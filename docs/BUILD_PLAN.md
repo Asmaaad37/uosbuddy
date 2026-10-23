@@ -959,7 +959,7 @@ Details and evidence are in `docs/research/unipal-rea.md`. #76's schema change i
 | 3 | `/start/email` | **Email fork** | "Do you have your UoS student email?" Two big pills: "Yes, I have it" and "No, I'm a fresher / don't have it yet". |
 | 4a | `/start/uni-email` | **Sign in with UoS email** | "Continue with Google" (domain-hinted) and an "Email me a code" fallback. On wrong domain: "That's not a UoS email. Join as a fresher instead?" |
 | 4b | `/start/freshman` | **Join as a fresher** | Fields: full name, personal email, password (strength meter), roll/registration number (validated against `roll_no_regex`, with a format hint), WhatsApp (optional, "only admins see this"), proof upload (camera or gallery; accepted types listed with examples). A privacy note: "Only a verifier sees your document. It's deleted 30 days after review." Turnstile, then "Submit for review". |
-| 5 | `/pending` | **Under review** | Mascot "checking…" animation. Status timeline (Submitted → In review → Decision). "Usually a few hours." Edit submission and contact support. Push opt-in: "Want a ping when you're in?" |
+| 5 | `/pending` | **Under review** | Mascot "checking…" animation. Status timeline (Submitted → In review → Decision). "Usually within 12 hours." Edit submission and contact support. Push opt-in: "Want a ping when you're in?" |
 | 6 | `/setup/academic` | **Academic** | Department → program → session (batch year) → semester → section → shift. Searchable selects from the catalogue. |
 | 7 | `/setup/about` | **About you** | Photo (cropper, visibility selector), handle (live availability check), bio, hometown city, day scholar/hostelite. |
 | 8 | `/setup/interests` | **Interests and Opening Move** | Pick up to 10 interest chips by category. Choose a prompt ("Ask me about…", "Best chai spot near campus is…") and answer it. |
@@ -1300,12 +1300,12 @@ Details and evidence are in `docs/research/unipal-rea.md`. #76's schema change i
 
 ## 10. Open questions for the human (Claude Code must ask before the relevant phase)
 
-1. What are UoS's student email domain(s), and are they Google Workspace or Microsoft 365? (Phase 1)
-2. What are the roll and registration number formats? Share examples with digits masked. (Phase 1)
-3. What are the official department, program and campus lists, and the current course codes? (Phases 1 and 6)
+1. ~~What are UoS's student email domain(s), and are they Google Workspace or Microsoft 365? (Phase 1)~~ **Answered 2026-10-23:** `@uos.edu.pk`, hosted on Google Workspace (MX → `aspmx.l.google.com`). The human chose to keep the Phase 1 flow as written (Google OAuth with `hd`, email OTP fallback, freshman document review), even though many students rarely use their university email.
+2. ~~What are the roll and registration number formats? Share examples with digits masked. (Phase 1)~~ **Answered 2026-10-23:** roll `BSCS51F22S037` (program code, 2-digit code, F/S term + 2-digit year, a letter, 3-digit serial) and registration `22F-US-CSC-401`. Regexes are in `supabase/seed/uos-catalogue.json`. `R` = regular and `S` = self-support (an admission category, not a shift). `51` is believed to be a department code (unconfirmed), so it is not used for validation.
+3. What are the official department, program and campus lists, and the current course codes? (Phases 1 and 6) **Partly answered 2026-10-23:** departments and programs are in `supabase/seed/uos-catalogue.json` (8 faculties, 48 departments, 244 programs, from the uos.edu.pk list, with campus-banner names as aliases). Campuses: UoS has sub-campuses, but launch covers the **main Sargodha campus only**. Course codes are still open (Phase 6).
 4. What is the UoS grading scale for the GPA calculator? (Phase 6)
 5. Which LLM provider and budget should the AI Buddy use? (Phase 7)
-6. Who are the initial admins and verifiers, and what is the review SLA? (Phase 1)
+6. Who are the initial admins and verifiers, and what is the review SLA? (Phase 1) **Partly answered 2026-10-23:** the project owner is the first and only admin and verifier; more are added later. Review SLA: **12 hours** (shown on `/pending`).
 7. ~~What is the final brand colour, and has permission been obtained for any official UoS marks? (Phase 0)~~ **Answered 2026-10-23:** cobalt/cream/navy from Refs C and D (Section 6.2); no official marks, so we build our own UOSBuddy logo from the human's brief.
 
 ---

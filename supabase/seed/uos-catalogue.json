@@ -1,0 +1,1679 @@
+{
+  "$comment": "UoS academic catalogue, source: uos.edu.pk degree-programs list + campus banners (2026-10-23). Seeds universities/departments/programs in Phase 1. short_code and duration_semesters are defaults chosen by Claude; edit freely.",
+  "university": {
+    "slug": "uos",
+    "name": "University of Sargodha",
+    "short_name": "UoS",
+    "city": "Sargodha",
+    "domains": [
+      "uos.edu.pk"
+    ],
+    "roll_no_regex": "^[A-Z]{2,8}\\d{2}[FS]\\d{2}[A-Z]\\d{3}$",
+    "registration_no_regex": "^\\d{2}[FS]-US-[A-Z]{2,5}-\\d{1,5}$",
+    "roll_no_format": "program letters (BSCS) + 2-digit code (51, believed to be the department; unconfirmed) + intake term F/S and 2-digit year (F22 = Fall 2022) + admission category (R = regular, S = self-support) + 3-digit serial",
+    "roll_no_examples": [
+      "BSCS51F22S037",
+      "BSAI51F25S005",
+      "BSIT51S25R002"
+    ],
+    "registration_no_format": "2-digit year + term F/S, 'US', subject code, serial (22F-US-CSC-401)",
+    "registration_no_examples": [
+      "22F-US-CSC-401"
+    ],
+    "verification_review_sla_hours": 12
+  },
+  "campuses": [
+    {
+      "name": "Main Campus, Sargodha",
+      "is_main": true
+    }
+  ],
+  "faculties": [
+    {
+      "name": "Faculty of Engineering and Technology",
+      "departments": [
+        {
+          "name": "Department of Mechanical, Industrial and Energy Systems",
+          "short_code": "DMIES",
+          "aliases": [
+            "College of Engineering & Technology"
+          ],
+          "programs": [
+            {
+              "name": "BSc Mechanical Engineering",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Mechanical Engineering",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "Bachelor of Engineering Technology (Mechanical)",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of Electrical, Electronics and Computer Systems",
+          "short_code": "DEECS",
+          "aliases": [
+            "College of Engineering & Technology"
+          ],
+          "programs": [
+            {
+              "name": "Bachelor of Engineering Technology (Electrical)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BSc Electrical Engineering",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Electrical Engineering",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Civil, Environment and Transportation Systems",
+          "short_code": "DCETS",
+          "aliases": [
+            "College of Engineering & Technology"
+          ],
+          "programs": [
+            {
+              "name": "Bachelor of Engineering Technology (Civil)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BSc Civil Engineering",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Agriculture",
+      "departments": [
+        {
+          "name": "Department of Animal Sciences",
+          "short_code": "ANS",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Animal Nutrition",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BSc (Hons) Animal Sciences",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Institute of Food Science & Nutrition",
+          "short_code": "IFSN",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "MSc (Hons) Food Science and Technology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Food Science and Technology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "MSc (Hons) Food and Nutrition",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Food and Nutrition",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BSc (Hons) Food Science and Technology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BSc (Hons) Home Economics (Major: Food and Nutrition)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BSc (Hons) Human Nutrition and Dietetics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS (Hons) Human Nutrition and Dietetics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Agricultural Extension & Rural Studies",
+          "short_code": "AERS",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Agricultural Extension",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Agricultural Extension",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Development Studies",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "Postgraduate Diploma in Gerontology",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "MS Rural Development",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Rural Development",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Entomology",
+          "short_code": "ENT",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Entomology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Entomology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "Post Graduate Diploma in Medical Entomology and Disease Vector Control (PGD-MEDVC)",
+              "level": "other",
+              "duration_semesters": 2
+            }
+          ]
+        },
+        {
+          "name": "Department of Agronomy",
+          "short_code": "AGR",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Agronomy",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Agronomy",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Climate Change",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Farm Management",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of Horticulture",
+          "short_code": "HORT",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Horticulture",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Horticulture",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Plant Breeding and Genetics",
+          "short_code": "PBG",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Plant Breeding and Genetics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Plant Breeding and Genetics",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BSc (Hons) Seed Science and Technology",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of Plant Pathology",
+          "short_code": "PP",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Plant Pathology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Plant Pathology",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Soil and Environmental Sciences",
+          "short_code": "SES",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "MSc (Hons) Soil Science",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Soil Science",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Agricultural Economics",
+          "short_code": "AGECON",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "BS in Agricultural and Resource Economics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MPhil Agricultural Economics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Agricultural Economics",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Forestry",
+          "short_code": "FOR",
+          "aliases": [
+            "College of Agriculture"
+          ],
+          "programs": [
+            {
+              "name": "BS in Forestry",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc (Hons) Forestry",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Forestry",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Medical and Health Sciences",
+      "departments": [
+        {
+          "name": "Department of Allied Health Sciences",
+          "short_code": "AHS",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "DPT (Doctor of Physical Therapy)",
+              "level": "bs",
+              "duration_semesters": 10
+            },
+            {
+              "name": "BS AHS (Pathology Lab Sciences)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Radiography and Imaging Technology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS AHS (Surgery Lab Sciences)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS AHS (Public Health Lab Sciences)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Medical Laboratory Technology (MLT)",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "University Nursing College",
+          "short_code": "NUR",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "Bachelor of Science in Nursing",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Social Sciences",
+      "departments": [
+        {
+          "name": "Malik Firoz Khan Noon Business School",
+          "short_code": "MFKNBS",
+          "aliases": [
+            "Malik Feroz Khan Noon Business School",
+            "Business School"
+          ],
+          "programs": [
+            {
+              "name": "Bachelor of Business Administration (BBA)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS in Management Sciences (Weekend)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "Executive MBA (Weekend)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD in Management Sciences (Weekend)",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "Bachelor of Business Administration (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS Entrepreneurship",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS Commerce",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "Master of Business Administration (MBA)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS Business Analytics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS Accounting and Finance",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS Islamic Banking and Finance",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of Economics",
+          "short_code": "ECO",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Economics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Economics",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Economics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Economics",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Economics with Data Science",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Economics (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Institute of Education",
+          "short_code": "EDU",
+          "aliases": [
+            "Department of Education"
+          ],
+          "programs": [
+            {
+              "name": "BS Education",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BEd (Hons) Elementary",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MPhil Education",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BEd (Hons) Elementary (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Education",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BEd (1.5 Year) General",
+              "level": "other",
+              "duration_semesters": 3
+            },
+            {
+              "name": "BEd (1.5 Year) ELT",
+              "level": "other",
+              "duration_semesters": 3
+            },
+            {
+              "name": "BEd (1.5 Year) Science Education",
+              "level": "other",
+              "duration_semesters": 3
+            },
+            {
+              "name": "BS in Special Education",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of International Relations",
+          "short_code": "IR",
+          "aliases": [
+            "Department of Politics & International Relations"
+          ],
+          "programs": [
+            {
+              "name": "BS Political Science",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA International Relations",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MA Political Science",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS International Relations",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MPhil Political Science",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil International Relations",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Political Science",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in International Relations (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Political Science (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of History & Pakistan Studies",
+          "short_code": "HPS",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "MA History",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MA Pakistan Studies",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS History",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MPhil History",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Pakistan Studies",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in History (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Pakistan Studies (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD History",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Social Work",
+          "short_code": "SW",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Social Work",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Social Work",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Social Work",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Social Work (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Social Work",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Sociology and Criminology",
+          "short_code": "SOC",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "MSc Sociology",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Sociology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Sociology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS Sociology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Criminology",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Criminology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Sociology (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Psychology",
+          "short_code": "PSY",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Psychology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Psychology",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Psychology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "ADCP",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "MS Industrial Organizational Psychology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Psychology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Psychology (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Political Science",
+          "short_code": "POL",
+          "aliases": [
+            "Department of Politics & International Relations"
+          ],
+          "programs": []
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Arts & Humanities",
+      "departments": [
+        {
+          "name": "Department of Islamic Studies",
+          "short_code": "ISL",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Islamic Studies",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Islamic Studies",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Islamic Studies",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Islamic Studies",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Islamic Studies (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Urdu Language and Literature",
+          "short_code": "URDU",
+          "aliases": [
+            "Department of Urdu Languages & Literature",
+            "Department of Oriental Languages"
+          ],
+          "programs": [
+            {
+              "name": "BS Urdu",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Urdu",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Urdu",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Urdu",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "MA Oriental Languages (Punjabi)",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MA Oriental Languages (Persian)",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Oriental Languages (Persian)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS Persian",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Urdu (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of English",
+          "short_code": "ENG",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS in English (Language and Literature)",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA English",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil English (Linguistics)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD English (Linguistics)",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in English (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in English (Language and Linguistics)",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Institute of Art & Design",
+          "short_code": "IAD",
+          "aliases": [
+            "Institute of Arts & Design"
+          ],
+          "programs": [
+            {
+              "name": "BS Fine Arts",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "Bachelors in Graphic Design",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "Bachelors in Textile Design",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Fine Arts",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "Diploma in Painting",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "BS Interior Design",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "Diploma in Fashion Design",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Interior Design",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "BS in Fine Arts (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Information Management",
+          "short_code": "IM",
+          "aliases": [
+            "Department of Information and Management"
+          ],
+          "programs": [
+            {
+              "name": "BS Information Management",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Information Management",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Information Management",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Information Management",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Information Management (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "College of Law",
+          "short_code": "LAW",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "LLB (5 years)",
+              "level": "bs",
+              "duration_semesters": 10
+            },
+            {
+              "name": "Diploma in Banking Law (PGDBL)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Corporate Law and Practices (PGDCLP)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Environmental Law (PGDEL)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Forensic Science and Related Laws (PGDFSC)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Taxation Laws (PGDTL)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Labour Law (PGDLL)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in Intellectual Property Law (PGDIPL)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "Diploma in International Trade (WTO) Law & EEU (Eurasian Economic Union) (PGDITLE)",
+              "level": "other",
+              "duration_semesters": 2
+            },
+            {
+              "name": "LLM",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Sports Sciences",
+          "short_code": "SPS",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "MSc Physical Education",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS Physical Education",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Physical Education (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Communication and Media Studies",
+          "short_code": "CMS",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS in Media & Communication Studies",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Mass Communication",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Communication and Media Studies",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Digital and Social Media",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Strategic Communication",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Theatre, Film & Television",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Media & Communication Studies (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Media and Communication Studies",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Punjabi Language, Literature and Culture",
+          "short_code": "PJB",
+          "aliases": [
+            "Department of Oriental Languages"
+          ],
+          "programs": [
+            {
+              "name": "BS Punjabi",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MA Punjabi",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Punjabi (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Arabic Language & Literature",
+          "short_code": "ARB",
+          "aliases": [
+            "Department of Oriental Languages"
+          ],
+          "programs": [
+            {
+              "name": "MA Arabic",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Arabic",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Arabic",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS Arabic",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Arabic (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Linguistics and Language Studies",
+          "short_code": "DLLS",
+          "aliases": [],
+          "programs": []
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Sciences",
+      "departments": [
+        {
+          "name": "Department of Biotechnology",
+          "short_code": "BIOTECH",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS in Biotechnology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MPhil Biotechnology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Biotechnology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Microbiology",
+              "level": "bs",
+              "duration_semesters": 8
+            }
+          ]
+        },
+        {
+          "name": "Department of Botany",
+          "short_code": "BOT",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Botany",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Botany",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Botany",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Botany",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Botany (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Institute of Chemistry",
+          "short_code": "CHEM",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Chemistry",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Chemistry",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Analytical/Inorganic",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Chemistry",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "MPhil Chemistry (Organic Chemistry)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Chemistry (Biochemistry)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Chemistry (Physical Chemistry)",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Biochemistry",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Chemistry (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Earth Sciences",
+          "short_code": "ES",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS in Geology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Geography",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS Geology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Environmental Sciences",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Geography (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Geography",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Geology",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Mathematics",
+          "short_code": "MATH",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Mathematics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Mathematics",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Mathematics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Mathematics",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Mathematics (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Physics",
+          "short_code": "PHY",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Physics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Physics",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Physics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Physics",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Physics (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Statistics",
+          "short_code": "STAT",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Statistics",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Statistics",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Statistics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Statistics (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Statistics",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Zoology",
+          "short_code": "ZOO",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "BS Zoology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Zoology",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Zoology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Zoology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Zoology (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Pharmacy",
+      "departments": [
+        {
+          "name": "College of Pharmacy",
+          "short_code": "PHARM",
+          "aliases": [],
+          "programs": [
+            {
+              "name": "MPhil Pharmaceutics",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Pharmaceutics",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "Pharm D",
+              "level": "bs",
+              "duration_semesters": 10
+            },
+            {
+              "name": "MPhil Pharmacy Practice",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MPhil Pharmacology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Pharmacology",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "MPhil Pharmaceutical Chemistry",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Faculty of Computing and Information Technology",
+      "departments": [
+        {
+          "name": "Department of Computer Science",
+          "short_code": "CS",
+          "aliases": [
+            "Department of Computer Science & IT"
+          ],
+          "programs": [
+            {
+              "name": "BS in Computer Science",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS Computer Science",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Computer Science",
+              "level": "phd",
+              "duration_semesters": 6
+            },
+            {
+              "name": "BS in Artificial Intelligence",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Data Science",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS Artificial Intelligence",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        },
+        {
+          "name": "Department of Information Technology",
+          "short_code": "IT",
+          "aliases": [
+            "Department of Computer Science & IT"
+          ],
+          "programs": [
+            {
+              "name": "BS Information Technology",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MSc Information Technology",
+              "level": "other",
+              "duration_semesters": 4
+            },
+            {
+              "name": "MS Information Technology",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            },
+            {
+              "name": "BS in Cyber Security",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "BS in Information Technology (5th Semester Intake)",
+              "level": "bs_5th_semester",
+              "duration_semesters": 4
+            },
+            {
+              "name": "PhD Information Technology",
+              "level": "phd",
+              "duration_semesters": 6
+            }
+          ]
+        },
+        {
+          "name": "Department of Software Engineering",
+          "short_code": "SE",
+          "aliases": [
+            "Department of Computer Science & IT"
+          ],
+          "programs": [
+            {
+              "name": "BS Software Engineering",
+              "level": "bs",
+              "duration_semesters": 8
+            },
+            {
+              "name": "MS Software Engineering",
+              "level": "ms_mphil",
+              "duration_semesters": 4
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

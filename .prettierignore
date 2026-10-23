@@ -1,0 +1,13 @@
+node_modules
+.next
+pnpm-lock.yaml
+apps/ai
+supabase/.temp
+packages/shared/src/database.types.ts
+docs/BUILD_PLAN.md
+docs/research
+apps/web/next-env.d.ts
+apps/web/screenshots
+apps/web/test-results
+apps/web/playwright-report
+supabase/seed/uos-catalogue.json

@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+/* Dark mode follows the OS unless <html data-theme> pins it (Section 6.2). */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *):not(
+        :where([data-theme="light"], [data-theme="light"] *)
+      ) {
+      @slot;
+    }
+  }
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+}
+
+/* ---------- Tokens (BUILD_PLAN §6.2) ----------
+   [data-theme] works on any element, so a subtree can be pinned (the /design page uses this). */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  /* Surfaces */
+  --bg: #f2ece1; /* cream (Ref D) */
+  --bg-grid-dot: #ddd5c6;
+  --surface: #ffffff;
+  --surface-2: #e9e2d4;
+  --ink: #0b0838; /* navy ink */
+  --ink-2: #4a4766;
+  --line: #ddd5c6;
+  /* Brand */
+  --brand: #0034d3; /* cobalt */
+  --brand-ink: #ffffff;
+  --brand-soft: #99ccff; /* sky */
+  --brand-deep: #003087;
+  /* Feature lanes (Ref C): tiles, stamps, headers only */
+  --lane-people: #6553f5;
+  --lane-people-ink: #ffffff;
+  --lane-learn: #00d68f;
+  --lane-learn-ink: #0b0838;
+  --lane-help: #2ec8ff;
+  --lane-help-ink: #0b0838;
+  --lane-campus: #0034d3;
+  --lane-campus-ink: #ffffff;
+  --accent-holo: linear-gradient(135deg, #99ccff 0%, #6553f5 35%, #2ec8ff 65%, #00d68f 100%);
+  --success: #00a86b;
+  --warning: #d99a1e;
+  --danger: #d64545;
+  /* Shape */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 0 rgb(11 8 56 / 0.04), 0 8px 24px -12px rgb(11 8 56 / 0.18);
+  --shadow-lift: 0 18px 40px -16px rgb(11 8 56 / 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0838;
+    --bg-grid-dot: #1c1757;
+    --surface: #141046;
+    --surface-2: #1c1757;
+    --ink: #f2ece1;
+    --ink-2: #a9a6c9;
+    --line: #2a2566;
+    --brand: #99ccff;
+    --brand-ink: #0b0838;
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0838;
+  --bg-grid-dot: #1c1757;
+  --surface: #141046;
+  --surface-2: #1c1757;
+  --ink: #f2ece1;
+  --ink-2: #a9a6c9;
+  --line: #2a2566;
+  --brand: #99ccff;
+  --brand-ink: #0b0838;
+}
+
+/* Expose tokens as Tailwind utilities (bg-surface, text-ink-2, rounded-pill, …). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-deep: var(--brand-deep);
+  --color-lane-people: var(--lane-people);
+  --color-lane-people-ink: var(--lane-people-ink);
+  --color-lane-learn: var(--lane-learn);
+  --color-lane-learn-ink: var(--lane-learn-ink);
+  --color-lane-help: var(--lane-help);
+  --color-lane-help-ink: var(--lane-help-ink);
+  --color-lane-campus: var(--lane-campus);
+  --color-lane-campus-ink: var(--lane-campus-ink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-lift: var(--shadow-lift);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-pixel: var(--font-silkscreen), ui-monospace, monospace;
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Dotted canvas (Section 6.3 #1). */
+  .bg-dotted {
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--bg-grid-dot) 1.2px, transparent 1.2px);
+    background-size: 20px 20px;
+  }
+  .bg-holo {
+    background-image: var(--accent-holo);
+  }
+  .gutter {
+    padding-inline: 16px;
+    @media (width >= 48rem) {
+      padding-inline: 24px;
+    }
+  }
+}
+
+/* No fans, marquee or confetti under reduced motion (Section 6.4). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
