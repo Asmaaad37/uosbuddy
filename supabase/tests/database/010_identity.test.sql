@@ -83,8 +83,10 @@ select ok(not exists(select 1 from public.profiles where id = (select id from u 
 select is((select count(*)::int from public.private_profile), 1, 'a verified user cannot read others'' PII');
 
 -- ---------- protected columns ----------
+select tests.login_as((select id from u where name = 'fresher'));
 select throws_ok($$ update public.profiles set verification_status = 'verified' where id = auth.uid() $$,
-  '42501', null, 'a user cannot change their own verification status');
+  '42501', null, 'an unverified user cannot mark themselves verified');
+select tests.login_as((select id from u where name = 'uni'));
 select throws_ok($$ update public.profiles set role = 'admin' where id = auth.uid() $$,
   '42501', null, 'a user cannot make themselves admin');
 select lives_ok($$ update public.profiles set bio = 'Chai and C++' where id = auth.uid() $$,
