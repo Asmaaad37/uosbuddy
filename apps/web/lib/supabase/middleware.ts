@@ -2,11 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@uosbuddy/shared";
 import { publicEnv } from "@/lib/env";
+import { needsProfile, redirectFor } from "@/lib/auth/routing";
 
 /**
- * Refreshes the auth session cookie on every request. Routing by verification state
- * (visitor → /, pending → /pending, …) is added in Phase 1. Middleware is a UX redirect,
- * never a security boundary: RLS enforces access.
+ * Refreshes the auth session cookie on every request, then routes by verification state
+ * (visitor → /, pending → /pending, …). Middleware is a UX redirect, never a security
+ * boundary: RLS enforces access.
  */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -31,7 +32,28 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Do not add logic between client creation and getUser(): it revalidates the token.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return response;
+  const path = request.nextUrl.pathname;
+  if (!needsProfile(path)) return response;
+
+  let profile = null;
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("verification_status, onboarding_step, role")
+      .eq("id", user.id)
+      .maybeSingle();
+    profile = data;
+  }
+
+  const target = redirectFor(path, !!user, profile);
+  if (!target) return response;
+
+  // Carry refreshed session cookies over to the redirect.
+  const redirect = NextResponse.redirect(new URL(target, request.url));
+  for (const cookie of response.cookies.getAll()) redirect.cookies.set(cookie);
+  return redirect;
 }
