@@ -1,0 +1,41 @@
+{
+  "name": "uosbuddy",
+  "private": true,
+  "packageManager": "pnpm@10.34.7",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @uosbuddy/web --filter @uosbuddy/ai dev",
+    "dev:web": "pnpm --filter @uosbuddy/web dev",
+    "dev:ai": "pnpm --filter @uosbuddy/ai dev",
+    "build": "pnpm --filter @uosbuddy/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:lint": "supabase db lint --level warning",
+    "db:test": "supabase test db",
+    "db:link": "supabase link --project-ref pjddiybbcpiywusglysc",
+    "db:push": "supabase db push",
+    "db:types": "node scripts/gen-types.mjs --linked",
+    "db:types:local": "node scripts/gen-types.mjs --local"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "supabase": "2.122.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "supabase",
+      "sharp",
+      "esbuild",
+      "@sentry/cli"
+    ]
+  }
+}

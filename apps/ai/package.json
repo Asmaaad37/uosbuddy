@@ -1,0 +1,10 @@
+{
+  "name": "@uosbuddy/ai",
+  "private": true,
+  "scripts": {
+    "dev": "uv run uvicorn app.main:app --reload --port 8000",
+    "lint": "uv run ruff check . && uv run ruff format --check .",
+    "typecheck": "uv run python -m compileall -q app",
+    "test": "uv run pytest -q"
+  }
+}

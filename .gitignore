@@ -29,3 +29,11 @@ supabase/.temp/
 Thumbs.db
 .idea/
 *.log
+
+# playwright screenshots
+apps/web/screenshots/
+
+# generated / caches
+*.tsbuildinfo
+.ruff_cache/
+.pytest_cache/
