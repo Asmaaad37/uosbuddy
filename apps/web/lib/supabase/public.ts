@@ -19,6 +19,8 @@ export function createPublicClient() {
 export async function getUniversity(slug = "uos") {
   try {
     const supabase = createPublicClient();
+    // Fall back to defaults rather than hold the page if the database is slow or unreachable.
+    const signal = AbortSignal.timeout(2500);
     const [{ data: uni }, { data: providers }] = await Promise.all([
       supabase
         .from("universities")
@@ -26,8 +28,9 @@ export async function getUniversity(slug = "uos") {
           "id, name, short_name, roll_no_regex, registration_no_regex, university_domains(domain, mail_host), campuses(name, is_main)",
         )
         .eq("slug", slug)
+        .abortSignal(signal)
         .maybeSingle(),
-      supabase.from("auth_providers").select("mail_host, live"),
+      supabase.from("auth_providers").select("mail_host, live").abortSignal(signal),
     ]);
     if (!uni) return null;
     const live = new Set((providers ?? []).filter((p) => p.live).map((p) => p.mail_host));

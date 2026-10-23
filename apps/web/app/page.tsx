@@ -10,7 +10,9 @@ export const revalidate = 60;
 
 async function getStats() {
   try {
-    const { data } = await createPublicClient().rpc("public_stats");
+    const { data } = await createPublicClient()
+      .rpc("public_stats")
+      .abortSignal(AbortSignal.timeout(2500));
     return data as { students: number; departments: number } | null;
   } catch {
     return null;
