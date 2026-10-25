@@ -17,7 +17,7 @@ export default async function SetupPage() {
       title={`You're in${profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}!`}
       subtitle="Profile setup opens soon. Then you'll see who else from your batch is here."
     >
-      <Stamp tone={byEmail ? "email" : "verified"} className="justify-self-start">
+      <Stamp tone={byEmail ? "email" : "verified"} className="self-start">
         {byEmail ? "UoS email" : "Verified"}
       </Stamp>
       <form action={signOut} className="mt-auto">
