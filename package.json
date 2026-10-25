@@ -23,7 +23,8 @@
     "db:link": "supabase link --project-ref pjddiybbcpiywusglysc",
     "db:push": "supabase db push",
     "db:types": "node scripts/gen-types.mjs --linked",
-    "db:types:local": "node scripts/gen-types.mjs --local"
+    "db:types:local": "node scripts/gen-types.mjs --local",
+    "admin:grant": "pnpm --filter @uosbuddy/web admin:grant"
   },
   "devDependencies": {
     "prettier": "3.9.10",
