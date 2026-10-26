@@ -26,7 +26,8 @@ async function prepare(file: File): Promise<File> {
     maxWidthOrHeight: 2400,
     fileType: "image/jpeg",
     preserveExif: false,
-    useWebWorker: true,
+    // The worker build loads from a CDN, which our CSP blocks; a one-off photo is fine inline.
+    useWebWorker: false,
   });
 }
 

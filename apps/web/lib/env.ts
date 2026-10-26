@@ -28,7 +28,12 @@ const serverSchema = publicSchema.extend({
   UPSTASH_REDIS_REST_URL: optional,
   UPSTASH_REDIS_REST_TOKEN: optional,
   TURNSTILE_SECRET_KEY: optional,
-  RESEND_API_KEY: optional,
+  // Transactional email over SMTP: Gmail during development, Resend (smtp.resend.com) at launch.
+  SMTP_HOST: optional,
+  SMTP_PORT: z.coerce.number().int().positive().default(465),
+  SMTP_USER: optional,
+  SMTP_PASSWORD: optional,
+  EMAIL_FROM: optional,
   VAPID_PRIVATE_KEY: optional,
   VAPID_SUBJECT: optional,
   AI_SERVICE_URL: optional,
