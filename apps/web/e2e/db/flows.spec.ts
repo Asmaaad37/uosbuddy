@@ -106,9 +106,11 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   const admin = await (await browser.newContext()).newPage();
   await admin.goto("/login");
   await admin.getByRole("tab", { name: "Personal email" }).click();
-  await admin.getByLabel("Email").fill(adminEmail);
-  await admin.getByLabel("Password").fill(adminPassword);
-  await admin.getByRole("button", { name: "Log in" }).click();
+  // Scoped and exact: the tab panel itself is labelled "Personal email".
+  const passwordTab = admin.getByRole("tabpanel", { name: "Personal email" });
+  await passwordTab.getByLabel("Email", { exact: true }).fill(adminEmail);
+  await passwordTab.getByLabel("Password", { exact: true }).fill(adminPassword);
+  await passwordTab.getByRole("button", { name: "Log in" }).click();
   await expect(admin).toHaveURL(/\/setup$/);
   await admin.goto("/admin/verifications");
   await expect(admin.getByText("Bilal Ahmed").first()).toBeVisible();
