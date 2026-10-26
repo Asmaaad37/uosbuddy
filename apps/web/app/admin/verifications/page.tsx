@@ -1,0 +1,70 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ReviewQueue, type QueueItem } from "@/components/admin/review-queue";
+import { getSession } from "@/lib/auth/session";
+
+export const metadata: Metadata = { title: "Verification queue", robots: { index: false } };
+
+/** Signed document links last long enough to review a batch, then expire. */
+const DOC_LINK_SECONDS = 15 * 60;
+
+/** Admin verification queue (Phase 1 task 7). RLS lets admins read requests, PII and documents. */
+export default async function VerificationsPage() {
+  const { supabase, profile } = await getSession();
+  // The middleware already redirects non-admins; this is the server-side check (§3.6 point 3).
+  if (profile?.role !== "admin") notFound();
+
+  const [{ data: rows }, { count: waitingOnStudents }] = await Promise.all([
+    supabase
+      .from("verification_requests")
+      .select(
+        "id, updated_at, doc_path, roll_no_submitted, full_name_submitted, applicant:profiles!verification_requests_user_id_fkey(full_name, private_profile(personal_email, uni_email, whatsapp))",
+      )
+      .eq("status", "pending")
+      .order("updated_at", { ascending: true })
+      .limit(50),
+    supabase
+      .from("verification_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "needs_info"),
+  ]);
+
+  const paths = (rows ?? []).flatMap((r) => (r.doc_path ? [r.doc_path] : []));
+  const { data: signed } = paths.length
+    ? await supabase.storage.from("verification-docs").createSignedUrls(paths, DOC_LINK_SECONDS)
+    : { data: [] };
+  const urls = new Map((signed ?? []).map((s) => [s.path, s.signedUrl]));
+
+  const items: QueueItem[] = (rows ?? []).map((r) => {
+    const pii = r.applicant?.private_profile;
+    return {
+      id: r.id,
+      updatedAt: r.updated_at,
+      docPath: r.doc_path,
+      docUrl: (r.doc_path && urls.get(r.doc_path)) || null,
+      submittedName: r.full_name_submitted,
+      accountName: r.applicant?.full_name ?? null,
+      studentId: r.roll_no_submitted,
+      email: pii?.personal_email ?? pii?.uni_email ?? null,
+      emailIsUni: !pii?.personal_email && !!pii?.uni_email,
+      whatsapp: pii?.whatsapp ?? null,
+    };
+  });
+
+  return (
+    <div className="min-h-dvh">
+      <header className="gutter flex items-center justify-between border-b border-line py-3">
+        <Link href="/admin/verifications" className="font-pixel text-lg">
+          UOSBUDDY ADMIN
+        </Link>
+        <Link href="/setup" className="text-sm font-semibold text-brand">
+          Back to app
+        </Link>
+      </header>
+      <main className="gutter mx-auto max-w-6xl py-6">
+        <ReviewQueue items={items} waitingOnStudents={waitingOnStudents ?? 0} />
+      </main>
+    </div>
+  );
+}
