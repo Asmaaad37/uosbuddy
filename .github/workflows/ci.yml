@@ -75,3 +75,52 @@ jobs:
       - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
       - run: supabase db lint --level warning
       - run: supabase test db
+
+  # Full sign-up flows (e2e/db) against a local Supabase stack; Mailpit catches the emails.
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: pnpm install --frozen-lockfile
+      - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+      - id: sb
+        name: Read local Supabase keys
+        run: |
+          eval "$(supabase status -o env)"
+          echo "url=$API_URL" >> "$GITHUB_OUTPUT"
+          echo "anon=${ANON_KEY:-$PUBLISHABLE_KEY}" >> "$GITHUB_OUTPUT"
+          echo "service=${SERVICE_ROLE_KEY:-$SECRET_KEY}" >> "$GITHUB_OUTPUT"
+      - name: Build against the local stack
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ steps.sb.outputs.url }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.sb.outputs.anon }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      - run: pnpm --filter @uosbuddy/web exec playwright install --with-deps chromium
+      - name: Sign-up flows
+        run: pnpm --filter @uosbuddy/web exec playwright test e2e/db --project=desktop
+        env:
+          E2E_DB: "1"
+          MAILPIT_URL: http://127.0.0.1:54324
+          NEXT_PUBLIC_SUPABASE_URL: ${{ steps.sb.outputs.url }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.sb.outputs.anon }}
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.sb.outputs.service }}
+          CRON_SECRET: ci-cron-secret
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-flows
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          retention-days: 7

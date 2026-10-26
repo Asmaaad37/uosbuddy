@@ -11,3 +11,4 @@ apps/web/screenshots
 apps/web/test-results
 apps/web/playwright-report
 supabase/seed/uos-catalogue.json
+supabase/templates
