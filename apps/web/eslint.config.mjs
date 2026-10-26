@@ -24,7 +24,7 @@ const config = [
     },
   },
   {
-    files: ["app/api/**", "actions/**", "lib/supabase/**", "**/*.server.ts"],
+    files: ["app/api/**", "app/auth/**", "actions/**", "lib/supabase/**", "**/*.server.ts"],
     rules: { "no-restricted-imports": "off" },
   },
 ];
