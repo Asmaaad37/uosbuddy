@@ -637,6 +637,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      expired_verification_documents: {
+        Args: { p_days?: number; p_limit?: number }
+        Returns: string[]
+      }
       is_admin: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
       my_university_id: { Args: never; Returns: string }

@@ -21,6 +21,7 @@ const publicSchema = z.object({
   NEXT_PUBLIC_SENTRY_DSN: optional,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: optional,
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: optional,
+  NEXT_PUBLIC_SUPPORT_EMAIL: optional,
 });
 
 const serverSchema = publicSchema.extend({
@@ -36,6 +37,8 @@ const serverSchema = publicSchema.extend({
   EMAIL_FROM: optional,
   VAPID_PRIVATE_KEY: optional,
   VAPID_SUBJECT: optional,
+  // Shared secret for scheduled jobs (/api/cron/*); Vercel Cron sends it as a Bearer token.
+  CRON_SECRET: optional,
   AI_SERVICE_URL: optional,
   AI_SERVICE_HMAC_SECRET: optional,
   SENTRY_DSN: optional,
@@ -73,4 +76,5 @@ export const publicEnv = parsePublicEnv({
   NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  NEXT_PUBLIC_SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
 });
