@@ -1,6 +1,8 @@
 "use server";
 
+import { after } from "next/server";
 import { redirect } from "next/navigation";
+import { sendStatusEmail } from "@/lib/email/send.server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -77,6 +79,10 @@ export async function submitProof(input: z.input<typeof proofSchema>): Promise<A
     return fail(
       ["22023", "P0001"].includes(error.code) ? error.message : "Couldn't submit. Try again.",
     );
+
+  // After the response, so a slow mail server never delays the student.
+  const { user } = await getSession();
+  if (user) after(() => sendStatusEmail(user.id, { kind: "submitted" }));
   return { ok: true, data: undefined };
 }
 
