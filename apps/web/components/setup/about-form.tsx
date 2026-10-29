@@ -100,6 +100,12 @@ export function AboutForm({
   useEffect(() => {
     const value = handle.trim();
     if (!value) return setHandleState("idle");
+    // Your saved handle is yours; re-checking it would only block a quick Save while editing.
+    if (value === initial.handle) {
+      setHandleState("available");
+      setHandleMessage(undefined);
+      return;
+    }
     const problem = handleProblem(value);
     if (problem) {
       setHandleState("invalid");

@@ -11,6 +11,9 @@ insert into tests.u (name) values ('F'), ('G'), ('P');
 create function tests.uid(p_name text) returns uuid language sql stable as $$
   select id from tests.u where name = p_name;
 $$;
+grant usage on schema tests to authenticated;
+grant select on tests.u to authenticated;
+grant execute on all functions in schema tests to authenticated;
 
 insert into auth.users (id, email, email_confirmed_at, aud, role)
 select id, lower(name) || '-link@example.com', now(), 'authenticated', 'authenticated' from tests.u;
