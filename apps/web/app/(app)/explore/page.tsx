@@ -1,44 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShieldCheck, UserRound } from "lucide-react";
-import { ProfileStamps } from "@/components/profile/profile-card";
+import { redirect } from "next/navigation";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import { getDirectoryCounts, getSuggestions, loadDirectory } from "@/actions/discovery";
+import { AppShell } from "@/components/app-shell";
+import { BatchReveal } from "@/components/discovery/batch-reveal";
+import { FeatureDock } from "@/components/discovery/feature-dock";
+import { PersonCard } from "@/components/discovery/person-card";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { OnboardingShell } from "@/components/onboarding/shell";
+import { Marquee } from "@/components/ui/marquee";
 import { getSession } from "@/lib/auth/session";
-import { signOut } from "@/actions/onboarding";
 
 export const metadata: Metadata = { title: "Explore" };
 
-// Phase 3 replaces this with "Find your batch" (Section 7, screen 10).
-export default async function ExplorePage() {
-  const { supabase, user, profile } = await getSession();
-  const isAdmin = profile?.role === "admin";
-  const { data: pii } = await supabase
-    .from("private_profile")
-    .select("uni_email")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+type Props = { searchParams: Promise<{ welcome?: string }> };
 
-  // RLS lets only admins count other students' requests.
-  const { count: waiting } = isAdmin
-    ? await supabase
-        .from("verification_requests")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "pending")
-    : { count: null };
+/** Phase 3 task 1: the Explore hub, with the batch reveal (task 2) after setup. */
+export default async function ExplorePage({ searchParams }: Props) {
+  const { supabase, user, profile } = await getSession();
+  if (!user || !profile) redirect("/login?next=/explore");
+  const welcome = (await searchParams).welcome === "1";
+  const isAdmin = profile.role === "admin";
+  const name = profile.full_name ?? profile.handle ?? "there";
+
+  const [counts, suggestions, batch, { data: dept }, { count: waiting }] = await Promise.all([
+    getDirectoryCounts(),
+    getSuggestions(6),
+    loadDirectory({ scope: "batch" }),
+    profile.department_id
+      ? supabase
+          .from("departments")
+          .select("short_code")
+          .eq("id", profile.department_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    // RLS lets only admins count other students' requests.
+    isAdmin
+      ? supabase
+          .from("verification_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending")
+      : Promise.resolve({ count: null }),
+  ]);
+
+  const batchCount = counts?.batch_count ?? 0;
+  const code = dept?.short_code;
+  const batchLabel = code && profile.batch_year ? `${code} ${profile.batch_year}` : "your batch";
+  const batchPeople = batch.ok ? batch.data.people : [];
+  const pulses = [
+    `${batchCount} from ${batchLabel} here`,
+    profile.section && `${counts?.section_count ?? 0} in your section`,
+    code && `${counts?.department_count ?? 0} from ${code} to meet`,
+    `${counts?.university_count ?? 0} UoS students to meet`,
+    "Invite your batch",
+  ].filter((p): p is string => !!p);
 
   return (
-    <OnboardingShell
-      title={`You're all set${profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}!`}
-      subtitle="Finding your batch opens soon. You'll see who else from your department and section is here."
-    >
-      <ProfileStamps hasUniEmail={!!pii?.uni_email} isMentor={profile?.is_mentor} />
-      <Button asChild block>
-        <Link href="/me">
-          <UserRound />
-          My profile
+    <AppShell
+      action={
+        <Link href="/me" aria-label="My profile" className="rounded-pill">
+          <Avatar name={name} src={profile.avatar_url} size="md" />
         </Link>
-      </Button>
+      }
+    >
+      <div className="grid gap-1">
+        <h1 className="text-[28px] leading-tight font-bold">
+          {welcome ? "Welcome" : "Hi"}, {name.split(" ")[0]}!
+        </h1>
+        <p className="text-ink-2">Find your people at the University of Sargodha.</p>
+      </div>
+
+      {welcome ? (
+        <BatchReveal
+          count={batchCount}
+          label={code && profile.batch_year ? `${code} ${profile.batch_year}` : "your batch"}
+          people={batchPeople}
+          inviteUrl="/"
+        />
+      ) : (
+        <Link
+          href="/explore/batch"
+          className="group grid gap-1 rounded-lg bg-ink p-5 text-bg shadow-[var(--shadow-card)]"
+        >
+          <span className="font-pixel text-5xl leading-none">{batchCount}</span>
+          <span className="font-semibold">
+            from {batchLabel} {batchCount === 1 ? "is" : "are"} here
+          </span>
+          <span className="mt-2 flex items-center gap-1 text-sm font-semibold text-brand-soft">
+            See your batch
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </Link>
+      )}
+
+      <Marquee items={pulses} className="-mx-4 sm:mx-0 sm:rounded-md sm:border-x" />
+
+      <FeatureDock
+        previews={batchPeople.map((p) => ({
+          name: p.full_name ?? p.handle ?? "Student",
+          avatar: p.avatar_url,
+        }))}
+      />
+
+      <section aria-labelledby="people-like-you" className="grid gap-3">
+        <div className="flex items-baseline justify-between">
+          <h2 id="people-like-you" className="text-lg font-bold">
+            People like you
+          </h2>
+          <Link href="/explore/batch" className="text-sm font-semibold text-brand">
+            See everyone
+          </Link>
+        </div>
+        {suggestions.length > 0 ? (
+          <ul className="grid gap-2">
+            {suggestions.map((s) => (
+              <li key={s.person.id}>
+                <PersonCard person={s.person} reason={s.reasons[0]} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+            Suggestions show up as more of your batch joins.
+          </p>
+        )}
+      </section>
+
       {isAdmin && (
         <Button asChild block variant="secondary">
           <Link href="/admin/verifications?from=/explore">
@@ -52,11 +140,6 @@ export default async function ExplorePage() {
           </Link>
         </Button>
       )}
-      <form action={signOut} className="mt-auto">
-        <Button type="submit" block variant="ghost">
-          Log out
-        </Button>
-      </form>
-    </OnboardingShell>
+    </AppShell>
   );
 }
