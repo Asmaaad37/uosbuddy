@@ -533,6 +533,48 @@ export type Database = {
           },
         ]
       }
+      uni_email_claims: {
+        Row: {
+          attempts: number
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uni_email_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "uni_email_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       universities: {
         Row: {
           city: string | null
@@ -785,6 +827,10 @@ export type Database = {
       }
       are_connected: { Args: { p_a: string; p_b: string }; Returns: boolean }
       can_view_profile: { Args: { p_target: string }; Returns: boolean }
+      confirm_uni_email_claim: {
+        Args: { p_code_hash: string; p_user: string }
+        Returns: string
+      }
       decide_verification: {
         Args: {
           p_decision: Database["public"]["Enums"]["verification_status"]
@@ -805,6 +851,10 @@ export type Database = {
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
+      }
+      start_uni_email_claim: {
+        Args: { p_code_hash: string; p_email: string; p_user: string }
+        Returns: string
       }
       submit_verification: {
         Args: {

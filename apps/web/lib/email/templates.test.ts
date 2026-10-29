@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { escapeHtml, renderStatusEmail } from "./templates";
+import { escapeHtml, renderLinkCodeEmail, renderStatusEmail } from "./templates";
 
 const site = { siteUrl: "https://uosbuddy.example" };
 
@@ -36,5 +36,15 @@ describe("status emails", () => {
     expect(escapeHtml(`<a href="x">'&'</a>`)).toBe(
       "&lt;a href=&quot;x&quot;&gt;&#39;&amp;&#39;&lt;/a&gt;",
     );
+  });
+});
+
+describe("link code email", () => {
+  it("puts the code in the subject, text and HTML", () => {
+    const email = renderLinkCodeEmail("042917");
+    expect(email.subject).toBe("042917 is your UOSBuddy code");
+    expect(email.text).toContain("042917");
+    expect(email.text).toContain("expires in 10 minutes");
+    expect(email.html).toContain("042917");
   });
 });

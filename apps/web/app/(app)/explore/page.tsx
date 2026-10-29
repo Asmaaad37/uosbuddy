@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
-import { Stamp } from "@/components/ui/badge";
+import { ShieldCheck, UserRound } from "lucide-react";
+import { ProfileStamps } from "@/components/profile/profile-card";
 import { Button } from "@/components/ui/button";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import { getSession } from "@/lib/auth/session";
@@ -11,9 +11,13 @@ export const metadata: Metadata = { title: "Explore" };
 
 // Phase 3 replaces this with "Find your batch" (Section 7, screen 10).
 export default async function ExplorePage() {
-  const { supabase, profile } = await getSession();
-  const byEmail = profile?.verification_method === "uni_email";
+  const { supabase, user, profile } = await getSession();
   const isAdmin = profile?.role === "admin";
+  const { data: pii } = await supabase
+    .from("private_profile")
+    .select("uni_email")
+    .eq("user_id", user?.id ?? "")
+    .maybeSingle();
 
   // RLS lets only admins count other students' requests.
   const { count: waiting } = isAdmin
@@ -28,9 +32,13 @@ export default async function ExplorePage() {
       title={`You're all set${profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}!`}
       subtitle="Finding your batch opens soon. You'll see who else from your department and section is here."
     >
-      <Stamp tone={byEmail ? "email" : "verified"} className="self-start">
-        {byEmail ? "UoS email" : "Verified"}
-      </Stamp>
+      <ProfileStamps hasUniEmail={!!pii?.uni_email} isMentor={profile?.is_mentor} />
+      <Button asChild block>
+        <Link href="/me">
+          <UserRound />
+          My profile
+        </Link>
+      </Button>
       {isAdmin && (
         <Button asChild block variant="secondary">
           <Link href="/admin/verifications">

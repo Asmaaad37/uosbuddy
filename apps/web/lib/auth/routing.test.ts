@@ -42,6 +42,12 @@ describe("redirectFor", () => {
     expect(redirectFor("/pending", true, profile("unverified"))).toBe("/start/freshman/proof");
   });
 
+  it("shows profiles only to signed-in, verified students", () => {
+    expect(redirectFor("/people/sana_k", false, null)).toBe("/login?next=%2Fpeople%2Fsana_k");
+    expect(redirectFor("/people/sana_k", true, profile("pending"))).toBe("/pending");
+    expect(redirectFor("/people/sana_k", true, profile("verified"))).toBeNull();
+  });
+
   it("keeps non-admins out of /admin", () => {
     expect(redirectFor("/admin/verifications", true, profile("verified"))).toBe("/setup");
     expect(

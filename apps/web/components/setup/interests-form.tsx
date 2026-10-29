@@ -18,7 +18,12 @@ const MAX = 10;
 export function InterestsForm({
   interests,
   initial,
+  next = "/setup/privacy",
+  submitLabel = "Continue",
 }: {
+  /** Where to go after saving: the next setup step, or back to /me when editing. */
+  next?: string;
+  submitLabel?: string;
   interests: Interest[];
   initial: { selected: string[]; prompt: Prompt; answer: string };
 }) {
@@ -56,7 +61,7 @@ export function InterestsForm({
       setBusy(false);
       return setError(result.error);
     }
-    router.push("/setup/privacy");
+    router.push(next);
   }
 
   return (
@@ -142,7 +147,7 @@ export function InterestsForm({
         </p>
       )}
       <Button type="submit" block disabled={busy}>
-        {busy ? "Saving…" : "Continue"}
+        {busy ? "Saving…" : submitLabel}
       </Button>
     </form>
   );

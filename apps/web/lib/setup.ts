@@ -10,10 +10,22 @@ export function stepNumber(step: SetupStep) {
   return SETUP_STEPS.indexOf(step) + 1;
 }
 
+/**
+ * `?edit=1` reuses a setup screen to edit the profile later: no step dots, "Save", and back
+ * to /me. Only once setup is finished, so it can't be used to skip a step.
+ */
+export function isEditing(edit: string | string[] | undefined, onboardingStep: number) {
+  return edit === "1" && onboardingStep >= SETUP_STEPS.length;
+}
+
 /** Where to resume: the first step not yet completed. */
 export function resumeStep(onboardingStep: number): SetupStep {
   return SETUP_STEPS[Math.min(Math.max(onboardingStep, 0), SETUP_STEPS.length - 1)]!;
 }
+
+/** Strip "Department of", "Institute of"… so it reads "Computer Science". */
+export const departmentShortName = (name: string) =>
+  name.replace(/^(Department|Institute|College) of /, "").replace(/^Department Of /, "");
 
 /** Opening Move prompts (screen 8): one answer makes starting a chat less awkward. */
 export const OPENING_MOVES = [

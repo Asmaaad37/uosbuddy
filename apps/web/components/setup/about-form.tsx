@@ -61,8 +61,13 @@ const CITIES = [
 export function AboutForm({
   userId,
   initial,
+  next = "/setup/interests",
+  submitLabel = "Continue",
 }: {
   userId: string;
+  /** Where to go after saving: the next setup step, or back to /me when editing. */
+  next?: string;
+  submitLabel?: string;
   initial: {
     name: string;
     handle: string;
@@ -159,7 +164,7 @@ export function AboutForm({
       setBusy(false);
       return setError(result.error);
     }
-    router.push("/setup/interests");
+    router.push(next);
   }
 
   return (
@@ -331,7 +336,7 @@ export function AboutForm({
         </p>
       )}
       <Button type="submit" block disabled={busy || uploading}>
-        {busy ? "Saving…" : "Continue"}
+        {busy ? "Saving…" : submitLabel}
       </Button>
     </form>
   );

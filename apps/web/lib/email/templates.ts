@@ -6,7 +6,7 @@ export type StatusEmail =
   | { kind: "needs_info"; reason: string }
   | { kind: "rejected"; reason: string };
 
-type Rendered = { subject: string; text: string; html: string };
+export type Rendered = { subject: string; text: string; html: string };
 
 const FOOTER =
   "UOSBuddy is a student-run project and is not an official University of Sargodha service.";
@@ -67,6 +67,37 @@ function copyFor(email: StatusEmail): Copy {
         cta: { label: "Try again", path: "/start/freshman/proof" },
       };
   }
+}
+
+/** The 6-digit code that links a UoS email to an existing account (Phase 2 task 8). */
+export function renderLinkCodeEmail(code: string): Rendered {
+  const subject = `${code} is your UOSBuddy code`;
+  const text = [
+    "Hi,",
+    "",
+    `Your code to link this email to UOSBuddy is ${code}. It expires in 10 minutes.`,
+    "",
+    "If you didn't ask for it, ignore this email; nothing changes without the code.",
+    "",
+    "— UOSBuddy",
+    "",
+    FOOTER,
+  ].join("\n");
+  const html = `<!doctype html>
+<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2ece1;font-family:Arial,Helvetica,sans-serif">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
+<tr><td>
+<p style="margin:0 0 20px;font-size:13px;font-weight:bold;letter-spacing:2px;color:#0034d3">UOSBUDDY</p>
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b0838">Link your UoS email</h1>
+<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b0838">Enter this code in UOSBuddy. It expires in 10 minutes.</p>
+<p style="margin:0 0 16px;font-size:32px;font-weight:bold;letter-spacing:8px;color:#0b0838">${escapeHtml(code)}</p>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#4a4766">If you didn't ask for it, ignore this email; nothing changes without the code.</p>
+</td></tr></table>
+<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#4a4766">${FOOTER}</p>
+</td></tr></table>
+</body></html>`;
+  return { subject, text, html };
 }
 
 export function renderStatusEmail(
