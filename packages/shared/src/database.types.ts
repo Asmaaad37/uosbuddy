@@ -102,6 +102,53 @@ export type Database = {
         }
         Relationships: []
       }
+      blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campuses: {
         Row: {
           created_at: string
@@ -839,6 +886,35 @@ export type Database = {
         }
         Returns: undefined
       }
+      directory: {
+        Args: {
+          p_after_id?: string
+          p_after_key?: string
+          p_hometown?: string
+          p_interest?: string
+          p_limit?: number
+          p_query?: string
+          p_residence?: Database["public"]["Enums"]["residence_type"]
+          p_scope?: string
+          p_shift?: Database["public"]["Enums"]["shift_type"]
+        }
+        Returns: Database["public"]["CompositeTypes"]["directory_person"][]
+        SetofOptions: {
+          from: "*"
+          to: "directory_person"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      directory_counts: {
+        Args: never
+        Returns: {
+          batch_count: number
+          department_count: number
+          section_count: number
+          university_count: number
+        }[]
+      }
       expired_verification_documents: {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
@@ -864,6 +940,14 @@ export type Database = {
           p_whatsapp?: string
         }
         Returns: string
+      }
+      suggest_people: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          person: Database["public"]["CompositeTypes"]["directory_person"]
+          reasons: string[]
+          score: number
+        }[]
       }
       visible_at: {
         Args: {
@@ -905,7 +989,21 @@ export type Database = {
         | "nobody"
     }
     CompositeTypes: {
-      [_ in never]: never
+      directory_person: {
+        id: string | null
+        handle: string | null
+        full_name: string | null
+        avatar_url: string | null
+        department_code: string | null
+        batch_year: number | null
+        section: string | null
+        shift: Database["public"]["Enums"]["shift_type"] | null
+        residence: Database["public"]["Enums"]["residence_type"] | null
+        hometown_city: string | null
+        interests: string[] | null
+        has_uni_email: boolean | null
+        sort_key: string | null
+      }
     }
   }
 }
