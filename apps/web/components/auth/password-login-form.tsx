@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { useTurnstile } from "@/components/turnstile";
 import { browserClient } from "@/lib/supabase/lazy";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { emailSchema } from "@/lib/validation/onboarding";
@@ -14,11 +15,13 @@ export function PasswordLoginForm({ next }: { next?: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const captcha = useTurnstile();
 
   async function submit(e: { preventDefault(): void }) {
     e.preventDefault();
     const parsed = emailSchema.safeParse(email);
     if (!parsed.success || !password) return setError("Enter your email and password.");
+    if (!captcha.ready) return setError("One moment: we're checking you're not a bot.");
 
     setBusy(true);
     const { error } = await (
@@ -26,9 +29,11 @@ export function PasswordLoginForm({ next }: { next?: string }) {
     ).auth.signInWithPassword({
       email: parsed.data,
       password,
+      options: { captchaToken: captcha.token },
     });
     if (error) {
       setBusy(false);
+      captcha.reset(); // tokens are single-use
       return setError(authErrorMessage(error));
     }
     window.location.assign(`/auth/continue${next ? `?next=${encodeURIComponent(next)}` : ""}`);
@@ -59,7 +64,8 @@ export function PasswordLoginForm({ next }: { next?: string }) {
           />
         )}
       </Field>
-      <Button type="submit" block disabled={busy}>
+      {captcha.widget}
+      <Button type="submit" block disabled={busy || !captcha.ready}>
         {busy ? "Logging in…" : "Log in"}
       </Button>
     </form>

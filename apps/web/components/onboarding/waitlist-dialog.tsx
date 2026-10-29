@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
+import { useTurnstile } from "@/components/turnstile";
 import { joinWaitlist } from "@/actions/onboarding";
 
 /** "Not from UoS? Request your university" waitlist (Section 7, screen 2). */
@@ -21,12 +22,14 @@ export function WaitlistDialog() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const captcha = useTurnstile();
 
   async function submit(e: { preventDefault(): void }) {
     e.preventDefault();
     setBusy(true);
-    const result = await joinWaitlist({ name, email });
+    const result = await joinWaitlist({ name, email, captchaToken: captcha.token });
     setBusy(false);
+    captcha.reset(); // tokens are single-use
     if (!result.ok) return setError(result.error);
     setOpen(false);
     toast.success("You're on the list", {
@@ -69,7 +72,8 @@ export function WaitlistDialog() {
               />
             )}
           </Field>
-          <Button type="submit" block disabled={busy}>
+          {captcha.widget}
+          <Button type="submit" block disabled={busy || !captcha.ready}>
             {busy ? "Saving…" : "Notify me"}
           </Button>
         </form>

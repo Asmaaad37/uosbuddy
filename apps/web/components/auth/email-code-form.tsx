@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { useTurnstile } from "@/components/turnstile";
 import { browserClient } from "@/lib/supabase/lazy";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { emailDomain, emailSchema, otpSchema } from "@/lib/validation/onboarding";
@@ -29,6 +30,7 @@ export function EmailCodeForm({
   const [error, setError] = useState<string>();
   const [wrongDomain, setWrongDomain] = useState(false);
   const [busy, setBusy] = useState(false);
+  const captcha = useTurnstile();
 
   async function sendCode(e?: { preventDefault(): void }) {
     e?.preventDefault();
@@ -40,6 +42,7 @@ export function EmailCodeForm({
       setWrongDomain(true);
       return setError(`That's not a UoS email. It should end in @${domains[0]}.`);
     }
+    if (!captcha.ready) return setError("One moment: we're checking you're not a bot.");
 
     setBusy(true);
     const { error } = await (
@@ -49,9 +52,11 @@ export function EmailCodeForm({
       options: {
         shouldCreateUser: !!domains,
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        captchaToken: captcha.token,
       },
     });
     setBusy(false);
+    captcha.reset(); // tokens are single-use
     // Sign-in mode: Supabase reports unknown emails; say it without confirming who has an account.
     if (error && error.code === "otp_disabled" && !domains) {
       return setError("We couldn't send a code to that email. Check it, or sign up first.");
@@ -83,8 +88,8 @@ export function EmailCodeForm({
     window.location.assign(`/auth/continue${next ? `?next=${encodeURIComponent(next)}` : ""}`);
   }
 
-  if (stage === "code") {
-    return (
+  const content =
+    stage === "code" ? (
       <form onSubmit={verify} className="grid gap-4" noValidate>
         <p className="text-ink-2">
           We sent a code to <strong className="text-ink">{email}</strong>. It can take a minute, and
@@ -119,43 +124,53 @@ export function EmailCodeForm({
             type="button"
             className="font-semibold text-brand"
             onClick={() => sendCode()}
-            disabled={busy}
+            disabled={busy || !captcha.ready}
           >
             Send a new code
           </button>
         </div>
       </form>
-    );
-  }
-
-  return (
-    <form onSubmit={sendCode} className="grid gap-4" noValidate>
-      <Field
-        id={`${id}-email`}
-        label={domains ? "UoS email" : "Email"}
-        hint={domains ? `Your student address, ending in @${domains[0]}.` : undefined}
-        error={error}
-      >
-        {(aria) => (
-          <Input
-            {...aria}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            inputMode="email"
-            placeholder={domains ? `you@${domains[0]}` : "you@example.com"}
-          />
+    ) : (
+      <form onSubmit={sendCode} className="grid gap-4" noValidate>
+        <Field
+          id={`${id}-email`}
+          label={domains ? "UoS email" : "Email"}
+          hint={domains ? `Your student address, ending in @${domains[0]}.` : undefined}
+          error={error}
+        >
+          {(aria) => (
+            <Input
+              {...aria}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
+              placeholder={domains ? `you@${domains[0]}` : "you@example.com"}
+            />
+          )}
+        </Field>
+        {wrongDomain && (
+          <Link href="/start/freshman" className="text-sm font-semibold text-brand">
+            Don&apos;t have a UoS email? Join with your student ID instead →
+          </Link>
         )}
-      </Field>
-      {wrongDomain && (
-        <Link href="/start/freshman" className="text-sm font-semibold text-brand">
-          Don&apos;t have a UoS email? Join with your student ID instead →
-        </Link>
-      )}
-      <Button type="submit" block variant={secondary ? "secondary" : "primary"} disabled={busy}>
-        {busy ? "Sending…" : "Email me a code"}
-      </Button>
-    </form>
+        <Button
+          type="submit"
+          block
+          variant={secondary ? "secondary" : "primary"}
+          disabled={busy || !captcha.ready}
+        >
+          {busy ? "Sending…" : "Email me a code"}
+        </Button>
+      </form>
+    );
+
+  // The captcha stays mounted across both steps: "Send a new code" needs a fresh token too.
+  return (
+    <div className="grid gap-4">
+      {content}
+      {captcha.widget}
+    </div>
   );
 }

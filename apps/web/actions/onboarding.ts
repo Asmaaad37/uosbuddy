@@ -7,6 +7,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { clientIp, verifyTurnstile, withinLimit } from "@/lib/abuse.server";
 import {
   DOC_TYPES,
   emailSchema,
@@ -18,11 +19,23 @@ import {
 export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
 
 const fail = (error: string) => ({ ok: false, error }) as const;
+const TOO_MANY = "Too many attempts. Wait a while and try again.";
 
 /** "Not from UoS? Request your university" (Section 7, screen 2). */
-export async function joinWaitlist(input: { name: string; email: string }): Promise<ActionResult> {
+export async function joinWaitlist(input: {
+  name: string;
+  email: string;
+  captchaToken?: string;
+}): Promise<ActionResult> {
   const parsed = z.object({ name: fullNameSchema, email: emailSchema }).safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the form");
+
+  // The only form anyone can submit without an account: captcha plus a per-IP limit.
+  const ip = await clientIp();
+  if (!(await verifyTurnstile(input.captchaToken, ip))) {
+    return fail("The security check failed. Refresh the page and try again.");
+  }
+  if (!(await withinLimit("waitlist", ip))) return fail(TOO_MANY);
 
   const supabase = await createClient();
   const { error } = await supabase.from("university_requests").insert(parsed.data);
@@ -39,6 +52,7 @@ export async function createProofUpload(
   const { user, profile } = await getSession();
   if (!user || !profile) return fail("Your session expired. Log in again.");
   if (profile.verification_status === "verified") return fail("You're already verified.");
+  if (!(await withinLimit("proofUpload", user.id))) return fail(TOO_MANY);
 
   const ext = DOC_TYPES[mimeType];
   if (!ext) return fail("Upload a JPG, PNG, WebP or PDF.");
@@ -67,7 +81,10 @@ export async function submitProof(input: z.input<typeof proofSchema>): Promise<A
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the form");
   const { fullName, studentId, whatsapp, docPath } = parsed.data;
 
-  const supabase = await createClient();
+  const { supabase, user } = await getSession();
+  if (!user) return fail("Your session expired. Log in again.");
+  if (!(await withinLimit("proofSubmit", user.id))) return fail(TOO_MANY);
+
   const { error } = await supabase.rpc("submit_verification", {
     p_full_name: fullName,
     p_roll_no: studentId,
@@ -81,8 +98,7 @@ export async function submitProof(input: z.input<typeof proofSchema>): Promise<A
     );
 
   // After the response, so a slow mail server never delays the student.
-  const { user } = await getSession();
-  if (user) after(() => sendStatusEmail(user.id, { kind: "submitted" }));
+  after(() => sendStatusEmail(user.id, { kind: "submitted" }));
   return { ok: true, data: undefined };
 }
 
