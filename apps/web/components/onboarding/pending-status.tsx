@@ -37,12 +37,17 @@ export function PendingLive({ userId }: { userId: string }) {
           },
           () => router.refresh(),
         )
+        // "SUBSCRIBED" only means the channel joined. Row changes flow once the server says
+        // "Subscribed to PostgreSQL" (a system message), which on a cold server can come
+        // seconds later; anything decided before then is missed, so look once at that point.
+        .on("system", {}, (payload: { extension?: string; status?: string }) => {
+          if (payload.extension !== "postgres_changes") return;
+          const ready = payload.status === "ok";
+          setLive(ready);
+          if (ready) router.refresh();
+        })
         .subscribe((status) => {
-          const joined = status === "SUBSCRIBED";
-          setLive(joined);
-          // A decision made while the channel was still connecting never arrives as an
-          // event, so look once now instead of waiting for the poll.
-          if (joined) router.refresh();
+          if (status !== "SUBSCRIBED") setLive(false);
         });
     });
 
