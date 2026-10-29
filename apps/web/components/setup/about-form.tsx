@@ -119,7 +119,7 @@ export function AboutForm({
       setHandleMessage(data ? undefined : "That handle is taken");
     }, 400);
     return () => clearTimeout(timer);
-  }, [handle]);
+  }, [handle, initial.handle]);
 
   function pickPhoto(file: File | undefined) {
     if (!file) return;

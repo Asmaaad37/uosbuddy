@@ -154,7 +154,11 @@ export default async function MePage() {
             />
           )}
           {profile.role === "admin" && (
-            <Row href="/admin/verifications" icon={ShieldCheck} label="Verification queue" />
+            <Row
+              href="/admin/verifications?from=/me"
+              icon={ShieldCheck}
+              label="Verification queue"
+            />
           )}
         </ul>
       </nav>

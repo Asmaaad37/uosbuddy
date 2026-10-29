@@ -41,7 +41,7 @@ export default async function ExplorePage() {
       </Button>
       {isAdmin && (
         <Button asChild block variant="secondary">
-          <Link href="/admin/verifications">
+          <Link href="/admin/verifications?from=/explore">
             <ShieldCheck />
             Verification queue
             {waiting ? (
