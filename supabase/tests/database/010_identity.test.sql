@@ -76,9 +76,9 @@ select is((select count(*)::int from public.private_profile), 1, 'an unverified 
 select ok((select count(*) from public.departments) > 40, 'the catalogue is readable');
 
 select tests.login_as((select id from u where name = 'uni'));
-select ok(exists(select 1 from public.profiles where id = (select id from u where name = 'otp')),
+select ok(exists(select 1 from public.profiles_public where id = (select id from u where name = 'otp')),
   'a verified user sees other verified students');
-select ok(not exists(select 1 from public.profiles where id = (select id from u where name = 'fresher')),
+select ok(not exists(select 1 from public.profiles_public where id = (select id from u where name = 'fresher')),
   'a verified user does not see unverified accounts');
 select is((select count(*)::int from public.private_profile), 1, 'a verified user cannot read others'' PII');
 
