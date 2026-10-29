@@ -36,8 +36,10 @@ export function Directory({
   counts,
   interests,
   hasSection,
+  initialFilters = {},
 }: {
   initialScope: Scope;
+  initialFilters?: Filters;
   initialPage: DirectoryPage;
   counts: Record<Scope, number>;
   interests: Interest[];
@@ -46,7 +48,7 @@ export function Directory({
   const id = useId();
   const [scope, setScope] = useState<Scope>(initialScope);
   const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<Filters>({});
+  const [filters, setFilters] = useState<Filters>(initialFilters);
   const [page, setPage] = useState<DirectoryPage>(initialPage);
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
@@ -69,7 +71,7 @@ export function Directory({
           setError(undefined);
           setPage(result.data);
         }),
-      query ? 300 : 0,
+      query || filters.hometown ? 300 : 0,
     );
     return () => clearTimeout(timer);
   }, [scope, query, filters]);

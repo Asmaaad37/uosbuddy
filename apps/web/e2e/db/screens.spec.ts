@@ -135,7 +135,7 @@ test("phase 2 screens", async ({ page }) => {
   await shoot(page, "phase-2", "17-link-uos-email", "/me/email");
 });
 
-test("phase 3 screens", async ({ page }) => {
+test("phase 3 screens", async ({ page, browser }) => {
   test.setTimeout(150_000);
   const h = (first: string) => `${first.toLowerCase()}3_${run}`.slice(0, 20);
   // A small batch: CS 2024 across two sections, one from another batch, one from IT.
@@ -183,4 +183,22 @@ test("phase 3 screens", async ({ page }) => {
     path: "test-results/screens/phase-3/06-filtered-375.png",
     fullPage: true,
   });
+
+  // Invite link (code made when /explore rendered), seen by someone signed out.
+  const { data: invite } = await db()
+    .from("invites")
+    .select("code, profiles!inner(handle)")
+    .eq("profiles.handle", me.handle)
+    .single();
+  const visitor = await (await browser.newContext()).newPage();
+  await shoot(visitor, "phase-3", "07-invite", `/i/${invite!.code}`);
+  await expect(visitor.getByText("Saad invited you")).toBeVisible();
+  await expect(
+    visitor.getByRole("heading", { name: /of CS 2024 are already on UOSBuddy/ }),
+  ).toBeVisible();
+  const ogImage = await visitor.locator('meta[property="og:image"]').getAttribute("content");
+  const image = await visitor.request.get(ogImage!);
+  expect(image.headers()["content-type"]).toBe("image/png");
+  await visitor.goto(ogImage!);
+  await visitor.screenshot({ path: "test-results/screens/phase-3/08-invite-share-image.png" });
 });

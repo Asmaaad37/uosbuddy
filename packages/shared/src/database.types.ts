@@ -297,6 +297,85 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_redemptions: {
+        Row: {
+          created_at: string
+          invite_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          invite_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          invite_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invite_redemptions_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "invites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invite_redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invite_redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invites: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          inviter_id: string
+          uses: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          inviter_id: string
+          uses?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          inviter_id?: string
+          uses?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invites_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invites_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       privacy_settings: {
         Row: {
           allow_dms_from: Database["public"]["Enums"]["visibility_level"]
@@ -920,10 +999,21 @@ export type Database = {
         Returns: string[]
       }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
+      invite_preview: {
+        Args: { p_code: string }
+        Returns: {
+          batch_count: number
+          batch_year: number
+          department_code: string
+          first_name: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
+      my_invite_code: { Args: never; Returns: string }
       my_university_id: { Args: never; Returns: string }
       public_stats: { Args: never; Returns: Json }
+      redeem_invite: { Args: { p_code: string }; Returns: boolean }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined

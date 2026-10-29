@@ -7,6 +7,7 @@ import { AppShell } from "@/components/app-shell";
 import { BatchReveal } from "@/components/discovery/batch-reveal";
 import { FeatureDock } from "@/components/discovery/feature-dock";
 import { PersonCard } from "@/components/discovery/person-card";
+import { ShareButton } from "@/components/discovery/share-button";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
@@ -24,7 +25,17 @@ export default async function ExplorePage({ searchParams }: Props) {
   const isAdmin = profile.role === "admin";
   const name = profile.full_name ?? profile.handle ?? "there";
 
-  const [counts, suggestions, batch, { data: dept }, { count: waiting }] = await Promise.all([
+  // "From your city" (Phase 3 task 7): only when the student shows their own hometown.
+  const city = profile.hometown_city?.trim() || null;
+  const [
+    counts,
+    suggestions,
+    batch,
+    { data: dept },
+    { count: waiting },
+    { data: inviteCode },
+    fromCity,
+  ] = await Promise.all([
     getDirectoryCounts(),
     getSuggestions(6),
     loadDirectory({ scope: "batch" }),
@@ -42,7 +53,11 @@ export default async function ExplorePage({ searchParams }: Props) {
           .select("id", { count: "exact", head: true })
           .eq("status", "pending")
       : Promise.resolve({ count: null }),
+    supabase.rpc("my_invite_code"),
+    city ? loadDirectory({ scope: "all", hometown: city }) : Promise.resolve(null),
   ]);
+  const inviteUrl = inviteCode ? `/i/${inviteCode}` : "/";
+  const cityPeople = fromCity?.ok ? fromCity.data.people : [];
 
   const batchCount = counts?.batch_count ?? 0;
   const code = dept?.short_code;
@@ -76,7 +91,7 @@ export default async function ExplorePage({ searchParams }: Props) {
           count={batchCount}
           label={code && profile.batch_year ? `${code} ${profile.batch_year}` : "your batch"}
           people={batchPeople}
-          inviteUrl="/"
+          inviteUrl={inviteUrl}
         />
       ) : (
         <Link
@@ -126,6 +141,37 @@ export default async function ExplorePage({ searchParams }: Props) {
           </p>
         )}
       </section>
+
+      {city && cityPeople.length > 0 && (
+        <section aria-labelledby="from-your-city" className="grid gap-3">
+          <div className="flex items-baseline justify-between">
+            <h2 id="from-your-city" className="text-lg font-bold">
+              From {city}
+            </h2>
+            <Link
+              href={`/explore/batch?tab=all&hometown=${encodeURIComponent(city)}`}
+              className="text-sm font-semibold text-brand"
+            >
+              See all
+            </Link>
+          </div>
+          <p className="-mt-2 text-sm text-ink-2">Handy for travel home and Eid trips.</p>
+          <ul className="grid gap-2">
+            {cityPeople.slice(0, 3).map((p) => (
+              <li key={p.id}>
+                <PersonCard person={p} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <ShareButton
+        block
+        variant="secondary"
+        url={inviteUrl}
+        text={`${batchCount} of ${batchLabel} are on UOSBuddy. Join us:`}
+      />
 
       {isAdmin && (
         <Button asChild block variant="secondary">
