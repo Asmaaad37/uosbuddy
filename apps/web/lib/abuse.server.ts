@@ -14,6 +14,9 @@ const LIMITS = {
   // Per student: a few retries, not a script hammering storage.
   proofUpload: { requests: 10, window: "1 h" },
   proofSubmit: { requests: 10, window: "1 h" },
+  // Per student: each request sends an email, so keep it to a handful.
+  linkEmailCode: { requests: 5, window: "1 h" },
+  linkEmailConfirm: { requests: 20, window: "1 h" },
   // Per IP: the waitlist is the one form anyone can submit without an account.
   waitlist: { requests: 5, window: "1 h" },
 } satisfies Record<string, { requests: number; window: Duration }>;

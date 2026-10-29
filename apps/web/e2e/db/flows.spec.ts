@@ -100,6 +100,44 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
     onboarding_step: 4,
     privacy_settings: { profile_visibility: "batch" },
   });
+
+  // Phase 2 part 3: the profile hub, editing, the public profile and privacy settings.
+  const handle = `stu_${run}`.slice(0, 20);
+  await page.getByRole("link", { name: "My profile" }).click();
+  await expect(page).toHaveURL(/\/me$/);
+  // Section, UoS email: 2 of 7 done.
+  await expect(page.getByRole("heading", { name: "Your profile is 29% done" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Write a short bio" }).click();
+  await expect(page).toHaveURL(/\/setup\/about\?edit=1$/);
+  await expect(page.getByRole("list", { name: /^Step/ })).toHaveCount(0);
+  await page.getByLabel("Bio (optional)").fill("Here for the cricket.");
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page).toHaveURL(/\/me$/);
+  await expect(page.getByRole("heading", { name: "Your profile is 43% done" })).toBeVisible();
+
+  await page.getByRole("link", { name: /View my profile/ }).click();
+  await expect(page).toHaveURL(new RegExp(`/people/${handle}$`));
+  await expect(page.getByText("BS in Computer Science")).toBeVisible();
+  await expect(page.getByText("Batch 2024 · Semester 5 · Section B · Morning")).toBeVisible();
+  await expect(page.getByText("Here for the cricket.")).toBeVisible();
+  await expect(page.getByRole("list").getByText("Cricket")).toBeVisible();
+  // Handles are case-insensitive; the canonical one wins.
+  await page.goto(`/people/${handle.toUpperCase()}`);
+  await expect(page).toHaveURL(new RegExp(`/people/${handle}$`));
+  await page.goto("/people/nobody_here_x");
+  await expect(page.getByRole("heading", { name: "Profile not available" })).toBeVisible();
+
+  await page.goto("/me/privacy");
+  await page.getByRole("radio", { name: /^Open/ }).click();
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page).toHaveURL(/\/me$/);
+  const { data: privacy } = await serviceClient()
+    .from("profiles")
+    .select("privacy_settings(profile_visibility)")
+    .eq("handle", handle)
+    .single();
+  expect(privacy).toMatchObject({ privacy_settings: { profile_visibility: "everyone" } });
 });
 
 test("a fresher submits proof, an admin approves, and the student moves on live", async ({

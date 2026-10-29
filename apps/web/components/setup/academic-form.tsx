@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { saveAcademic } from "@/actions/setup";
-import { batchYears } from "@/lib/setup";
+import { batchYears, departmentShortName } from "@/lib/setup";
 import { cn } from "@/lib/utils";
 
 type Department = { id: string; name: string; faculty: string | null; aliases: string[] };
@@ -19,15 +19,16 @@ const SHIFTS: { value: Shift; label: string }[] = [
   { value: "weekend", label: "Weekend" },
 ];
 
-/** Strip "Department of", "Institute of"… so the picker reads "Computer Science". */
-const shortName = (name: string) =>
-  name.replace(/^(Department|Institute|College) of /, "").replace(/^Department Of /, "");
-
 export function AcademicForm({
   departments,
   programs,
   initial,
+  next = "/setup/about",
+  submitLabel = "Continue",
 }: {
+  /** Where to go after saving: the next setup step, or back to /me when editing. */
+  next?: string;
+  submitLabel?: string;
   departments: Department[];
   programs: Program[];
   initial: {
@@ -86,7 +87,7 @@ export function AcademicForm({
       setBusy(false);
       return setError(result.error);
     }
-    router.push("/setup/about");
+    router.push(next);
   }
 
   return (
@@ -109,7 +110,7 @@ export function AcademicForm({
               <optgroup key={faculty} label={faculty.replace(/^Faculty of /, "")}>
                 {list.map((d) => (
                   <option key={d.id} value={d.id}>
-                    {shortName(d.name)}
+                    {departmentShortName(d.name)}
                   </option>
                 ))}
               </optgroup>
@@ -231,7 +232,7 @@ export function AcademicForm({
         </p>
       )}
       <Button type="submit" block disabled={busy}>
-        {busy ? "Saving…" : "Continue"}
+        {busy ? "Saving…" : submitLabel}
       </Button>
     </form>
   );

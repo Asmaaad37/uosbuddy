@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReviewQueue, type QueueItem } from "@/components/admin/review-queue";
+import { homePath, safeNext } from "@/lib/auth/routing";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Verification queue", robots: { index: false } };
@@ -10,10 +11,17 @@ export const metadata: Metadata = { title: "Verification queue", robots: { index
 const DOC_LINK_SECONDS = 15 * 60;
 
 /** Admin verification queue (Phase 1 task 7). RLS lets admins read requests, PII and documents. */
-export default async function VerificationsPage() {
+export default async function VerificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
   const { supabase, profile } = await getSession();
   // The middleware already redirects non-admins; this is the server-side check (§3.6 point 3).
   if (profile?.role !== "admin") notFound();
+  // Back to the page that opened the queue; otherwise the admin's usual home.
+  const from = safeNext((await searchParams).from);
+  const back = from ?? homePath(profile);
 
   const [{ data: rows }, { count: waitingOnStudents }] = await Promise.all([
     supabase
@@ -55,10 +63,15 @@ export default async function VerificationsPage() {
   return (
     <div className="min-h-dvh">
       <header className="gutter flex items-center justify-between border-b border-line py-3">
-        <Link href="/admin/verifications" className="font-pixel text-lg">
+        <Link
+          href={
+            from ? `/admin/verifications?from=${encodeURIComponent(from)}` : "/admin/verifications"
+          }
+          className="font-pixel text-lg"
+        >
           UOSBUDDY ADMIN
         </Link>
-        <Link href="/setup" className="text-sm font-semibold text-brand">
+        <Link href={back} className="text-sm font-semibold text-brand">
           Back to app
         </Link>
       </header>

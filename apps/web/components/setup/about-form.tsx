@@ -61,8 +61,13 @@ const CITIES = [
 export function AboutForm({
   userId,
   initial,
+  next = "/setup/interests",
+  submitLabel = "Continue",
 }: {
   userId: string;
+  /** Where to go after saving: the next setup step, or back to /me when editing. */
+  next?: string;
+  submitLabel?: string;
   initial: {
     name: string;
     handle: string;
@@ -95,6 +100,12 @@ export function AboutForm({
   useEffect(() => {
     const value = handle.trim();
     if (!value) return setHandleState("idle");
+    // Your saved handle is yours; re-checking it would only block a quick Save while editing.
+    if (value === initial.handle) {
+      setHandleState("available");
+      setHandleMessage(undefined);
+      return;
+    }
     const problem = handleProblem(value);
     if (problem) {
       setHandleState("invalid");
@@ -108,7 +119,7 @@ export function AboutForm({
       setHandleMessage(data ? undefined : "That handle is taken");
     }, 400);
     return () => clearTimeout(timer);
-  }, [handle]);
+  }, [handle, initial.handle]);
 
   function pickPhoto(file: File | undefined) {
     if (!file) return;
@@ -159,7 +170,7 @@ export function AboutForm({
       setBusy(false);
       return setError(result.error);
     }
-    router.push("/setup/interests");
+    router.push(next);
   }
 
   return (
@@ -331,7 +342,7 @@ export function AboutForm({
         </p>
       )}
       <Button type="submit" block disabled={busy || uploading}>
-        {busy ? "Saving…" : "Continue"}
+        {busy ? "Saving…" : submitLabel}
       </Button>
     </form>
   );

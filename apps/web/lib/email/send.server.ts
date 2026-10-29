@@ -2,7 +2,7 @@ import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { serverEnv } from "@/lib/env.server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { renderStatusEmail, type StatusEmail } from "./templates";
+import { renderStatusEmail, type Rendered, type StatusEmail } from "./templates";
 
 let transport: Transporter | undefined;
 
@@ -19,6 +19,30 @@ function getTransport() {
     auth: { user: serverEnv.SMTP_USER, pass: serverEnv.SMTP_PASSWORD },
   });
   return transport;
+}
+
+/** Sends one email. Throws on failure; callers decide whether that matters. */
+async function deliver(to: string, message: Rendered) {
+  await getTransport().sendMail({
+    from: serverEnv.EMAIL_FROM ?? `UOSBuddy <${serverEnv.SMTP_USER}>`,
+    to,
+    ...message,
+  });
+}
+
+/** Sends an email to any address (e.g. a code). Returns false if it couldn't be sent. */
+export async function sendEmail(to: string, message: Rendered): Promise<boolean> {
+  if (!emailEnabled()) {
+    console.info(`[email] SMTP not configured; skipped "${message.subject}"`);
+    return false;
+  }
+  try {
+    await deliver(to, message);
+    return true;
+  } catch (error) {
+    console.error("[email] failed to send", error);
+    return false;
+  }
 }
 
 /**
@@ -48,11 +72,7 @@ export async function sendStatusEmail(userId: string, email: StatusEmail): Promi
       name: profile?.full_name,
       siteUrl: serverEnv.NEXT_PUBLIC_SITE_URL,
     });
-    await getTransport().sendMail({
-      from: serverEnv.EMAIL_FROM ?? `UOSBuddy <${serverEnv.SMTP_USER}>`,
-      to,
-      ...message,
-    });
+    await deliver(to, message);
     return true;
   } catch (error) {
     console.error(`[email] failed to send "${email.kind}" email`, error);
