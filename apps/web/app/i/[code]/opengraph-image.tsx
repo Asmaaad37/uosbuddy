@@ -40,15 +40,25 @@ export default async function Image({ params }: { params: Promise<{ code: string
       <div style={{ display: "flex", flexDirection: "column" }}>
         {hasBatch ? (
           <>
-            <div style={{ fontSize: 200, fontWeight: 800, lineHeight: 1, color: "#0034d3" }}>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 200,
+                fontWeight: 800,
+                lineHeight: 1,
+                color: "#0034d3",
+              }}
+            >
               {preview!.count}
             </div>
-            <div style={{ fontSize: 64, fontWeight: 700, lineHeight: 1.1 }}>
+            <div style={{ display: "flex", fontSize: 64, fontWeight: 700, lineHeight: 1.1 }}>
               {`of ${preview!.batch} ${preview!.count === 1 ? "is" : "are"} on UOSBuddy`}
             </div>
           </>
         ) : (
-          <div style={{ fontSize: 110, fontWeight: 800, lineHeight: 1 }}>FIND YOUR BATCH.</div>
+          <div style={{ display: "flex", fontSize: 110, fontWeight: 800, lineHeight: 1 }}>
+            FIND YOUR BATCH.
+          </div>
         )}
       </div>
       <div style={{ display: "flex", fontSize: 32, color: "#4a4766" }}>
