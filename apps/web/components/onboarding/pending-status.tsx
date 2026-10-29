@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { browserClient } from "@/lib/supabase/lazy";
+import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
 
 /** Re-renders /pending when this user's verification changes (§3.3 B step 7, `user:{id}`). */
 export function PendingLive({ userId }: { userId: string }) {
@@ -13,7 +13,7 @@ export function PendingLive({ userId }: { userId: string }) {
     let channel: RealtimeChannel | undefined;
     let cancelled = false;
 
-    void browserClient().then((supabase) => {
+    void realtimeClient().then((supabase) => {
       if (cancelled) return;
       channel = supabase
         .channel(`user:${userId}`)
@@ -39,8 +39,13 @@ export function PendingLive({ userId }: { userId: string }) {
         .subscribe();
     });
 
+    // Safety net for dropped realtime connections (flaky mobile data): re-check every 20 s.
+    // The page redirects on its own once the status is no longer under review.
+    const poll = window.setInterval(() => router.refresh(), 20_000);
+
     return () => {
       cancelled = true;
+      window.clearInterval(poll);
       if (channel) void browserClient().then((supabase) => supabase.removeChannel(channel!));
     };
   }, [userId, router]);

@@ -10,3 +10,16 @@ export function browserClient() {
   client ??= import("./client").then((m) => m.createClient());
   return client;
 }
+
+/**
+ * The browser client with realtime authenticated as the signed-in user. Subscribing before the
+ * session loads connects as `anon`, and RLS then hides every row change from the channel.
+ */
+export async function realtimeClient() {
+  const supabase = await browserClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session) await supabase.realtime.setAuth(session.access_token);
+  return supabase;
+}
