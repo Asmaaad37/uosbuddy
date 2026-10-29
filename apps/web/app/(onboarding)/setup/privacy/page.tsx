@@ -31,7 +31,7 @@ export default async function PrivacyPage() {
       <PrivacyForm
         initial={privacy ?? PRIVACY_PRESETS.open.settings}
         submitLabel="Finish"
-        onSavedHref="/explore"
+        onSavedHref="/explore?welcome=1"
       />
     </OnboardingShell>
   );

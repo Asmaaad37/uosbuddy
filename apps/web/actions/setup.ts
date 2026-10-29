@@ -1,9 +1,11 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
-import { OPENING_MOVES, stepNumber, type SetupStep } from "@/lib/setup";
+import { OPENING_MOVES, SETUP_STEPS, stepNumber, type SetupStep } from "@/lib/setup";
+import { INVITE_COOKIE } from "@/lib/invites.server";
 import { handleSchema } from "@/lib/validation/handle";
 import type { ActionResult } from "./onboarding";
 
@@ -199,5 +201,20 @@ export async function savePrivacy(input: z.input<typeof privacySchema>): Promise
     .update(parsed.data)
     .eq("user_id", session.user.id);
   if (error) return fail("Couldn't save. Try again.");
-  return saveStep(session, "privacy", {});
+  const finishing = session.profile.onboarding_step < SETUP_STEPS.length;
+  const result = await saveStep(session, "privacy", {});
+  if (result.ok && finishing) await redeemInvite(session);
+  return result;
+}
+
+/** Joined through someone's invite link: count it once setup is done (Phase 3 task 6). */
+async function redeemInvite(
+  session: Exclude<Awaited<ReturnType<typeof verifiedSession>>, { error: string }>,
+) {
+  const jar = await cookies();
+  const code = jar.get(INVITE_COOKIE)?.value;
+  if (!code) return;
+  jar.delete(INVITE_COOKIE);
+  // Best effort: a missing or stale code must never block finishing setup.
+  await session.supabase.rpc("redeem_invite", { p_code: code });
 }

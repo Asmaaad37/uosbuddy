@@ -75,6 +75,8 @@ jobs:
       - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
       - run: supabase db lint --level warning
       - run: supabase test db
+      - name: Directory speed with 30k students (p95 < 300 ms)
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/perf/directory_perf.sql
 
   # Full sign-up flows (e2e/db) against a local Supabase stack; Mailpit catches the emails.
   e2e:

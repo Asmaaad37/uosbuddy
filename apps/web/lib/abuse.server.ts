@@ -1,8 +1,8 @@
 import "server-only";
 import { headers } from "next/headers";
 import { Ratelimit, type Duration } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import { serverEnv } from "@/lib/env.server";
+import { redis } from "@/lib/redis.server";
 
 /**
  * Abuse protection for our own server actions (Phase 1 task 9, §3.6 point 5). Sign-up, codes
@@ -22,14 +22,6 @@ const LIMITS = {
 } satisfies Record<string, { requests: number; window: Duration }>;
 
 export type LimitName = keyof typeof LIMITS;
-
-const redis =
-  serverEnv.UPSTASH_REDIS_REST_URL && serverEnv.UPSTASH_REDIS_REST_TOKEN
-    ? new Redis({
-        url: serverEnv.UPSTASH_REDIS_REST_URL,
-        token: serverEnv.UPSTASH_REDIS_REST_TOKEN,
-      })
-    : null;
 
 const limiters = new Map<LimitName, Ratelimit>();
 

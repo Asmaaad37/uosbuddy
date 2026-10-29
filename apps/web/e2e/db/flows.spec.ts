@@ -83,9 +83,12 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await expect(page).toHaveURL(/\/setup\/privacy$/);
   await page.getByRole("radio", { name: /Batch only/ }).click();
   await page.getByRole("button", { name: "Finish" }).click();
-  await expect(page).toHaveURL(/\/explore$/);
-  await expect(page.getByRole("heading", { name: /You're all set/ })).toBeVisible();
-  await expect(page.getByText("UoS email", { exact: true })).toBeVisible();
+  // Phase 3: finishing setup lands on the batch reveal.
+  await expect(page).toHaveURL(/\/explore\?welcome=1$/);
+  await expect(page.getByRole("heading", { name: /^Welcome/ })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /already here|first from CS 2024/ }),
+  ).toBeVisible();
 
   // What was saved.
   const { data: saved } = await serviceClient()
@@ -105,6 +108,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   const handle = `stu_${run}`.slice(0, 20);
   await page.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/me$/);
+  await expect(page.getByText("UoS email", { exact: true })).toBeVisible();
   // Section, UoS email: 2 of 7 done.
   await expect(page.getByRole("heading", { name: "Your profile is 29% done" })).toBeVisible();
 
