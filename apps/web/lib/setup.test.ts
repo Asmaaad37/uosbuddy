@@ -40,6 +40,9 @@ describe("handles", () => {
   it("accepts ordinary handles", () => {
     expect(handleProblem("ali_raza")).toBeNull();
     expect(handleProblem("Hamza07")).toBeNull();
+    // Substring matching must not catch real names.
+    expect(handleProblem("nazia_khan")).toBeNull();
+    expect(handleProblem("grape_juice")).toBeNull();
   });
 
   it("explains what's wrong", () => {

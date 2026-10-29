@@ -117,13 +117,32 @@ export async function saveAbout(input: z.input<typeof aboutSchema>): Promise<Act
     .eq("user_id", session.user.id);
   if (error) return fail("Couldn't save. Try again.");
 
-  return saveStep(session, "about", {
+  const result = await saveStep(session, "about", {
     handle,
     bio: bio || null,
     hometown_city: hometown || null,
     residence,
     avatar_url: avatarUrl,
   });
+  if (result.ok) await removeOldAvatars(session, avatarUrl);
+  return result;
+}
+
+/** Deletes the student's earlier photos, keeping both sizes of the current one. */
+async function removeOldAvatars(
+  session: Exclude<Awaited<ReturnType<typeof verifiedSession>>, { error: string }>,
+  avatarUrl: string | null,
+) {
+  const folder = session.user.id;
+  const bucket = session.supabase.storage.from("avatars");
+  const { data: files } = await bucket.list(folder, { limit: 100 });
+  // "{version}-512.webp" → keep everything starting with "{version}-".
+  const keep = avatarUrl?.split("/").pop()?.split("-")[0];
+  const stale = (files ?? [])
+    .filter((f) => !keep || !f.name.startsWith(`${keep}-`))
+    .map((f) => `${folder}/${f.name}`);
+  // Best effort: a leftover file is harmless, so failures don't fail the save.
+  if (stale.length) await bucket.remove(stale);
 }
 
 // ---------------------------------------------------------------------------

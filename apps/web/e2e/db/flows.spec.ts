@@ -43,7 +43,7 @@ function serviceClient() {
   );
 }
 
-test("a UoS email is verified instantly and lands on setup", async ({ page, request }) => {
+test("a UoS email is verified instantly and completes profile setup", async ({ page, request }) => {
   const email = `student-${run}@uos.edu.pk`;
   await page.goto("/start/uni-email");
   await page.getByLabel("UoS email").fill(email);
@@ -51,9 +51,55 @@ test("a UoS email is verified instantly and lands on setup", async ({ page, requ
   await page.getByLabel("Code").fill(await emailedCode(request, email));
   await page.getByRole("button", { name: "Continue" }).click();
 
-  await expect(page).toHaveURL(/\/setup$/);
-  await expect(page.getByRole("heading", { name: /You're in/ })).toBeVisible();
+  // Screen 6: academic.
+  await expect(page).toHaveURL(/\/setup\/academic$/);
+  await page.getByLabel("Department").selectOption({ label: "Computer Science" });
+  await page.getByLabel("Program").selectOption({ label: "BS in Computer Science" });
+  await page.getByLabel(/Session/).selectOption("2024");
+  await page.getByLabel("Semester").selectOption("5");
+  await page.getByLabel(/Section/).fill("b");
+  await page.getByRole("radio", { name: "Morning" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Autosave: a reload (or coming back later) resumes at the next unfinished step.
+  await expect(page).toHaveURL(/\/setup\/about$/);
+  await page.goto("/setup");
+  await expect(page).toHaveURL(/\/setup\/about$/);
+
+  // Screen 7: about you.
+  await page.getByLabel("Handle").fill(`stu_${run}`.slice(0, 20));
+  await expect(page.getByText(/Your profile link/)).toBeVisible();
+  await page.getByRole("radio", { name: "Hostelite" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Screen 8: interests.
+  await expect(page).toHaveURL(/\/setup\/interests$/);
+  await page.getByRole("button", { name: "Cricket" }).click();
+  await page.getByRole("button", { name: "Coding" }).click();
+  await expect(page.getByText("2/10 picked")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Screen 9: privacy, then done.
+  await expect(page).toHaveURL(/\/setup\/privacy$/);
+  await page.getByRole("radio", { name: /Batch only/ }).click();
+  await page.getByRole("button", { name: "Finish" }).click();
+  await expect(page).toHaveURL(/\/explore$/);
+  await expect(page.getByRole("heading", { name: /You're all set/ })).toBeVisible();
   await expect(page.getByText("UoS email", { exact: true })).toBeVisible();
+
+  // What was saved.
+  const { data: saved } = await serviceClient()
+    .from("profiles")
+    .select("section, shift, residence, onboarding_step, privacy_settings(profile_visibility)")
+    .eq("handle", `stu_${run}`.slice(0, 20))
+    .single();
+  expect(saved).toMatchObject({
+    section: "B",
+    shift: "morning",
+    residence: "hostelite",
+    onboarding_step: 4,
+    privacy_settings: { profile_visibility: "batch" },
+  });
 });
 
 test("a fresher submits proof, an admin approves, and the student moves on live", async ({
@@ -111,7 +157,7 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   await passwordTab.getByLabel("Email", { exact: true }).fill(adminEmail);
   await passwordTab.getByLabel("Password", { exact: true }).fill(adminPassword);
   await passwordTab.getByRole("button", { name: "Log in" }).click();
-  await expect(admin).toHaveURL(/\/setup$/);
+  await expect(admin).toHaveURL(/\/setup\/academic$/);
   await admin.goto("/admin/verifications");
   await expect(admin.getByText("Bilal Ahmed").first()).toBeVisible();
   await expect(admin.getByText("BSCS51F22S037")).toBeVisible();
@@ -120,8 +166,8 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
 
   // The student's open page follows the decision without a reload (realtime; the 20 s poll is
   // only a fallback, so a pass well inside this timeout means realtime delivered it).
-  await expect(student).toHaveURL(/\/setup$/, { timeout: 15_000 });
-  await expect(student.getByRole("heading", { name: /You're in, Bilal/ })).toBeVisible();
+  await expect(student).toHaveURL(/\/setup\/academic$/, { timeout: 15_000 });
+  await expect(student.getByRole("heading", { name: "What do you study?" })).toBeVisible();
 });
 
 test("the retention job needs its secret and runs against storage", async ({ request }) => {

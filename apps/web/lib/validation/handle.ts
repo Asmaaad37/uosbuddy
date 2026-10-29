@@ -30,7 +30,8 @@ const RESERVED = [
 
 /**
  * Blocked anywhere in a handle (English and Roman Urdu). Deliberately short: obvious abuse
- * only, to avoid blocking innocent names. Reports and moderation cover the rest.
+ * only, to avoid blocking innocent names (no "nazi": it's inside Nazia). Reports and
+ * moderation cover the rest.
  */
 const BLOCKED = [
   "fuck",
@@ -40,8 +41,6 @@ const BLOCKED = [
   "whore",
   "slut",
   "porn",
-  "rape",
-  "nazi",
   "chutiya",
   "chutya",
   "harami",
