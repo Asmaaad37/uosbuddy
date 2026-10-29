@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { DocViewer } from "@/components/admin/doc-viewer";
 import { decideVerification } from "@/actions/admin";
-import { browserClient } from "@/lib/supabase/lazy";
+import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
 import { describeStudentId } from "@/lib/student-id";
 import { cn } from "@/lib/utils";
 
@@ -133,7 +133,7 @@ export function ReviewQueue({
   useEffect(() => {
     let channel: RealtimeChannel | undefined;
     let cancelled = false;
-    void browserClient().then((supabase) => {
+    void realtimeClient().then((supabase) => {
       if (cancelled) return;
       channel = supabase
         .channel("admin:verifications")

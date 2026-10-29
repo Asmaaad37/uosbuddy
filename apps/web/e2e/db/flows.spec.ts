@@ -118,7 +118,8 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   await admin.getByRole("button", { name: "Approve" }).click();
   await expect(admin.getByText("The queue is clear")).toBeVisible();
 
-  // The student's open page follows the decision without a reload.
+  // The student's open page follows the decision without a reload (realtime; the 20 s poll is
+  // only a fallback, so a pass well inside this timeout means realtime delivered it).
   await expect(student).toHaveURL(/\/setup$/, { timeout: 15_000 });
   await expect(student.getByRole("heading", { name: /You're in, Bilal/ })).toBeVisible();
 });
