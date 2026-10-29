@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
+import { useTurnstile } from "@/components/turnstile";
 import { cn } from "@/lib/utils";
 import { browserClient } from "@/lib/supabase/lazy";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -31,6 +32,7 @@ export function FreshmanAccountForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
   const strength = passwordStrength(password);
+  const captcha = useTurnstile();
 
   async function createAccount(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -44,6 +46,7 @@ export function FreshmanAccountForm() {
     };
     setErrors(next);
     if (!n.success || !m.success || !p.success) return;
+    if (!captcha.ready) return setErrors({ email: "One moment: we're checking you're not a bot." });
 
     setBusy(true);
     const { data, error } = await (
@@ -54,9 +57,11 @@ export function FreshmanAccountForm() {
       options: {
         data: { full_name: n.data },
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        captchaToken: captcha.token,
       },
     });
     setBusy(false);
+    captcha.reset(); // tokens are single-use
     if (error) return setErrors({ email: authErrorMessage(error) });
     // Supabase hides existing accounts behind a user with no identities.
     if (data.user && data.user.identities?.length === 0) {
@@ -84,13 +89,16 @@ export function FreshmanAccountForm() {
   }
 
   async function resend() {
-    const { error } = await (await browserClient()).auth.resend({ type: "signup", email });
+    const { error } = await (
+      await browserClient()
+    ).auth.resend({ type: "signup", email, options: { captchaToken: captcha.token } });
+    captcha.reset();
     if (error) toast.error(authErrorMessage(error));
     else toast.success("New code sent");
   }
 
-  if (stage === "code") {
-    return (
+  const content =
+    stage === "code" ? (
       <form onSubmit={confirm} className="grid gap-4" noValidate>
         <p className="text-ink-2">
           Enter the code we sent to <strong className="text-ink">{email}</strong> to confirm
@@ -116,86 +124,92 @@ export function FreshmanAccountForm() {
         <button
           type="button"
           onClick={resend}
+          disabled={!captcha.ready}
           className="justify-self-start text-sm font-semibold text-brand"
         >
           Send a new code
         </button>
       </form>
-    );
-  }
-
-  return (
-    <form onSubmit={createAccount} className="grid gap-4" noValidate>
-      <Field
-        id={`${id}-name`}
-        label="Full name"
-        hint="As it appears on your student card."
-        error={errors.name}
-      >
-        {(aria) => (
-          <Input
-            {...aria}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoComplete="name"
-          />
-        )}
-      </Field>
-      <Field
-        id={`${id}-email`}
-        label="Personal email"
-        hint="For your login and review updates. Never shown to anyone."
-        error={errors.email}
-      >
-        {(aria) => (
-          <Input
-            {...aria}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            inputMode="email"
-          />
-        )}
-      </Field>
-      <Field id={`${id}-password`} label="Password" error={errors.password}>
-        {(aria) => (
-          <div className="grid gap-2">
+    ) : (
+      <form onSubmit={createAccount} className="grid gap-4" noValidate>
+        <Field
+          id={`${id}-name`}
+          label="Full name"
+          hint="As it appears on your student card."
+          error={errors.name}
+        >
+          {(aria) => (
             <Input
               {...aria}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
             />
-            <div className="flex items-center gap-3" aria-live="polite">
-              <div className="grid flex-1 grid-cols-4 gap-1">
-                {[1, 2, 3, 4].map((i) => (
-                  <span
-                    key={i}
-                    className={cn(
-                      "h-1.5 rounded-pill",
-                      i <= strength ? (strength >= 3 ? "bg-success" : "bg-warning") : "bg-line",
-                    )}
-                  />
-                ))}
+          )}
+        </Field>
+        <Field
+          id={`${id}-email`}
+          label="Personal email"
+          hint="For your login and review updates. Never shown to anyone."
+          error={errors.email}
+        >
+          {(aria) => (
+            <Input
+              {...aria}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
+            />
+          )}
+        </Field>
+        <Field id={`${id}-password`} label="Password" error={errors.password}>
+          {(aria) => (
+            <div className="grid gap-2">
+              <Input
+                {...aria}
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+              <div className="flex items-center gap-3" aria-live="polite">
+                <div className="grid flex-1 grid-cols-4 gap-1">
+                  {[1, 2, 3, 4].map((i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        "h-1.5 rounded-pill",
+                        i <= strength ? (strength >= 3 ? "bg-success" : "bg-warning") : "bg-line",
+                      )}
+                    />
+                  ))}
+                </div>
+                <span className="w-24 text-right text-[13px] text-ink-2">
+                  {password && STRENGTH[strength]}
+                </span>
               </div>
-              <span className="w-24 text-right text-[13px] text-ink-2">
-                {password && STRENGTH[strength]}
-              </span>
             </div>
-          </div>
-        )}
-      </Field>
-      <Button type="submit" block disabled={busy}>
-        {busy ? "Creating account…" : "Continue"}
-      </Button>
-      <p className="text-center text-sm text-ink-2">
-        Already joined?{" "}
-        <Link href="/login" className="font-semibold text-brand">
-          Log in
-        </Link>
-      </p>
-    </form>
+          )}
+        </Field>
+        <Button type="submit" block disabled={busy || !captcha.ready}>
+          {busy ? "Creating account…" : "Continue"}
+        </Button>
+        <p className="text-center text-sm text-ink-2">
+          Already joined?{" "}
+          <Link href="/login" className="font-semibold text-brand">
+            Log in
+          </Link>
+        </p>
+      </form>
+    );
+
+  // Mounted across both steps: "Send a new code" needs a fresh token too.
+  return (
+    <div className="grid gap-4">
+      {content}
+      {captcha.widget}
+    </div>
   );
 }
