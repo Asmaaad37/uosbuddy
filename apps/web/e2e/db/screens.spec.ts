@@ -138,6 +138,8 @@ test("phase 2 screens", async ({ page }) => {
 test("phase 3 screens", async ({ page, browser }) => {
   test.setTimeout(150_000);
   const h = (first: string) => `${first.toLowerCase()}3_${run}`.slice(0, 20);
+  // By profile link, not name: a retried run leaves the first attempt's students behind.
+  const card = (first: string) => page.locator(`a[href="/people/${h(first)}"]`);
   // A small batch: CS 2024 across two sections, one from another batch, one from IT.
   await makeStudent("Ayesha Siddiqui", h("Ayesha"), 4, {}, ["Cricket", "Coding", "Chai"]);
   await makeStudent("Usman Tariq", h("Usman"), 4, { residence: "day_scholar" }, [
@@ -160,25 +162,25 @@ test("phase 3 screens", async ({ page, browser }) => {
   await expect(page.getByText("Same section").first()).toBeVisible();
 
   await shoot(page, "phase-3", "03-directory-section", "/explore/batch");
-  await expect(page.getByText("Ayesha Siddiqui")).toBeVisible();
-  await expect(page.getByText("Fatima Noor")).toHaveCount(0);
+  await expect(card("Ayesha")).toBeVisible();
+  await expect(card("Fatima")).toHaveCount(0);
   await shoot(page, "phase-3", "04-directory-batch", "/explore/batch?tab=batch");
-  await expect(page.getByText("Fatima Noor")).toBeVisible();
-  await expect(page.getByText("Zainab Raza")).toHaveCount(0);
+  await expect(card("Fatima")).toBeVisible();
+  await expect(card("Zainab")).toHaveCount(0);
 
   // Search and filters, at phone width.
   await page.setViewportSize({ width: 375, height: 812 });
   await page.getByRole("tab", { name: /All UoS/ }).click();
   await page.getByPlaceholder("Search by name or @handle").fill("zain");
-  await expect(page.getByText("Zainab Raza")).toBeVisible();
-  await expect(page.getByText("Ayesha Siddiqui")).toHaveCount(0);
+  await expect(card("Zainab")).toBeVisible();
+  await expect(card("Ayesha")).toHaveCount(0);
   await page.getByPlaceholder("Search by name or @handle").fill("");
   await page.getByRole("button", { name: "Filters" }).click();
   await page.getByLabel("Hometown").fill("Lahore");
   await page.screenshot({ path: "test-results/screens/phase-3/05-filters-375.png" });
   await page.getByRole("button", { name: "Show people" }).click();
-  await expect(page.getByText("Fatima Noor")).toBeVisible();
-  await expect(page.getByText("Ayesha Siddiqui")).toHaveCount(0);
+  await expect(card("Fatima")).toBeVisible();
+  await expect(card("Ayesha")).toHaveCount(0);
   await page.screenshot({
     path: "test-results/screens/phase-3/06-filtered-375.png",
     fullPage: true,
