@@ -185,6 +185,9 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   await student.getByRole("button", { name: "Submit for review" }).click();
   await expect(student).toHaveURL(/\/pending$/);
   await expect(student.getByRole("heading", { name: "You're in the queue" })).toBeVisible();
+  // Wait for the live channel: on a cold CI stack the first subscription can take a while,
+  // and a decision made before it joins would only show up on the 20 s poll.
+  await expect(student.getByText(/^Live:/)).toBeVisible({ timeout: 30_000 });
 
   // The admin reviews it.
   const admin = await (await browser.newContext()).newPage();

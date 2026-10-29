@@ -24,7 +24,7 @@ export default async function LinkEmailPage() {
   return (
     <AppShell back="/me">
       <div className="grid gap-3">
-        <Stamp tone="email" className="self-start">
+        <Stamp tone="email" className="justify-self-start">
           UoS email
         </Stamp>
         <h1 className="text-[28px] leading-tight font-bold">Link your UoS email</h1>
