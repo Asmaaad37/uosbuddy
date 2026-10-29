@@ -802,6 +802,10 @@ export type Database = {
       is_verified: { Args: never; Returns: boolean }
       my_university_id: { Args: never; Returns: string }
       public_stats: { Args: never; Returns: Json }
+      set_my_interests: {
+        Args: { p_interest_ids: string[] }
+        Returns: undefined
+      }
       submit_verification: {
         Args: {
           p_doc_path: string
