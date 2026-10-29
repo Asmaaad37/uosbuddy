@@ -2,7 +2,7 @@
 -- fresher, P a fresher still pending review.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(21);
+select plan(23);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -64,12 +64,12 @@ select is(public.start_uni_email_claim(tests.uid('G'), 'F.STUDENT@uos.edu.pk', '
   'taken', 'an address someone already linked is taken');
 
 -- Too many tries and expiry
-select public.start_uni_email_claim(tests.uid('G'), 'g@uos.edu.pk', 'right');
+select is(public.start_uni_email_claim(tests.uid('G'), 'g@uos.edu.pk', 'right'), 'ok', 'a new claim can be started');
 update public.uni_email_claims set attempts = 5 where user_id = tests.uid('G');
 select is(public.confirm_uni_email_claim(tests.uid('G'), 'right'), 'too_many',
   'after five wrong tries even the right code is refused');
 
-select public.start_uni_email_claim(tests.uid('G'), 'g@uos.edu.pk', 'right');
+select is(public.start_uni_email_claim(tests.uid('G'), 'g@uos.edu.pk', 'right'), 'ok', 'asking again starts a fresh claim');
 update public.uni_email_claims set expires_at = now() - interval '1 second' where user_id = tests.uid('G');
 select is(public.confirm_uni_email_claim(tests.uid('G'), 'right'), 'expired', 'an expired code is refused');
 
