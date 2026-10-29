@@ -1,7 +1,7 @@
 -- Phase 1 identity and verification: sign-up trigger, RLS, protected columns, RPCs, storage.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(33);
+select plan(34);
 
 -- ---------- helpers (rolled back with the transaction) ----------
 create schema tests;
@@ -67,6 +67,12 @@ select is((select verification_status::text from public.profiles where id = (sel
 select is((select personal_email from public.private_profile where user_id = (select id from u where name = 'otp')),
   null, 'a confirmed uni email is not kept as the personal email');
 
+update public.university_domains set domain = 'UOS.edu.pk' where domain = 'uos.edu.pk';
+insert into u values ('mixed', tests.create_user('zara@uos.edu.pk'));
+select is((select verification_status::text from public.profiles where id = (select id from u where name = 'mixed')),
+  'verified', 'a domain stored in mixed case still verifies');
+update public.university_domains set domain = 'uos.edu.pk' where domain = 'UOS.edu.pk';
+
 update public.profiles set role = 'admin' where id = (select id from u where name = 'admin');
 
 -- ---------- RLS: who can read what ----------
@@ -76,9 +82,9 @@ select is((select count(*)::int from public.private_profile), 1, 'an unverified 
 select ok((select count(*) from public.departments) > 40, 'the catalogue is readable');
 
 select tests.login_as((select id from u where name = 'uni'));
-select ok(exists(select 1 from public.profiles where id = (select id from u where name = 'otp')),
+select ok(exists(select 1 from public.profiles_public where id = (select id from u where name = 'otp')),
   'a verified user sees other verified students');
-select ok(not exists(select 1 from public.profiles where id = (select id from u where name = 'fresher')),
+select ok(not exists(select 1 from public.profiles_public where id = (select id from u where name = 'fresher')),
   'a verified user does not see unverified accounts');
 select is((select count(*)::int from public.private_profile), 1, 'a verified user cannot read others'' PII');
 

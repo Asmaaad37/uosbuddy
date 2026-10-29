@@ -78,6 +78,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       auth_providers: {
@@ -213,6 +220,36 @@ export type Database = {
           },
         ]
       }
+      interests: {
+        Row: {
+          category: string
+          created_at: string
+          emoji: string
+          id: string
+          label: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          emoji: string
+          id?: string
+          label: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          label?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: []
+      }
       privacy_settings: {
         Row: {
           allow_dms_from: Database["public"]["Enums"]["visibility_level"]
@@ -252,6 +289,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "privacy_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       private_profile: {
@@ -287,6 +331,53 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "private_profile_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_interests: {
+        Row: {
+          created_at: string
+          interest_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          interest_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          interest_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_interests_interest_id_fkey"
+            columns: ["interest_id"]
+            isOneToOne: false
+            referencedRelation: "interests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_interests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_interests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -306,6 +397,7 @@ export type Database = {
           last_active_at: string | null
           onboarding_step: number
           opening_move: string | null
+          opening_move_prompt: string | null
           program_id: string | null
           pronoun_display: string | null
           residence: Database["public"]["Enums"]["residence_type"] | null
@@ -336,6 +428,7 @@ export type Database = {
           last_active_at?: string | null
           onboarding_step?: number
           opening_move?: string | null
+          opening_move_prompt?: string | null
           program_id?: string | null
           pronoun_display?: string | null
           residence?: Database["public"]["Enums"]["residence_type"] | null
@@ -366,6 +459,7 @@ export type Database = {
           last_active_at?: string | null
           onboarding_step?: number
           opening_move?: string | null
+          opening_move_prompt?: string | null
           program_id?: string | null
           pronoun_display?: string | null
           residence?: Database["public"]["Enums"]["residence_type"] | null
@@ -605,6 +699,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "verification_requests_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "verification_requests_university_id_fkey"
             columns: ["university_id"]
             isOneToOne: false
@@ -618,17 +719,72 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          batch_year: number | null
+          bio: string | null
+          department_id: string | null
+          full_name: string | null
+          handle: string | null
+          has_uni_email: boolean | null
+          hometown_city: string | null
+          id: string | null
+          is_mentor: boolean | null
+          opening_move: string | null
+          opening_move_prompt: string | null
+          program_id: string | null
+          pronoun_display: string | null
+          residence: Database["public"]["Enums"]["residence_type"] | null
+          section: string | null
+          semester: number | null
+          shift: Database["public"]["Enums"]["shift_type"] | null
+          university_id: string | null
+          verified_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       apply_uni_email: {
         Args: { p_email: string; p_user: string }
         Returns: boolean
       }
+      are_connected: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      can_view_profile: { Args: { p_target: string }; Returns: boolean }
       decide_verification: {
         Args: {
           p_decision: Database["public"]["Enums"]["verification_status"]
@@ -641,10 +797,15 @@ export type Database = {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
       }
+      handle_available: { Args: { p_handle: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
       my_university_id: { Args: never; Returns: string }
       public_stats: { Args: never; Returns: Json }
+      set_my_interests: {
+        Args: { p_interest_ids: string[] }
+        Returns: undefined
+      }
       submit_verification: {
         Args: {
           p_doc_path: string
@@ -653,6 +814,13 @@ export type Database = {
           p_whatsapp?: string
         }
         Returns: string
+      }
+      visible_at: {
+        Args: {
+          p_level: Database["public"]["Enums"]["visibility_level"]
+          p_target: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
