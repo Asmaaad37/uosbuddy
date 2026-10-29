@@ -161,7 +161,7 @@ select is((select reasons from public.suggest_people(50) s where (s.person).id =
   array['Same section', 'Both into Cricket', 'Also from Sargodha', 'Also a hostelite'],
   'suggestions explain themselves, strongest reason first');
 reset role;
-select ok(tests.suggested('B')[1] = tests.uid('T'), 'the same-section, same-interest student is suggested first');
+select ok((tests.suggested('B'))[1] = tests.uid('T'), 'the same-section, same-interest student is suggested first');
 
 select * from finish();
 rollback;
