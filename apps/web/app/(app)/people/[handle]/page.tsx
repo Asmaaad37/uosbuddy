@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { ConnectPanel } from "@/components/connect/connect-panel";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth/session";
+import type { ConnectionState } from "@/actions/connect";
 import { getProfileCard } from "@/lib/profile.server";
 
 type Props = { params: Promise<{ handle: string }> };
@@ -29,6 +31,13 @@ export default async function PersonPage({ params }: Props) {
   if (profile.handle && profile.handle !== handle) redirect(`/people/${profile.handle}`);
 
   const own = profile.id === user.id;
+  const [{ data: state }, { data: incoming }] = own
+    ? [{ data: null }, { data: null }]
+    : await Promise.all([
+        supabase.rpc("connection_state", { p_other: profile.id }),
+        supabase.rpc("incoming_requests").eq("requester_id", profile.id).maybeSingle(),
+      ]);
+  const firstName = (profile.full_name ?? profile.handle ?? "them").split(" ")[0]!;
 
   return (
     <AppShell
@@ -48,7 +57,24 @@ export default async function PersonPage({ params }: Props) {
           This is how your profile looks to students your privacy settings allow.
         </p>
       )}
-      <ProfileCard profile={profile} />
+      <ProfileCard
+        profile={profile}
+        actions={
+          own ? undefined : (
+            <ConnectPanel
+              target={profile.id}
+              firstName={firstName}
+              initialState={(state as ConnectionState | null) ?? "none"}
+              openingMove={
+                profile.opening_move_prompt && profile.opening_move
+                  ? { prompt: profile.opening_move_prompt, answer: profile.opening_move }
+                  : null
+              }
+              incomingNote={incoming?.message ?? null}
+            />
+          )
+        }
+      />
     </AppShell>
   );
 }

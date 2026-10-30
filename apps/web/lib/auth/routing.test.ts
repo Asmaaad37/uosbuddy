@@ -46,6 +46,8 @@ describe("redirectFor", () => {
     expect(redirectFor("/people/sana_k", false, null)).toBe("/login?next=%2Fpeople%2Fsana_k");
     expect(redirectFor("/people/sana_k", true, profile("pending"))).toBe("/pending");
     expect(redirectFor("/people/sana_k", true, profile("verified"))).toBeNull();
+    expect(redirectFor("/chats/abc", true, profile("pending"))).toBe("/pending");
+    expect(redirectFor("/chats", false, null)).toBe("/login?next=%2Fchats");
   });
 
   it("keeps non-admins out of /admin", () => {

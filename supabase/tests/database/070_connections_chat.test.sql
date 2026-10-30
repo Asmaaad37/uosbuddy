@@ -37,7 +37,7 @@ update public.profiles p set
 from tests.u u where p.id = u.id;
 
 -- ---------- the connections table is never read directly ----------
-select is(tests.as('A', 'select count(*)::text from public.connections'), '0',
+select is(has_table_privilege('authenticated', 'public.connections', 'select'), false,
   'students cannot read the connections table');
 select is(has_function_privilege('authenticated', 'public.are_connected(uuid, uuid)', 'execute'), false,
   'students cannot ask whether two others are connected');
