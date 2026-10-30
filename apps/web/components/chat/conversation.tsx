@@ -4,16 +4,32 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { ArrowLeft, ImagePlus, Loader2, SendHorizontal, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  BellOff,
+  Flag,
+  ImagePlus,
+  LogOut,
+  Loader2,
+  MoreHorizontal,
+  SendHorizontal,
+  Trash2,
+  Users,
+} from "lucide-react";
 import {
   answerMessageRequest,
+  deleteMessage,
+  leaveConversation,
   loadLatest,
   loadOlder,
   markRead,
-  sendMessage,
+  setMuted,
   type Message,
 } from "@/actions/chat";
+import { ReportDialog, SafetyMenu } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
 import { clockTime, dayLabel, sameDay, startsGroup } from "@/lib/chat";
 import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
@@ -30,6 +46,14 @@ export type Person = {
 type Local = Message & { pending?: boolean; failed?: boolean; previewUrl?: string };
 
 const BUCKET = "chat-attachments";
+
+/** The database explains refusals in plain words; anything else gets a generic line. */
+function sendErrorMessage(error: { code?: string; message: string } | null) {
+  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? "")) {
+    return error.message;
+  }
+  return "Couldn't send. Check your connection and try again.";
+}
 
 /** Re-encode photos as JPEG: smaller uploads, and EXIF (GPS, device) is dropped. */
 async function prepare(file: File): Promise<File> {
@@ -92,6 +116,7 @@ export function Conversation({
   initialMessages,
   signedUrls,
   isRequest,
+  muted: initialMuted,
 }: {
   conversationId: string;
   me: string;
@@ -102,6 +127,7 @@ export function Conversation({
   initialMessages: Message[];
   signedUrls: Record<string, string>;
   isRequest: boolean;
+  muted: boolean;
 }) {
   const router = useRouter();
   const [messages, setMessages] = useState<Local[]>(() => [...initialMessages].reverse());
@@ -112,6 +138,8 @@ export function Conversation({
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string>();
   const [request, setRequest] = useState(isRequest);
+  const [muted, setMutedState] = useState(initialMuted);
+  const [reporting, setReporting] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(initialMessages.length === 30);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -270,7 +298,18 @@ export function Conversation({
   async function deliver(local: Local, body?: string, attachmentPath?: string) {
     stick.current = true;
     setMessages((list) => [...list, local]);
-    const result = await sendMessage({ conversationId, body, attachmentPath });
+    // Straight to the database (no hop through our server): the function checks membership,
+    // blocks and the rate limit itself.
+    const supabase = await browserClient();
+    const { data, error: sendError } = await supabase.rpc("send_message", {
+      p_conversation: conversationId,
+      p_body: body,
+      p_attachment_path: attachmentPath,
+    });
+    const result =
+      sendError || !data
+        ? { ok: false as const, error: sendErrorMessage(sendError) }
+        : { ok: true as const, data: data as Message };
     if (!result.ok) {
       setError(result.error);
       setMessages((list) =>
@@ -373,6 +412,40 @@ export function Conversation({
             </span>
           </span>
         )}
+        <div className="ml-auto">
+          <SafetyMenu
+            target={other?.id}
+            name={kind === "dm" ? title.split(" ")[0]! : title}
+            reportType={kind === "dm" && other ? "profile" : "conversation"}
+            reportId={kind === "dm" && other ? other.id : conversationId}
+            afterBlock="/chats"
+            extra={
+              <>
+                <MenuItem
+                  onSelect={async () => {
+                    const next = !muted;
+                    setMutedState(next);
+                    const r = await setMuted(conversationId, next);
+                    if (!r.ok) setMutedState(!next);
+                  }}
+                >
+                  {muted ? <Bell /> : <BellOff />} {muted ? "Unmute" : "Mute"}
+                </MenuItem>
+                {kind !== "dm" && (
+                  <MenuItem
+                    onSelect={async () => {
+                      const r = await leaveConversation(conversationId);
+                      if (r.ok) router.replace("/chats?tab=groups");
+                      else setError(r.error);
+                    }}
+                  >
+                    <LogOut /> Leave
+                  </MenuItem>
+                )}
+              </>
+            }
+          />
+        </div>
       </header>
 
       <div
@@ -413,7 +486,13 @@ export function Conversation({
                     {nameOf(m.sender_id)}
                   </p>
                 )}
-                <div className={cn("flex", mine ? "justify-end" : "justify-start", head && "mt-2")}>
+                <div
+                  className={cn(
+                    "group flex items-center gap-1",
+                    mine ? "flex-row-reverse" : "flex-row",
+                    head && "mt-2",
+                  )}
+                >
                   <div
                     className={cn(
                       "grid max-w-[80%] gap-1 rounded-lg px-3 py-2",
@@ -441,6 +520,48 @@ export function Conversation({
                       {m.failed ? "Not sent" : m.pending ? "Sending…" : clockTime(m.created_at)}
                     </p>
                   </div>
+                  {!m.pending && !m.failed && !m.deleted_at && (
+                    <Menu>
+                      <MenuTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label="Message options"
+                          className="grid size-8 place-items-center rounded-pill text-ink-2 opacity-40 group-hover:opacity-100 hover:bg-surface-2 focus-visible:opacity-100"
+                        >
+                          <MoreHorizontal className="size-4" />
+                        </button>
+                      </MenuTrigger>
+                      <MenuContent align={mine ? "end" : "start"}>
+                        {mine ? (
+                          <MenuItem
+                            danger
+                            onSelect={async () => {
+                              const r = await deleteMessage(m.id);
+                              if (!r.ok) return setError(r.error);
+                              setMessages((list) =>
+                                list.map((x) =>
+                                  x.id === m.id
+                                    ? {
+                                        ...x,
+                                        body: null,
+                                        attachment_path: null,
+                                        deleted_at: new Date().toISOString(),
+                                      }
+                                    : x,
+                                ),
+                              );
+                            }}
+                          >
+                            <Trash2 /> Delete for everyone
+                          </MenuItem>
+                        ) : (
+                          <MenuItem onSelect={() => setReporting(m.id)}>
+                            <Flag /> Report message
+                          </MenuItem>
+                        )}
+                      </MenuContent>
+                    </Menu>
+                  )}
                 </div>
                 {m.id === myLast?.id && kind === "dm" && (
                   <p className="pt-1 pr-1 text-right text-[11px] text-ink-2">
@@ -538,6 +659,13 @@ export function Conversation({
           <SendHorizontal />
         </Button>
       </form>
+      <ReportDialog
+        open={!!reporting}
+        onOpenChange={(o) => !o && setReporting(null)}
+        title="Report message"
+        targetType="message"
+        targetId={reporting ?? ""}
+      />
       {error && (
         <p role="alert" className="gutter bg-surface pb-2 text-sm text-danger">
           {error}

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BellOff, Users } from "lucide-react";
+import { BellOff, Plus, Users } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ChatsLive } from "@/components/chat/chats-live";
+import { JoinBatchChat } from "@/components/chat/join-batch-chat";
 import { RequestRow } from "@/components/chat/request-row";
+import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { getSession } from "@/lib/auth/session";
 import { shortTime } from "@/lib/chat";
@@ -23,15 +25,44 @@ type Props = { searchParams: Promise<{ tab?: string }> };
 
 /** Phase 4 task 3: Primary · Requests · Groups. */
 export default async function ChatsPage({ searchParams }: Props) {
-  const { supabase, user } = await getSession();
+  const { supabase, user, profile } = await getSession();
   if (!user) redirect("/login?next=/chats");
   const tabParam = (await searchParams).tab;
   const tab: Tab = TABS.some((t) => t.key === tabParam) ? (tabParam as Tab) : "primary";
 
-  const [{ data: conversations }, { data: requests }] = await Promise.all([
-    supabase.rpc("my_conversations"),
-    supabase.rpc("incoming_requests"),
-  ]);
+  const [{ data: conversations }, { data: requests }, { data: joined }, { data: dept }] =
+    await Promise.all([
+      supabase.rpc("my_conversations"),
+      supabase.rpc("incoming_requests"),
+      supabase.from("conversations").select("batch_key").not("batch_key", "is", null),
+      profile?.department_id
+        ? supabase
+            .from("departments")
+            .select("short_code")
+            .eq("id", profile.department_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+  // Batch and section chats on offer (Phase 4 task 4), keyed like join_batch_chat().
+  const keys = new Set((joined ?? []).map((c) => c.batch_key));
+  const batchName = dept && profile?.batch_year ? `${dept.short_code} ${profile.batch_year}` : null;
+  const offers = batchName
+    ? [
+        !keys.has(`batch:${profile!.department_id}:${profile!.batch_year}`) && {
+          scope: "batch" as const,
+          title: `${batchName} batch chat`,
+          hint: "Everyone in your department batch",
+        },
+        profile!.section &&
+          !keys.has(
+            `section:${profile!.department_id}:${profile!.batch_year}:${profile!.section}:${profile!.shift ?? "-"}`,
+          ) && {
+            scope: "section" as const,
+            title: `${batchName} · Sec ${profile!.section} chat`,
+            hint: "Just your section",
+          },
+      ].filter((o): o is { scope: "batch" | "section"; title: string; hint: string } => !!o)
+    : [];
   const all = conversations ?? [];
   const lists: Record<Tab, typeof all> = {
     primary: all.filter((c) => c.kind === "dm" && !c.is_request),
@@ -77,6 +108,19 @@ export default async function ChatsPage({ searchParams }: Props) {
           </Link>
         ))}
       </nav>
+
+      {tab === "groups" && (
+        <div className="grid gap-2">
+          {offers.map((o) => (
+            <JoinBatchChat key={o.scope} {...o} />
+          ))}
+          <Button asChild variant="secondary" block>
+            <Link href="/chats/new">
+              <Plus /> New group
+            </Link>
+          </Button>
+        </div>
+      )}
 
       {tab === "requests" && (requests?.length ?? 0) > 0 && (
         <section aria-label="Connection requests" className="grid gap-2">

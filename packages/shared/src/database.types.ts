@@ -1369,6 +1369,15 @@ export type Database = {
         Returns: undefined
       }
       mark_read: { Args: { p_conversation: string }; Returns: undefined }
+      my_blocked: {
+        Args: never
+        Returns: {
+          blocked_at: string
+          full_name: string
+          handle: string
+          id: string
+        }[]
+      }
       my_connections: {
         Args: never
         Returns: {

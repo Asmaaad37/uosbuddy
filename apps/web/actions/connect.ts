@@ -12,7 +12,8 @@ const id = z.uuid();
 
 /** The database explains refusals in plain words (42501/22023/P0002); pass those through. */
 function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002"].includes(error.code ?? "")) return error.message;
+  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? ""))
+    return error.message;
   return fallback;
 }
 
@@ -30,9 +31,6 @@ export async function requestConnection(
   if (note && note.length > 300) return fail("Keep your note under 300 characters");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
-  if (!(await withinLimit("connectRequest", s.user.id))) {
-    return fail("That's a lot of requests for one day. Try again tomorrow.");
-  }
   const { data, error } = await s.supabase.rpc("request_connection", {
     p_target: target,
     p_message: note?.trim() || undefined,

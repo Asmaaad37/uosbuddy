@@ -29,12 +29,14 @@ test("two students connect and chat in realtime", async ({ browser }) => {
   await a.getByRole("button", { name: "Connect" }).click();
   await expect(a.getByText("The dhaba behind the main gate, no contest.").last()).toBeVisible();
   await a.getByLabel("Your reply (optional)").fill("Same! See you there after class");
+  await a.screenshot({ path: "test-results/screens/phase-4/01-connect-sheet-1280.png" });
   await a.getByRole("button", { name: "Send request" }).click();
   await expect(a.getByRole("button", { name: "Requested" })).toBeVisible();
 
   // B accepts from Requests.
   await b.goto("/chats?tab=requests");
   await expect(b.getByText("Same! See you there after class")).toBeVisible();
+  await b.screenshot({ path: "test-results/screens/phase-4/02-requests-1280.png" });
   await b.getByRole("button", { name: "Accept" }).click();
   await expect(b.getByText(/Connected!/)).toBeVisible();
 
@@ -47,12 +49,23 @@ test("two students connect and chat in realtime", async ({ browser }) => {
   await expect(liveLog(a)).toBeVisible({ timeout: 30_000 });
   await expect(liveLog(b)).toBeVisible({ timeout: 30_000 });
 
-  // A → B, timed.
-  await a.getByLabel("Message", { exact: true }).fill("Salam! Chai at 3?");
-  const sentAt = Date.now();
+  // A → B, timed in the browsers (same machine clock): Enter on A to the text on B's screen.
+  const text = "Salam! Chai at 3?";
+  await b.evaluate((t) => {
+    const w = window as unknown as { __seenAt?: number };
+    new MutationObserver((_, obs) => {
+      if (document.body.innerText.includes(t)) {
+        w.__seenAt = Date.now();
+        obs.disconnect();
+      }
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  }, text);
+  await a.getByLabel("Message", { exact: true }).fill(text);
+  const sentAt = await a.evaluate(() => Date.now());
   await a.getByLabel("Message", { exact: true }).press("Enter");
-  await expect(b.getByText("Salam! Chai at 3?")).toBeVisible({ timeout: 5_000 });
-  const deliveryMs = Date.now() - sentAt;
+  await expect(b.getByText(text)).toBeVisible({ timeout: 5_000 });
+  const seenAt = await b.evaluate(() => (window as unknown as { __seenAt?: number }).__seenAt ?? 0);
+  const deliveryMs = seenAt - sentAt;
   console.log(`[chat] A → B delivered in ${deliveryMs} ms`);
   test.info().annotations.push({ type: "delivery-ms", description: String(deliveryMs) });
 
@@ -73,9 +86,32 @@ test("two students connect and chat in realtime", async ({ browser }) => {
   });
   await expect(b.getByRole("img", { name: "Photo" })).toBeVisible({ timeout: 10_000 });
 
+  // Screenshots (phone width) of the conversation from B's side.
+  const shot = async (page: Page, name: string) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.screenshot({ path: `test-results/screens/phase-4/${name}-375.png` });
+  };
+  await shot(b, "03-conversation");
+
+  // A makes a group with B; B finds it under Groups and joins the batch chat too.
+  await a.goto("/chats/new");
+  await a.getByLabel("Group name").fill("DSA study group");
+  await a.getByRole("checkbox", { name: /Bilal Raza/ }).click();
+  await shot(a, "04-new-group");
+  await a.getByRole("button", { name: "Create group" }).click();
+  await expect(a).toHaveURL(/\/chats\/[0-9a-f-]{36}$/);
+  await expect(a.getByText("2 members")).toBeVisible();
+  await b.goto("/chats?tab=groups");
+  await expect(b.getByText("DSA study group")).toBeVisible();
+  await shot(b, "05-groups");
+  await b.getByRole("button", { name: "Join" }).first().click();
+  await expect(b).toHaveURL(/\/chats\/[0-9a-f-]{36}$/);
+  await expect(b.getByText("CS 2024", { exact: true })).toBeVisible();
+
   // The chats list shows the conversation with B's last message for A.
   await a.goto("/chats");
   await expect(a.getByText("Bilal Raza")).toBeVisible();
+  await shot(a, "06-chats");
 
   // B blocks A: the chat disappears from A's list and A's profile is gone for B.
   await b.goto(`/people/${aHandle}`);

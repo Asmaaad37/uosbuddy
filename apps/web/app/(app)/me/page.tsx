@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   AtSign,
+  Ban,
   BookOpen,
   ChevronRight,
   Eye,
@@ -137,6 +138,7 @@ export default async function MePage() {
             label="Privacy"
             hint="Who sees your profile and photo, and who can message you"
           />
+          <Row href="/me/blocked" icon={Ban} label="Blocked" />
           {hasUniEmail ? (
             <li className="flex min-h-14 items-center gap-3 px-4 py-3">
               <AtSign className="size-5 shrink-0 text-ink-2" />

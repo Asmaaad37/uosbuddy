@@ -53,6 +53,7 @@ export default async function ConversationPage({ params }: Props) {
         (urls ?? []).flatMap((u) => (u.path && u.signedUrl ? [[u.path, u.signedUrl]] : [])),
       )}
       isRequest={conversation.is_request}
+      muted={conversation.muted}
     />
   );
 }

@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import type { Database } from "@uosbuddy/shared";
-import { withinLimit } from "@/lib/abuse.server";
 import { getSession } from "@/lib/auth/session";
 import type { ActionResult } from "./onboarding";
 
@@ -30,37 +29,6 @@ export async function startDm(target: string): Promise<ActionResult<string>> {
   const { data, error } = await s.supabase.rpc("start_dm", { p_target: target });
   if (error || !data) return fail(friendly(error, "Couldn't open the chat. Try again."));
   return { ok: true, data };
-}
-
-const sendSchema = z
-  .object({
-    conversationId: z.uuid(),
-    body: z.string().trim().max(4000, "Messages are up to 4,000 characters").optional(),
-    attachmentPath: z.string().max(200).optional(),
-    replyTo: z.uuid().optional(),
-  })
-  .refine((m) => m.body || m.attachmentPath, "Write a message");
-
-/** Phase 4 task 3: send a message (rate-limited per student). */
-export async function sendMessage(
-  input: z.input<typeof sendSchema>,
-): Promise<ActionResult<Message>> {
-  const parsed = sendSchema.safeParse(input);
-  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Write a message");
-  const s = await session();
-  if (!s) return fail("Your session expired. Log in again.");
-  if (!(await withinLimit("message", s.user.id))) {
-    return fail("You're sending messages very fast. Wait a moment.");
-  }
-  const { conversationId, body, attachmentPath, replyTo } = parsed.data;
-  const { data, error } = await s.supabase.rpc("send_message", {
-    p_conversation: conversationId,
-    p_body: body || undefined,
-    p_attachment_path: attachmentPath,
-    p_reply_to: replyTo,
-  });
-  if (error || !data) return fail(friendly(error, "Couldn't send. Try again."));
-  return { ok: true, data: data as Message };
 }
 
 /** Older messages, newest first, before the given one (infinite scroll back in time). */
@@ -145,5 +113,55 @@ export async function setMuted(conversationId: string, muted: boolean): Promise<
     .eq("conversation_id", conversationId)
     .eq("user_id", s.user.id);
   if (error) return fail("Couldn't update. Try again.");
+  return { ok: true, data: undefined };
+}
+
+/** Phase 4 task 4: join your batch or section chat (created the first time someone joins). */
+export async function joinBatchChat(scope: "batch" | "section"): Promise<ActionResult<string>> {
+  if (scope !== "batch" && scope !== "section") return fail("Choose a chat");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { data, error } = await s.supabase.rpc("join_batch_chat", { p_scope: scope });
+  if (error || !data) return fail(friendly(error, "Couldn't join. Try again."));
+  return { ok: true, data };
+}
+
+const groupSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Give the group a name")
+    .max(60, "Keep the name under 60 characters"),
+  emoji: z.string().trim().max(8).optional(),
+  members: z
+    .array(z.uuid())
+    .min(1, "Pick at least one person")
+    .max(49, "Groups hold up to 50 people"),
+});
+
+/** Phase 4 task 5: a custom group from your connections. */
+export async function createGroup(
+  input: z.input<typeof groupSchema>,
+): Promise<ActionResult<string>> {
+  const parsed = groupSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the form");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { title, emoji, members } = parsed.data;
+  const { data, error } = await s.supabase.rpc("create_group", {
+    p_title: title,
+    p_emoji: emoji ?? "",
+    p_members: members,
+  });
+  if (error || !data) return fail(friendly(error, "Couldn't create the group. Try again."));
+  return { ok: true, data };
+}
+
+export async function leaveConversation(conversationId: string): Promise<ActionResult> {
+  if (!id.safeParse(conversationId).success) return fail("Chat not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("leave_conversation", { p_conversation: conversationId });
+  if (error) return fail("Couldn't leave. Try again.");
   return { ok: true, data: undefined };
 }
