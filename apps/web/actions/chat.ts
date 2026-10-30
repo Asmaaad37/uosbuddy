@@ -87,6 +87,22 @@ export async function loadOlder(
   return { ok: true, data: data ?? [] };
 }
 
+/** The newest page, for catching up after (re)connecting. */
+export async function loadLatest(conversationId: string): Promise<ActionResult<Message[]>> {
+  if (!id.safeParse(conversationId).success) return fail("Chat not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { data, error } = await s.supabase
+    .from("messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(PAGE);
+  if (error) return fail("Couldn't load messages.");
+  return { ok: true, data: data ?? [] };
+}
+
 export async function markRead(conversationId: string): Promise<void> {
   if (!id.safeParse(conversationId).success) return;
   const s = await session();

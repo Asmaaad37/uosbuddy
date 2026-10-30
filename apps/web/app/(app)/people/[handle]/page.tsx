@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ConnectPanel } from "@/components/connect/connect-panel";
+import { SafetyMenu } from "@/components/connect/safety-menu";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth/session";
@@ -49,7 +50,9 @@ export default async function PersonPage({ params }: Props) {
               <Pencil /> Edit
             </Link>
           </Button>
-        ) : undefined
+        ) : (
+          <SafetyMenu target={profile.id} name={firstName} />
+        )
       }
     >
       {own && (

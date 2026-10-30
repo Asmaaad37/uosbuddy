@@ -111,7 +111,8 @@ select throws_ok($$ select tests.as('C', 'select public.start_dm(%4$L)') $$, '42
 -- ---------- members only ----------
 select is(tests.as('C', format('select count(*)::text from public.messages where conversation_id = %L', (select id from conv where name = 'AB'))),
   '0', 'non-members cannot read messages');
-select throws_ok(format($$ select tests.as('C', 'select public.send_message(%L, ''sneaky'')') $$, (select id from conv where name = 'AB')),
+select throws_ok(format('select tests.as(%L, %L)', 'C',
+    format('select public.send_message(%L, %L)', (select id from conv where name = 'AB'), 'sneaky')),
   '42501', null, 'non-members cannot send');
 select is(tests.as('C', format('select public.can_use_topic(%L)::text', 'conversation:' || (select id from conv where name = 'AB'))),
   'false', 'non-members cannot join the typing channel');
@@ -123,7 +124,8 @@ select is((select count(*)::int from public.messages where body = 'Hi B!' and de
 
 -- ---------- blocks ----------
 select tests.as('A', 'select public.block_user(%3$L)');
-select throws_ok(format($$ select tests.as('C', 'select public.send_message(%L, ''still there?'')') $$, (select id from conv where name = 'CA')),
+select throws_ok(format('select tests.as(%L, %L)', 'C',
+    format('select public.send_message(%L, %L)', (select id from conv where name = 'CA'), 'still there?')),
   '42501', null, 'a blocked student cannot DM');
 select is(tests.as('A', format('select count(*)::text from public.my_conversations() where id = %L', (select id from conv where name = 'CA'))),
   '0', 'the DM disappears from the blocker''s list');
