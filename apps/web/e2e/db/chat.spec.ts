@@ -19,48 +19,10 @@ async function student(browser: Browser, name: string, first: string): Promise<[
 
 const liveLog = (page: Page) => page.locator('[role="log"][data-live]');
 
-// TEMP diagnostics: print console output, and if the page stops responding, pause V8 and
-// print where it is stuck.
-function watch(page: Page, label: string) {
-  page.on("console", (m) => console.log(`[${label} console] ${m.type()}: ${m.text()}`));
-  page.on("pageerror", (e) => console.log(`[${label} pageerror] ${e.message}`));
-}
-async function assertResponsive(page: Page, label: string) {
-  const alive = await Promise.race([
-    page.evaluate(() => true).catch(() => false),
-    new Promise<boolean>((r) => setTimeout(() => r(false), 5000)),
-  ]);
-  if (alive) return;
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send("Debugger.enable");
-  const paused = new Promise<{
-    callFrames: {
-      functionName: string;
-      url: string;
-      location: { scriptId: string; lineNumber: number; columnNumber: number };
-    }[];
-  }>((r) => cdp.once("Debugger.paused", r as never));
-  await cdp.send("Debugger.pause");
-  const { callFrames } = await paused;
-  for (const f of callFrames.slice(0, 12)) {
-    const { scriptSource } = await cdp.send("Debugger.getScriptSource", {
-      scriptId: f.location.scriptId,
-    });
-    const line = scriptSource.split("\n")[f.location.lineNumber] ?? "";
-    const c = f.location.columnNumber;
-    console.log(
-      `[${label} stuck] ${f.functionName || "(anon)"} ${f.url}:${f.location.lineNumber}:${c} …${line.slice(Math.max(0, c - 120), c + 120)}…`,
-    );
-  }
-  throw new Error(`${label} page is not responding`);
-}
-
 test("two students connect and chat in realtime", async ({ browser }) => {
   test.setTimeout(120_000);
   const [a, aHandle] = await student(browser, "Areeba Malik", "areeba");
   const [b, bHandle] = await student(browser, "Bilal Raza", "bilal");
-  watch(a, "A");
-  watch(b, "B");
 
   // A asks to connect, answering B's Opening Move.
   await a.goto(`/people/${bHandle}`);
@@ -87,7 +49,6 @@ test("two students connect and chat in realtime", async ({ browser }) => {
 
   // A → B, timed.
   await a.getByLabel("Message", { exact: true }).fill("Salam! Chai at 3?");
-  await assertResponsive(a, "A");
   const sentAt = Date.now();
   await a.getByLabel("Message", { exact: true }).press("Enter");
   await expect(b.getByText("Salam! Chai at 3?")).toBeVisible({ timeout: 5_000 });

@@ -514,9 +514,9 @@ export function Conversation({
         >
           {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />}
         </Button>
-        <label className="flex-1">
-          <span className="sr-only">Message</span>
+        <div className="flex-1">
           <textarea
+            aria-label="Message"
             value={draft}
             rows={1}
             maxLength={4000}
@@ -533,7 +533,7 @@ export function Conversation({
             placeholder="Message"
             className="max-h-32 min-h-11 w-full resize-none rounded-md border border-line bg-bg px-3 py-2.5 text-[15px] focus-visible:border-brand focus-visible:outline-none"
           />
-        </label>
+        </div>
         <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
           <SendHorizontal />
         </Button>
