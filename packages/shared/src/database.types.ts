@@ -39,6 +39,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          sources: Json
+          thread_id: string
+          tokens_in: number | null
+          tokens_out: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          sources?: Json
+          thread_id: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          sources?: Json
+          thread_id?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "ai_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_threads: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_threads_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_threads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_threads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_usage: {
+        Row: {
+          day: string
+          kind: string
+          used: number
+          user_id: string
+        }
+        Insert: {
+          day: string
+          kind: string
+          used?: number
+          user_id: string
+        }
+        Update: {
+          day?: string
+          kind?: string
+          used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       anon_aliases: {
         Row: {
           alias: string
@@ -1744,6 +1870,54 @@ export type Database = {
           },
         ]
       }
+      resource_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          course_id: string
+          embedding: string | null
+          fts: unknown
+          id: string
+          page: number | null
+          resource_id: string
+        }
+        Insert: {
+          chunk_index: number
+          content: string
+          course_id: string
+          embedding?: string | null
+          fts?: unknown
+          id?: string
+          page?: number | null
+          resource_id: string
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          course_id?: string
+          embedding?: string | null
+          fts?: unknown
+          id?: string
+          page?: number | null
+          resource_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_chunks_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_chunks_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_votes: {
         Row: {
           resource_id: string
@@ -1783,11 +1957,13 @@ export type Database = {
       }
       resources: {
         Row: {
+          chunk_count: number
           course_id: string
           created_at: string
           embedded_at: string | null
           file_path: string
           id: string
+          index_status: string
           kind: string
           mime_type: string
           size_bytes: number
@@ -1800,11 +1976,13 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          chunk_count?: number
           course_id: string
           created_at?: string
           embedded_at?: string | null
           file_path: string
           id?: string
+          index_status?: string
           kind: string
           mime_type: string
           size_bytes: number
@@ -1817,11 +1995,13 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          chunk_count?: number
           course_id?: string
           created_at?: string
           embedded_at?: string | null
           file_path?: string
           id?: string
+          index_status?: string
           kind?: string
           mime_type?: string
           size_bytes?: number
@@ -2358,6 +2538,8 @@ export type Database = {
         }
         Returns: string
       }
+      ai_limit: { Args: { p_kind: string }; Returns: number }
+      ai_remaining: { Args: { p_kind: string }; Returns: number }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
       answer_message_request: {
         Args: { p_accept: boolean; p_conversation: string }
@@ -2475,6 +2657,8 @@ export type Database = {
         Args: {
           p_anonymous?: boolean
           p_body: string
+          p_mod_status?: string
+          p_mod_token?: string
           p_parent?: string
           p_post: string
         }
@@ -2489,6 +2673,8 @@ export type Database = {
           p_anonymous?: boolean
           p_body: string
           p_media?: string[]
+          p_mod_status?: string
+          p_mod_token?: string
           p_poll?: Json
           p_space: string
         }
@@ -2636,6 +2822,10 @@ export type Database = {
           message: string
         }[]
       }
+      moderation_status: {
+        Args: { p_body: string; p_status: string; p_token: string }
+        Returns: string
+      }
       my_blocked: {
         Args: never
         Returns: {
@@ -2742,6 +2932,23 @@ export type Database = {
         Args: { p_accept: boolean; p_mentee: string }
         Returns: undefined
       }
+      search_course_chunks: {
+        Args: {
+          p_course: string
+          p_embedding?: string
+          p_k?: number
+          p_query: string
+        }
+        Returns: {
+          chunk_id: string
+          content: string
+          page: number
+          resource_id: string
+          resource_kind: string
+          resource_title: string
+          score: number
+        }[]
+      }
       send_message: {
         Args: {
           p_attachment_path?: string
@@ -2798,6 +3005,7 @@ export type Database = {
       }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
+      use_ai: { Args: { p_kind: string }; Returns: number }
       visible_at: {
         Args: {
           p_level: Database["public"]["Enums"]["visibility_level"]

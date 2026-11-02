@@ -41,6 +41,12 @@ const serverSchema = publicSchema.extend({
   CRON_SECRET: optional,
   // Shared with the database (app_private.config.push_secret) so only it can call /api/push.
   PUSH_WEBHOOK_SECRET: optional,
+  // Phase 7: Claude (claude-haiku-5-5) for AI Buddy, moderation, timetable and proof checks.
+  ANTHROPIC_API_KEY: optional,
+  // "1" in CI: a deterministic stand-in for Claude and embeddings (no key, no cost).
+  AI_FAKE: optional,
+  // Signs moderation decisions; also stored as moderation_secret in app_private.config.
+  MODERATION_SECRET: optional,
   AI_SERVICE_URL: optional,
   AI_SERVICE_HMAC_SECRET: optional,
   SENTRY_DSN: optional,
