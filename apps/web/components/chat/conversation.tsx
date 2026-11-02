@@ -120,7 +120,7 @@ export function Conversation({
 }: {
   conversationId: string;
   me: string;
-  kind: "dm" | "group" | "batch" | "course" | "backup_temp";
+  kind: "dm" | "group" | "batch" | "course" | "backup_temp" | "ping";
   title: string;
   people: Person[];
   /** Newest first, as loaded. */
@@ -153,7 +153,9 @@ export function Conversation({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const byId = Object.fromEntries(people.map((p) => [p.id, p]));
-  const other = kind === "dm" ? people.find((p) => p.id !== me) : undefined;
+  // A ping is a short one-to-one chat: show it like a DM.
+  const oneToOne = kind === "dm" || kind === "ping";
+  const other = oneToOne ? people.find((p) => p.id !== me) : undefined;
   const nameOf = (id: string | null) =>
     (id && (byId[id]?.full_name ?? byId[id]?.handle)) || "Someone";
 
@@ -383,14 +385,14 @@ export function Conversation({
   const myLast = [...messages].reverse().find((m) => m.sender_id === me && !m.pending);
   const theirRead = other ? reads[other.id] : null;
   const seen =
-    kind === "dm" && myLast && theirRead && new Date(theirRead) >= new Date(myLast.created_at);
+    oneToOne && myLast && theirRead && new Date(theirRead) >= new Date(myLast.created_at);
   const typers = Object.keys(typing).map(nameOf);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-bg">
       <header className="gutter flex items-center gap-3 border-b border-line bg-surface py-2">
         <Link
-          href={request ? "/chats?tab=requests" : kind === "dm" ? "/chats" : "/chats?tab=groups"}
+          href={request ? "/chats?tab=requests" : oneToOne ? "/chats" : "/chats?tab=groups"}
           aria-label="Back to chats"
           className="-ml-2 grid size-11 place-items-center rounded-pill hover:bg-surface-2"
         >
@@ -415,9 +417,9 @@ export function Conversation({
         <div className="ml-auto">
           <SafetyMenu
             target={other?.id}
-            name={kind === "dm" ? title.split(" ")[0]! : title}
-            reportType={kind === "dm" && other ? "profile" : "conversation"}
-            reportId={kind === "dm" && other ? other.id : conversationId}
+            name={oneToOne ? title.split(" ")[0]! : title}
+            reportType={oneToOne && other ? "profile" : "conversation"}
+            reportId={oneToOne && other ? other.id : conversationId}
             afterBlock="/chats"
             extra={
               <>
@@ -431,7 +433,7 @@ export function Conversation({
                 >
                   {muted ? <Bell /> : <BellOff />} {muted ? "Unmute" : "Mute"}
                 </MenuItem>
-                {kind !== "dm" && (
+                {(kind === "group" || kind === "batch" || kind === "course") && (
                   <MenuItem
                     onSelect={async () => {
                       const r = await leaveConversation(conversationId);
@@ -481,7 +483,7 @@ export function Conversation({
                     {dayLabel(m.created_at)}
                   </p>
                 )}
-                {head && !mine && kind !== "dm" && (
+                {head && !mine && !oneToOne && (
                   <p className="mt-2 px-3 text-xs font-semibold text-ink-2">
                     {nameOf(m.sender_id)}
                   </p>
@@ -563,7 +565,7 @@ export function Conversation({
                     </Menu>
                   )}
                 </div>
-                {m.id === myLast?.id && kind === "dm" && (
+                {m.id === myLast?.id && oneToOne && (
                   <p className="pt-1 pr-1 text-right text-[11px] text-ink-2">
                     {seen ? "Seen" : "Sent"}
                   </p>
