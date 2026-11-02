@@ -3,9 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { FreeNow } from "@/components/timetable/free-now";
+import { ImportTimetable } from "@/components/timetable/import";
 import { FreeTogether } from "@/components/timetable/together";
 import { Week } from "@/components/timetable/week";
 import { termLabel } from "@/lib/academics";
+import { aiEnabled } from "@/lib/ai/claude.server";
 import { getSession } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +83,7 @@ export default async function TimetablePage({ searchParams }: Props) {
           </Link>
         ))}
       </nav>
+      {tab === "week" && aiEnabled() && <ImportTimetable />}
       {tab === "week" && <Week slots={slots ?? []} courses={courses ?? []} />}
       {tab === "together" && <FreeTogether connections={connections ?? []} />}
       {tab === "now" && (

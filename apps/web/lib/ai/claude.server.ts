@@ -26,3 +26,24 @@ export function textOf(message: Anthropic.Message) {
     .map((b) => b.text)
     .join("");
 }
+
+/** A PDF or photo as a content block (base64). */
+export function fileBlock(
+  data: Buffer,
+  mime: string,
+): Anthropic.DocumentBlockParam | Anthropic.ImageBlockParam {
+  if (mime === "application/pdf") {
+    return {
+      type: "document",
+      source: { type: "base64", media_type: "application/pdf", data: data.toString("base64") },
+    };
+  }
+  return {
+    type: "image",
+    source: {
+      type: "base64",
+      media_type: mime as "image/jpeg" | "image/png" | "image/webp",
+      data: data.toString("base64"),
+    },
+  };
+}

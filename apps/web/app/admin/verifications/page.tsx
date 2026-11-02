@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReviewQueue, type QueueItem } from "@/components/admin/review-queue";
 import { homePath, safeNext } from "@/lib/auth/routing";
+import type { Precheck } from "@/lib/ai/precheck";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Verification queue", robots: { index: false } };
@@ -27,7 +28,7 @@ export default async function VerificationsPage({
     supabase
       .from("verification_requests")
       .select(
-        "id, updated_at, doc_path, roll_no_submitted, full_name_submitted, applicant:profiles!verification_requests_user_id_fkey(full_name, private_profile(personal_email, uni_email, whatsapp))",
+        "id, updated_at, doc_path, roll_no_submitted, full_name_submitted, ai_precheck, applicant:profiles!verification_requests_user_id_fkey(full_name, private_profile(personal_email, uni_email, whatsapp))",
       )
       .eq("status", "pending")
       .order("updated_at", { ascending: true })
@@ -57,8 +58,15 @@ export default async function VerificationsPage({
       email: pii?.personal_email ?? pii?.uni_email ?? null,
       emailIsUni: !pii?.personal_email && !!pii?.uni_email,
       whatsapp: pii?.whatsapp ?? null,
+      precheck: (r.ai_precheck as Precheck | null) ?? null,
     };
   });
+  // Phase 7: high pre-check confidence first (§4.6); unscored last; oldest first otherwise.
+  items.sort(
+    (a, b) =>
+      (b.precheck?.confidence ?? -1) - (a.precheck?.confidence ?? -1) ||
+      a.updatedAt.localeCompare(b.updatedAt),
+  );
 
   return (
     <div className="min-h-dvh">

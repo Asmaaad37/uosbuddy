@@ -2,7 +2,7 @@ import "server-only";
 import { extractText } from "unpdf";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chunkPages } from "./chunk";
-import { MODEL, aiEnabled, aiFake, claude, textOf } from "./claude.server";
+import { MODEL, aiEnabled, aiFake, claude, fileBlock, textOf } from "./claude.server";
 import { embed, toVector } from "./embed.server";
 
 const TRANSCRIBE = `You transcribe study material for a search index.
@@ -12,20 +12,7 @@ Separate pages with a line "=== Page N ===". Output only the transcription.`;
 
 /** Pages of text via Claude (photos of notes, scanned PDFs). */
 async function transcribe(data: Buffer, mime: string): Promise<string[]> {
-  const source =
-    mime === "application/pdf"
-      ? ({
-          type: "document",
-          source: { type: "base64", media_type: "application/pdf", data: data.toString("base64") },
-        } as const)
-      : ({
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: mime as "image/jpeg" | "image/png" | "image/webp",
-            data: data.toString("base64"),
-          },
-        } as const);
+  const source = fileBlock(data, mime);
   const message = await claude().messages.create({
     model: MODEL,
     max_tokens: 16000,

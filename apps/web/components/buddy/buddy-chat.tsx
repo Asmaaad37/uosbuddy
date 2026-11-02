@@ -57,7 +57,7 @@ export function BuddyChat({
       { role: "assistant", content: "", sources: [], pending: true },
     ]);
     const patch = (fn: (last: Turn) => Turn) =>
-      setTurns((t) => [...t.slice(0, -1), fn(t[t.length - 1]!)]);
+      setTurns((t) => (t.length ? [...t.slice(0, -1), fn(t[t.length - 1]!)] : t));
 
     try {
       const res = await fetch("/api/buddy", {

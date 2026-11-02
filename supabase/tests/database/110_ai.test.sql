@@ -2,7 +2,7 @@
 -- private, and signed moderation decisions can't be skipped or forged.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(14);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -79,14 +79,20 @@ insert into public.ai_threads (user_id, title) values (tests.uid('A'), 'Exam pre
 select is(tests.as('B', 'select count(*)::text from public.ai_threads'), '0', 'nobody reads another student''s AI chats');
 
 -- ---------- signed moderation ----------
+-- Before a secret is set, the app's "held" is still honoured (it only hides your own post).
+-- (tests.as is volatile: create the post once in a materialized CTE, then look it up.)
+select is((with n as materialized (select tests.as('A',
+  'select public.create_post(''campus'', ''unsure'', ''{}'', null, false, null, ''held'')')::uuid as id)
+  select p.status from n join public.posts p on p.id = n.id),
+  'held', 'without a secret, a held decision still holds');
 insert into app_private.config values ('moderation_secret', 'test-secret');
 select throws_ok($$ select tests.as('A', 'select public.create_post(''campus'', ''hello'')') $$, '42501', null,
   'with moderation on, a post without a decision is refused');
--- (Students can't read held posts, so check as the test runner.)
-select is((select status from public.posts where id = tests.as('A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
+select is((with n as materialized (select tests.as('A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'needs a look', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':held', 'test-secret', 'sha256'), 'hex'),
-  'held'))::uuid), 'held', 'a signed "hold" decision creates a held post');
+  'held'))::uuid as id)
+  select p.status from n join public.posts p on p.id = n.id), 'held', 'a signed "hold" decision creates a held post');
 select throws_ok(format('select tests.as(%L, %L)', 'A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'different text', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':published', 'test-secret', 'sha256'), 'hex'),

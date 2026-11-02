@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Flag, Loader2, MoreHorizontal, Trash2, VenetianMask } from "lucide-react";
 import { createComment, deleteComment, type Comment } from "@/actions/feed";
+import { toast } from "@/components/ui/toast";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,8 @@ export function Comments({
     });
     setBusy(false);
     if (!result.ok) return setError(result.error);
+    if (result.data.held)
+      toast.success("Thanks. A moderator will check your comment before it shows up.");
     setBody("");
     setReplyTo(null);
     setError(undefined);

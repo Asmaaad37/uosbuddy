@@ -57,6 +57,45 @@ export async function saveSlot(input: z.input<typeof slotSchema>): Promise<Actio
   return { ok: true, data: undefined };
 }
 
+const slotsSchema = z
+  .array(
+    z
+      .object({
+        day: z.number().int().min(0).max(6),
+        start: z.number().int().min(0).max(1439),
+        end: z.number().int().min(1).max(1440),
+        label: z.string().trim().min(1, "Name every class").max(60),
+        room: z.string().trim().max(40).nullable(),
+        course: z.uuid().nullable(),
+      })
+      .refine((s) => s.start < s.end, "Every class has to end after it starts"),
+  )
+  .min(1, "Keep at least one class")
+  .max(60);
+
+/** Phase 7 task 6: save the classes read from a screenshot, after the student checks them. */
+export async function saveSlots(input: z.input<typeof slotsSchema>): Promise<ActionResult> {
+  const parsed = slotsSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the classes");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { data: term } = await s.supabase.rpc("current_term");
+  const { error } = await s.supabase.from("timetable_slots").insert(
+    parsed.data.map((v) => ({
+      user_id: s.user.id,
+      term: term ?? "",
+      day: v.day,
+      start_min: v.start,
+      end_min: v.end,
+      label: v.label,
+      room: v.room || null,
+      course_id: v.course,
+    })),
+  );
+  if (error) return fail("Couldn't save the classes. Try again.");
+  return { ok: true, data: undefined };
+}
+
 export async function deleteSlot(slot: string): Promise<ActionResult> {
   if (!id.safeParse(slot).success) return fail("Class not found");
   const s = await session();

@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { db, logIn, makeStudent, run, textPdf } from "./helpers";
 
-// Phase 7: a shared PDF is indexed, and AI Buddy answers from it with a source. CI runs with
-// AI_FAKE=1, so the answer is a canned quote of the best match (no Claude call).
+// Phase 7: AI Buddy answers from a shared PDF with a source; moderation holds or blocks
+// posts. CI runs with AI_FAKE=1: Buddy quotes the best match, and [[hold]] / [[block]] in a
+// post pick the moderation decision (no Claude calls).
 test.skip(!process.env.E2E_DB || !process.env.AI_FAKE, "needs E2E_DB=1 and AI_FAKE=1");
 
 const code = `CS${(Date.now() % 9000) + 1000}`;
@@ -11,6 +12,8 @@ test("AI Buddy answers from the course's files, with a source", async ({ browser
   test.setTimeout(120_000);
   const s = await makeStudent("Hira Aslam", `hira7_${run}`.slice(0, 20), 4);
   const page = await (await browser.newContext()).newPage();
+  page.on("pageerror", (e) => console.log("[pageerror]", e.stack));
+  page.on("console", (m) => m.type() === "error" && console.log("[console.error]", m.text()));
   await logIn(page, s.email, s.password);
 
   // No courses yet: Buddy points to adding one.
@@ -90,4 +93,77 @@ test("AI Buddy answers from the course's files, with a source", async ({ browser
   // The source opens the course's files at that file.
   await chat.getByRole("list", { name: "Sources" }).getByRole("link").first().click();
   await expect(page).toHaveURL(/\/courses\/[0-9a-f-]{36}#r-[0-9a-f-]{36}$/);
+});
+
+test("moderation blocks rule-breaking posts and holds unsure ones for review", async ({
+  browser,
+}) => {
+  test.skip(!process.env.MODERATION_SECRET, "needs MODERATION_SECRET");
+  test.setTimeout(90_000);
+  const [a, b] = await Promise.all(
+    [
+      ["Sana Javed", "sana"],
+      ["Usman Ali", "usman"],
+    ].map(async ([name, first]) => {
+      const s = await makeStudent(name!, `${first}7_${run}`.slice(0, 20), 4);
+      const page = await (await browser.newContext()).newPage();
+      await logIn(page, s.email, s.password);
+      return { page, ...s };
+    }),
+  );
+  const post = async (text: string) => {
+    await a!.page.getByRole("button", { name: "Write a post" }).click();
+    await a!.page.getByLabel("What's happening?").fill(text);
+    await a!.page.getByRole("button", { name: "Post", exact: true }).click();
+  };
+
+  await a!.page.goto("/feed?sort=new");
+  await post(`[[block]] blocked post ${run}`);
+  await expect(a!.page.getByRole("alert")).toContainText("breaks the community rules");
+  await a!.page.keyboard.press("Escape");
+
+  await post(`[[hold]] Is the library open late? ${run}`);
+  await expect(a!.page.getByText("A moderator will check your post")).toBeVisible();
+  const held = a!.page.locator("article", { hasText: `Is the library open late? ${run}` });
+  await expect(held.getByText("Under review")).toBeVisible();
+
+  await post(`Anyone up for cricket after class? ${run}`);
+  await b!.page.goto("/feed?sort=new");
+  await expect(b!.page.getByText(`Anyone up for cricket after class? ${run}`)).toBeVisible();
+  await expect(b!.page.getByText(`Is the library open late? ${run}`)).toHaveCount(0);
+  await expect(b!.page.getByText(`blocked post ${run}`)).toHaveCount(0);
+});
+
+test("a timetable screenshot becomes classes after the student checks them", async ({
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const s = await makeStudent("Zain Abbas", `zain7_${run}`.slice(0, 20), 4);
+  const page = await (await browser.newContext()).newPage();
+  await logIn(page, s.email, s.password);
+
+  await page.goto("/timetable");
+  await page.getByLabel("Timetable screenshot").setInputFiles({
+    name: "timetable.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
+
+  // The fake reader finds Calculus (Mon 8:30) and Physics lab (Wed 11:00); fix one, drop one.
+  const found = page.getByRole("list", { name: "Classes found" });
+  await expect(found.getByRole("listitem")).toHaveCount(2);
+  const first = found.getByRole("listitem", { name: "Class 1" });
+  await expect(first.getByLabel("Class name")).toHaveValue("Calculus");
+  await first.getByLabel("Starts").fill("09:00");
+  await page.getByRole("button", { name: "Remove Physics lab" }).click();
+  await page.screenshot({ path: "test-results/screens/phase-7/02-timetable-import.png" });
+  await page.getByRole("button", { name: "Save 1 class" }).click();
+
+  const monday = page.getByRole("region", { name: "Mon" });
+  await expect(monday.getByText("Calculus")).toBeVisible();
+  await expect(monday.getByText("9:00–10:00")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Wed" }).getByText("Physics lab")).toHaveCount(0);
 });
