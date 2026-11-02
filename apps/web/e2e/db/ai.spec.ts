@@ -126,6 +126,7 @@ test("moderation blocks rule-breaking posts and holds unsure ones for review", a
   await expect(held.getByText("Under review")).toBeVisible();
 
   await post(`Anyone up for cricket after class? ${run}`);
+  await expect(a!.page.getByText(`Anyone up for cricket after class? ${run}`)).toBeVisible();
   await b!.page.goto("/feed?sort=new");
   await expect(b!.page.getByText(`Anyone up for cricket after class? ${run}`)).toBeVisible();
   await expect(b!.page.getByText(`Is the library open late? ${run}`)).toHaveCount(0);
