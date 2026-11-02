@@ -638,7 +638,9 @@ export type Database = {
       courses: {
         Row: {
           code: string
+          code_norm: string | null
           created_at: string
+          created_by: string | null
           credit_hours: number | null
           department_id: string
           id: string
@@ -647,7 +649,9 @@ export type Database = {
         }
         Insert: {
           code: string
+          code_norm?: string | null
           created_at?: string
+          created_by?: string | null
           credit_hours?: number | null
           department_id: string
           id?: string
@@ -656,7 +660,9 @@ export type Database = {
         }
         Update: {
           code?: string
+          code_norm?: string | null
           created_at?: string
+          created_by?: string | null
           credit_hours?: number | null
           department_id?: string
           id?: string
@@ -664,6 +670,20 @@ export type Database = {
           title?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "courses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "courses_department_id_fkey"
             columns: ["department_id"]
@@ -717,6 +737,52 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          course_id: string
+          created_at: string
+          section: string | null
+          term: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          section?: string | null
+          term: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          section?: string | null
+          term?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -843,6 +909,65 @@ export type Database = {
             foreignKeyName: "invites_inviter_id_fkey"
             columns: ["inviter_id"]
             isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentorships: {
+        Row: {
+          created_at: string
+          id: string
+          mentee_id: string
+          mentor_id: string
+          message: string | null
+          responded_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mentee_id: string
+          mentor_id: string
+          message?: string | null
+          responded_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mentee_id?: string
+          mentor_id?: string
+          message?: string | null
+          responded_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentorships_mentee_id_fkey"
+            columns: ["mentee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentorships_mentee_id_fkey"
+            columns: ["mentee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentorships_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentorships_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
@@ -1190,11 +1315,42 @@ export type Database = {
           },
         ]
       }
+      presence: {
+        Row: {
+          on_campus_until: string
+          user_id: string
+        }
+        Insert: {
+          on_campus_until: string
+          user_id: string
+        }
+        Update: {
+          on_campus_until?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presence_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presence_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       privacy_settings: {
         Row: {
           allow_dms_from: Database["public"]["Enums"]["visibility_level"]
           photo_visibility: Database["public"]["Enums"]["visibility_level"]
           profile_visibility: Database["public"]["Enums"]["visibility_level"]
+          share_free_time: boolean
           show_free_now: boolean
           show_hometown: boolean
           show_in_directory: boolean
@@ -1205,6 +1361,7 @@ export type Database = {
           allow_dms_from?: Database["public"]["Enums"]["visibility_level"]
           photo_visibility?: Database["public"]["Enums"]["visibility_level"]
           profile_visibility?: Database["public"]["Enums"]["visibility_level"]
+          share_free_time?: boolean
           show_free_now?: boolean
           show_hometown?: boolean
           show_in_directory?: boolean
@@ -1215,6 +1372,7 @@ export type Database = {
           allow_dms_from?: Database["public"]["Enums"]["visibility_level"]
           photo_visibility?: Database["public"]["Enums"]["visibility_level"]
           profile_visibility?: Database["public"]["Enums"]["visibility_level"]
+          share_free_time?: boolean
           show_free_now?: boolean
           show_hometown?: boolean
           show_in_directory?: boolean
@@ -1586,6 +1744,239 @@ export type Database = {
           },
         ]
       }
+      resource_votes: {
+        Row: {
+          resource_id: string
+          user_id: string
+        }
+        Insert: {
+          resource_id: string
+          user_id: string
+        }
+        Update: {
+          resource_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_votes_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          course_id: string
+          created_at: string
+          embedded_at: string | null
+          file_path: string
+          id: string
+          kind: string
+          mime_type: string
+          size_bytes: number
+          status: string
+          teacher_name: string | null
+          term: string | null
+          title: string
+          uploader_id: string | null
+          upvotes: number
+          year: number | null
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          embedded_at?: string | null
+          file_path: string
+          id?: string
+          kind: string
+          mime_type: string
+          size_bytes: number
+          status?: string
+          teacher_name?: string | null
+          term?: string | null
+          title: string
+          uploader_id?: string | null
+          upvotes?: number
+          year?: number | null
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          embedded_at?: string | null
+          file_path?: string
+          id?: string
+          kind?: string
+          mime_type?: string
+          size_bytes?: number
+          status?: string
+          teacher_name?: string | null
+          term?: string | null
+          title?: string
+          uploader_id?: string | null
+          upvotes?: number
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_uploader_id_fkey"
+            columns: ["uploader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_groups: {
+        Row: {
+          conversation_id: string
+          course_id: string
+          created_at: string
+          creator_id: string | null
+          id: string
+          max_members: number
+          meets: string | null
+          title: string
+        }
+        Insert: {
+          conversation_id: string
+          course_id: string
+          created_at?: string
+          creator_id?: string | null
+          id?: string
+          max_members?: number
+          meets?: string | null
+          title: string
+        }
+        Update: {
+          conversation_id?: string
+          course_id?: string
+          created_at?: string
+          creator_id?: string | null
+          id?: string
+          max_members?: number
+          meets?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_groups_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_groups_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_groups_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_groups_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timetable_slots: {
+        Row: {
+          course_id: string | null
+          day: number
+          end_min: number
+          id: string
+          label: string
+          room: string | null
+          start_min: number
+          term: string
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          day: number
+          end_min: number
+          id?: string
+          label: string
+          room?: string | null
+          start_min: number
+          term: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          day?: number
+          end_min?: number
+          id?: string
+          label?: string
+          room?: string | null
+          start_min?: number
+          term?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_slots_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_slots_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_slots_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       uni_email_claims: {
         Row: {
           attempts: number
@@ -1946,9 +2337,26 @@ export type Database = {
       }
     }
     Functions: {
+      add_course: {
+        Args: { p_code: string; p_department: string; p_title: string }
+        Returns: string
+      }
       add_group_members: {
         Args: { p_conversation: string; p_members: string[] }
         Returns: undefined
+      }
+      add_resource: {
+        Args: {
+          p_course: string
+          p_kind: string
+          p_mime: string
+          p_path: string
+          p_size: number
+          p_teacher?: string
+          p_title: string
+          p_year?: number
+        }
+        Returns: string
       }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
       answer_message_request: {
@@ -1983,6 +2391,15 @@ export type Database = {
       block_user: { Args: { p_target: string }; Returns: undefined }
       blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
       blocked_with: { Args: { p_other: string }; Returns: boolean }
+      busy_slots: {
+        Args: { p_users: string[] }
+        Returns: {
+          day: number
+          end_min: number
+          start_min: number
+          user_id: string
+        }[]
+      }
       can_see_space: {
         Args: { p_space: string; p_university: string }
         Returns: boolean
@@ -2006,6 +2423,41 @@ export type Database = {
           id: string
           last_read_at: string
           role: string
+        }[]
+      }
+      course_overview: {
+        Args: { p_course: string }
+        Returns: {
+          chat_id: string
+          code: string
+          department_code: string
+          department_id: string
+          enrolled_count: number
+          id: string
+          me_enrolled: boolean
+          title: string
+        }[]
+      }
+      course_people: {
+        Args: { p_course: string; p_limit?: number }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          id: string
+          section: string
+        }[]
+      }
+      course_study_groups: {
+        Args: { p_course: string }
+        Returns: {
+          conversation_id: string
+          id: string
+          is_member: boolean
+          max_members: number
+          meets: string
+          member_count: number
+          title: string
         }[]
       }
       create_backup: {
@@ -2042,6 +2494,16 @@ export type Database = {
         }
         Returns: string
       }
+      create_study_group: {
+        Args: {
+          p_course: string
+          p_max?: number
+          p_meets?: string
+          p_title: string
+        }
+        Returns: string
+      }
+      current_term: { Args: never; Returns: string }
       decide_verification: {
         Args: {
           p_decision: Database["public"]["Enums"]["verification_status"]
@@ -2053,6 +2515,7 @@ export type Database = {
       delete_comment: { Args: { p_comment: string }; Returns: undefined }
       delete_message: { Args: { p_message: string }; Returns: undefined }
       delete_post: { Args: { p_post: string }; Returns: undefined }
+      delete_resource: { Args: { p_resource: string }; Returns: undefined }
       directory: {
         Args: {
           p_after_id?: string
@@ -2082,12 +2545,42 @@ export type Database = {
           university_count: number
         }[]
       }
+      dispatch_push: {
+        Args: { p_id: string; p_kind: string }
+        Returns: undefined
+      }
       dm_key: { Args: { p_a: string; p_b: string }; Returns: string }
       expired_verification_documents: {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
       }
+      find_mentors: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          batch_year: number
+          bio: string
+          full_name: string
+          handle: string
+          id: string
+          requested: boolean
+          semester: number
+        }[]
+      }
       flag: { Args: { p_key: string }; Returns: boolean }
+      free_now: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          batch_year: number
+          department_id: string
+          free_until_min: number
+          full_name: string
+          handle: string
+          id: string
+          section: string
+        }[]
+      }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
       hot_score: {
         Args: { p_created: string; p_down: number; p_up: number }
@@ -2118,12 +2611,31 @@ export type Database = {
       is_staff: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
       join_batch_chat: { Args: { p_scope: string }; Returns: string }
+      join_course: {
+        Args: { p_course: string; p_section?: string }
+        Returns: undefined
+      }
+      join_course_chat: { Args: { p_course: string }; Returns: string }
+      join_study_group: { Args: { p_group: string }; Returns: string }
       leave_conversation: {
         Args: { p_conversation: string }
         Returns: undefined
       }
+      leave_course: { Args: { p_course: string }; Returns: undefined }
       mark_notifications_read: { Args: { p_id?: string }; Returns: undefined }
       mark_read: { Args: { p_conversation: string }; Returns: undefined }
+      mentor_requests: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          batch_year: number
+          created_at: string
+          full_name: string
+          handle: string
+          mentee_id: string
+          message: string
+        }[]
+      }
       my_blocked: {
         Args: never
         Returns: {
@@ -2160,6 +2672,17 @@ export type Database = {
           other_name: string
           title: string
           unread: number
+        }[]
+      }
+      my_courses: {
+        Args: never
+        Returns: {
+          code: string
+          department_code: string
+          enrolled_count: number
+          id: string
+          section: string
+          title: string
         }[]
       }
       my_invite_code: { Args: never; Returns: string }
@@ -2206,10 +2729,18 @@ export type Database = {
         Args: { p_message?: string; p_target: string }
         Returns: string
       }
+      request_mentor: {
+        Args: { p_mentor: string; p_message?: string }
+        Returns: undefined
+      }
       resolve_backup: { Args: { p_request: string }; Returns: undefined }
       respond_connection: {
         Args: { p_accept: boolean; p_requester: string }
         Returns: string
+      }
+      respond_mentorship: {
+        Args: { p_accept: boolean; p_mentee: string }
+        Returns: undefined
       }
       send_message: {
         Args: {
@@ -2236,10 +2767,13 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      send_ping: { Args: { p_target: string }; Returns: string }
+      set_mentor: { Args: { p_on: boolean }; Returns: undefined }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
       }
+      set_on_campus: { Args: { p_hours: number }; Returns: string }
       start_dm: { Args: { p_target: string }; Returns: string }
       start_uni_email_claim: {
         Args: { p_code_hash: string; p_email: string; p_user: string }
@@ -2279,12 +2813,22 @@ export type Database = {
         Args: { p_post: string; p_value: number }
         Returns: undefined
       }
+      vote_resource: {
+        Args: { p_resource: string; p_up: boolean }
+        Returns: number
+      }
       wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
     }
     Enums: {
       backup_status: "open" | "claimed" | "resolved" | "expired" | "cancelled"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
-      conversation_kind: "dm" | "group" | "batch" | "course" | "backup_temp"
+      conversation_kind:
+        | "dm"
+        | "group"
+        | "batch"
+        | "course"
+        | "backup_temp"
+        | "ping"
       listing_kind: "sell" | "buy" | "free" | "lost" | "found"
       program_level:
         | "associate"
@@ -2457,7 +3001,14 @@ export const Constants = {
     Enums: {
       backup_status: ["open", "claimed", "resolved", "expired", "cancelled"],
       connection_status: ["pending", "accepted", "declined", "blocked"],
-      conversation_kind: ["dm", "group", "batch", "course", "backup_temp"],
+      conversation_kind: [
+        "dm",
+        "group",
+        "batch",
+        "course",
+        "backup_temp",
+        "ping",
+      ],
       listing_kind: ["sell", "buy", "free", "lost", "found"],
       program_level: [
         "associate",

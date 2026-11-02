@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bell, LifeBuoy, MessageSquare, Settings, UserPlus, VenetianMask } from "lucide-react";
+import {
+  Bell,
+  GraduationCap,
+  LifeBuoy,
+  MessageSquare,
+  Settings,
+  UserPlus,
+  VenetianMask,
+  Zap,
+} from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { MarkAllRead } from "@/components/notifications/mark-read";
 import { PushPrompt } from "@/components/notifications/push-prompt";
@@ -18,6 +27,8 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   backup: LifeBuoy,
   post: MessageSquare,
   comment: MessageSquare,
+  ping: Zap,
+  mentor: GraduationCap,
 };
 
 /** Phase 5 task 5: the notification centre. */

@@ -10,6 +10,7 @@ import {
   respondConnection,
   type ConnectionState,
 } from "@/actions/connect";
+import { PingButton } from "@/components/timetable/free-now";
 import { Button } from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
@@ -116,9 +117,12 @@ export function ConnectPanel({
           </Button>
         )}
         {state === "connected" && (
-          <Button className="flex-1" onClick={message} disabled={!!busy}>
-            {spin("message") ?? <MessageCircle />} Message
-          </Button>
+          <>
+            <Button className="flex-1" onClick={message} disabled={!!busy}>
+              {spin("message") ?? <MessageCircle />} Message
+            </Button>
+            <PingButton target={target} />
+          </>
         )}
         {state !== "connected" && (
           <Button

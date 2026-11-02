@@ -37,7 +37,7 @@ export default async function ConversationPage({ params }: Props) {
     : { data: [] };
 
   const title =
-    conversation.kind === "dm"
+    conversation.kind === "dm" || conversation.kind === "ping"
       ? (conversation.other_name ?? conversation.other_handle ?? "Student")
       : (conversation.title ?? "Group");
 

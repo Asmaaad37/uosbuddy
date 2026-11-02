@@ -65,9 +65,9 @@ export default async function ChatsPage({ searchParams }: Props) {
     : [];
   const all = conversations ?? [];
   const lists: Record<Tab, typeof all> = {
-    primary: all.filter((c) => c.kind === "dm" && !c.is_request),
+    primary: all.filter((c) => (c.kind === "dm" || c.kind === "ping") && !c.is_request),
     requests: all.filter((c) => c.kind === "dm" && c.is_request),
-    groups: all.filter((c) => c.kind !== "dm"),
+    groups: all.filter((c) => c.kind !== "dm" && c.kind !== "ping"),
   };
   const counts: Record<Tab, number> = {
     primary: lists.primary.filter((c) => c.unread > 0 && !c.muted).length,
@@ -141,7 +141,7 @@ export default async function ChatsPage({ searchParams }: Props) {
         <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
           {shown.map((c) => {
             const name =
-              c.kind === "dm"
+              c.kind === "dm" || c.kind === "ping"
                 ? (c.other_name ?? c.other_handle ?? "Student")
                 : (c.title ?? "Group");
             const mine = c.last_sender_id === user.id;
@@ -151,7 +151,7 @@ export default async function ChatsPage({ searchParams }: Props) {
                   href={`/chats/${c.id}`}
                   className="flex items-center gap-3 px-3 py-3 hover:bg-surface-2"
                 >
-                  {c.kind === "dm" ? (
+                  {c.kind === "dm" || c.kind === "ping" ? (
                     <Avatar name={name} src={c.other_avatar} size="md" />
                   ) : (
                     <span className="grid size-11 shrink-0 place-items-center rounded-pill bg-lane-people text-lg text-lane-people-ink">

@@ -21,28 +21,30 @@ export default async function BackupPage() {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/backup");
 
-  const [{ data: open }, { data: mine }, { data: helping }, { data: points }] = await Promise.all([
-    supabase.rpc("backup_feed", { p_limit: 30 }),
-    supabase
-      .from("backup_requests")
-      .select(
-        "id, title, category, status, notified_count, conversation_id, expires_at, created_at",
-      )
-      .eq("requester_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(10),
-    supabase
-      .from("backup_requests")
-      .select("id, title, category, status, conversation_id")
-      .eq("claimed_by", user.id)
-      .eq("status", "claimed")
-      .order("claimed_at", { ascending: false }),
-    supabase
-      .from("backup_points")
-      .select("points, helped_count")
-      .eq("user_id", user.id)
-      .maybeSingle(),
-  ]);
+  const [{ data: open }, { data: mine }, { data: helping }, { data: points }, { data: courses }] =
+    await Promise.all([
+      supabase.rpc("backup_feed", { p_limit: 30 }),
+      supabase
+        .from("backup_requests")
+        .select(
+          "id, title, category, status, notified_count, conversation_id, expires_at, created_at",
+        )
+        .eq("requester_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10),
+      supabase
+        .from("backup_requests")
+        .select("id, title, category, status, conversation_id")
+        .eq("claimed_by", user.id)
+        .eq("status", "claimed")
+        .order("claimed_at", { ascending: false }),
+      supabase
+        .from("backup_points")
+        .select("points, helped_count")
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      supabase.rpc("my_courses"),
+    ]);
 
   return (
     <AppShell bell>
@@ -57,7 +59,7 @@ export default async function BackupPage() {
           </Stamp>
         )}
       </div>
-      <AskSheet />
+      <AskSheet courses={courses ?? []} />
       {(mine?.length ?? 0) > 0 && (
         // The soft ask, once they've asked for backup: now a ping is clearly useful.
         <PushPrompt reason="Get a ping on this phone when someone picks up your request." />

@@ -6,7 +6,11 @@ import {
   Ban,
   Bell,
   BookOpen,
+  Calculator,
+  CalendarDays,
   ChevronRight,
+  GraduationCap,
+  Library,
   Eye,
   Heart,
   Lock,
@@ -138,6 +142,30 @@ export default async function MePage() {
             icon={Lock}
             label="Privacy"
             hint="Who sees your profile and photo, and who can message you"
+          />
+          <Row
+            href="/courses"
+            icon={Library}
+            label="My courses"
+            hint="Files, study groups and course chats"
+          />
+          <Row
+            href="/timetable"
+            icon={CalendarDays}
+            label="Timetable"
+            hint="Your week, and free time with friends"
+          />
+          <Row
+            href="/gpa"
+            icon={Calculator}
+            label="GPA calculator"
+            hint="UoS grading table, saved on this phone"
+          />
+          <Row
+            href="/mentors"
+            icon={GraduationCap}
+            label="Mentors"
+            hint="Find a senior, or mentor juniors"
           />
           <Row
             href="/me/notifications"

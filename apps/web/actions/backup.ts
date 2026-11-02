@@ -29,6 +29,7 @@ const askSchema = z.object({
   category: z.enum(CATEGORIES, { message: "Pick a category" }),
   urgency: z.number().int().min(1).max(3),
   hours: z.number().int().min(1).max(72),
+  course: z.uuid().optional(),
 });
 
 /** Phase 5 task 4: ask your classmates for backup. They're notified straight away. */
@@ -39,13 +40,14 @@ export async function createBackup(
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the form");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
-  const { title, details, category, urgency, hours } = parsed.data;
+  const { title, details, category, urgency, hours, course } = parsed.data;
   const { data, error } = await s.supabase.rpc("create_backup", {
     p_title: title,
     p_details: details ?? "",
     p_category: category,
     p_urgency: urgency,
     p_hours: hours,
+    p_course: course,
   });
   if (error || !data) return fail(friendly(error, "Couldn't send your request. Try again."));
   return { ok: true, data };

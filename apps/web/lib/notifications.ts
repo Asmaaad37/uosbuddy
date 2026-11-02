@@ -65,6 +65,24 @@ export function describe(n: NotificationLike): Described {
         body: typeof p.preview === "string" ? p.preview : undefined,
         href: n.entity_id ? `/feed/${n.entity_id}` : "/feed",
       };
+    case "ping":
+      return {
+        title: `${who} asks: you free?`,
+        body: "Reply within 2 hours.",
+        href: n.entity_id ? `/chats/${n.entity_id}` : "/chats",
+      };
+    case "mentor.request":
+      return {
+        title: `${who} would like you to mentor them`,
+        body: typeof p.message === "string" && p.message ? p.message : undefined,
+        href: "/mentors",
+      };
+    case "mentor.accepted":
+      return {
+        title: `${who} will mentor you`,
+        body: "You're connected now. Say hi!",
+        href: n.actor_handle ? `/people/${n.actor_handle}` : "/mentors",
+      };
     default:
       return { title: "Something new on UOSBuddy", href: "/notifications" };
   }
