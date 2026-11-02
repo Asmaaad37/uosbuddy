@@ -44,7 +44,7 @@ export default async function FeedPage({ searchParams }: Props) {
     `/feed?${new URLSearchParams({ ...(t !== "campus" && { tab: t }), ...(s !== "hot" && { sort: s }) })}`;
 
   return (
-    <AppShell>
+    <AppShell bell>
       <h1 className="text-[28px] leading-tight font-bold">Feed</h1>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <nav aria-label="Feeds" className="flex gap-2">

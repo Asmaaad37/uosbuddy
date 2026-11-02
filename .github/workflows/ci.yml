@@ -118,6 +118,7 @@ jobs:
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
           SUPABASE_SERVICE_ROLE_KEY: ${{ steps.sb.outputs.service }}
           CRON_SECRET: ci-cron-secret
+          PUSH_WEBHOOK_SECRET: ci-push-secret
       - uses: actions/upload-artifact@v4
         if: always()
         with:

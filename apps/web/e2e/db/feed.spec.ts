@@ -82,6 +82,12 @@ test("a Backup request: ask, claim, chat, mark done", async ({ browser }) => {
     .eq("type", "backup.nearby");
   expect(pinged?.length).toBe(1);
 
+  // B's bell shows the ping; the centre says who needs what.
+  await b.page.goto("/backup");
+  await expect(b.page.getByRole("link", { name: /Notifications, \d+ unread/ })).toBeVisible();
+  await b.page.getByRole("link", { name: /Notifications, \d+ unread/ }).click();
+  await expect(b.page.getByText("Nida Akhtar needs backup").first()).toBeVisible();
+  await shot(b.page, "06-notifications");
   await b.page.goto("/backup");
   const card = b.page.locator("li", { hasText: `Need DSA notes from Monday ${run}` });
   await expect(card.getByText("Your section")).toBeVisible();
@@ -97,4 +103,16 @@ test("a Backup request: ask, claim, chat, mark done", async ({ browser }) => {
   await expect(a.page.getByText("Done", { exact: true })).toBeVisible();
   await b.page.goto("/backup");
   await expect(b.page.getByText(/Helped 1×/)).toBeVisible();
+});
+
+test("only the database can call the push endpoint", async ({ request }) => {
+  const body = { kind: "notification", id: "00000000-0000-0000-0000-000000000000" };
+  expect((await request.post("/api/push", { data: body })).status()).toBe(401);
+  const res = await request.post("/api/push", {
+    data: body,
+    headers: { authorization: `Bearer ${process.env.PUSH_WEBHOOK_SECRET}` },
+  });
+  expect(res.status()).toBe(200);
+  // No VAPID keys in CI: accepted, nothing sent.
+  expect(await res.json()).toMatchObject({ sent: 0 });
 });

@@ -5,6 +5,7 @@ import { MessageCircle } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AskSheet } from "@/components/backup/ask-sheet";
 import { BackupAction } from "@/components/backup/backup-actions";
+import { PushPrompt } from "@/components/notifications/push-prompt";
 import { Avatar } from "@/components/ui/avatar";
 import { Chip, Stamp } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
@@ -44,7 +45,7 @@ export default async function BackupPage() {
   ]);
 
   return (
-    <AppShell>
+    <AppShell bell>
       <div className="flex items-start justify-between gap-3">
         <div className="grid gap-1">
           <h1 className="text-[28px] leading-tight font-bold">Backup</h1>
@@ -57,6 +58,10 @@ export default async function BackupPage() {
         )}
       </div>
       <AskSheet />
+      {(mine?.length ?? 0) > 0 && (
+        // The soft ask, once they've asked for backup: now a ping is clearly useful.
+        <PushPrompt reason="Get a ping on this phone when someone picks up your request." />
+      )}
 
       {(helping?.length ?? 0) > 0 && (
         <section aria-labelledby="helping" className="grid gap-2">
