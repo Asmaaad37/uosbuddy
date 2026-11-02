@@ -60,7 +60,10 @@ export async function loadFeed(input: z.input<typeof feedSchema>): Promise<Actio
     query = query.order("created_at", { ascending: false }).order("id", { ascending: false });
   }
   const { data, error } = await query.limit(PAGE);
-  if (error) return fail("Couldn't load the feed. Try again.");
+  if (error) {
+    console.error("[feed] load failed", error.code, error.message);
+    return fail("Couldn't load the feed. Try again.");
+  }
   const posts = data ?? [];
   const last = posts.at(-1);
   return {

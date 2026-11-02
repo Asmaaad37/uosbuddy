@@ -91,12 +91,21 @@ export default async function FeedPage({ searchParams }: Props) {
         initialSpace={space}
         anonymousAllowed={!!flag?.enabled}
       />
+      {!page.ok && (
+        <p role="alert" className="rounded-lg border border-danger/40 p-4 text-sm text-danger">
+          {page.error}{" "}
+          <Link href={href(tab, sort)} className="font-semibold underline">
+            Try again
+          </Link>
+        </p>
+      )}
       <FeedList
         // Re-mount after posting (router.refresh) so a new post shows up at the top.
         key={`${space}:${sort}:${posts.posts[0]?.id ?? ""}`}
         space={space}
         sort={sort}
         initial={posts}
+        failed={!page.ok}
         mediaUrls={Object.fromEntries(
           (urls ?? []).flatMap((u) => (u.path && u.signedUrl ? [[u.path, u.signedUrl]] : [])),
         )}

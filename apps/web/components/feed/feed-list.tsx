@@ -12,7 +12,9 @@ export function FeedList({
   sort,
   initial,
   mediaUrls,
+  failed = false,
 }: {
+  failed?: boolean;
   space: string;
   sort: Sort;
   initial: FeedPage;
@@ -31,6 +33,7 @@ export function FeedList({
     setPage((p) => ({ posts: [...p.posts, ...result.data.posts], next: result.data.next }));
   }
 
+  if (failed) return null;
   if (page.posts.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
