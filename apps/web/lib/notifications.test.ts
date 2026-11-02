@@ -36,4 +36,14 @@ group("describe", () => {
     });
     expect(d.title).toBe("Someone commented on your post");
   });
+
+  it("links pings to their chat and mentor requests to Mentors", () => {
+    expect(describe({ ...base, type: "ping", payload: {} }).href).toBe(`/chats/${base.entity_id}`);
+    expect(
+      describe({ ...base, type: "mentor.request", payload: { message: "DSA?" } }),
+    ).toMatchObject({
+      title: "Ayesha Khan would like you to mentor them",
+      href: "/mentors",
+    });
+  });
 });

@@ -31,6 +31,7 @@ const SIGNED_IN_PREFIXES = [
   "/notifications",
   "/courses",
   "/timetable",
+  "/mentors",
   "/start/freshman/proof",
 ];
 
@@ -47,6 +48,7 @@ const ALLOWED: Record<Profile["verification_status"], string[]> = {
     "/notifications",
     "/courses",
     "/timetable",
+    "/mentors",
   ],
   unverified: ["/start/freshman/proof"],
   pending: ["/pending", "/start/freshman/proof"],

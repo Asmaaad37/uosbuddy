@@ -20,7 +20,11 @@ import { cn } from "@/lib/utils";
 type Category = (typeof CATEGORIES)[number];
 
 /** Phase 5 task 4: the "I need backup" sheet. */
-export function AskSheet() {
+export function AskSheet({
+  courses = [],
+}: {
+  courses?: { id: string; code: string; title: string }[];
+}) {
   const id = useId();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -29,6 +33,7 @@ export function AskSheet() {
   const [details, setDetails] = useState("");
   const [urgency, setUrgency] = useState(2);
   const [hours, setHours] = useState(24);
+  const [course, setCourse] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -36,7 +41,14 @@ export function AskSheet() {
     e.preventDefault();
     if (!category) return setError("Pick a category");
     setBusy(true);
-    const result = await createBackup({ title, details, category, urgency, hours });
+    const result = await createBackup({
+      title,
+      details,
+      category,
+      urgency,
+      hours,
+      course: course || undefined,
+    });
     setBusy(false);
     if (!result.ok) return setError(result.error);
     setOpen(false);
@@ -104,6 +116,24 @@ export function AskSheet() {
               />
             )}
           </Field>
+          {courses.length > 0 && (
+            <Field
+              id={`${id}-course`}
+              label="For a course? (optional)"
+              hint="Classmates taking it hear first"
+            >
+              {(aria) => (
+                <NativeSelect {...aria} value={course} onChange={(e) => setCourse(e.target.value)}>
+                  <option value="">Not about a course</option>
+                  {courses.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.code} · {c.title}
+                    </option>
+                  ))}
+                </NativeSelect>
+              )}
+            </Field>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <Field id={`${id}-urgency`} label="How urgent?">
               {(aria) => (
