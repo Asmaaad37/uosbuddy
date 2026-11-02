@@ -5,12 +5,11 @@ import { usePathname } from "next/navigation";
 import { Compass, LifeBuoy, MessageCircle, Newspaper, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Section 6.3 #8. Feed and Backup arrive in later phases; until then they say so
-// instead of linking to a page that doesn't exist.
+// Section 6.3 #8.
 const ITEMS = [
   { label: "Explore", href: "/explore", icon: Compass, match: ["/explore", "/people"] },
-  { label: "Feed", icon: Newspaper },
-  { label: "Backup", icon: LifeBuoy, center: true },
+  { label: "Feed", href: "/feed", icon: Newspaper, match: ["/feed"] },
+  { label: "Backup", href: "/backup", icon: LifeBuoy, match: ["/backup"], center: true },
   { label: "Chats", href: "/chats", icon: MessageCircle, match: ["/chats"] },
   { label: "Me", href: "/me", icon: UserRound, match: ["/me"] },
 ] as const;
@@ -27,30 +26,6 @@ export function BottomNav() {
         {ITEMS.map((item) => {
           const Icon = item.icon;
           const center = "center" in item && item.center;
-          if (!("href" in item)) {
-            return (
-              <li key={item.label} className="flex-1">
-                <span
-                  aria-disabled
-                  className="flex h-16 flex-col items-center justify-center gap-0.5 text-ink-2/60"
-                >
-                  <span
-                    className={cn(
-                      "grid place-items-center",
-                      center && "-mt-6 size-14 rounded-pill border-4 border-bg bg-lane-help/40",
-                    )}
-                  >
-                    <Icon className="size-5" strokeWidth={1.75} />
-                  </span>
-                  <span className="text-[11px] font-semibold">{item.label}</span>
-                  <span className="sr-only">(coming soon)</span>
-                  <span aria-hidden className="text-[9px] tracking-wide uppercase">
-                    Soon
-                  </span>
-                </span>
-              </li>
-            );
-          }
           const on = item.match.some((m) => path === m || path.startsWith(`${m}/`));
           return (
             <li key={item.label} className="flex-1">
@@ -62,7 +37,17 @@ export function BottomNav() {
                   on ? "text-ink" : "text-ink-2 hover:text-ink",
                 )}
               >
-                <Icon className={cn("size-6", on && "text-brand")} strokeWidth={on ? 2.25 : 1.75} />
+                {center ? (
+                  // Backup: the signature feature sits raised in the middle (§6.3 #8).
+                  <span className="-mt-7 grid size-14 place-items-center rounded-pill border-4 border-bg bg-lane-help text-lane-help-ink shadow-lift">
+                    <Icon className="size-6" strokeWidth={2} />
+                  </span>
+                ) : (
+                  <Icon
+                    className={cn("size-6", on && "text-brand")}
+                    strokeWidth={on ? 2.25 : 1.75}
+                  />
+                )}
                 {item.label}
               </Link>
             </li>

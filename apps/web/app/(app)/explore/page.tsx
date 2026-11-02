@@ -73,6 +73,7 @@ export default async function ExplorePage({ searchParams }: Props) {
 
   return (
     <AppShell
+      bell
       action={
         <Link href="/me" aria-label="My profile" className="rounded-pill">
           <Avatar name={name} src={profile.avatar_url} size="md" />

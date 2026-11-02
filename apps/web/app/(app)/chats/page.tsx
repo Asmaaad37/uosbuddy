@@ -77,7 +77,7 @@ export default async function ChatsPage({ searchParams }: Props) {
   const shown = lists[tab];
 
   return (
-    <AppShell>
+    <AppShell bell>
       <ChatsLive userId={user.id} />
       <h1 className="text-[28px] leading-tight font-bold">Chats</h1>
 

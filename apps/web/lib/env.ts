@@ -39,6 +39,8 @@ const serverSchema = publicSchema.extend({
   VAPID_SUBJECT: optional,
   // Shared secret for scheduled jobs (/api/cron/*); Vercel Cron sends it as a Bearer token.
   CRON_SECRET: optional,
+  // Shared with the database (app_private.config.push_secret) so only it can call /api/push.
+  PUSH_WEBHOOK_SECRET: optional,
   AI_SERVICE_URL: optional,
   AI_SERVICE_HMAC_SECRET: optional,
   SENTRY_DSN: optional,

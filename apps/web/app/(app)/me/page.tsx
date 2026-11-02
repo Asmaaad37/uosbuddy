@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import {
   AtSign,
   Ban,
+  Bell,
   BookOpen,
   ChevronRight,
   Eye,
@@ -72,7 +73,7 @@ export default async function MePage() {
   const name = profile.full_name ?? profile.handle ?? "You";
 
   return (
-    <AppShell back="/explore">
+    <AppShell back="/explore" bell>
       <header className="flex items-center gap-4">
         <Avatar name={name} src={profile.avatar_url} size="lg" />
         <div className="grid min-w-0 gap-1.5">
@@ -137,6 +138,12 @@ export default async function MePage() {
             icon={Lock}
             label="Privacy"
             hint="Who sees your profile and photo, and who can message you"
+          />
+          <Row
+            href="/me/notifications"
+            icon={Bell}
+            label="Notifications"
+            hint="What pings you, and push on this phone"
           />
           <Row href="/me/blocked" icon={Ban} label="Blocked" />
           {hasUniEmail ? (

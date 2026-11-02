@@ -39,6 +39,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      anon_aliases: {
+        Row: {
+          alias: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          alias: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          alias?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anon_aliases_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anon_aliases_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anon_aliases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anon_aliases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -101,6 +148,159 @@ export type Database = {
           mail_host?: string
         }
         Relationships: []
+      }
+      backup_points: {
+        Row: {
+          helped_count: number
+          points: number
+          user_id: string
+        }
+        Insert: {
+          helped_count?: number
+          points?: number
+          user_id: string
+        }
+        Update: {
+          helped_count?: number
+          points?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backup_requests: {
+        Row: {
+          category: string
+          claimed_at: string | null
+          claimed_by: string | null
+          closed_at: string | null
+          conversation_id: string | null
+          course_id: string | null
+          created_at: string
+          department_id: string | null
+          details: string | null
+          expires_at: string
+          id: string
+          notified_count: number
+          requester_id: string
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["backup_status"]
+          title: string
+          university_id: string
+          urgency: number
+        }
+        Insert: {
+          category: string
+          claimed_at?: string | null
+          claimed_by?: string | null
+          closed_at?: string | null
+          conversation_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          department_id?: string | null
+          details?: string | null
+          expires_at?: string
+          id?: string
+          notified_count?: number
+          requester_id: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["backup_status"]
+          title: string
+          university_id: string
+          urgency?: number
+        }
+        Update: {
+          category?: string
+          claimed_at?: string | null
+          claimed_by?: string | null
+          closed_at?: string | null
+          conversation_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          department_id?: string | null
+          details?: string | null
+          expires_at?: string
+          id?: string
+          notified_count?: number
+          requester_id?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["backup_status"]
+          title?: string
+          university_id?: string
+          urgency?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_requests_claimed_by_fkey"
+            columns: ["claimed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_claimed_by_fkey"
+            columns: ["claimed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backup_requests_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blocks: {
         Row: {
@@ -177,6 +377,82 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          is_anonymous: boolean
+          parent_id: string | null
+          post_id: string
+          status: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          parent_id?: string | null
+          post_id: string
+          status?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          parent_id?: string | null
+          post_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
             referencedColumns: ["id"]
           },
         ]
@@ -445,6 +721,24 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          enabled: boolean
+          key: string
+          note: string | null
+        }
+        Insert: {
+          enabled?: boolean
+          key: string
+          note?: string | null
+        }
+        Update: {
+          enabled?: boolean
+          key?: string
+          note?: string | null
+        }
+        Relationships: []
+      }
       interests: {
         Row: {
           category: string
@@ -615,6 +909,283 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_prefs: {
+        Row: {
+          backup: boolean
+          comments: boolean
+          connections: boolean
+          messages: boolean
+          push: boolean
+          user_id: string
+        }
+        Insert: {
+          backup?: boolean
+          comments?: boolean
+          connections?: boolean
+          messages?: boolean
+          push?: boolean
+          user_id: string
+        }
+        Update: {
+          backup?: boolean
+          comments?: boolean
+          connections?: boolean
+          messages?: boolean
+          push?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_prefs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_prefs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          payload: Json
+          read_at: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          payload?: Json
+          read_at?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          payload?: Json
+          read_at?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poll_votes: {
+        Row: {
+          option: number
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          option: number
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          option?: number
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_votes: {
+        Row: {
+          post_id: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          post_id: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          post_id?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          body: string
+          comment_count: number
+          created_at: string
+          downvotes: number
+          hot_score: number
+          id: string
+          is_anonymous: boolean
+          media_paths: string[]
+          poll: Json | null
+          removed_at: string | null
+          space: string
+          status: string
+          university_id: string
+          upvotes: number
+        }
+        Insert: {
+          author_id: string
+          body: string
+          comment_count?: number
+          created_at?: string
+          downvotes?: number
+          hot_score?: number
+          id?: string
+          is_anonymous?: boolean
+          media_paths?: string[]
+          poll?: Json | null
+          removed_at?: string | null
+          space?: string
+          status?: string
+          university_id: string
+          upvotes?: number
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          comment_count?: number
+          created_at?: string
+          downvotes?: number
+          hot_score?: number
+          id?: string
+          is_anonymous?: boolean
+          media_paths?: string[]
+          poll?: Json | null
+          removed_at?: string | null
+          space?: string
+          status?: string
+          university_id?: string
+          upvotes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
             referencedColumns: ["id"]
           },
         ]
@@ -898,6 +1469,51 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1209,6 +1825,78 @@ export type Database = {
       }
     }
     Views: {
+      comments_public: {
+        Row: {
+          author_avatar: string | null
+          author_handle: string | null
+          author_id: string | null
+          author_name: string | null
+          body: string | null
+          created_at: string | null
+          id: string | null
+          is_anonymous: boolean | null
+          is_mine: boolean | null
+          is_op: boolean | null
+          parent_id: string | null
+          post_id: string | null
+          status: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts_public: {
+        Row: {
+          author_avatar: string | null
+          author_handle: string | null
+          author_id: string | null
+          author_name: string | null
+          body: string | null
+          comment_count: number | null
+          created_at: string | null
+          downvotes: number | null
+          hot_score: number | null
+          id: string | null
+          is_anonymous: boolean | null
+          is_mine: boolean | null
+          media_paths: string[] | null
+          my_poll_option: number | null
+          my_vote: number | null
+          poll: Json | null
+          poll_counts: number[] | null
+          space: string | null
+          status: string | null
+          upvotes: number | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null
@@ -1262,6 +1950,7 @@ export type Database = {
         Args: { p_conversation: string; p_members: string[] }
         Returns: undefined
       }
+      alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
       answer_message_request: {
         Args: { p_accept: boolean; p_conversation: string }
         Returns: undefined
@@ -1271,11 +1960,38 @@ export type Database = {
         Returns: boolean
       }
       are_connected: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      backup_fanout: { Args: { p_request: string }; Returns: number }
+      backup_feed: {
+        Args: { p_limit?: number }
+        Returns: {
+          category: string
+          course_code: string
+          created_at: string
+          details: string
+          expires_at: string
+          id: string
+          nearness: number
+          requester_avatar: string
+          requester_handle: string
+          requester_id: string
+          requester_name: string
+          title: string
+          urgency: number
+        }[]
+      }
+      backup_housekeeping: { Args: never; Returns: undefined }
       block_user: { Args: { p_target: string }; Returns: undefined }
       blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      blocked_with: { Args: { p_other: string }; Returns: boolean }
+      can_see_space: {
+        Args: { p_space: string; p_university: string }
+        Returns: boolean
+      }
       can_use_conversation_path: { Args: { p_name: string }; Returns: boolean }
       can_use_topic: { Args: { p_topic: string }; Returns: boolean }
       can_view_profile: { Args: { p_target: string }; Returns: boolean }
+      cancel_backup: { Args: { p_request: string }; Returns: undefined }
+      claim_backup: { Args: { p_request: string }; Returns: string }
       confirm_uni_email_claim: {
         Args: { p_code_hash: string; p_user: string }
         Returns: string
@@ -1292,8 +2008,38 @@ export type Database = {
           role: string
         }[]
       }
+      create_backup: {
+        Args: {
+          p_category: string
+          p_course?: string
+          p_details: string
+          p_hours?: number
+          p_title: string
+          p_urgency?: number
+        }
+        Returns: string
+      }
+      create_comment: {
+        Args: {
+          p_anonymous?: boolean
+          p_body: string
+          p_parent?: string
+          p_post: string
+        }
+        Returns: string
+      }
       create_group: {
         Args: { p_emoji: string; p_members: string[]; p_title: string }
+        Returns: string
+      }
+      create_post: {
+        Args: {
+          p_anonymous?: boolean
+          p_body: string
+          p_media?: string[]
+          p_poll?: Json
+          p_space: string
+        }
         Returns: string
       }
       decide_verification: {
@@ -1304,7 +2050,9 @@ export type Database = {
         }
         Returns: undefined
       }
+      delete_comment: { Args: { p_comment: string }; Returns: undefined }
       delete_message: { Args: { p_message: string }; Returns: undefined }
+      delete_post: { Args: { p_post: string }; Returns: undefined }
       directory: {
         Args: {
           p_after_id?: string
@@ -1339,7 +2087,12 @@ export type Database = {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
       }
+      flag: { Args: { p_key: string }; Returns: boolean }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
+      hot_score: {
+        Args: { p_created: string; p_down: number; p_up: number }
+        Returns: number
+      }
       incoming_requests: {
         Args: never
         Returns: {
@@ -1362,12 +2115,14 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_member: { Args: { p_conversation: string }; Returns: boolean }
+      is_staff: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
       join_batch_chat: { Args: { p_scope: string }; Returns: string }
       leave_conversation: {
         Args: { p_conversation: string }
         Returns: undefined
       }
+      mark_notifications_read: { Args: { p_id?: string }; Returns: undefined }
       mark_read: { Args: { p_conversation: string }; Returns: undefined }
       my_blocked: {
         Args: never
@@ -1408,7 +2163,33 @@ export type Database = {
         }[]
       }
       my_invite_code: { Args: never; Returns: string }
+      my_notifications: {
+        Args: { p_limit?: number }
+        Returns: {
+          actor_avatar: string
+          actor_handle: string
+          actor_name: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          payload: Json
+          read_at: string
+          type: string
+        }[]
+      }
       my_university_id: { Args: never; Returns: string }
+      notify: {
+        Args: {
+          p_actor: string
+          p_entity_id: string
+          p_entity_type: string
+          p_payload?: Json
+          p_type: string
+          p_user: string
+        }
+        Returns: undefined
+      }
       public_stats: { Args: never; Returns: Json }
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
       remove_connection: { Args: { p_other: string }; Returns: undefined }
@@ -1425,6 +2206,7 @@ export type Database = {
         Args: { p_message?: string; p_target: string }
         Returns: string
       }
+      resolve_backup: { Args: { p_request: string }; Returns: undefined }
       respond_connection: {
         Args: { p_accept: boolean; p_requester: string }
         Returns: string
@@ -1481,6 +2263,7 @@ export type Database = {
         }[]
       }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
+      unclaim_backup: { Args: { p_request: string }; Returns: undefined }
       visible_at: {
         Args: {
           p_level: Database["public"]["Enums"]["visibility_level"]
@@ -1488,6 +2271,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      vote_poll: {
+        Args: { p_option: number; p_post: string }
+        Returns: undefined
+      }
+      vote_post: {
+        Args: { p_post: string; p_value: number }
+        Returns: undefined
+      }
+      wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
     }
     Enums: {
       backup_status: "open" | "claimed" | "resolved" | "expired" | "cancelled"
