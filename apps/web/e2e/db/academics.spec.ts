@@ -103,3 +103,16 @@ test("courses, files, study groups, free time together and a ping", async ({ bro
     .eq("type", "ping");
   expect(pinged?.length).toBe(1);
 });
+
+test("the GPA calculator follows the UoS grading table", async ({ browser }) => {
+  const a = await student(browser, "Iqra Nawaz", "iqra");
+  await a.page.goto("/gpa");
+  await a.page.getByLabel("Marks out of 100").fill("72");
+  await expect(a.page.getByText("3.47 grade points")).toBeVisible();
+  await a.page.getByRole("button", { name: "Add course" }).click();
+  await a.page.getByLabel("Marks out of 100").nth(1).fill("45");
+  await expect(a.page.getByText(/below the 50% pass mark/)).toBeVisible();
+  // (3.47×3 + 1.50×3) / 6 = 2.485 → 2.49
+  await expect(a.page.getByText("2.49").first()).toBeVisible();
+  await shot(a.page, "04-gpa");
+});

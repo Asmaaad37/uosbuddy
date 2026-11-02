@@ -6,6 +6,7 @@ import {
   Ban,
   Bell,
   BookOpen,
+  Calculator,
   CalendarDays,
   ChevronRight,
   GraduationCap,
@@ -153,6 +154,12 @@ export default async function MePage() {
             icon={CalendarDays}
             label="Timetable"
             hint="Your week, and free time with friends"
+          />
+          <Row
+            href="/gpa"
+            icon={Calculator}
+            label="GPA calculator"
+            hint="UoS grading table, saved on this phone"
           />
           <Row
             href="/mentors"
