@@ -16,8 +16,8 @@ const lanes = {
 
 const TILES = [
   { label: "Batch", href: "/explore/batch", icon: Users, lane: "people" },
-  { label: "Backup", icon: LifeBuoy, lane: "help" },
-  { label: "Courses", icon: BookOpen, lane: "learn" },
+  { label: "Backup", href: "/backup", icon: LifeBuoy, lane: "help" },
+  { label: "Courses", href: "/courses", icon: BookOpen, lane: "learn" },
   { label: "Buddy", icon: Sparkles, lane: "learn" },
   { label: "Rides", icon: Car, lane: "campus" },
   { label: "Market", icon: ShoppingBag, lane: "campus" },
