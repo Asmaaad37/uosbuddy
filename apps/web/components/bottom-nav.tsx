@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { Compass, LifeBuoy, MessageCircle, Newspaper, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Section 6.3 #8. Feed, Backup and Chats arrive in later phases; until then they say so
+// Section 6.3 #8. Feed and Backup arrive in later phases; until then they say so
 // instead of linking to a page that doesn't exist.
 const ITEMS = [
   { label: "Explore", href: "/explore", icon: Compass, match: ["/explore", "/people"] },
   { label: "Feed", icon: Newspaper },
   { label: "Backup", icon: LifeBuoy, center: true },
-  { label: "Chats", icon: MessageCircle },
+  { label: "Chats", href: "/chats", icon: MessageCircle, match: ["/chats"] },
   { label: "Me", href: "/me", icon: UserRound, match: ["/me"] },
 ] as const;
 

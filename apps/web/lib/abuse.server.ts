@@ -17,6 +17,8 @@ const LIMITS = {
   // Per student: each request sends an email, so keep it to a handful.
   linkEmailCode: { requests: 5, window: "1 h" },
   linkEmailConfirm: { requests: 20, window: "1 h" },
+  // Message and connection-request limits live in the database (they're called directly).
+  report: { requests: 20, window: "1 d" },
   // Per IP: the waitlist is the one form anyone can submit without an account.
   waitlist: { requests: 5, window: "1 h" },
 } satisfies Record<string, { requests: number; window: Duration }>;

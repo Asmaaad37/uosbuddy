@@ -23,7 +23,14 @@ export function ProfileStamps({
 }
 
 /** Section 6.3 profile: everything another student is allowed to see, nothing more. */
-export function ProfileCard({ profile }: { profile: ProfileCardData }) {
+export function ProfileCard({
+  profile,
+  actions,
+}: {
+  profile: ProfileCardData;
+  /** Connect / Message buttons, under the name. */
+  actions?: React.ReactNode;
+}) {
   const name = profile.full_name ?? profile.handle ?? "Student";
   const studies = studiesLine(profile);
   const residence =
@@ -39,6 +46,8 @@ export function ProfileCard({ profile }: { profile: ProfileCardData }) {
           <ProfileStamps hasUniEmail={profile.has_uni_email} isMentor={profile.is_mentor} />
         </div>
       </header>
+
+      {actions}
 
       {(profile.programName || profile.departmentName || studies) && (
         <section aria-label="Studies" className="grid gap-0.5">

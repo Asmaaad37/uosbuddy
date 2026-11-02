@@ -181,6 +181,184 @@ export type Database = {
           },
         ]
       }
+      connections: {
+        Row: {
+          addressee_id: string
+          created_at: string
+          id: string
+          message: string | null
+          requester_id: string
+          responded_at: string | null
+          status: Database["public"]["Enums"]["connection_status"]
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_id: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["connection_status"]
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_id?: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["connection_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connections_addressee_id_fkey"
+            columns: ["addressee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_addressee_id_fkey"
+            columns: ["addressee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_members: {
+        Row: {
+          accepted_at: string | null
+          conversation_id: string
+          joined_at: string
+          last_read_at: string | null
+          muted: boolean
+          role: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          conversation_id: string
+          joined_at?: string
+          last_read_at?: string | null
+          muted?: boolean
+          role?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          conversation_id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          muted?: boolean
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_members_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          batch_key: string | null
+          course_id: string | null
+          created_at: string
+          created_by: string | null
+          dm_key: string | null
+          emoji: string | null
+          expires_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at: string | null
+          title: string | null
+          university_id: string | null
+        }
+        Insert: {
+          batch_key?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dm_key?: string | null
+          emoji?: string | null
+          expires_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at?: string | null
+          title?: string | null
+          university_id?: string | null
+        }
+        Update: {
+          batch_key?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dm_key?: string | null
+          emoji?: string | null
+          expires_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["conversation_kind"]
+          last_message_at?: string | null
+          title?: string | null
+          university_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           code: string
@@ -371,6 +549,71 @@ export type Database = {
             foreignKeyName: "invites_inviter_id_fkey"
             columns: ["inviter_id"]
             isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          attachment_path: string | null
+          body: string | null
+          conversation_id: string
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          reply_to_id: string | null
+          sender_id: string | null
+        }
+        Insert: {
+          attachment_path?: string | null
+          body?: string | null
+          conversation_id: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          reply_to_id?: string | null
+          sender_id?: string | null
+        }
+        Update: {
+          attachment_path?: string | null
+          body?: string | null
+          conversation_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          reply_to_id?: string | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
@@ -655,6 +898,74 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          handled_at: string | null
+          handled_by: string | null
+          id: string
+          reason: string
+          reporter_id: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          reason: string
+          reporter_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -947,14 +1258,42 @@ export type Database = {
       }
     }
     Functions: {
+      add_group_members: {
+        Args: { p_conversation: string; p_members: string[] }
+        Returns: undefined
+      }
+      answer_message_request: {
+        Args: { p_accept: boolean; p_conversation: string }
+        Returns: undefined
+      }
       apply_uni_email: {
         Args: { p_email: string; p_user: string }
         Returns: boolean
       }
       are_connected: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      block_user: { Args: { p_target: string }; Returns: undefined }
+      blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      can_use_conversation_path: { Args: { p_name: string }; Returns: boolean }
+      can_use_topic: { Args: { p_topic: string }; Returns: boolean }
       can_view_profile: { Args: { p_target: string }; Returns: boolean }
       confirm_uni_email_claim: {
         Args: { p_code_hash: string; p_user: string }
+        Returns: string
+      }
+      connection_state: { Args: { p_other: string }; Returns: string }
+      conversation_people: {
+        Args: { p_conversation: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          id: string
+          last_read_at: string
+          role: string
+        }[]
+      }
+      create_group: {
+        Args: { p_emoji: string; p_members: string[]; p_title: string }
         Returns: string
       }
       decide_verification: {
@@ -965,6 +1304,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      delete_message: { Args: { p_message: string }; Returns: undefined }
       directory: {
         Args: {
           p_after_id?: string
@@ -994,11 +1334,23 @@ export type Database = {
           university_count: number
         }[]
       }
+      dm_key: { Args: { p_a: string; p_b: string }; Returns: string }
       expired_verification_documents: {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
       }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
+      incoming_requests: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          created_at: string
+          full_name: string
+          handle: string
+          message: string
+          requester_id: string
+        }[]
+      }
       invite_preview: {
         Args: { p_code: string }
         Returns: {
@@ -1009,15 +1361,104 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      is_member: { Args: { p_conversation: string }; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
+      join_batch_chat: { Args: { p_scope: string }; Returns: string }
+      leave_conversation: {
+        Args: { p_conversation: string }
+        Returns: undefined
+      }
+      mark_read: { Args: { p_conversation: string }; Returns: undefined }
+      my_blocked: {
+        Args: never
+        Returns: {
+          blocked_at: string
+          full_name: string
+          handle: string
+          id: string
+        }[]
+      }
+      my_connections: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          id: string
+        }[]
+      }
+      my_conversations: {
+        Args: never
+        Returns: {
+          emoji: string
+          id: string
+          is_request: boolean
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_at: string
+          last_body: string
+          last_sender_id: string
+          member_count: number
+          muted: boolean
+          other_avatar: string
+          other_handle: string
+          other_id: string
+          other_name: string
+          title: string
+          unread: number
+        }[]
+      }
       my_invite_code: { Args: never; Returns: string }
       my_university_id: { Args: never; Returns: string }
       public_stats: { Args: never; Returns: Json }
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
+      remove_connection: { Args: { p_other: string }; Returns: undefined }
+      report: {
+        Args: {
+          p_details?: string
+          p_reason: string
+          p_target_id: string
+          p_target_type: string
+        }
+        Returns: undefined
+      }
+      request_connection: {
+        Args: { p_message?: string; p_target: string }
+        Returns: string
+      }
+      respond_connection: {
+        Args: { p_accept: boolean; p_requester: string }
+        Returns: string
+      }
+      send_message: {
+        Args: {
+          p_attachment_path?: string
+          p_body?: string
+          p_conversation: string
+          p_reply_to?: string
+        }
+        Returns: {
+          attachment_path: string | null
+          body: string | null
+          conversation_id: string
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          reply_to_id: string | null
+          sender_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "messages"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
       }
+      start_dm: { Args: { p_target: string }; Returns: string }
       start_uni_email_claim: {
         Args: { p_code_hash: string; p_email: string; p_user: string }
         Returns: string
@@ -1039,6 +1480,7 @@ export type Database = {
           score: number
         }[]
       }
+      unblock_user: { Args: { p_target: string }; Returns: undefined }
       visible_at: {
         Args: {
           p_level: Database["public"]["Enums"]["visibility_level"]

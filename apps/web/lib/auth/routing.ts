@@ -25,11 +25,12 @@ const SIGNED_IN_PREFIXES = [
   "/admin",
   "/me",
   "/people",
+  "/chats",
   "/start/freshman/proof",
 ];
 
 const ALLOWED: Record<Profile["verification_status"], string[]> = {
-  verified: ["/setup", "/explore", "/admin", "/me", "/people"],
+  verified: ["/setup", "/explore", "/admin", "/me", "/people", "/chats"],
   unverified: ["/start/freshman/proof"],
   pending: ["/pending", "/start/freshman/proof"],
   needs_info: ["/pending", "/start/freshman/proof"],
