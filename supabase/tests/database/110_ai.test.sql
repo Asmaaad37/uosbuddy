@@ -82,10 +82,11 @@ select is(tests.as('B', 'select count(*)::text from public.ai_threads'), '0', 'n
 insert into app_private.config values ('moderation_secret', 'test-secret');
 select throws_ok($$ select tests.as('A', 'select public.create_post(''campus'', ''hello'')') $$, '42501', null,
   'with moderation on, a post without a decision is refused');
-select is(tests.as('A', format('select status from public.posts where id = public.create_post(%L, %L, %L, null, false, %L, %L)',
+-- (Students can't read held posts, so check as the test runner.)
+select is((select status from public.posts where id = tests.as('A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'needs a look', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':held', 'test-secret', 'sha256'), 'hex'),
-  'held')), 'held', 'a signed "hold" decision creates a held post');
+  'held'))::uuid), 'held', 'a signed "hold" decision creates a held post');
 select throws_ok(format('select tests.as(%L, %L)', 'A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'different text', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':published', 'test-secret', 'sha256'), 'hex'),

@@ -121,7 +121,8 @@ export function Resources({
           {shown.map((r) => (
             <li
               key={r.id}
-              className="flex items-center gap-3 rounded-lg border border-line bg-surface p-3"
+              id={`r-${r.id}`}
+              className="flex scroll-mt-20 items-center gap-3 rounded-lg border border-line bg-surface p-3 target:border-brand"
             >
               <button
                 type="button"
