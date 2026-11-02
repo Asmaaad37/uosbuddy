@@ -80,19 +80,21 @@ select is(tests.as('B', 'select count(*)::text from public.ai_threads'), '0', 'n
 
 -- ---------- signed moderation ----------
 -- Before a secret is set, the app's "held" is still honoured (it only hides your own post).
--- (tests.as is volatile: create the post once in a materialized CTE, then look it up.)
-select is((with n as materialized (select tests.as('A',
-  'select public.create_post(''campus'', ''unsure'', ''{}'', null, false, null, ''held'')')::uuid as id)
-  select p.status from n join public.posts p on p.id = n.id),
+-- (Create the post in one statement and check it in the next: a statement doesn't see
+-- rows inserted by functions it calls.)
+create temp table unsigned_post as select tests.as('A',
+  'select public.create_post(''campus'', ''unsure'', ''{}'', null, false, null, ''held'')')::uuid as id;
+select is((select p.status from unsigned_post n join public.posts p on p.id = n.id),
   'held', 'without a secret, a held decision still holds');
 insert into app_private.config values ('moderation_secret', 'test-secret');
 select throws_ok($$ select tests.as('A', 'select public.create_post(''campus'', ''hello'')') $$, '42501', null,
   'with moderation on, a post without a decision is refused');
-select is((with n as materialized (select tests.as('A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
+create temp table signed_post as select tests.as('A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'needs a look', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':held', 'test-secret', 'sha256'), 'hex'),
-  'held'))::uuid as id)
-  select p.status from n join public.posts p on p.id = n.id), 'held', 'a signed "hold" decision creates a held post');
+  'held'))::uuid as id;
+select is((select p.status from signed_post n join public.posts p on p.id = n.id),
+  'held', 'a signed "hold" decision creates a held post');
 select throws_ok(format('select tests.as(%L, %L)', 'A', format('select public.create_post(%L, %L, %L, null, false, %L, %L)',
   'campus', 'different text', '{}',
   encode(extensions.hmac(tests.uid('A')::text || ':' || md5('needs a look') || ':published', 'test-secret', 'sha256'), 'hex'),

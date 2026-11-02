@@ -12,8 +12,6 @@ test("AI Buddy answers from the course's files, with a source", async ({ browser
   test.setTimeout(120_000);
   const s = await makeStudent("Hira Aslam", `hira7_${run}`.slice(0, 20), 4);
   const page = await (await browser.newContext()).newPage();
-  page.on("pageerror", (e) => console.log("[pageerror]", e.stack));
-  page.on("console", (m) => m.type() === "error" && console.log("[console.error]", m.text()));
   await logIn(page, s.email, s.password);
 
   // No courses yet: Buddy points to adding one.

@@ -44,8 +44,8 @@ export async function loadFeed(input: z.input<typeof feedSchema>): Promise<Actio
   let query = s.supabase
     .from("posts_public")
     .select("*")
-    .eq("space", space)
-    .eq("status", "published");
+    // posts_public holds back others' held posts; your own show as "Under review".
+    .eq("space", space);
   if (sort === "hot") {
     if (after)
       query = query.or(

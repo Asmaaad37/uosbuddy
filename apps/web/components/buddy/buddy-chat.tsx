@@ -42,7 +42,10 @@ export function BuddyChat({
   const [remaining, setRemaining] = useState(initialRemaining);
   const bottom = useRef<HTMLDivElement>(null);
 
-  useEffect(() => bottom.current?.scrollIntoView({ block: "end" }), [turns]);
+  // A block body: scrollIntoView can return a Promise, which React would call as cleanup.
+  useEffect(() => {
+    bottom.current?.scrollIntoView({ block: "end" });
+  }, [turns]);
 
   async function ask(e?: { preventDefault(): void }) {
     e?.preventDefault();
