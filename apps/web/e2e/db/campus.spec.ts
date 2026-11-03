@@ -51,7 +51,12 @@ test("a ride: offer, ask, accept into a chat, leave, cancel; women-only stays hi
   await woman.page.getByLabel("To", { exact: true }).fill(`Shahpur ${run}`);
   await woman.page.getByRole("checkbox", { name: /Women only/ }).check();
   await woman.page.getByRole("button", { name: "Post ride" }).click();
-  await expect(woman.page.getByText("Women only")).toBeVisible();
+  await expect(
+    woman.page
+      .getByRole("listitem")
+      .filter({ hasText: `Shahpur ${run}` })
+      .getByText("Women only", { exact: true }),
+  ).toBeVisible();
 
   // The rider asks for the seat.
   await rider.page.goto("/rides");
@@ -75,7 +80,7 @@ test("a ride: offer, ask, accept into a chat, leave, cancel; women-only stays hi
   await rider.page.getByRole("link", { name: "Ride chat" }).click();
   await expect(rider.page).toHaveURL(/\/chats\/[0-9a-f-]{36}$/);
   await expect(rider.page.getByText(`Ride: UoS main gate → ${to}`).first()).toBeVisible();
-  await rider.page.getByLabel("Message").fill("Where exactly do we meet?");
+  await rider.page.getByRole("textbox", { name: "Message" }).fill("Where exactly do we meet?");
   await rider.page.keyboard.press("Enter");
   await expect(rider.page.getByText("Where exactly do we meet?")).toBeVisible();
 
@@ -120,7 +125,9 @@ test("market: post with a price, find it, message the seller, mark sold", async 
   await shot(buyer.page, "03-market");
   await listing.getByRole("button", { name: "Message" }).click();
   await expect(buyer.page).toHaveURL(/\/chats\/[0-9a-f-]{36}\?draft=/);
-  await expect(buyer.page.getByLabel("Message")).toHaveValue(`Hi! About "${title}"…`);
+  await expect(buyer.page.getByRole("textbox", { name: "Message" })).toHaveValue(
+    `Hi! About "${title}"…`,
+  );
 
   await seller.page.reload();
   await seller.page

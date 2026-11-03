@@ -118,6 +118,9 @@ test("two students connect and chat in realtime", async ({ browser }) => {
   await b.getByRole("button", { name: "More" }).click();
   await b.getByRole("menuitem", { name: "Block" }).click();
   await b.getByRole("button", { name: "Block" }).click();
-  await a.goto("/chats");
-  await expect(a.getByText("Bilal Raza")).toHaveCount(0);
+  // The block saves in the background; reload until A's list reflects it.
+  await expect(async () => {
+    await a.goto("/chats");
+    await expect(a.getByText("Bilal Raza")).toHaveCount(0, { timeout: 1_000 });
+  }).toPass({ timeout: 15_000 });
 });
