@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import type { Database } from "@uosbuddy/shared";
+import { moderate } from "@/lib/ai/moderate.server";
 import { getSession } from "@/lib/auth/session";
 import type { ActionResult } from "./onboarding";
 
@@ -43,8 +44,8 @@ export async function loadFeed(input: z.input<typeof feedSchema>): Promise<Actio
   let query = s.supabase
     .from("posts_public")
     .select("*")
-    .eq("space", space)
-    .eq("status", "published");
+    // posts_public holds back others' held posts; your own show as "Under review".
+    .eq("space", space);
   if (sort === "hot") {
     if (after)
       query = query.or(
@@ -89,21 +90,26 @@ const postSchema = z.object({
   anonymous: z.boolean().default(false),
 });
 
-export async function createPost(input: z.input<typeof postSchema>): Promise<ActionResult<string>> {
+export async function createPost(
+  input: z.input<typeof postSchema>,
+): Promise<ActionResult<{ id: string; held: boolean }>> {
   const parsed = postSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check your post");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
   const { space, body, media, poll, anonymous } = parsed.data;
+  const check = await moderate(s.user.id, body, anonymous, "post");
+  if (!check.ok) return fail(check.error);
   const { data, error } = await s.supabase.rpc("create_post", {
     p_space: space,
     p_body: body,
     p_media: media,
     p_poll: poll ? { options: poll } : undefined,
     p_anonymous: anonymous,
+    ...check.params,
   });
   if (error || !data) return fail(friendly(error, "Couldn't post. Try again."));
-  return { ok: true, data };
+  return { ok: true, data: { id: data, held: check.held } };
 }
 
 export async function votePost(post: string, value: -1 | 0 | 1): Promise<ActionResult> {
@@ -146,20 +152,23 @@ const commentSchema = z.object({
 
 export async function createComment(
   input: z.input<typeof commentSchema>,
-): Promise<ActionResult<string>> {
+): Promise<ActionResult<{ id: string; held: boolean }>> {
   const parsed = commentSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Write a comment");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
   const { post, body, parent, anonymous } = parsed.data;
+  const check = await moderate(s.user.id, body, anonymous, "comment");
+  if (!check.ok) return fail(check.error);
   const { data, error } = await s.supabase.rpc("create_comment", {
     p_post: post,
     p_body: body,
     p_parent: parent,
     p_anonymous: anonymous,
+    ...check.params,
   });
   if (error || !data) return fail(friendly(error, "Couldn't comment. Try again."));
-  return { ok: true, data };
+  return { ok: true, data: { id: data, held: check.held } };
 }
 
 export async function deleteComment(comment: string): Promise<ActionResult> {

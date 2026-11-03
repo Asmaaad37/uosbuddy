@@ -4,6 +4,7 @@ import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { sendStatusEmail } from "@/lib/email/send.server";
 import { z } from "zod";
+import { precheckVerification } from "@/lib/ai/precheck.server";
 import { getSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -99,6 +100,8 @@ export async function submitProof(input: z.input<typeof proofSchema>): Promise<A
 
   // After the response, so a slow mail server never delays the student.
   after(() => sendStatusEmail(user.id, { kind: "submitted" }));
+  // Phase 7: the AI pre-check sorts the admin queue; it never decides.
+  after(() => precheckVerification(user.id));
   return { ok: true, data: undefined };
 }
 

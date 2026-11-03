@@ -18,7 +18,7 @@ const TILES = [
   { label: "Batch", href: "/explore/batch", icon: Users, lane: "people" },
   { label: "Backup", href: "/backup", icon: LifeBuoy, lane: "help" },
   { label: "Courses", href: "/courses", icon: BookOpen, lane: "learn" },
-  { label: "Buddy", icon: Sparkles, lane: "learn" },
+  { label: "Buddy", href: "/buddy", icon: Sparkles, lane: "learn" },
   { label: "Rides", icon: Car, lane: "campus" },
   { label: "Market", icon: ShoppingBag, lane: "campus" },
 ] as const;

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { DocViewer } from "@/components/admin/doc-viewer";
 import { decideVerification } from "@/actions/admin";
+import { FLAG_LABELS, type Precheck } from "@/lib/ai/precheck";
 import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
 import { describeStudentId } from "@/lib/student-id";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ export type QueueItem = {
   email: string | null;
   emailIsUni: boolean;
   whatsapp: string | null;
+  precheck: Precheck | null;
 };
 
 type Picker = "rejected" | "needs_info";
@@ -192,6 +194,8 @@ export function ReviewQueue({
               </div>
             </div>
 
+            {current.precheck && <PrecheckPanel p={current.precheck} />}
+
             <dl className="grid gap-3 rounded-lg border border-line bg-surface p-4">
               <div>
                 <dt className="text-[13px] text-ink-2">Name on submission</dt>
@@ -309,5 +313,39 @@ export function ReviewQueue({
         </div>
       )}
     </div>
+  );
+}
+
+/** What the AI read from the document. A hint for the reviewer, never a decision. */
+function PrecheckPanel({ p }: { p: Precheck }) {
+  const pct = Math.round(p.confidence * 100);
+  const x = p.extracted;
+  return (
+    <section
+      aria-label="AI pre-check"
+      className="grid gap-2 rounded-lg border border-line bg-surface p-4 text-sm"
+    >
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">AI pre-check</span>
+        <Chip tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Chip>
+      </div>
+      {p.flags.length > 0 && (
+        <ul className="flex flex-wrap gap-1.5" aria-label="Flags">
+          {p.flags.map((f) => (
+            <li key={f}>
+              <Chip tone="outline" className="text-warning">
+                {FLAG_LABELS[f]}
+              </Chip>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-[13px] text-ink-2">
+        Read from the document: {x.name ?? "no name"} · {x.roll_no ?? "no roll number"} ·{" "}
+        {x.university ?? "no university"}
+        {x.session ? ` · ${x.session}` : ""}
+        {x.department ? ` · ${x.department}` : ""}
+      </p>
+    </section>
   );
 }

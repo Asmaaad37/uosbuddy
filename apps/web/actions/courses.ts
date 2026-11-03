@@ -1,6 +1,8 @@
 "use server";
 
+import { after } from "next/server";
 import { z } from "zod";
+import { indexResource } from "@/lib/ai/index-resource.server";
 import { getSession } from "@/lib/auth/session";
 import type { ActionResult } from "./onboarding";
 
@@ -147,6 +149,11 @@ export async function addResource(
     p_teacher: r.teacher,
   });
   if (error || !data) return fail(friendly(error, "Couldn't share the file. Try again."));
+  // Index it for AI Buddy after responding: the upload shouldn't wait for it.
+  const {
+    data: { session: auth },
+  } = await s.supabase.auth.getSession();
+  if (auth?.access_token) after(() => indexResource(data, auth.access_token));
   return { ok: true, data };
 }
 

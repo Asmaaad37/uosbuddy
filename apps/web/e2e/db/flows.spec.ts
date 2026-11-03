@@ -205,7 +205,11 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   await expect(admin).toHaveURL(/\/setup\/academic$/);
   await admin.goto("/admin/verifications");
   await expect(admin.getByText("Bilal Ahmed").first()).toBeVisible();
-  await expect(admin.getByText("BSCS51F22S037")).toBeVisible();
+  await expect(admin.getByText("BSCS51F22S037", { exact: true })).toBeVisible();
+  // Phase 7: the AI pre-check (faked in CI) is shown as a hint; the admin still decides.
+  if (process.env.AI_FAKE) {
+    await expect(admin.getByRole("region", { name: "AI pre-check" })).toContainText("100% match");
+  }
   await admin.getByRole("button", { name: "Approve" }).click();
   await expect(admin.getByText("The queue is clear")).toBeVisible();
 

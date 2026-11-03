@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BarChart3, ImagePlus, Loader2, PenSquare, X } from "lucide-react";
 import { createPost } from "@/actions/feed";
+import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -102,6 +103,8 @@ export function Composer({
     });
     setBusy(null);
     if (!result.ok) return setError(result.error);
+    if (result.data.held)
+      toast.success("Thanks. A moderator will check your post before it shows up.");
     reset();
     setOpen(false);
     router.refresh();
