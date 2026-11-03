@@ -35,7 +35,7 @@ export const moderationSchema = z.object({
 });
 export type Moderation = z.infer<typeof moderationSchema>;
 
-export type Kind = "post" | "comment";
+export type Kind = "post" | "comment" | "listing";
 
 export const moderationPrompt = (body: string, anonymous: boolean, kind: Kind) =>
   `${anonymous ? "Anonymous" : "Named"} ${kind}:\n<post>\n${body.replaceAll("</post>", "")}\n</post>`;

@@ -913,6 +913,126 @@ export type Database = {
           },
         ]
       }
+      event_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          created_by: string | null
+          description: string
+          ends_at: string
+          id: string
+          reminded_at: string | null
+          society_id: string | null
+          starts_at: string
+          status: string
+          title: string
+          university_id: string
+          venue: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at: string
+          id?: string
+          reminded_at?: string | null
+          society_id?: string | null
+          starts_at: string
+          status?: string
+          title: string
+          university_id: string
+          venue: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string
+          id?: string
+          reminded_at?: string | null
+          society_id?: string | null
+          starts_at?: string
+          status?: string
+          title?: string
+          university_id?: string
+          venue?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_society_id_fkey"
+            columns: ["society_id"]
+            isOneToOne: false
+            referencedRelation: "societies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           enabled: boolean
@@ -1035,6 +1155,73 @@ export type Database = {
             foreignKeyName: "invites_inviter_id_fkey"
             columns: ["inviter_id"]
             isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          created_at: string
+          description: string
+          done_at: string | null
+          id: string
+          kind: string
+          location_hint: string | null
+          media_paths: string[]
+          price_pkr: number | null
+          status: string
+          title: string
+          university_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          done_at?: string | null
+          id?: string
+          kind: string
+          location_hint?: string | null
+          media_paths?: string[]
+          price_pkr?: number | null
+          status?: string
+          title: string
+          university_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          done_at?: string | null
+          id?: string
+          kind?: string
+          location_hint?: string | null
+          media_paths?: string[]
+          price_pkr?: number | null
+          status?: string
+          title?: string
+          university_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
@@ -2037,6 +2224,239 @@ export type Database = {
           },
         ]
       }
+      ride_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          ride_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          ride_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          ride_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_requests_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rides: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          depart_at: string
+          from_area: string
+          id: string
+          kind: string
+          notes: string | null
+          recurring_days: number[]
+          seats: number
+          status: string
+          to_area: string
+          university_id: string
+          user_id: string
+          women_only: boolean
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          depart_at: string
+          from_area: string
+          id?: string
+          kind: string
+          notes?: string | null
+          recurring_days?: number[]
+          seats?: number
+          status?: string
+          to_area: string
+          university_id: string
+          user_id: string
+          women_only?: boolean
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          depart_at?: string
+          from_area?: string
+          id?: string
+          kind?: string
+          notes?: string | null
+          recurring_days?: number[]
+          seats?: number
+          status?: string
+          to_area?: string
+          university_id?: string
+          user_id?: string
+          women_only?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rides_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rides_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rides_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rides_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      societies: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          emoji: string | null
+          id: string
+          name: string
+          slug: string
+          university_id: string
+          verified: boolean
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          emoji?: string | null
+          id?: string
+          name: string
+          slug: string
+          university_id: string
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          emoji?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          university_id?: string
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "societies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "societies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "societies_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      society_members: {
+        Row: {
+          joined_at: string
+          role: string
+          society_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          role?: string
+          society_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          role?: string
+          society_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "society_members_society_id_fkey"
+            columns: ["society_id"]
+            isOneToOne: false
+            referencedRelation: "societies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "society_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "society_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_groups: {
         Row: {
           conversation_id: string
@@ -2394,6 +2814,62 @@ export type Database = {
           },
         ]
       }
+      women_only_access: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          note: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          note?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          note?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "women_only_access_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "women_only_access_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "women_only_access_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "women_only_access_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       comments_public: {
@@ -2582,6 +3058,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      can_see_ride: {
+        Args: { p_ride: Database["public"]["Tables"]["rides"]["Row"] }
+        Returns: boolean
+      }
       can_see_space: {
         Args: { p_space: string; p_university: string }
         Returns: boolean
@@ -2590,6 +3070,9 @@ export type Database = {
       can_use_topic: { Args: { p_topic: string }; Returns: boolean }
       can_view_profile: { Args: { p_target: string }; Returns: boolean }
       cancel_backup: { Args: { p_request: string }; Returns: undefined }
+      cancel_event: { Args: { p_event: string }; Returns: undefined }
+      cancel_ride: { Args: { p_ride: string }; Returns: undefined }
+      cancel_seat: { Args: { p_ride: string }; Returns: undefined }
       claim_backup: { Args: { p_request: string }; Returns: string }
       confirm_uni_email_claim: {
         Args: { p_code_hash: string; p_user: string }
@@ -2664,8 +3147,33 @@ export type Database = {
         }
         Returns: string
       }
+      create_event: {
+        Args: {
+          p_capacity?: number
+          p_description: string
+          p_ends: string
+          p_society: string
+          p_starts: string
+          p_title: string
+          p_venue: string
+        }
+        Returns: string
+      }
       create_group: {
         Args: { p_emoji: string; p_members: string[]; p_title: string }
+        Returns: string
+      }
+      create_listing: {
+        Args: {
+          p_description?: string
+          p_kind: string
+          p_location?: string
+          p_media?: string[]
+          p_mod_status?: string
+          p_mod_token?: string
+          p_price?: number
+          p_title: string
+        }
         Returns: string
       }
       create_post: {
@@ -2677,6 +3185,28 @@ export type Database = {
           p_mod_token?: string
           p_poll?: Json
           p_space: string
+        }
+        Returns: string
+      }
+      create_ride: {
+        Args: {
+          p_depart: string
+          p_from: string
+          p_kind: string
+          p_notes?: string
+          p_recurring?: number[]
+          p_seats?: number
+          p_to: string
+          p_women_only?: boolean
+        }
+        Returns: string
+      }
+      create_society: {
+        Args: {
+          p_description?: string
+          p_emoji?: string
+          p_name: string
+          p_slug: string
         }
         Returns: string
       }
@@ -2698,7 +3228,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      decide_women_only: {
+        Args: { p_approve: boolean; p_user: string }
+        Returns: undefined
+      }
       delete_comment: { Args: { p_comment: string }; Returns: undefined }
+      delete_listing: { Args: { p_listing: string }; Returns: undefined }
       delete_message: { Args: { p_message: string }; Returns: undefined }
       delete_post: { Args: { p_post: string }; Returns: undefined }
       delete_resource: { Args: { p_resource: string }; Returns: undefined }
@@ -2736,6 +3271,28 @@ export type Database = {
         Returns: undefined
       }
       dm_key: { Args: { p_a: string; p_b: string }; Returns: string }
+      event_reminders: { Args: never; Returns: undefined }
+      events_board: {
+        Args: { p_mine?: boolean; p_society?: string }
+        Returns: {
+          can_manage: boolean
+          capacity: number
+          description: string
+          ends_at: string
+          going: number
+          id: string
+          interested: number
+          my_rsvp: string
+          society_emoji: string
+          society_id: string
+          society_name: string
+          society_slug: string
+          starts_at: string
+          status: string
+          title: string
+          venue: string
+        }[]
+      }
       expired_verification_documents: {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
@@ -2794,6 +3351,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_member: { Args: { p_conversation: string }; Returns: boolean }
+      is_society_admin: { Args: { p_society: string }; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
       is_verified: { Args: never; Returns: boolean }
       join_batch_chat: { Args: { p_scope: string }; Returns: string }
@@ -2802,14 +3360,40 @@ export type Database = {
         Returns: undefined
       }
       join_course_chat: { Args: { p_course: string }; Returns: string }
+      join_society: { Args: { p_society: string }; Returns: undefined }
       join_study_group: { Args: { p_group: string }; Returns: string }
       leave_conversation: {
         Args: { p_conversation: string }
         Returns: undefined
       }
       leave_course: { Args: { p_course: string }; Returns: undefined }
+      leave_society: { Args: { p_society: string }; Returns: undefined }
+      mark_listing_done: { Args: { p_listing: string }; Returns: undefined }
       mark_notifications_read: { Args: { p_id?: string }; Returns: undefined }
       mark_read: { Args: { p_conversation: string }; Returns: undefined }
+      market_listings: {
+        Args: {
+          p_before?: string
+          p_kind?: string
+          p_mine?: boolean
+          p_query?: string
+        }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          description: string
+          full_name: string
+          handle: string
+          id: string
+          kind: string
+          location_hint: string
+          media_paths: string[]
+          price_pkr: number
+          status: string
+          title: string
+          user_id: string
+        }[]
+      }
       mentor_requests: {
         Args: never
         Returns: {
@@ -2923,6 +3507,11 @@ export type Database = {
         Args: { p_mentor: string; p_message?: string }
         Returns: undefined
       }
+      request_seat: {
+        Args: { p_message?: string; p_ride: string }
+        Returns: undefined
+      }
+      request_women_only: { Args: { p_note?: string }; Returns: undefined }
       resolve_backup: { Args: { p_request: string }; Returns: undefined }
       respond_connection: {
         Args: { p_accept: boolean; p_requester: string }
@@ -2930,6 +3519,49 @@ export type Database = {
       }
       respond_mentorship: {
         Args: { p_accept: boolean; p_mentee: string }
+        Returns: undefined
+      }
+      respond_seat: {
+        Args: { p_accept: boolean; p_request: string }
+        Returns: string
+      }
+      ride_requests_for: {
+        Args: { p_ride: string }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          full_name: string
+          handle: string
+          id: string
+          message: string
+          status: string
+          user_id: string
+        }[]
+      }
+      rides_board: {
+        Args: { p_kind?: string; p_mine?: boolean }
+        Returns: {
+          avatar_url: string
+          conversation_id: string
+          depart_at: string
+          from_area: string
+          full_name: string
+          handle: string
+          id: string
+          kind: string
+          my_request: string
+          notes: string
+          recurring_days: number[]
+          seats: number
+          seats_taken: number
+          status: string
+          to_area: string
+          user_id: string
+          women_only: boolean
+        }[]
+      }
+      rsvp_event: {
+        Args: { p_event: string; p_status: string }
         Returns: undefined
       }
       search_course_chunks: {
@@ -2981,6 +3613,34 @@ export type Database = {
         Returns: undefined
       }
       set_on_campus: { Args: { p_hours: number }; Returns: string }
+      set_society_admin: {
+        Args: { p_admin: boolean; p_society: string; p_user: string }
+        Returns: undefined
+      }
+      shown_avatar: { Args: { p_user: string }; Returns: string }
+      societies_list: {
+        Args: never
+        Returns: {
+          description: string
+          emoji: string
+          id: string
+          member_count: number
+          my_role: string
+          name: string
+          slug: string
+          verified: boolean
+        }[]
+      }
+      society_people: {
+        Args: { p_society: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          role: string
+          user_id: string
+        }[]
+      }
       start_dm: { Args: { p_target: string }; Returns: string }
       start_uni_email_claim: {
         Args: { p_code_hash: string; p_email: string; p_user: string }
@@ -3006,6 +3666,10 @@ export type Database = {
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
       use_ai: { Args: { p_kind: string }; Returns: number }
+      verify_society: {
+        Args: { p_society: string; p_verified: boolean }
+        Returns: undefined
+      }
       visible_at: {
         Args: {
           p_level: Database["public"]["Enums"]["visibility_level"]
@@ -3026,6 +3690,20 @@ export type Database = {
         Returns: number
       }
       wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
+      women_eligible: { Args: never; Returns: boolean }
+      women_only_queue: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          batch_year: number
+          created_at: string
+          department: string
+          full_name: string
+          handle: string
+          note: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       backup_status: "open" | "claimed" | "resolved" | "expired" | "cancelled"

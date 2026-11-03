@@ -83,7 +83,17 @@ export async function unblockUser(target: string): Promise<ActionResult> {
 }
 
 const reportSchema = z.object({
-  targetType: z.enum(["profile", "message", "conversation", "post", "comment", "resource"]),
+  targetType: z.enum([
+    "profile",
+    "message",
+    "conversation",
+    "post",
+    "comment",
+    "resource",
+    "listing",
+    "ride",
+    "event",
+  ]),
   targetId: z.uuid(),
   reason: z.enum(["spam", "harassment", "fake", "inappropriate", "other"]),
   details: z.string().trim().max(1000).optional(),

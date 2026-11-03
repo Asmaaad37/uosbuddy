@@ -9,6 +9,9 @@ export type NotificationLike = {
 
 export type Described = { title: string; body?: string; href: string };
 
+const route = (p: Record<string, unknown>) =>
+  typeof p.from === "string" && typeof p.to === "string" ? `${p.from} → ${p.to}` : "Your ride";
+
 export function describe(n: NotificationLike): Described {
   const p = (n.payload ?? {}) as Record<string, unknown>;
   const who = n.actor_name ?? "Someone";
@@ -83,6 +86,49 @@ export function describe(n: NotificationLike): Described {
         body: "You're connected now. Say hi!",
         href: n.actor_handle ? `/people/${n.actor_handle}` : "/mentors",
       };
+    case "ride.request":
+      return {
+        title:
+          p.kind === "request" ? `${who} can give you a lift` : `${who} wants a seat on your ride`,
+        body: route(p),
+        href: "/rides?tab=mine",
+      };
+    case "ride.accepted":
+      return {
+        title: `${who} accepted you on the ride`,
+        body: `${route(p)}. Plan it in the ride chat.`,
+        href: n.entity_id ? `/chats/${n.entity_id}` : "/rides?tab=mine",
+      };
+    case "ride.declined":
+      return { title: `${who} couldn't take you this time`, body: route(p), href: "/rides" };
+    case "ride.cancelled":
+      return { title: `${who} cancelled the ride`, body: route(p), href: "/rides?tab=mine" };
+    case "ride.left":
+      return { title: `${who} left your ride`, body: route(p), href: "/rides?tab=mine" };
+    case "event.reminder":
+      return {
+        title: `Starting soon: ${typeof p.title === "string" ? p.title : "your event"}`,
+        body: typeof p.venue === "string" ? `At ${p.venue}` : undefined,
+        href: "/events?tab=going",
+      };
+    case "event.cancelled":
+      return {
+        title: `Cancelled: ${typeof p.title === "string" ? p.title : "an event"}`,
+        href: "/events?tab=going",
+      };
+    case "society.verified":
+      return {
+        title: "Your society page is verified",
+        body: "You can post events now.",
+        href: "/events?tab=societies",
+      };
+    case "access.women_only":
+      return p.approved
+        ? { title: "You can now see women-only rides", href: "/rides" }
+        : {
+            title: "Your women-only access request wasn't approved",
+            href: "/me/privacy#women-only",
+          };
     default:
       return { title: "Something new on UOSBuddy", href: "/notifications" };
   }

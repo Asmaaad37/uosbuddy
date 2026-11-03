@@ -46,4 +46,30 @@ group("describe", () => {
       href: "/mentors",
     });
   });
+
+  it("describes campus life notifications", () => {
+    const ride = { from: "UoS main gate", to: "Lahore", kind: "offer" };
+    expect(describe({ ...base, type: "ride.request", payload: ride })).toEqual({
+      title: "Ayesha Khan wants a seat on your ride",
+      body: "UoS main gate → Lahore",
+      href: "/rides?tab=mine",
+    });
+    expect(describe({ ...base, type: "ride.accepted", payload: ride }).href).toBe(
+      `/chats/${base.entity_id}`,
+    );
+    expect(
+      describe({
+        ...base,
+        type: "event.reminder",
+        payload: { title: "Open debate", venue: "Hall A" },
+      }),
+    ).toEqual({
+      title: "Starting soon: Open debate",
+      body: "At Hall A",
+      href: "/events?tab=going",
+    });
+    expect(describe({ ...base, type: "access.women_only", payload: { approved: true } }).href).toBe(
+      "/rides",
+    );
+  });
 });

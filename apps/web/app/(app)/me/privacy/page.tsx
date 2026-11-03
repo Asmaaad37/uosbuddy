@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
+import { WomenOnlyRequest } from "@/components/rides/women-only-request";
 import { PrivacyForm } from "@/components/setup/privacy-form";
 import { getSession } from "@/lib/auth/session";
 import { PRIVACY_PRESETS } from "@/lib/setup";
@@ -12,13 +13,16 @@ export default async function PrivacySettingsPage() {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/me/privacy");
 
-  const { data: privacy } = await supabase
-    .from("privacy_settings")
-    .select(
-      "profile_visibility, photo_visibility, allow_dms_from, show_hometown, show_in_directory",
-    )
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [{ data: privacy }, { data: womenOnly }] = await Promise.all([
+    supabase
+      .from("privacy_settings")
+      .select(
+        "profile_visibility, photo_visibility, allow_dms_from, show_hometown, show_in_directory",
+      )
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase.from("women_only_access").select("status").eq("user_id", user.id).maybeSingle(),
+  ]);
 
   return (
     <AppShell back="/me">
@@ -33,6 +37,7 @@ export default async function PrivacySettingsPage() {
         submitLabel="Save"
         onSavedHref="/me"
       />
+      <WomenOnlyRequest status={womenOnly?.status ?? null} />
     </AppShell>
   );
 }
