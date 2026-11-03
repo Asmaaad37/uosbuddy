@@ -17,7 +17,16 @@ const REASONS = [
   { value: "other", label: "Something else" },
 ] as const;
 type Reason = (typeof REASONS)[number]["value"];
-export type ReportTarget = "profile" | "message" | "conversation" | "post" | "comment" | "resource";
+export type ReportTarget =
+  | "profile"
+  | "message"
+  | "conversation"
+  | "post"
+  | "comment"
+  | "resource"
+  | "listing"
+  | "ride"
+  | "event";
 
 /** Phase 4 task 6: report a profile, message or chat. Only moderators see reports. */
 export function ReportDialog({

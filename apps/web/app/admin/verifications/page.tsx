@@ -79,9 +79,10 @@ export default async function VerificationsPage({
         >
           UOSBUDDY ADMIN
         </Link>
-        <Link href={back} className="text-sm font-semibold text-brand">
-          Back to app
-        </Link>
+        <nav className="flex gap-4 text-sm font-semibold text-brand">
+          <Link href="/admin/campus">Campus queues</Link>
+          <Link href={back}>Back to app</Link>
+        </nav>
       </header>
       <main className="gutter mx-auto max-w-6xl py-6">
         <ReviewQueue items={items} waitingOnStudents={waitingOnStudents ?? 0} />

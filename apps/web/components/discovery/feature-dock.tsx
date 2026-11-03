@@ -3,7 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
-import { BookOpen, Car, LifeBuoy, ShoppingBag, Sparkles, Users } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  Car,
+  Clock,
+  LifeBuoy,
+  ShoppingBag,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -19,8 +28,10 @@ const TILES = [
   { label: "Backup", href: "/backup", icon: LifeBuoy, lane: "help" },
   { label: "Courses", href: "/courses", icon: BookOpen, lane: "learn" },
   { label: "Buddy", href: "/buddy", icon: Sparkles, lane: "learn" },
-  { label: "Rides", icon: Car, lane: "campus" },
-  { label: "Market", icon: ShoppingBag, lane: "campus" },
+  { label: "Rides", href: "/rides", icon: Car, lane: "campus" },
+  { label: "Market", href: "/market", icon: ShoppingBag, lane: "campus" },
+  { label: "Events", href: "/events", icon: CalendarDays, lane: "campus" },
+  { label: "Timetable", href: "/timetable", icon: Clock, lane: "learn" },
 ] as const;
 
 const SPRING = { type: "spring", stiffness: 260, damping: 22 } as const;
@@ -43,11 +54,10 @@ export function FeatureDock({ previews }: { previews: { name: string; avatar: st
 
   return (
     <LazyMotion features={domAnimation} strict>
-      <ul className="grid grid-cols-3 gap-x-2 gap-y-5 sm:grid-cols-6">
+      <ul className="grid grid-cols-4 gap-x-2 gap-y-5">
         {TILES.map((tile) => {
           const Icon = tile.icon;
-          const live = "href" in tile;
-          const isOpening = live && opening === tile.href;
+          const isOpening = opening === tile.href;
           const body = (
             <>
               <span className="relative">
@@ -79,9 +89,8 @@ export function FeatureDock({ previews }: { previews: { name: string; avatar: st
                   animate={isOpening ? { y: -6, scale: 1.08 } : { y: 0, scale: 1 }}
                   transition={SPRING}
                   className={cn(
-                    "relative grid size-16 place-items-center overflow-hidden rounded-[20px] shadow-card [&_svg]:size-7",
+                    "relative grid size-14 place-items-center overflow-hidden rounded-[18px] shadow-card [&_svg]:size-7",
                     lanes[tile.lane],
-                    !live && "opacity-55 saturate-50",
                   )}
                 >
                   <span
@@ -94,35 +103,22 @@ export function FeatureDock({ previews }: { previews: { name: string; avatar: st
               <span className="rounded-pill bg-surface px-2.5 py-0.5 text-xs font-semibold text-ink shadow-card">
                 {tile.label}
               </span>
-              {!live && (
-                <span className="text-[10px] font-semibold tracking-wide text-ink-2 uppercase">
-                  Soon
-                </span>
-              )}
             </>
           );
           return (
             <li key={tile.label} className="flex justify-center">
-              {live ? (
-                <a
-                  href={tile.href}
-                  onClick={(e) => {
-                    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-                    e.preventDefault();
-                    open(tile.href);
-                  }}
-                  className="group flex w-20 flex-col items-center gap-2 rounded-md outline-offset-4"
-                >
-                  {body}
-                </a>
-              ) : (
-                <span
-                  aria-label={`${tile.label}, coming soon`}
-                  className="flex w-20 flex-col items-center gap-2"
-                >
-                  {body}
-                </span>
-              )}
+              <a
+                href={tile.href}
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+                  e.preventDefault();
+                  open(tile.href);
+                }}
+                // Four to a row: fits a 360 px phone with the 16 px gutters.
+                className="group flex w-full max-w-20 flex-col items-center gap-2 rounded-md outline-offset-4"
+              >
+                {body}
+              </a>
             </li>
           );
         })}

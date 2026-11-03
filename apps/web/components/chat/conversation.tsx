@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import {
   ArrowLeft,
@@ -135,7 +135,9 @@ export function Conversation({
     Object.fromEntries(people.map((p) => [p.id, p.last_read_at])),
   );
   const [typing, setTyping] = useState<Record<string, number>>({});
-  const [draft, setDraft] = useState("");
+  // ?draft= prefills the box (e.g. "Message" on a market listing); the student still sends it.
+  const params = useSearchParams();
+  const [draft, setDraft] = useState(() => params.get("draft")?.slice(0, 500) ?? "");
   const [error, setError] = useState<string>();
   const [request, setRequest] = useState(isRequest);
   const [muted, setMutedState] = useState(initialMuted);
