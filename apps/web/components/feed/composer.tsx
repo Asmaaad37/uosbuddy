@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { BarChart3, ImagePlus, Loader2, PenSquare, X } from "lucide-react";
 import { createPost } from "@/actions/feed";
 import { toast } from "@/components/ui/toast";
+import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
+import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -42,6 +44,7 @@ export function Composer({
 }) {
   const id = useId();
   const router = useRouter();
+  const { gate, ask } = useGuidelinesGate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [space, setSpace] = useState(initialSpace);
@@ -102,6 +105,10 @@ export function Composer({
       anonymous,
     });
     setBusy(null);
+    if (!result.ok && result.error === GUIDELINES_REQUIRED) {
+      if (await ask()) await submit(e);
+      return;
+    }
     if (!result.ok) return setError(result.error);
     if (result.data.held)
       toast.success("Thanks. A moderator will check your post before it shows up.");
@@ -257,6 +264,7 @@ export function Composer({
             {busy === "post" && <Loader2 className="animate-spin" />} Post
           </Button>
         </form>
+        {gate}
       </SheetContent>
     </Sheet>
   );

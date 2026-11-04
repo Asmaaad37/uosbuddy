@@ -1,7 +1,8 @@
 import type { Database } from "@uosbuddy/shared";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-export type RoutingProfile = Pick<Profile, "verification_status" | "onboarding_step" | "role">;
+export type RoutingProfile = Pick<Profile, "verification_status" | "onboarding_step" | "role"> &
+  Partial<Pick<Profile, "banned_at" | "deleted_at">>;
 
 /** Steps in /setup (Section 7, screens 6–9). Phase 2 advances onboarding_step to this. */
 export const ONBOARDING_STEPS = 4;
@@ -38,6 +39,7 @@ const SIGNED_IN_PREFIXES = [
   "/market",
   "/events",
   "/start/freshman/proof",
+  "/banned",
 ];
 
 const ALLOWED: Record<Profile["verification_status"], string[]> = {
@@ -71,6 +73,9 @@ const matches = (path: string, prefix: string) => path === prefix || path.starts
 /** Where a user belongs right now (Phase 1 task 8). `null` means signed out. */
 export function homePath(profile: RoutingProfile | null): string {
   if (!profile) return "/";
+  // Phase 9: a banned account sees only its notice; one awaiting deletion, its data page.
+  if (profile.banned_at) return "/banned";
+  if (profile.deleted_at) return "/me/data";
   switch (profile.verification_status) {
     case "verified":
       return profile.onboarding_step >= ONBOARDING_STEPS ? "/explore" : "/setup";
@@ -103,9 +108,14 @@ function decide(path: string, signedIn: boolean, profile: RoutingProfile | null)
   if (!needsSession) return null;
   if (!profile) return "/";
 
+  if (profile.banned_at) return matches(path, "/banned") ? null : "/banned";
+  if (profile.deleted_at) return matches(path, "/me/data") ? null : "/me/data";
+  if (matches(path, "/banned")) return homePath(profile);
   const allowed = ALLOWED[profile.verification_status].some((p) => matches(path, p));
   if (!allowed) return homePath(profile);
-  if (matches(path, "/admin") && profile.role !== "admin") return homePath(profile);
+  // Student moderators may use the reports queue; the rest of /admin is for admins.
+  const staffPath = matches(path, "/admin/reports") && profile.role === "moderator";
+  if (matches(path, "/admin") && profile.role !== "admin" && !staffPath) return homePath(profile);
   return null;
 }
 

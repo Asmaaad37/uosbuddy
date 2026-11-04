@@ -5,6 +5,7 @@ import { Pencil } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ConnectPanel } from "@/components/connect/connect-panel";
 import { SafetyMenu } from "@/components/connect/safety-menu";
+import { BadgeRow } from "@/components/profile/badge-row";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth/session";
@@ -32,12 +33,13 @@ export default async function PersonPage({ params }: Props) {
   if (profile.handle && profile.handle !== handle) redirect(`/people/${profile.handle}`);
 
   const own = profile.id === user.id;
-  const [{ data: state }, { data: incoming }] = own
-    ? [{ data: null }, { data: null }]
-    : await Promise.all([
-        supabase.rpc("connection_state", { p_other: profile.id }),
-        supabase.rpc("incoming_requests").eq("requester_id", profile.id).maybeSingle(),
-      ]);
+  const [{ data: state }, { data: incoming }, { data: badges }] = await Promise.all([
+    own ? { data: null } : supabase.rpc("connection_state", { p_other: profile.id }),
+    own
+      ? { data: null }
+      : supabase.rpc("incoming_requests").eq("requester_id", profile.id).maybeSingle(),
+    supabase.rpc("profile_badges", { p_user: profile.id }),
+  ]);
   const firstName = (profile.full_name ?? profile.handle ?? "them").split(" ")[0]!;
 
   return (
@@ -78,6 +80,7 @@ export default async function PersonPage({ params }: Props) {
           )
         }
       />
+      <BadgeRow badges={badges ?? []} />
     </AppShell>
   );
 }

@@ -14,6 +14,11 @@ const ROWS: { key: keyof NotificationPrefs; label: string; hint: string }[] = [
   { key: "comments", label: "Comments and replies", hint: "On your posts and comments" },
   { key: "messages", label: "Chat messages", hint: "As pushes; muted chats never ping" },
   {
+    key: "digest",
+    label: "Weekly email",
+    hint: "A short Sunday summary of what's new for you",
+  },
+  {
     key: "push",
     label: "Push notifications",
     hint: "Off: everything stays in the app, on all your devices",

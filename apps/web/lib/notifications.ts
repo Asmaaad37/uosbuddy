@@ -129,6 +129,23 @@ export function describe(n: NotificationLike): Described {
             title: "Your women-only access request wasn't approved",
             href: "/me/privacy#women-only",
           };
+    case "account.warning":
+      return {
+        title: "A warning from the UOSBuddy team",
+        body: typeof p.message === "string" ? p.message : undefined,
+        href: "/guidelines",
+      };
+    case "content.removed":
+      return {
+        title: `Your ${typeof p.kind === "string" ? p.kind : "post"} was removed`,
+        body: "It broke the community guidelines.",
+        href: "/guidelines",
+      };
+    case "badge.awarded":
+      return {
+        title: `New badge: ${typeof p.emoji === "string" ? `${p.emoji} ` : ""}${typeof p.name === "string" ? p.name : "unlocked"}`,
+        href: "/me",
+      };
     default:
       return { title: "Something new on UOSBuddy", href: "/notifications" };
   }

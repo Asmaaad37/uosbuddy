@@ -12,7 +12,7 @@ export default async function NotificationSettingsPage() {
   if (!user) redirect("/login?next=/me/notifications");
   const { data: prefs } = await supabase
     .from("notification_prefs")
-    .select("connections, backup, comments, messages, push")
+    .select("connections, backup, comments, messages, push, digest")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -24,7 +24,14 @@ export default async function NotificationSettingsPage() {
       </div>
       <PrefsForm
         initial={
-          prefs ?? { connections: true, backup: true, comments: true, messages: true, push: true }
+          prefs ?? {
+            connections: true,
+            backup: true,
+            comments: true,
+            messages: true,
+            push: true,
+            digest: true,
+          }
         }
       />
     </AppShell>

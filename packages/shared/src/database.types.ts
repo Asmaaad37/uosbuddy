@@ -873,6 +873,42 @@ export type Database = {
           },
         ]
       }
+      data_exports: {
+        Row: {
+          created_at: string
+          id: string
+          path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_exports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_exports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           aliases: string[]

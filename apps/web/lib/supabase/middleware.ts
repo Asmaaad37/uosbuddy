@@ -9,6 +9,8 @@ import { needsProfile, redirectFor } from "@/lib/auth/routing";
  * (visitor → /, pending → /pending, …). Middleware is a UX redirect, never a security
  * boundary: RLS enforces access.
  */
+const ACTIVE_COOKIE = "uob_active";
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -43,10 +45,22 @@ export async function updateSession(request: NextRequest) {
   if (user) {
     const { data } = await supabase
       .from("profiles")
-      .select("verification_status, onboarding_step, role")
+      .select("verification_status, onboarding_step, role, banned_at, deleted_at")
       .eq("id", user.id)
       .maybeSingle();
     profile = data;
+
+    // Phase 9: count the student as active today (DAU/WAU), once per day per browser.
+    const today = new Date(Date.now() + 5 * 3_600_000).toISOString().slice(0, 10);
+    if (profile && request.cookies.get(ACTIVE_COOKIE)?.value !== today) {
+      await supabase.rpc("touch_activity");
+      response.cookies.set(ACTIVE_COOKIE, today, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: request.nextUrl.protocol === "https:",
+        maxAge: 60 * 60 * 24,
+      });
+    }
   }
 
   const target = redirectFor(path, !!user, profile);

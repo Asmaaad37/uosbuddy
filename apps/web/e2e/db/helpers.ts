@@ -63,6 +63,7 @@ export async function makeStudent(
       opening_move_prompt: "Best chai spot near campus is…",
       opening_move: "The dhaba behind the main gate, no contest.",
       onboarding_step: onboardingStep,
+      guidelines_accepted_at: new Date().toISOString(),
       ...extra,
     })
     .eq("id", id);
