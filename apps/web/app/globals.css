@@ -183,3 +183,42 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* AIBuddy: a slow breathing bob (3 s), its shadow, and the thinking bubbles. */
+@keyframes buddy-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes buddy-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scaleX(0.9);
+    opacity: 0.08;
+  }
+}
+@keyframes buddy-rise {
+  0% {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+}
+svg [class*="buddy-"] {
+  transform-box: fill-box;
+  transform-origin: center;
+}

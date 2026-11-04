@@ -13,6 +13,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { AIBuddyMascot } from "@/components/buddy/ai-buddy-mascot";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +41,14 @@ const SPRING = { type: "spring", stiffness: 260, damping: 22 } as const;
  * Feature dock (Section 6.3 #2). Tapping a live tile springs it up and fans a few preview
  * cards, then navigates; with reduced motion it just navigates.
  */
-export function FeatureDock({ previews }: { previews: { name: string; avatar: string | null }[] }) {
+export function FeatureDock({
+  previews,
+  aiReady = true,
+}: {
+  previews: { name: string; avatar: string | null }[];
+  /** Off for the MVP: the Buddy tile says "Soon" and opens the coming-soon page. */
+  aiReady?: boolean;
+}) {
   const router = useRouter();
   const reduce = useReducedMotion();
   const [opening, setOpening] = useState<string | null>(null);
@@ -97,12 +105,21 @@ export function FeatureDock({ previews }: { previews: { name: string; avatar: st
                     aria-hidden
                     className="pointer-events-none absolute inset-x-1 top-1 h-1/2 rounded-t-[16px] bg-gradient-to-b from-white/45 to-white/0"
                   />
-                  <Icon strokeWidth={1.75} />
+                  {tile.label === "Buddy" ? (
+                    <AIBuddyMascot mood="idle" face size={46} title="" />
+                  ) : (
+                    <Icon strokeWidth={1.75} />
+                  )}
                 </m.span>
               </span>
               <span className="rounded-pill bg-surface px-2.5 py-0.5 text-xs font-semibold text-ink shadow-card">
                 {tile.label}
               </span>
+              {tile.label === "Buddy" && !aiReady && (
+                <span className="-mt-1 text-[10px] font-semibold tracking-wide text-ink-2 uppercase">
+                  Soon
+                </span>
+              )}
             </>
           );
           return (
