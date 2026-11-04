@@ -47,9 +47,9 @@ export function FeatureDock({ previews }: { previews: { name: string; avatar: st
 
   function open(href: string) {
     if (reduce) return router.push(href);
-    router.prefetch(href);
+    // Navigate straight away; the spring plays while the next page loads.
     setOpening(href);
-    setTimeout(() => router.push(href), 380);
+    router.push(href);
   }
 
   return (

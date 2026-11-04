@@ -7,6 +7,7 @@ import { addAndJoinCourse, joinCourse, searchCourses, type CourseHit } from "@/a
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
+import { looksLikeCourseCode } from "@/lib/academics";
 import {
   Sheet,
   SheetContent,
@@ -120,7 +121,9 @@ export function AddCourse({
                 className="justify-self-start text-sm font-semibold text-brand"
                 onClick={() => {
                   setAdding(true);
-                  setCode(query.trim());
+                  // A typed code fills the code; a typed name fills the title.
+                  if (looksLikeCourseCode(query)) setCode(query.trim());
+                  else setTitle(query.trim().slice(0, 120));
                   setError(undefined);
                 }}
               >

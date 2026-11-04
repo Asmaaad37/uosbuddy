@@ -66,3 +66,8 @@ export function freeWindows(
   if (to - cursor >= minLength) out.push({ start: cursor, end: to });
   return out;
 }
+
+/** "CS-301", "cs 301", "BSCS3101": a course code; anything else is probably a course name. */
+export function looksLikeCourseCode(value: string) {
+  return /^[A-Za-z]{2,6}[\s-]?\d{2,5}[A-Za-z]?$/.test(value.trim());
+}

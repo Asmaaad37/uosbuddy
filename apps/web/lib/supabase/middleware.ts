@@ -33,10 +33,11 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Do not add logic between client creation and getUser(): it revalidates the token.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Do not add logic between client creation and getClaims(): it refreshes the session.
+  // getClaims verifies the token locally when the project signs with asymmetric keys (no
+  // round trip to the auth server on every navigation) and falls back to getUser otherwise.
+  const { data: auth } = await supabase.auth.getClaims();
+  const user = auth?.claims?.sub ? { id: auth.claims.sub } : null;
 
   const path = request.nextUrl.pathname;
   if (!needsProfile(path)) return response;
