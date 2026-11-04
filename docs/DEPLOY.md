@@ -14,6 +14,20 @@ environment settings or the Supabase dashboard, never into the repository or a c
 The AI runs inside the web app (Claude), so there's no separate AI server to host; `apps/ai`
 stays as a placeholder.
 
+## MVP launch (no domain, AI off)
+
+- **No domain needed:** Vercel's free `https://<project>.vercel.app` address works for everything
+  (login, emails, push, install). Use it wherever this guide says `<your-domain>`; add a custom
+  domain later without code changes.
+- **AI stays off:** leave `ANTHROPIC_API_KEY`, `AI_FAKE` and `MODERATION_SECRET` unset, and skip
+  the `moderation_secret` row and the `embed` function deploy. AIBuddy then shows "coming
+  soon", timetable import is hidden, posts publish straight away (reports still hold them), and
+  admins check verification documents by eye. Turning AI on later is adding the keys.
+- **Free plans are fine for testing:** Supabase Free pauses after a week without activity and
+  has no daily backups; move to Pro before a public launch. Vercel Hobby is for
+  non-commercial use; move to Pro if UOSBuddy ever earns money.
+- **Email:** Gmail SMTP (an app password) works for the MVP, capped at about 500 emails a day.
+
 ## 1. Supabase production project
 
 1. Create a project in **Mumbai (ap-south-1)**, Pro plan (daily backups, no pausing). Save the
