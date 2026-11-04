@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parsePublicEnv, parseServerEnv } from "./env";
+import { parsePublicEnv } from "./env";
+import { parseServerEnv } from "./env-server-schema";
 
 const base = {
   NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321",

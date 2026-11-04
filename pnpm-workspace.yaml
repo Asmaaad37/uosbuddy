@@ -1,3 +1,6 @@
 packages:
   - apps/*
   - packages/*
+# Phase 10 dependency audit: Next.js pins an older postcss with known advisories.
+overrides:
+  postcss: 8.5.31

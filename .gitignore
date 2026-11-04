@@ -37,3 +37,7 @@ apps/web/screenshots/
 *.tsbuildinfo
 .ruff_cache/
 .pytest_cache/
+
+# load test tokens and Lighthouse runs
+load/tokens.json
+.lighthouseci/

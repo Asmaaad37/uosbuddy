@@ -6,6 +6,7 @@ import { getDirectoryCounts, getSuggestions, loadDirectory } from "@/actions/dis
 import { AppShell } from "@/components/app-shell";
 import { BatchReveal } from "@/components/discovery/batch-reveal";
 import { FeatureDock } from "@/components/discovery/feature-dock";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { PersonCard } from "@/components/discovery/person-card";
 import { ShareButton } from "@/components/discovery/share-button";
 import { Avatar } from "@/components/ui/avatar";
@@ -112,6 +113,7 @@ export default async function ExplorePage({ searchParams }: Props) {
 
       <Marquee items={pulses} className="-mx-4 sm:mx-0 sm:rounded-md sm:border-x" />
 
+      <InstallPrompt />
       <FeatureDock
         previews={batchPeople.map((p) => ({
           name: p.full_name ?? p.handle ?? "Student",

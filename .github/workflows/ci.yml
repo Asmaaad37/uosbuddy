@@ -35,8 +35,22 @@ jobs:
       - run: pnpm format:check
       - run: pnpm --filter @uosbuddy/web test
       - run: pnpm build
+      # Phase 10 security checks: no server secret (even by name) in browser code, and no
+      # high-severity advisories in production dependencies.
+      - name: No server secrets in the browser bundle
+        run: |
+          if grep -rlE "SUPABASE_SERVICE_ROLE_KEY|ANTHROPIC_API_KEY|MODERATION_SECRET|CRON_SECRET|PUSH_WEBHOOK_SECRET|SMTP_PASSWORD|VAPID_PRIVATE_KEY|TURNSTILE_SECRET_KEY|UPSTASH_REDIS_REST_TOKEN" apps/web/.next/static; then
+            echo "::error::Server-only variables appear in client JavaScript"; exit 1
+          fi
+      - run: pnpm audit --prod --audit-level high
       - run: pnpm --filter @uosbuddy/web exec playwright install --with-deps chromium
       - run: pnpm --filter @uosbuddy/web exec playwright test
+      - name: Lighthouse (mobile, public pages, >= 90 in every category)
+        working-directory: apps/web
+        run: |
+          pnpm start -p 3000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ > /dev/null && break; sleep 2; done
+          npx -y @lhci/cli@0.15.1 autorun
       - uses: actions/upload-artifact@v4
         if: always()
         with:
