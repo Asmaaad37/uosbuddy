@@ -68,8 +68,8 @@ export function DeleteAccount({ deletesAt }: { deletesAt: string | null }) {
               const r = await cancelDeletion();
               if (!r.ok) return void toast.error(r.error);
               toast.success("Welcome back! Your account is active again.");
-              router.push("/explore");
-              router.refresh();
+              // A full load: the client router may still hold the earlier redirect to here.
+              window.location.assign("/explore");
             })
           }
         >

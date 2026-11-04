@@ -37,7 +37,9 @@ test("guidelines, a moderator removes a reported post, and a ban", async ({ brow
   await expect(author.page.getByRole("heading", { name: "Before you post" })).toBeVisible();
   await shot(author.page, "01-guidelines");
   await author.page.getByRole("button", { name: "I agree" }).click();
-  await expect(author.page.getByText(body)).toBeVisible();
+  // Saved once the composer closes and the post is in the feed.
+  await expect(author.page.getByRole("dialog")).toHaveCount(0);
+  await expect(author.page.getByRole("article").filter({ hasText: body })).toBeVisible();
   const { data: post } = await db().from("posts").select("id").eq("body", body).single();
   await db()
     .from("reports")
