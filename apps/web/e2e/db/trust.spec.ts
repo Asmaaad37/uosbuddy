@@ -46,8 +46,12 @@ test("guidelines, a moderator removes a reported post, and a ban", async ({ brow
     .insert({ reporter_id: admin.id, target_type: "post", target_id: post!.id, reason: "other" });
 
   // The admin makes Omer a campus moderator.
-  await admin.page.goto(`/admin/users?q=${encodeURIComponent("Omer Farooq")}`);
-  const row = admin.page.getByRole("listitem").filter({ hasText: "Omer Farooq" });
+  // Search by the unique handle (a retry's earlier students share the name); pick the row
+  // by its profile link, since a toast is also a list item with the name in it.
+  await admin.page.goto(`/admin/users?q=${mod.handle}`);
+  const row = admin.page
+    .getByRole("listitem")
+    .filter({ has: admin.page.locator(`a[href="/people/${mod.handle}"]`) });
   await row.getByRole("button", { name: "Make moderator" }).click();
   await row.getByRole("checkbox", { name: "Campus feed" }).check();
   await row.getByRole("button", { name: "Save" }).click();
@@ -74,12 +78,14 @@ test("guidelines, a moderator removes a reported post, and a ban", async ({ brow
   );
 
   // The admin bans the author: they only see the suspension notice.
-  await admin.page.goto(`/admin/users?q=${encodeURIComponent("Nadia Hussain")}`);
-  const nadia = admin.page.getByRole("listitem").filter({ hasText: "Nadia Hussain" });
-  await nadia.getByRole("button", { name: "Ban" }).click();
+  await admin.page.goto(`/admin/users?q=${author.handle}`);
+  const nadia = admin.page
+    .getByRole("listitem")
+    .filter({ has: admin.page.locator(`a[href="/people/${author.handle}"]`) });
+  await nadia.getByRole("button", { name: "Ban", exact: true }).click();
   await nadia.getByLabel("Reason for the ban").fill("Selling exam papers");
-  await nadia.getByRole("button", { name: "Ban" }).last().click();
-  await expect(nadia.getByText("Banned")).toBeVisible();
+  await nadia.getByRole("button", { name: "Ban", exact: true }).last().click();
+  await expect(nadia.getByText("Banned", { exact: true })).toBeVisible();
   await author.page.goto("/feed");
   await expect(author.page).toHaveURL(/\/banned$/);
   await expect(
