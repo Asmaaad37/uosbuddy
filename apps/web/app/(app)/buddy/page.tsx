@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { BuddyChat } from "@/components/buddy/buddy-chat";
+import { BuddyComingSoon } from "@/components/buddy/coming-soon";
 import { Button } from "@/components/ui/button";
 import type { Source } from "@/lib/ai/buddy";
 import { aiEnabled } from "@/lib/ai/claude.server";
@@ -19,6 +20,14 @@ type Props = { searchParams: Promise<{ thread?: string; course?: string }> };
 export default async function BuddyPage({ searchParams }: Props) {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/buddy");
+  if (!aiEnabled()) {
+    return (
+      <AppShell bell back="/explore">
+        <h1 className="text-[28px] leading-tight font-bold">AIBuddy</h1>
+        <BuddyComingSoon />
+      </AppShell>
+    );
+  }
   const { thread, course } = await searchParams;
   const threadId = thread && /^[0-9a-f-]{36}$/.test(thread) ? thread : null;
 
@@ -66,21 +75,15 @@ export default async function BuddyPage({ searchParams }: Props) {
         )}
       </div>
 
-      {!aiEnabled() ? (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-          AI Buddy isn&apos;t switched on yet.
-        </p>
-      ) : (
-        <BuddyChat
-          key={open?.id ?? "new"}
-          courses={courses ?? []}
-          courseId={open?.course_id ?? (course && /^[0-9a-f-]{36}$/.test(course) ? course : null)}
-          threadId={open?.id ?? null}
-          initialTurns={turns}
-          remaining={remaining ?? 0}
-          limit={limit ?? 30}
-        />
-      )}
+      <BuddyChat
+        key={open?.id ?? "new"}
+        courses={courses ?? []}
+        courseId={open?.course_id ?? (course && /^[0-9a-f-]{36}$/.test(course) ? course : null)}
+        threadId={open?.id ?? null}
+        initialTurns={turns}
+        remaining={remaining ?? 0}
+        limit={limit ?? 30}
+      />
 
       {(threads?.length ?? 0) > 0 && (
         <section aria-labelledby="past-chats" className="grid gap-2">
