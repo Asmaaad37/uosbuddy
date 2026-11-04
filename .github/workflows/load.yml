@@ -1,0 +1,48 @@
+name: Load test
+
+# Phase 10: 500 students on the feed and chat with k6 (BUILD_PLAN §4.12). Runs on demand,
+# and when the load test itself changes. A CI runner shares 4 cores between Postgres and
+# k6, so treat results as a regression check; the real run is against staging.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ["load/**", ".github/workflows/load.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+      - id: sb
+        name: Read local Supabase settings
+        run: |
+          eval "$(supabase status -o env)"
+          echo "::add-mask::$JWT_SECRET"
+          {
+            echo "api=$API_URL"
+            echo "anon=$ANON_KEY"
+            echo "db=$DB_URL"
+            echo "jwt=$JWT_SECRET"
+          } >> "$GITHUB_OUTPUT"
+      - run: psql "${{ steps.sb.outputs.db }}" -v ON_ERROR_STOP=1 -f load/seed.sql
+      - name: Query plans and timings
+        run: psql "${{ steps.sb.outputs.db }}" -f load/explain.sql
+      - run: node load/tokens.mjs > load/tokens.json
+        env:
+          DB_URL: ${{ steps.sb.outputs.db }}
+          JWT_SECRET: ${{ steps.sb.outputs.jwt }}
+      - uses: grafana/setup-k6-action@v1
+      # A step up first, to see where a single runner's stack stops coping.
+      - name: 100 students, feed and chat
+        continue-on-error: true
+        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=100 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js
+      - name: 500 students, feed and chat
+        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=500 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js

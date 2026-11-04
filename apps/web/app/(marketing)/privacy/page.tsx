@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 // Keep this in step with what the app actually does; update it when a feature changes.
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy" updated="26 October 2026">
+    <LegalPage title="Privacy" updated="4 November 2026">
       <p>
         UOSBuddy helps University of Sargodha students find their batch and classmates. It&apos;s
         run by students and is not an official University of Sargodha service. This page explains
@@ -33,8 +33,13 @@ export default function PrivacyPage() {
             department, batch, section, photo, bio and interests.
           </li>
           <li>
-            <strong>Technical data:</strong> a cookie that keeps you logged in. If we turn on error
-            reporting or usage analytics, they record errors and page visits, not what you type.
+            <strong>What you do in the app:</strong> posts, comments, messages, files you share,
+            rides, listings, events you RSVP to, your timetable and your AI Buddy chats.
+          </li>
+          <li>
+            <strong>Technical data:</strong> a cookie that keeps you logged in, and which days you
+            used the app (to count active students). If we turn on error reporting or usage
+            analytics, they record errors and page visits, not what you type.
           </li>
         </ul>
       </section>
@@ -58,6 +63,32 @@ export default function PrivacyPage() {
       </section>
 
       <section>
+        <h2>AI features</h2>
+        <ul>
+          <li>
+            <strong>AI Buddy</strong> sends your question and excerpts from your course&apos;s
+            shared files to Anthropic (Claude) to write an answer.
+          </li>
+          <li>
+            <strong>Moderation:</strong> the text of posts, comments and listings is checked by
+            Claude before it&apos;s published. People, not AI, decide on removals and bans.
+          </li>
+          <li>
+            <strong>Verification:</strong> your proof document may be read by Claude to help a
+            verifier check it faster. A person always makes the decision.
+          </li>
+          <li>
+            <strong>Timetable import:</strong> a screenshot you upload is read by Claude to fill in
+            your classes.
+          </li>
+        </ul>
+        <p>
+          Anthropic processes this only to provide the answer and doesn&apos;t use it to train its
+          models.
+        </p>
+      </section>
+
+      <section>
         <h2>How long we keep it</h2>
         <ul>
           <li>
@@ -66,8 +97,11 @@ export default function PrivacyPage() {
           </li>
           <li>Everything else stays while your account exists.</li>
           <li>
-            To delete your account and its data, <ContactLine />.
+            You can delete your account in <strong>Me → Data</strong>. It&apos;s hidden straight
+            away and permanently deleted after 14 days (log in before then to change your mind).
+            Messages you sent stay in other people&apos;s chats without your name.
           </li>
+          <li>Data exports are deleted after 7 days.</li>
         </ul>
       </section>
 
@@ -75,15 +109,17 @@ export default function PrivacyPage() {
         <h2>Where it&apos;s stored</h2>
         <p>
           Your data is stored with Supabase (database and files, in Mumbai, India). The website is
-          hosted on Vercel. Account and status emails are sent through an email provider. These
-          services process data for us and only as needed to run UOSBuddy.
+          hosted on Vercel. Account, status and weekly emails are sent through an email provider,
+          and AI features use Anthropic. These services process data for us and only as needed to
+          run UOSBuddy.
         </p>
       </section>
 
       <section>
         <h2>Questions</h2>
         <p>
-          To ask about your data or request a copy of it, <ContactLine />.
+          Download a copy of your data any time in <strong>Me → Data</strong>. For anything else,{" "}
+          <ContactLine />.
         </p>
       </section>
     </LegalPage>

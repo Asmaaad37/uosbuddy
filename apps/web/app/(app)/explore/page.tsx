@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, MessageCircle, ShieldCheck } from "lucide-react";
 import { getDirectoryCounts, getSuggestions, loadDirectory } from "@/actions/discovery";
 import { AppShell } from "@/components/app-shell";
 import { BatchReveal } from "@/components/discovery/batch-reveal";
 import { FeatureDock } from "@/components/discovery/feature-dock";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { PersonCard } from "@/components/discovery/person-card";
 import { ShareButton } from "@/components/discovery/share-button";
+import { publicEnv } from "@/lib/env";
+import { inviteMessage, whatsappLink } from "@/lib/invite-text";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
@@ -75,8 +78,11 @@ export default async function ExplorePage({ searchParams }: Props) {
     <AppShell
       bell
       action={
-        <Link href="/me" aria-label="My profile" className="rounded-pill">
-          <Avatar name={name} src={profile.avatar_url} size="md" />
+        <Link href="/me" className="rounded-pill">
+          <span aria-hidden>
+            <Avatar name={name} src={profile.avatar_url} size="md" />
+          </span>
+          <span className="sr-only">My profile</span>
         </Link>
       }
     >
@@ -103,7 +109,7 @@ export default async function ExplorePage({ searchParams }: Props) {
           <span className="font-semibold">
             from {batchLabel} {batchCount === 1 ? "is" : "are"} here
           </span>
-          <span className="mt-2 flex items-center gap-1 text-sm font-semibold text-brand-soft">
+          <span className="mt-2 flex items-center gap-1 text-sm font-semibold text-on-ink-accent">
             See your batch
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
           </span>
@@ -112,6 +118,7 @@ export default async function ExplorePage({ searchParams }: Props) {
 
       <Marquee items={pulses} className="-mx-4 sm:mx-0 sm:rounded-md sm:border-x" />
 
+      <InstallPrompt />
       <FeatureDock
         previews={batchPeople.map((p) => ({
           name: p.full_name ?? p.handle ?? "Student",
@@ -167,12 +174,29 @@ export default async function ExplorePage({ searchParams }: Props) {
         </section>
       )}
 
-      <ShareButton
-        block
-        variant="secondary"
-        url={inviteUrl}
-        text={`${batchCount} of ${batchLabel} are on UOSBuddy. Join us:`}
-      />
+      <div className="grid grid-cols-2 gap-2">
+        <ShareButton
+          block
+          variant="secondary"
+          url={inviteUrl}
+          text={`${batchCount} of ${batchLabel} are on UOSBuddy. Join us:`}
+        />
+        <Button asChild block variant="secondary">
+          <a
+            href={whatsappLink(
+              inviteMessage({
+                batchLabel: code && profile.batch_year ? batchLabel : null,
+                count: batchCount,
+                url: new URL(inviteUrl, publicEnv.NEXT_PUBLIC_SITE_URL).toString(),
+              }),
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MessageCircle /> WhatsApp
+          </a>
+        </Button>
+      </div>
 
       {isAdmin && (
         <Button asChild block variant="secondary">

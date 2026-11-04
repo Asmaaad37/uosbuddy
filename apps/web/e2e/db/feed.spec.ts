@@ -31,7 +31,10 @@ test("an anonymous post never reveals its author to anyone else", async ({ brows
   await a.page.getByRole("switch", { name: /Post anonymously/ }).check();
   await a.page.screenshot({ path: "test-results/screens/phase-5/01-composer.png" });
   await a.page.getByRole("button", { name: "Post", exact: true }).click();
-  await expect(a.page.getByText(`Which canteen has the best samosas? ${run}`)).toBeVisible();
+  // Saved once it's in A's feed (the composer box holds the same text until then).
+  await expect(
+    a.page.locator("article", { hasText: `Which canteen has the best samosas? ${run}` }),
+  ).toBeVisible();
 
   // B reads the feed and the thread; every response B's browser receives is captured.
   const bodies: string[] = [];

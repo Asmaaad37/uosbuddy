@@ -28,7 +28,7 @@
     "lucide-react": "1.61.0",
     "motion": "14.6.0",
     "next": "15.5.28",
-    "nodemailer": "10.1.0",
+    "nodemailer": "10.1.7",
     "posthog-js": "1.438.20",
     "radix-ui": "1.8.1",
     "react": "19.1.10",
@@ -42,6 +42,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@eslint/eslintrc": "3.3.7",
     "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.3.3",
@@ -58,5 +59,13 @@
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vitest": "5.0.5"
-  }
+  },
+  "browserslist": [
+    "chrome >= 109",
+    "edge >= 109",
+    "firefox >= 109",
+    "safari >= 15.4",
+    "ios_saf >= 15.4",
+    "samsung >= 21"
+  ]
 }

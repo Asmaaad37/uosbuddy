@@ -1,8 +1,16 @@
-// Service worker. Phase 5: Web Push. Offline shell and asset caching arrive in Phase 10.
-const VERSION = "v1";
+// Service worker. Phase 5: Web Push. Phase 10: offline page and static asset caching.
+const VERSION = "v2";
+const SHELL = `shell-${VERSION}`;
+const STATIC = `static-${VERSION}`;
+const OFFLINE = "/offline";
 
-self.addEventListener("install", () => {
-  self.skipWaiting();
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches
+      .open(SHELL)
+      .then((cache) => cache.addAll([OFFLINE, "/icons/192", "/manifest.webmanifest"]))
+      .then(() => self.skipWaiting()),
+  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -16,8 +24,55 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Pass-through fetch handler: keeps installability checks happy without caching anything yet.
-self.addEventListener("fetch", () => {});
+// Only our own GETs. Pages always come from the network (they're personal and live);
+// with no connection, the offline page. Hashed build assets and icons are cached.
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request).catch(() => caches.match(OFFLINE).then((r) => r || Response.error())),
+    );
+    return;
+  }
+
+  // Content-hashed, so a cached copy is always right.
+  if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith(
+      caches.open(STATIC).then((cache) =>
+        cache.match(request).then(
+          (hit) =>
+            hit ||
+            fetch(request).then((res) => {
+              if (res.ok) cache.put(request, res.clone());
+              return res;
+            }),
+        ),
+      ),
+    );
+    return;
+  }
+
+  // Icons: serve the cached copy, refresh it in the background.
+  if (url.pathname.startsWith("/icons/")) {
+    event.respondWith(
+      caches.open(STATIC).then((cache) =>
+        cache.match(request).then((hit) => {
+          const fresh = fetch(request)
+            .then((res) => {
+              if (res.ok) cache.put(request, res.clone());
+              return res;
+            })
+            .catch(() => hit);
+          return hit || fresh;
+        }),
+      ),
+    );
+  }
+});
 
 // Payload from /api/push: { title, body?, url, tag? }.
 self.addEventListener("push", (event) => {
