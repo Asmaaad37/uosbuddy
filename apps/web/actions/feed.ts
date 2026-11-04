@@ -42,26 +42,17 @@ export async function loadFeed(input: z.input<typeof feedSchema>): Promise<Actio
   if (!s) return fail("Your session expired. Log in again.");
   const { space, sort, after } = parsed.data;
 
-  let query = s.supabase
-    .from("posts_public")
-    .select("*")
-    // posts_public holds back others' held posts; your own show as "Under review".
-    .eq("space", space);
-  if (sort === "hot") {
-    if (after)
-      query = query.or(
-        `hot_score.lt.${after.score},and(hot_score.eq.${after.score},id.lt.${after.id})`,
-      );
-    query = query.order("hot_score", { ascending: false }).order("id", { ascending: false });
-  } else {
-    if (after) {
-      query = query.or(
-        `created_at.lt."${after.createdAt}",and(created_at.eq."${after.createdAt}",id.lt.${after.id})`,
-      );
-    }
-    query = query.order("created_at", { ascending: false }).order("id", { ascending: false });
-  }
-  const { data, error } = await query.limit(PAGE);
+  // feed_page walks the index in order and builds only this page (Phase 10 load test);
+  // posts_public still decides what's visible: others' held posts never, your own as
+  // "Under review".
+  const { data, error } = await s.supabase.rpc("feed_page", {
+    p_space: space,
+    p_sort: sort,
+    p_after_score: after?.score,
+    p_after_created: after?.createdAt,
+    p_after_id: after?.id,
+    p_limit: PAGE,
+  });
   if (error) {
     console.error("[feed] load failed", error.code, error.message);
     return fail("Couldn't load the feed. Try again.");

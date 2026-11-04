@@ -5,21 +5,13 @@
     "name": "University of Sargodha",
     "short_name": "UoS",
     "city": "Sargodha",
-    "domains": [
-      "uos.edu.pk"
-    ],
+    "domains": ["uos.edu.pk"],
     "roll_no_regex": "^[A-Z]{2,8}\\d{2}[FS]\\d{2}[A-Z]\\d{3}$",
     "registration_no_regex": "^\\d{2}[FS]-US-[A-Z]{2,5}-\\d{1,5}$",
     "roll_no_format": "program letters (BSCS) + 2-digit code (51, believed to be the department; unconfirmed) + intake term F/S and 2-digit year (F22 = Fall 2022) + admission category (R = regular, S = self-support) + 3-digit serial",
-    "roll_no_examples": [
-      "BSCS51F22S037",
-      "BSAI51F25S005",
-      "BSIT51S25R002"
-    ],
+    "roll_no_examples": ["BSCS51F22S037", "BSAI51F25S005", "BSIT51S25R002"],
     "registration_no_format": "2-digit year + term F/S, 'US', subject code, serial (22F-US-CSC-401)",
-    "registration_no_examples": [
-      "22F-US-CSC-401"
-    ],
+    "registration_no_examples": ["22F-US-CSC-401"],
     "verification_review_sla_hours": 12
   },
   "campuses": [
@@ -35,9 +27,7 @@
         {
           "name": "Department of Mechanical, Industrial and Energy Systems",
           "short_code": "DMIES",
-          "aliases": [
-            "College of Engineering & Technology"
-          ],
+          "aliases": ["College of Engineering & Technology"],
           "programs": [
             {
               "name": "BSc Mechanical Engineering",
@@ -59,9 +49,7 @@
         {
           "name": "Department of Electrical, Electronics and Computer Systems",
           "short_code": "DEECS",
-          "aliases": [
-            "College of Engineering & Technology"
-          ],
+          "aliases": ["College of Engineering & Technology"],
           "programs": [
             {
               "name": "Bachelor of Engineering Technology (Electrical)",
@@ -83,9 +71,7 @@
         {
           "name": "Department of Civil, Environment and Transportation Systems",
           "short_code": "DCETS",
-          "aliases": [
-            "College of Engineering & Technology"
-          ],
+          "aliases": ["College of Engineering & Technology"],
           "programs": [
             {
               "name": "Bachelor of Engineering Technology (Civil)",
@@ -107,9 +93,7 @@
         {
           "name": "Department of Animal Sciences",
           "short_code": "ANS",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Animal Nutrition",
@@ -173,9 +157,7 @@
         {
           "name": "Department of Agricultural Extension & Rural Studies",
           "short_code": "AERS",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Agricultural Extension",
@@ -212,9 +194,7 @@
         {
           "name": "Department of Entomology",
           "short_code": "ENT",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Entomology",
@@ -236,9 +216,7 @@
         {
           "name": "Department of Agronomy",
           "short_code": "AGR",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Agronomy",
@@ -265,9 +243,7 @@
         {
           "name": "Department of Horticulture",
           "short_code": "HORT",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Horticulture",
@@ -284,9 +260,7 @@
         {
           "name": "Department of Plant Breeding and Genetics",
           "short_code": "PBG",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Plant Breeding and Genetics",
@@ -308,9 +282,7 @@
         {
           "name": "Department of Plant Pathology",
           "short_code": "PP",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Plant Pathology",
@@ -327,9 +299,7 @@
         {
           "name": "Department of Soil and Environmental Sciences",
           "short_code": "SES",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "MSc (Hons) Soil Science",
@@ -346,9 +316,7 @@
         {
           "name": "Department of Agricultural Economics",
           "short_code": "AGECON",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "BS in Agricultural and Resource Economics",
@@ -370,9 +338,7 @@
         {
           "name": "Department of Forestry",
           "short_code": "FOR",
-          "aliases": [
-            "College of Agriculture"
-          ],
+          "aliases": ["College of Agriculture"],
           "programs": [
             {
               "name": "BS in Forestry",
@@ -453,10 +419,7 @@
         {
           "name": "Malik Firoz Khan Noon Business School",
           "short_code": "MFKNBS",
-          "aliases": [
-            "Malik Feroz Khan Noon Business School",
-            "Business School"
-          ],
+          "aliases": ["Malik Feroz Khan Noon Business School", "Business School"],
           "programs": [
             {
               "name": "Bachelor of Business Administration (BBA)",
@@ -555,9 +518,7 @@
         {
           "name": "Institute of Education",
           "short_code": "EDU",
-          "aliases": [
-            "Department of Education"
-          ],
+          "aliases": ["Department of Education"],
           "programs": [
             {
               "name": "BS Education",
@@ -609,9 +570,7 @@
         {
           "name": "Department of International Relations",
           "short_code": "IR",
-          "aliases": [
-            "Department of Politics & International Relations"
-          ],
+          "aliases": ["Department of Politics & International Relations"],
           "programs": [
             {
               "name": "BS Political Science",
@@ -826,9 +785,7 @@
         {
           "name": "Department of Political Science",
           "short_code": "POL",
-          "aliases": [
-            "Department of Politics & International Relations"
-          ],
+          "aliases": ["Department of Politics & International Relations"],
           "programs": []
         }
       ]
@@ -963,9 +920,7 @@
         {
           "name": "Institute of Art & Design",
           "short_code": "IAD",
-          "aliases": [
-            "Institute of Arts & Design"
-          ],
+          "aliases": ["Institute of Arts & Design"],
           "programs": [
             {
               "name": "BS Fine Arts",
@@ -1017,9 +972,7 @@
         {
           "name": "Department of Information Management",
           "short_code": "IM",
-          "aliases": [
-            "Department of Information and Management"
-          ],
+          "aliases": ["Department of Information and Management"],
           "programs": [
             {
               "name": "BS Information Management",
@@ -1177,9 +1130,7 @@
         {
           "name": "Department of Punjabi Language, Literature and Culture",
           "short_code": "PJB",
-          "aliases": [
-            "Department of Oriental Languages"
-          ],
+          "aliases": ["Department of Oriental Languages"],
           "programs": [
             {
               "name": "BS Punjabi",
@@ -1201,9 +1152,7 @@
         {
           "name": "Department of Arabic Language & Literature",
           "short_code": "ARB",
-          "aliases": [
-            "Department of Oriental Languages"
-          ],
+          "aliases": ["Department of Oriental Languages"],
           "programs": [
             {
               "name": "MA Arabic",
@@ -1579,9 +1528,7 @@
         {
           "name": "Department of Computer Science",
           "short_code": "CS",
-          "aliases": [
-            "Department of Computer Science & IT"
-          ],
+          "aliases": ["Department of Computer Science & IT"],
           "programs": [
             {
               "name": "BS in Computer Science",
@@ -1618,9 +1565,7 @@
         {
           "name": "Department of Information Technology",
           "short_code": "IT",
-          "aliases": [
-            "Department of Computer Science & IT"
-          ],
+          "aliases": ["Department of Computer Science & IT"],
           "programs": [
             {
               "name": "BS Information Technology",
@@ -1657,9 +1602,7 @@
         {
           "name": "Department of Software Engineering",
           "short_code": "SE",
-          "aliases": [
-            "Department of Computer Science & IT"
-          ],
+          "aliases": ["Department of Computer Science & IT"],
           "programs": [
             {
               "name": "BS Software Engineering",

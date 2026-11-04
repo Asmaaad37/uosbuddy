@@ -3563,6 +3563,44 @@ export type Database = {
         Returns: string[]
       }
       export_my_data: { Args: never; Returns: Json }
+      feed_page: {
+        Args: {
+          p_after_created?: string
+          p_after_id?: string
+          p_after_score?: number
+          p_limit?: number
+          p_sort?: string
+          p_space: string
+        }
+        Returns: {
+          author_avatar: string | null
+          author_handle: string | null
+          author_id: string | null
+          author_name: string | null
+          body: string | null
+          comment_count: number | null
+          created_at: string | null
+          downvotes: number | null
+          hot_score: number | null
+          id: string | null
+          is_anonymous: boolean | null
+          is_mine: boolean | null
+          media_paths: string[] | null
+          my_poll_option: number | null
+          my_vote: number | null
+          poll: Json | null
+          poll_counts: number[] | null
+          space: string | null
+          status: string | null
+          upvotes: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "posts_public"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       find_mentors: {
         Args: { p_limit?: number }
         Returns: {
@@ -3721,6 +3759,7 @@ export type Database = {
           id: string
         }[]
       }
+      my_conversation_ids: { Args: never; Returns: string[] }
       my_conversations: {
         Args: never
         Returns: {

@@ -46,10 +46,10 @@ export default function () {
     "Content-Type": "application/json",
   };
 
-  // The feed's first page, newest and hot (as /feed loads it).
-  const sort = __ITER % 2 ? "created_at.desc,id.desc" : "hot_score.desc,id.desc";
-  const feed = http.get(
-    `${API}/rest/v1/posts_public?select=*&space=eq.campus&order=${sort}&limit=20`,
+  // The feed's first page, hot and new, the way /feed loads it.
+  const feed = http.post(
+    `${API}/rest/v1/rpc/feed_page`,
+    JSON.stringify({ p_space: "campus", p_sort: __ITER % 2 ? "new" : "hot", p_limit: 20 }),
     { headers, tags: { name: "feed" } },
   );
   check(feed, { "feed 200": (r) => r.status === 200 });
