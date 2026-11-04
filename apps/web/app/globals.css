@@ -183,3 +183,13 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* The navigation bar: quick at first, then easing as it waits for the page. */
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
