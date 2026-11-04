@@ -42,11 +42,12 @@ insert into public.blocks (blocker_id, blocked_id) values (tests.uid('A'), tests
 select is(tests.as('A', $q$ select string_agg(body, ',' order by hot_score desc) from public.feed_page('campus', 'hot') $q$),
   'a1,a2,a3', 'the hot feed hides others'' held posts and blocked authors, in order');
 select is(tests.as('B', $q$ select string_agg(body, ',') from public.feed_page('campus', 'new') $q$),
-  'a1,a2,a3,b-held', 'the new feed shows your own held post, newest first');
+  'a1,a2,a3,b-held,c1', 'the new feed shows your own held post, newest first');
 select is(tests.as('A', $q$ select string_agg(body, ',') from public.feed_page('campus', 'new', null, null, null, 2) $q$),
   'a1,a2', 'a page stops at the limit');
-select is(tests.as('A', $q$ select string_agg(body, ',') from public.feed_page('campus', 'new', null,
-  (select created_at from public.posts where body = 'a2'), (select id from public.posts where body = 'a2')) $q$),
+-- (The cursor is read as the test runner: students can't read the posts table itself.)
+select is(tests.as('A', format($q$ select string_agg(body, ',') from public.feed_page('campus', 'new', null, %L, %L) $q$,
+  (select created_at from public.posts where body = 'a2'), (select id from public.posts where body = 'a2'))),
   'a3', 'the next page continues after the last post, without repeats');
 select is(tests.as('A', format($q$ select count(*)::text from public.feed_page('department:%s') $q$,
   (select id from public.departments where short_code <> 'CS' order by short_code limit 1))),

@@ -33,6 +33,8 @@ jobs:
             echo "jwt=$JWT_SECRET"
           } >> "$GITHUB_OUTPUT"
       - run: psql "${{ steps.sb.outputs.db }}" -v ON_ERROR_STOP=1 -f load/seed.sql
+      - name: Query plans and timings
+        run: psql "${{ steps.sb.outputs.db }}" -f load/explain.sql
       - run: node load/tokens.mjs > load/tokens.json
         env:
           DB_URL: ${{ steps.sb.outputs.db }}
