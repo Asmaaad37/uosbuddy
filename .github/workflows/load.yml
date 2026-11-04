@@ -38,5 +38,9 @@ jobs:
           DB_URL: ${{ steps.sb.outputs.db }}
           JWT_SECRET: ${{ steps.sb.outputs.jwt }}
       - uses: grafana/setup-k6-action@v1
+      # A step up first, to see where a single runner's stack stops coping.
+      - name: 100 students, feed and chat
+        continue-on-error: true
+        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=100 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js
       - name: 500 students, feed and chat
-        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js
+        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=500 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js

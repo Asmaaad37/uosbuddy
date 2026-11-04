@@ -6,6 +6,7 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 
 const { users } = JSON.parse(open("./tokens.json"));
+const VUS = Number(__ENV.VUS || 500);
 const API = __ENV.API;
 const CHAT = "00000000-0000-0000-0000-00000000c0de";
 
@@ -14,8 +15,8 @@ export const options = {
     students: {
       executor: "ramping-vus",
       stages: [
-        { duration: "30s", target: 500 },
-        { duration: "2m", target: 500 },
+        { duration: "30s", target: VUS },
+        { duration: "2m", target: VUS },
         { duration: "15s", target: 0 },
       ],
     },
@@ -27,6 +28,15 @@ export const options = {
     http_req_failed: ["rate<0.01"],
   },
 };
+
+// The first few failures, so a broken run says why (status 0 = connection error).
+let logged = 0;
+function note(r, what) {
+  if (r.status !== 200 && logged < 5) {
+    logged++;
+    console.warn(`${what} ${r.status} ${r.error || ""} ${String(r.body || "").slice(0, 160)}`);
+  }
+}
 
 export default function () {
   const me = users[(__VU - 1) % users.length];
@@ -43,6 +53,7 @@ export default function () {
     { headers, tags: { name: "feed" } },
   );
   check(feed, { "feed 200": (r) => r.status === 200 });
+  note(feed, "feed");
   sleep(1 + Math.random() * 2);
 
   // Open the chat, then say something.
@@ -51,11 +62,13 @@ export default function () {
     { headers, tags: { name: "messages" } },
   );
   check(messages, { "messages 200": (r) => r.status === 200 });
+  note(messages, "messages");
   const send = http.post(
     `${API}/rest/v1/rpc/send_message`,
     JSON.stringify({ p_conversation: CHAT, p_body: `hello from student ${__VU} (${__ITER})` }),
     { headers, tags: { name: "send" } },
   );
   check(send, { "send 200": (r) => r.status === 200 });
+  note(send, "send");
   sleep(3 + Math.random() * 4);
 }
