@@ -60,8 +60,12 @@ export async function searchCourses(query: string): Promise<CourseHit[]> {
 
 const addSchema = z.object({
   department: z.uuid("Choose a department"),
-  code: z.string().trim().min(3, "Add the course code").max(20),
-  title: z.string().trim().max(120).default(""),
+  code: z
+    .string()
+    .trim()
+    .min(3, "Add the course code, like CS-301")
+    .max(20, "Course codes are short, like CS-301. Put the name in Course title."),
+  title: z.string().trim().max(120, "Keep the title under 120 characters").default(""),
   section: z.string().trim().max(10).optional(),
 });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { freeWindows, minToTime, termLabel, timeToMin } from "./academics";
+import { freeWindows, looksLikeCourseCode, minToTime, termLabel, timeToMin } from "./academics";
 
 const slot = (day: number, start: string, end: string) => ({
   day,
@@ -45,5 +45,16 @@ describe("times and terms", () => {
   it("names terms", () => {
     expect(termLabel("2026-fall")).toBe("Fall 2026");
     expect(termLabel("nope")).toBe("");
+  });
+});
+
+describe("adding a course from a search", () => {
+  it("tells a course code from a course name", () => {
+    for (const code of ["CS-301", "cs 301", "BSCS3101", "MATH-101A"]) {
+      expect(looksLikeCourseCode(code)).toBe(true);
+    }
+    for (const name of ["Object Oriented Programming", "Data Structures", "Calculus"]) {
+      expect(looksLikeCourseCode(name)).toBe(false);
+    }
   });
 });

@@ -184,6 +184,16 @@
   }
 }
 
+/* The navigation bar: quick at first, then easing as it waits for the page. */
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* AIBuddy: a slow breathing bob (3 s), its shadow, and the thinking bubbles. */
 @keyframes buddy-bob {
   0%,
