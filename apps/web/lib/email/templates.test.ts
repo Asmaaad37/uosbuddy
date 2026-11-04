@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { escapeHtml, renderLinkCodeEmail, renderStatusEmail } from "./templates";
+import {
+  escapeHtml,
+  renderDigestEmail,
+  renderExportEmail,
+  renderLinkCodeEmail,
+  renderStatusEmail,
+} from "./templates";
 
 const site = { siteUrl: "https://uosbuddy.example" };
 
@@ -46,5 +52,37 @@ describe("link code email", () => {
     expect(email.text).toContain("042917");
     expect(email.text).toContain("expires in 10 minutes");
     expect(email.html).toContain("042917");
+  });
+});
+
+describe("digest and export emails", () => {
+  const site = "https://uosbuddy.example";
+  it("skips the digest when nothing happened", () => {
+    expect(
+      renderDigestEmail(
+        { newBatchmates: 0, openBackup: 0, upcomingEvents: 0, unread: 0 },
+        { siteUrl: site, unsubscribeUrl: `${site}/u` },
+      ),
+    ).toBeNull();
+  });
+
+  it("lists what's new, escapes HTML and links to unsubscribe", () => {
+    const mail = renderDigestEmail(
+      { newBatchmates: 3, openBackup: 1, upcomingEvents: 0, unread: 2 },
+      {
+        name: "<b>Ali</b> Raza",
+        siteUrl: site,
+        unsubscribeUrl: `${site}/api/digest/unsubscribe?u=1&t=x`,
+      },
+    )!;
+    expect(mail.subject).toBe("This week: 3 new batchmates joined");
+    expect(mail.text).toContain("• 1 classmate needs backup right now.");
+    expect(mail.text).not.toContain("events");
+    expect(mail.html).toContain("&lt;b&gt;Ali&lt;/b&gt;");
+    expect(mail.html).toContain("/api/digest/unsubscribe?u=1&amp;t=x");
+  });
+
+  it("sends the export link", () => {
+    expect(renderExportEmail("https://x.example/file").text).toContain("https://x.example/file");
   });
 });

@@ -39,6 +39,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_days: {
+        Row: {
+          day: string
+          user_id: string
+        }
+        Insert: {
+          day: string
+          user_id: string
+        }
+        Update: {
+          day?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_days_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_days_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_messages: {
         Row: {
           content: string
@@ -428,6 +458,30 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          description: string
+          emoji: string
+          name: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          description: string
+          emoji: string
+          name: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          description?: string
+          emoji?: string
+          name?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: []
+      }
       blocks: {
         Row: {
           blocked_id: string
@@ -815,6 +869,42 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_exports: {
+        Row: {
+          created_at: string
+          id: string
+          path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_exports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_exports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1351,11 +1441,62 @@ export type Database = {
           },
         ]
       }
+      moderator_scopes: {
+        Row: {
+          granted_at: string
+          granted_by: string | null
+          space: string
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by?: string | null
+          space: string
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string | null
+          space?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderator_scopes_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderator_scopes_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderator_scopes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderator_scopes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_prefs: {
         Row: {
           backup: boolean
           comments: boolean
           connections: boolean
+          digest: boolean
           messages: boolean
           push: boolean
           user_id: string
@@ -1364,6 +1505,7 @@ export type Database = {
           backup?: boolean
           comments?: boolean
           connections?: boolean
+          digest?: boolean
           messages?: boolean
           push?: boolean
           user_id: string
@@ -1372,6 +1514,7 @@ export type Database = {
           backup?: boolean
           comments?: boolean
           connections?: boolean
+          digest?: boolean
           messages?: boolean
           push?: boolean
           user_id?: string
@@ -1801,6 +1944,7 @@ export type Database = {
           deleted_at: string | null
           department_id: string | null
           full_name: string | null
+          guidelines_accepted_at: string | null
           handle: string | null
           hometown_city: string | null
           id: string
@@ -1832,6 +1976,7 @@ export type Database = {
           deleted_at?: string | null
           department_id?: string | null
           full_name?: string | null
+          guidelines_accepted_at?: string | null
           handle?: string | null
           hometown_city?: string | null
           id: string
@@ -1863,6 +2008,7 @@ export type Database = {
           deleted_at?: string | null
           department_id?: string | null
           full_name?: string | null
+          guidelines_accepted_at?: string | null
           handle?: string | null
           hometown_city?: string | null
           id?: string
@@ -2724,6 +2870,46 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          awarded_at: string
+          badge: string
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          badge: string
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          badge?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_fkey"
+            columns: ["badge"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       verification_requests: {
         Row: {
           ai_precheck: Json | null
@@ -2872,6 +3058,15 @@ export type Database = {
       }
     }
     Views: {
+      admin_daily_stats: {
+        Row: {
+          active: number | null
+          day: string | null
+          signups: number | null
+          verified: number | null
+        }
+        Relationships: []
+      }
       comments_public: {
         Row: {
           author_avatar: string | null
@@ -2993,6 +3188,7 @@ export type Database = {
       }
     }
     Functions: {
+      accept_guidelines: { Args: never; Returns: undefined }
       add_course: {
         Args: { p_code: string; p_department: string; p_title: string }
         Returns: string
@@ -3014,6 +3210,26 @@ export type Database = {
         }
         Returns: string
       }
+      admin_kpis: { Args: never; Returns: Json }
+      admin_search_users: {
+        Args: { p_query?: string }
+        Returns: {
+          avatar_url: string
+          banned_at: string
+          batch_year: number
+          created_at: string
+          deleted_at: string
+          department: string
+          email: string
+          full_name: string
+          handle: string
+          id: string
+          last_active_at: string
+          open_reports: number
+          role: string
+          verification_status: string
+        }[]
+      }
       ai_limit: { Args: { p_kind: string }; Returns: number }
       ai_remaining: { Args: { p_kind: string }; Returns: number }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
@@ -3026,6 +3242,17 @@ export type Database = {
         Returns: boolean
       }
       are_connected: { Args: { p_a: string; p_b: string }; Returns: boolean }
+      audit: {
+        Args: {
+          p_action: string
+          p_after?: Json
+          p_before?: Json
+          p_target_id: string
+          p_target_type: string
+        }
+        Returns: undefined
+      }
+      award_badges: { Args: never; Returns: number }
       backup_fanout: { Args: { p_request: string }; Returns: number }
       backup_feed: {
         Args: { p_limit?: number }
@@ -3046,6 +3273,22 @@ export type Database = {
         }[]
       }
       backup_housekeeping: { Args: never; Returns: undefined }
+      backup_leaderboard: {
+        Args: { p_department_only?: boolean }
+        Returns: {
+          avatar_url: string
+          department: string
+          full_name: string
+          handle: string
+          helped: number
+          rank: number
+          user_id: string
+        }[]
+      }
+      ban_user: {
+        Args: { p_reason: string; p_user: string }
+        Returns: undefined
+      }
       block_user: { Args: { p_target: string }; Returns: undefined }
       blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
       blocked_with: { Args: { p_other: string }; Returns: boolean }
@@ -3058,6 +3301,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      can_moderate: {
+        Args: { p_space: string; p_university: string }
+        Returns: boolean
+      }
       can_see_ride: {
         Args: { p_ride: Database["public"]["Tables"]["rides"]["Row"] }
         Returns: boolean
@@ -3069,6 +3316,7 @@ export type Database = {
       can_use_conversation_path: { Args: { p_name: string }; Returns: boolean }
       can_use_topic: { Args: { p_topic: string }; Returns: boolean }
       can_view_profile: { Args: { p_target: string }; Returns: boolean }
+      cancel_account_deletion: { Args: never; Returns: undefined }
       cancel_backup: { Args: { p_request: string }; Returns: undefined }
       cancel_event: { Args: { p_event: string }; Returns: undefined }
       cancel_ride: { Args: { p_ride: string }; Returns: undefined }
@@ -3233,10 +3481,23 @@ export type Database = {
         Returns: undefined
       }
       delete_comment: { Args: { p_comment: string }; Returns: undefined }
+      delete_course: { Args: { p_id: string }; Returns: undefined }
       delete_listing: { Args: { p_listing: string }; Returns: undefined }
       delete_message: { Args: { p_message: string }; Returns: undefined }
       delete_post: { Args: { p_post: string }; Returns: undefined }
       delete_resource: { Args: { p_resource: string }; Returns: undefined }
+      digest_recipients: {
+        Args: { p_limit?: number }
+        Returns: {
+          email: string
+          full_name: string
+          new_batchmates: number
+          open_backup: number
+          unread_notifications: number
+          upcoming_events: number
+          user_id: string
+        }[]
+      }
       directory: {
         Args: {
           p_after_id?: string
@@ -3265,6 +3526,10 @@ export type Database = {
           section_count: number
           university_count: number
         }[]
+      }
+      dismiss_reports: {
+        Args: { p_id: string; p_type: string }
+        Returns: undefined
       }
       dispatch_push: {
         Args: { p_id: string; p_kind: string }
@@ -3297,6 +3562,7 @@ export type Database = {
         Args: { p_days?: number; p_limit?: number }
         Returns: string[]
       }
+      export_my_data: { Args: never; Returns: Json }
       find_mentors: {
         Args: { p_limit?: number }
         Returns: {
@@ -3406,6 +3672,33 @@ export type Database = {
           message: string
         }[]
       }
+      moderate_content: {
+        Args: {
+          p_action: string
+          p_id: string
+          p_reason?: string
+          p_type: string
+        }
+        Returns: undefined
+      }
+      moderation_queue: {
+        Args: never
+        Returns: {
+          author_handle: string
+          author_id: string
+          author_name: string
+          details: string[]
+          is_anonymous: boolean
+          last_reported_at: string
+          preview: string
+          reasons: string[]
+          report_count: number
+          space: string
+          status: string
+          target_id: string
+          target_type: string
+        }[]
+      }
       moderation_status: {
         Args: { p_body: string; p_status: string; p_token: string }
         Returns: string
@@ -3487,8 +3780,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      profile_badges: {
+        Args: { p_user: string }
+        Returns: {
+          awarded_at: string
+          description: string
+          emoji: string
+          name: string
+          slug: string
+        }[]
+      }
       public_stats: { Args: never; Returns: Json }
+      purge_deleted_accounts: { Args: never; Returns: number }
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
+      refresh_admin_stats: { Args: never; Returns: undefined }
       remove_connection: { Args: { p_other: string }; Returns: undefined }
       report: {
         Args: {
@@ -3499,6 +3804,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      request_account_deletion: { Args: never; Returns: string }
       request_connection: {
         Args: { p_message?: string; p_target: string }
         Returns: string
@@ -3564,6 +3870,30 @@ export type Database = {
         Args: { p_event: string; p_status: string }
         Returns: undefined
       }
+      save_course: {
+        Args: { p_code: string; p_id: string; p_title: string }
+        Returns: undefined
+      }
+      save_department: {
+        Args: {
+          p_aliases?: string[]
+          p_faculty?: string
+          p_id: string
+          p_name: string
+          p_short_code: string
+        }
+        Returns: string
+      }
+      save_program: {
+        Args: {
+          p_department: string
+          p_id: string
+          p_level: Database["public"]["Enums"]["program_level"]
+          p_name: string
+          p_semesters: number
+        }
+        Returns: string
+      }
       search_course_chunks: {
         Args: {
           p_course: string
@@ -3607,7 +3937,19 @@ export type Database = {
         }
       }
       send_ping: { Args: { p_target: string }; Returns: string }
+      set_digest: {
+        Args: { p_on: boolean; p_user: string }
+        Returns: undefined
+      }
+      set_flag: {
+        Args: { p_enabled: boolean; p_key: string }
+        Returns: undefined
+      }
       set_mentor: { Args: { p_on: boolean }; Returns: undefined }
+      set_moderator: {
+        Args: { p_spaces: string[]; p_user: string }
+        Returns: undefined
+      }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
@@ -3663,6 +4005,8 @@ export type Database = {
           score: number
         }[]
       }
+      touch_activity: { Args: never; Returns: undefined }
+      unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
       use_ai: { Args: { p_kind: string }; Returns: number }
@@ -3690,6 +4034,10 @@ export type Database = {
         Returns: number
       }
       wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
+      warn_user: {
+        Args: { p_message: string; p_user: string }
+        Returns: undefined
+      }
       women_eligible: { Args: never; Returns: boolean }
       women_only_queue: {
         Args: never

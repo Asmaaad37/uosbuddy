@@ -14,6 +14,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
+import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
+import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
 import { browserClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
@@ -33,6 +35,7 @@ async function prepare(file: File): Promise<File> {
 export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKind }) {
   const id = useId();
   const router = useRouter();
+  const { gate, ask } = useGuidelinesGate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<ListingKind>(initialKind);
@@ -86,6 +89,10 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
       location: location || undefined,
     });
     setBusy(null);
+    if (!result.ok && result.error === GUIDELINES_REQUIRED) {
+      if (await ask()) await submit(e);
+      return;
+    }
     if (!result.ok) return setError(result.error);
     if (result.data.held) toast.success("Thanks. A moderator will check it before it shows up.");
     setOpen(false);
@@ -225,6 +232,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
             {busy === "post" && <Loader2 className="animate-spin" />} Post
           </Button>
         </form>
+        {gate}
       </SheetContent>
     </Sheet>
   );

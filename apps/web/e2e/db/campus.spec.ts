@@ -87,6 +87,8 @@ test("a ride: offer, ask, accept into a chat, leave, cancel; women-only stays hi
   // The rider leaves: the seat opens again. Then the driver cancels.
   await rider.page.goto("/rides?tab=mine");
   await rider.page.getByRole("button", { name: "Leave ride" }).click();
+  // Saved once the ride drops off the rider's list; only then look as the driver.
+  await expect(rider.page.getByText(to)).toHaveCount(0);
   await driver.page.reload();
   const again = driver.page.getByRole("listitem").filter({ hasText: to }).first();
   await expect(again.getByText("1 of 1 seats left")).toBeVisible();

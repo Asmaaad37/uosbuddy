@@ -13,6 +13,12 @@ export function SiteFooter() {
         <Link href="/terms" className="hover:text-ink">
           Terms
         </Link>
+        <Link href="/guidelines" className="hover:text-ink">
+          Guidelines
+        </Link>
+        <Link href="/safety" className="hover:text-ink">
+          Safety
+        </Link>
       </nav>
     </footer>
   );

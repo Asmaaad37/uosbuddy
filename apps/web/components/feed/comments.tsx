@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Flag, Loader2, MoreHorizontal, Trash2, VenetianMask } from "lucide-react";
 import { createComment, deleteComment, type Comment } from "@/actions/feed";
 import { toast } from "@/components/ui/toast";
+import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
+import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,7 @@ export function Comments({
 }) {
   const id = useId();
   const router = useRouter();
+  const { gate, ask } = useGuidelinesGate();
   const [body, setBody] = useState("");
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [anonymous, setAnonymous] = useState(false);
@@ -47,6 +50,10 @@ export function Comments({
       anonymous,
     });
     setBusy(false);
+    if (!result.ok && result.error === GUIDELINES_REQUIRED) {
+      if (await ask()) await submit(e);
+      return;
+    }
     if (!result.ok) return setError(result.error);
     if (result.data.held)
       toast.success("Thanks. A moderator will check your comment before it shows up.");
@@ -173,6 +180,7 @@ export function Comments({
             {error}
           </p>
         )}
+        {gate}
       </form>
 
       <ul className="grid gap-4">

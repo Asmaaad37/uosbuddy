@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { serverEnv } from "@/lib/env.server";
-import { purgeExpiredDocuments } from "@/lib/retention.server";
+import { purgeExpiredDocuments, purgeOldExports, purgeOrphanFiles } from "@/lib/retention.server";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,10 @@ function authorized(request: NextRequest, secret: string) {
   return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
-/** Daily document retention job. Vercel Cron sends `Authorization: Bearer $CRON_SECRET`. */
+/**
+ * Daily retention job: verification documents, old data exports, and files left by purged
+ * accounts. Vercel Cron sends `Authorization: Bearer $CRON_SECRET`.
+ */
 export async function GET(request: NextRequest) {
   const secret = serverEnv.CRON_SECRET;
   // Fail closed: without a secret, nobody can trigger deletions.
@@ -21,7 +24,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    return NextResponse.json(await purgeExpiredDocuments());
+    const documents = await purgeExpiredDocuments();
+    const exports = await purgeOldExports();
+    const orphans = await purgeOrphanFiles();
+    return NextResponse.json({ ...documents, ...exports, ...orphans });
   } catch (error) {
     console.error("[cron] purge-documents failed", error);
     return NextResponse.json({ error: "Purge failed" }, { status: 500 });

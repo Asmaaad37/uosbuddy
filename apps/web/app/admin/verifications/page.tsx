@@ -80,7 +80,7 @@ export default async function VerificationsPage({
           UOSBUDDY ADMIN
         </Link>
         <nav className="flex gap-4 text-sm font-semibold text-brand">
-          <Link href="/admin/campus">Campus queues</Link>
+          <Link href="/admin">Dashboard</Link>
           <Link href={back}>Back to app</Link>
         </nav>
       </header>

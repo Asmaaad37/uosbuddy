@@ -148,3 +148,100 @@ ${
 
   return { subject: copy.subject, text, html };
 }
+
+/** The shared card layout: heading, paragraphs, one button, optional small print. */
+function card(
+  heading: string,
+  lines: string[],
+  cta: { label: string; url: string },
+  small?: string,
+) {
+  const p = (s: string) =>
+    `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b0838">${s}</p>`;
+  return `<!doctype html>
+<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2ece1;font-family:Arial,Helvetica,sans-serif">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
+<tr><td>
+<p style="margin:0 0 20px;font-size:13px;font-weight:bold;letter-spacing:2px;color:#0034d3">UOSBUDDY</p>
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b0838">${escapeHtml(heading)}</h1>
+${lines.map((l) => p(escapeHtml(l))).join("\n")}
+<p style="margin:20px 0 0"><a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#0b0838;color:#f2ece1;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(cta.label)}</a></p>
+${small ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#4a4766">${small}</p>` : ""}
+</td></tr></table>
+<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#4a4766">${FOOTER}</p>
+</td></tr></table>
+</body></html>`;
+}
+
+export type DigestNumbers = {
+  newBatchmates: number;
+  openBackup: number;
+  upcomingEvents: number;
+  unread: number;
+};
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+/** Phase 9 task 4: the weekly digest. Null when there's nothing worth an email. */
+export function renderDigestEmail(
+  n: DigestNumbers,
+  {
+    name,
+    siteUrl,
+    unsubscribeUrl,
+  }: { name?: string | null; siteUrl: string; unsubscribeUrl: string },
+): Rendered | null {
+  const lines = [
+    n.newBatchmates > 0 && `${plural(n.newBatchmates, "new batchmate", "new batchmates")} joined.`,
+    n.openBackup > 0 &&
+      `${plural(n.openBackup, "classmate needs", "classmates need")} backup right now.`,
+    n.upcomingEvents > 0 &&
+      `${plural(n.upcomingEvents, "event is", "events are")} coming up this week.`,
+    n.unread > 0 && `You have ${plural(n.unread, "unread notification", "unread notifications")}.`,
+  ].filter((l): l is string => !!l);
+  if (!lines.length) return null;
+  const first = name?.trim().split(/\s+/)[0];
+  const greeting = first ? `Hi ${first}, here's your week at UoS:` : "Here's your week at UoS:";
+  const url = new URL("/explore", siteUrl).toString();
+  const subject = lines[0]!.replace(/\.$/, "");
+  const text = [
+    greeting,
+    "",
+    ...lines.map((l) => `• ${l}`),
+    "",
+    `Open UOSBuddy: ${url}`,
+    "",
+    `Don't want these weekly emails? ${unsubscribeUrl}`,
+    "",
+    FOOTER,
+  ].join("\n");
+  const html = card(
+    "Your week at UoS",
+    [greeting, ...lines],
+    { label: "Open UOSBuddy", url },
+    `Weekly digest. <a href="${escapeHtml(unsubscribeUrl)}" style="color:#4a4766">Unsubscribe in one click</a>.`,
+  );
+  return { subject: `This week: ${subject}`, text, html };
+}
+
+/** Phase 9 task 6: a link to the student's data export (expires in 7 days). */
+export function renderExportEmail(url: string): Rendered {
+  const text = [
+    "Hi,",
+    "",
+    "Your UOSBuddy data export is ready. This link works for 7 days:",
+    url,
+    "",
+    "If you didn't ask for it, change your password; someone may have your login.",
+    "",
+    FOOTER,
+  ].join("\n");
+  const html = card(
+    "Your data export is ready",
+    ["Everything UOSBuddy holds about you, as one JSON file. The link works for 7 days."],
+    { label: "Download my data", url },
+    "If you didn't ask for it, change your password; someone may have your login.",
+  );
+  return { subject: "Your UOSBuddy data export", text, html };
+}

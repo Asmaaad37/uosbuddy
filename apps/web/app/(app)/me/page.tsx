@@ -9,16 +9,19 @@ import {
   Calculator,
   CalendarDays,
   ChevronRight,
-  GraduationCap,
-  Library,
+  Download,
   Eye,
+  GraduationCap,
   Heart,
+  Library,
+  LifeBuoy,
   Lock,
   Mail,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { BadgeRow } from "@/components/profile/badge-row";
 import { ProfileStamps } from "@/components/profile/profile-card";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -61,12 +64,13 @@ export default async function MePage() {
   const { supabase, user, profile } = await getSession();
   if (!user || !profile) redirect("/login?next=/me");
 
-  const [{ data: pii }, { count: interestCount }] = await Promise.all([
+  const [{ data: pii }, { count: interestCount }, { data: badges }] = await Promise.all([
     supabase.from("private_profile").select("uni_email").eq("user_id", user.id).maybeSingle(),
     supabase
       .from("profile_interests")
       .select("interest_id", { count: "exact", head: true })
       .eq("user_id", user.id),
+    supabase.rpc("profile_badges", { p_user: user.id }),
   ]);
   const hasUniEmail = !!pii?.uni_email;
   const { percent, nudges } = completeness({
@@ -86,6 +90,7 @@ export default async function MePage() {
           <ProfileStamps hasUniEmail={hasUniEmail} isMentor={profile.is_mentor} />
         </div>
       </header>
+      <BadgeRow badges={badges ?? []} />
 
       {nudges.length > 0 && (
         <section
@@ -174,6 +179,18 @@ export default async function MePage() {
             hint="What pings you, and push on this phone"
           />
           <Row href="/me/blocked" icon={Ban} label="Blocked" />
+          <Row
+            href="/me/data"
+            icon={Download}
+            label="Your data"
+            hint="Download it, or delete your account"
+          />
+          <Row
+            href="/safety"
+            icon={LifeBuoy}
+            label="Safety centre"
+            hint="Reporting, privacy, help"
+          />
           {hasUniEmail ? (
             <li className="flex min-h-14 items-center gap-3 px-4 py-3">
               <AtSign className="size-5 shrink-0 text-ink-2" />
@@ -191,10 +208,14 @@ export default async function MePage() {
             />
           )}
           {profile.role === "admin" && (
+            <Row href="/admin" icon={ShieldCheck} label="Admin" hint="Dashboard, reports, people" />
+          )}
+          {profile.role === "moderator" && (
             <Row
-              href="/admin/verifications?from=/me"
+              href="/admin/reports"
               icon={ShieldCheck}
-              label="Verification queue"
+              label="Moderation"
+              hint="Reports in your feeds"
             />
           )}
         </ul>

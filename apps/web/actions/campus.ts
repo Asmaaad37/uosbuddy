@@ -4,6 +4,7 @@ import { z } from "zod";
 import { moderate } from "@/lib/ai/moderate.server";
 import { getSession } from "@/lib/auth/session";
 import { LISTING_KIND_KEYS } from "@/lib/campus";
+import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import type { ActionResult } from "./onboarding";
 
 const fail = (error: string) => ({ ok: false, error }) as const;
@@ -18,7 +19,7 @@ function friendly(error: { code?: string; message: string } | null, fallback: st
 
 async function session() {
   const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user } : null;
+  return s.user ? { supabase: s.supabase, user: s.user, profile: s.profile } : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -156,6 +157,7 @@ export async function createListing(
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the listing");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
+  if (!s.profile?.guidelines_accepted_at) return fail(GUIDELINES_REQUIRED);
   const v = parsed.data;
   // The database checks the decision against exactly "title\ndescription".
   const check = await moderate(s.user.id, `${v.title}\n${v.description}`, false, "listing");

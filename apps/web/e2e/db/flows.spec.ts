@@ -225,5 +225,5 @@ test("the retention job needs its secret and runs against storage", async ({ req
     headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
   });
   expect(res.status()).toBe(200);
-  expect(await res.json()).toEqual({ removed: 0 });
+  expect(await res.json()).toMatchObject({ removed: 0, exports: 0, orphans: expect.any(Number) });
 });

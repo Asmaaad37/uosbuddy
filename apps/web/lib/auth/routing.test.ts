@@ -70,4 +70,22 @@ describe("safeNext", () => {
     expect(safeNext("https://evil.example")).toBeNull();
     expect(safeNext(null)).toBeNull();
   });
+
+  it("confines banned accounts and accounts awaiting deletion", () => {
+    const banned = profile("verified", { onboarding_step: 4, banned_at: "2026-11-01T00:00:00Z" });
+    expect(redirectFor("/explore", true, banned)).toBe("/banned");
+    expect(redirectFor("/banned", true, banned)).toBeNull();
+    const leaving = profile("verified", { onboarding_step: 4, deleted_at: "2026-11-01T00:00:00Z" });
+    expect(redirectFor("/feed", true, leaving)).toBe("/me/data");
+    expect(redirectFor("/me/data", true, leaving)).toBeNull();
+    expect(redirectFor("/banned", true, profile("verified", { onboarding_step: 4 }))).toBe(
+      "/explore",
+    );
+  });
+
+  it("lets moderators into the reports queue only", () => {
+    const mod = profile("verified", { onboarding_step: 4, role: "moderator" });
+    expect(redirectFor("/admin/reports", true, mod)).toBeNull();
+    expect(redirectFor("/admin/users", true, mod)).toBe("/explore");
+  });
 });

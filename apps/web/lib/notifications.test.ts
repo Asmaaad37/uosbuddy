@@ -72,4 +72,16 @@ group("describe", () => {
       "/rides",
     );
   });
+
+  it("describes trust notifications", () => {
+    expect(
+      describe({ ...base, type: "badge.awarded", payload: { name: "Connector", emoji: "🤝" } }),
+    ).toEqual({ title: "New badge: 🤝 Connector", href: "/me" });
+    expect(
+      describe({ ...base, type: "account.warning", payload: { message: "Keep it civil" } }).body,
+    ).toBe("Keep it civil");
+    expect(describe({ ...base, type: "content.removed", payload: { kind: "comment" } }).title).toBe(
+      "Your comment was removed",
+    );
+  });
 });

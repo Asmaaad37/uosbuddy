@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { Database } from "@uosbuddy/shared";
 import { moderate } from "@/lib/ai/moderate.server";
 import { getSession } from "@/lib/auth/session";
+import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import type { ActionResult } from "./onboarding";
 
 export type Post = Database["public"]["Views"]["posts_public"]["Row"];
@@ -97,6 +98,7 @@ export async function createPost(
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check your post");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
+  if (!s.profile?.guidelines_accepted_at) return fail(GUIDELINES_REQUIRED);
   const { space, body, media, poll, anonymous } = parsed.data;
   const check = await moderate(s.user.id, body, anonymous, "post");
   if (!check.ok) return fail(check.error);
@@ -157,6 +159,7 @@ export async function createComment(
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Write a comment");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
+  if (!s.profile?.guidelines_accepted_at) return fail(GUIDELINES_REQUIRED);
   const { post, body, parent, anonymous } = parsed.data;
   const check = await moderate(s.user.id, body, anonymous, "comment");
   if (!check.ok) return fail(check.error);

@@ -21,30 +21,37 @@ export default async function BackupPage() {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/backup");
 
-  const [{ data: open }, { data: mine }, { data: helping }, { data: points }, { data: courses }] =
-    await Promise.all([
-      supabase.rpc("backup_feed", { p_limit: 30 }),
-      supabase
-        .from("backup_requests")
-        .select(
-          "id, title, category, status, notified_count, conversation_id, expires_at, created_at",
-        )
-        .eq("requester_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10),
-      supabase
-        .from("backup_requests")
-        .select("id, title, category, status, conversation_id")
-        .eq("claimed_by", user.id)
-        .eq("status", "claimed")
-        .order("claimed_at", { ascending: false }),
-      supabase
-        .from("backup_points")
-        .select("points, helped_count")
-        .eq("user_id", user.id)
-        .maybeSingle(),
-      supabase.rpc("my_courses"),
-    ]);
+  const [
+    { data: open },
+    { data: mine },
+    { data: helping },
+    { data: points },
+    { data: courses },
+    { data: heroes },
+  ] = await Promise.all([
+    supabase.rpc("backup_feed", { p_limit: 30 }),
+    supabase
+      .from("backup_requests")
+      .select(
+        "id, title, category, status, notified_count, conversation_id, expires_at, created_at",
+      )
+      .eq("requester_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10),
+    supabase
+      .from("backup_requests")
+      .select("id, title, category, status, conversation_id")
+      .eq("claimed_by", user.id)
+      .eq("status", "claimed")
+      .order("claimed_at", { ascending: false }),
+    supabase
+      .from("backup_points")
+      .select("points, helped_count")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase.rpc("my_courses"),
+    supabase.rpc("backup_leaderboard", { p_department_only: false }),
+  ]);
 
   return (
     <AppShell bell>
@@ -193,6 +200,28 @@ export default async function BackupPage() {
               );
             })}
           </ul>
+        </section>
+      )}
+      {(heroes?.length ?? 0) > 0 && (
+        <section aria-labelledby="heroes" className="grid gap-2">
+          <h2 id="heroes" className="text-lg font-bold">
+            Backup Heroes this month
+          </h2>
+          <ol className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+            {heroes!.slice(0, 10).map((h) => (
+              <li key={h.user_id} className="flex items-center gap-3 px-3 py-2.5">
+                <span className="w-6 text-center font-bold text-ink-2 tabular-nums">{h.rank}</span>
+                <Avatar name={h.full_name ?? "Student"} src={h.avatar_url} size="sm" />
+                <Link href={`/people/${h.handle}`} className="min-w-0 flex-1 truncate font-medium">
+                  {h.full_name}
+                  {h.department && <span className="text-ink-2"> · {h.department}</span>}
+                </Link>
+                <span className="text-sm font-semibold tabular-nums">
+                  {h.helped} {h.helped === 1 ? "save" : "saves"}
+                </span>
+              </li>
+            ))}
+          </ol>
         </section>
       )}
     </AppShell>
