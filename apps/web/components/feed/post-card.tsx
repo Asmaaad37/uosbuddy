@@ -38,12 +38,16 @@ export function PostCard({
   const [removed, setRemoved] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [error, setError] = useState<string>();
+  const [bump, setBump] = useState<{ n: number; dir: number }>({ n: 0, dir: 1 });
   if (removed || !post.id) return null;
   const id = post.id;
 
   async function vote(dir: 1 | -1) {
     const old = post.my_vote ?? 0;
     const next = old === dir ? 0 : dir;
+    // Spec §6: the icon pops, the score rolls the way it moved, and a light haptic fires.
+    setBump((b) => ({ n: b.n + 1, dir: next === 0 ? -dir : dir }));
+    navigator.vibrate?.(8);
     const up = (post.upvotes ?? 0) - (old === 1 ? 1 : 0) + (next === 1 ? 1 : 0);
     const down = (post.downvotes ?? 0) - (old === -1 ? 1 : 0) + (next === -1 ? 1 : 0);
     setPost((p) => ({ ...p, my_vote: next || null, upvotes: up, downvotes: down }));
@@ -252,18 +256,29 @@ export function PostCard({
           onClick={() => vote(1)}
           className={voteClass(post.my_vote === 1)}
         >
-          <span className="grid size-9 place-items-center rounded-pill">
+          <span
+            key={post.my_vote === 1 ? bump.n : "up"}
+            className={cn(
+              "grid size-9 place-items-center rounded-pill",
+              post.my_vote === 1 && bump.n > 0 && "vote-pop",
+            )}
+          >
             <ArrowUp strokeWidth={post.my_vote === 1 ? 2.4 : 1.9} />
           </span>
         </button>
         <span
           className={cn(
-            "min-w-6 text-center text-subhead font-semibold tabular-nums",
+            "min-w-6 overflow-hidden text-center text-subhead font-semibold tabular-nums",
             post.my_vote ? "text-accent" : "text-label",
           )}
           aria-label={`Score ${score}`}
         >
-          {score}
+          <span
+            key={bump.n}
+            className={cn("block", bump.n > 0 && (bump.dir > 0 ? "roll-up" : "roll-down"))}
+          >
+            {score}
+          </span>
         </span>
         <button
           type="button"
@@ -272,7 +287,13 @@ export function PostCard({
           onClick={() => vote(-1)}
           className={voteClass(post.my_vote === -1)}
         >
-          <span className="grid size-9 place-items-center rounded-pill">
+          <span
+            key={post.my_vote === -1 ? bump.n : "down"}
+            className={cn(
+              "grid size-9 place-items-center rounded-pill",
+              post.my_vote === -1 && bump.n > 0 && "vote-pop",
+            )}
+          >
             <ArrowDown strokeWidth={post.my_vote === -1 ? 2.4 : 1.9} />
           </span>
         </button>

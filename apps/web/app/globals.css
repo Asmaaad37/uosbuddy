@@ -218,13 +218,202 @@
   }
 }
 
-/* Reduced motion: no slides or scales, only short fades (spec §6). */
+/* ===========================================================================
+   Motion (redesign §1, §6). Springs are Framer Motion's duration/bounce springs sampled
+   into CSS linear() curves, so Radix can still wait for the exit animation:
+   --spring        bounce 0,   0.35 s (the default; settles in ~475 ms)
+   --spring-sheet  bounce 0.2, 0.30 s (sheets; settles in ~390 ms)
+   Only transform and opacity animate.
+   =========================================================================== */
+:root {
+  --spring: linear(
+    0,
+    0.0415,
+    0.1306,
+    0.2392,
+    0.3509,
+    0.4534,
+    0.5486,
+    0.6315,
+    0.7019,
+    0.7606,
+    0.8091,
+    0.8485,
+    0.8804,
+    0.9059,
+    0.9263,
+    0.942,
+    0.9548,
+    0.9648,
+    0.9727,
+    0.9789,
+    0.9837,
+    0.9874,
+    0.9903,
+    0.9925,
+    0.9942,
+    0.9956,
+    0.9966,
+    0.9974,
+    1
+  );
+  --spring-ms: 475ms;
+  --spring-sheet: linear(
+    0,
+    0.0407,
+    0.128,
+    0.2437,
+    0.3677,
+    0.4841,
+    0.5948,
+    0.6916,
+    0.7704,
+    0.8372,
+    0.89,
+    0.9292,
+    0.9595,
+    0.9812,
+    0.996,
+    1.0052,
+    1.0108,
+    1.0136,
+    1.0144,
+    1.014,
+    1.0127,
+    1.0111,
+    1.0094,
+    1.0076,
+    1.006,
+    1.0046,
+    1.0034,
+    1.0025,
+    1
+  );
+  --spring-sheet-ms: 390ms;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0.92);
+  }
+}
+@keyframes vote-pop {
+  40% {
+    transform: scale(1.15);
+  }
+}
+@keyframes roll-up {
+  from {
+    transform: translateY(60%);
+    opacity: 0;
+  }
+}
+@keyframes roll-down {
+  from {
+    transform: translateY(-60%);
+    opacity: 0;
+  }
+}
+
+/* Sheets slide up and back down the same path; the overlay dims to 40%. */
+.sheet[data-state="open"] {
+  animation: sheet-in var(--spring-sheet-ms) var(--spring-sheet);
+}
+.sheet[data-state="closed"] {
+  animation: sheet-out 240ms cubic-bezier(0.4, 0, 1, 1);
+}
+.sheet-overlay[data-state="open"],
+.dialog-pop[data-state="open"] {
+  animation: fade-in 200ms ease-out;
+}
+.sheet-overlay[data-state="closed"],
+.dialog-pop[data-state="closed"] {
+  animation: fade-out 160ms ease-in;
+}
+/* ...and the page behind steps back to 96%, scaled around the middle of the screen. */
+.app-page {
+  transform-origin: var(--sheet-origin, 50% 50vh);
+  transition: scale var(--spring-sheet-ms) var(--spring-sheet);
+}
+html:has(.sheet[data-state="open"]) .app-page {
+  scale: 0.96;
+}
+
+/* Menus scale out of their trigger (transform-origin is the trigger). */
+@keyframes menu-in {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+}
+.menu-pop[data-state="open"] {
+  animation: menu-in 300ms var(--spring);
+}
+.menu-pop[data-state="closed"] {
+  animation: fade-out 120ms ease-in;
+}
+
+/* Tab switch: the content cross-fades; the newly active tab icon pops in. */
+.page-fade {
+  animation: fade-in 150ms ease-out;
+}
+.tab-pop {
+  animation: pop var(--spring-ms) var(--spring);
+}
+.vote-pop {
+  animation: vote-pop var(--spring-ms) var(--spring);
+}
+.roll-up {
+  animation: roll-up 300ms var(--spring);
+}
+.roll-down {
+  animation: roll-down 300ms var(--spring);
+}
+
+/* Reduced motion: no slides or scales anywhere, only 200 ms opacity fades (spec §6). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms !important;
+    transition-property: opacity, color, background-color, border-color !important;
+    transition-duration: 200ms !important;
     animation-iteration-count: 1 !important;
+  }
+  .sheet[data-state="open"],
+  .menu-pop[data-state="open"],
+  .roll-up,
+  .roll-down {
+    animation: fade-in 200ms ease-out;
+  }
+  .sheet[data-state="closed"] {
+    animation: fade-out 200ms ease-in;
+  }
+  .tab-pop,
+  .vote-pop {
+    animation: none;
+  }
+  html:has(.sheet[data-state="open"]) .app-page {
+    scale: none;
   }
 }
 

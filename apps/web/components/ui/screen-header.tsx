@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,28 +26,49 @@ export function ScreenHeader({
   className?: string;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [collapsed, setCollapsed] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
 
+  // Driven by scroll position, not time (spec §6): as the large title slides under the
+  // toolbar, the bar material and the inline title fade in by the same amount, and
+  // scrolling back reverses it exactly.
   useEffect(() => {
-    const el = titleRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setCollapsed(!e!.isIntersecting), {
-      rootMargin: "-44px 0px 0px 0px",
-    });
-    io.observe(el);
-    return () => io.disconnect();
+    const title = titleRef.current;
+    const bar = barRef.current;
+    if (!title || !bar) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const { top, height } = title.getBoundingClientRect();
+      const toolbarBottom = bar.getBoundingClientRect().bottom;
+      // 0 while the title is fully below the toolbar, 1 once it has passed under it.
+      const p = Math.min(1, Math.max(0, (toolbarBottom - top) / Math.max(1, height)));
+      bar.style.setProperty("--collapse", String(p));
+      bar.dataset.collapsed = p >= 1 ? "true" : "false";
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
     <>
       <div
-        className={cn(
-          "sticky top-0 z-30 -mx-4 flex h-[calc(44px+env(safe-area-inset-top))] items-end px-4 pt-[env(safe-area-inset-top)] transition-[background-color,backdrop-filter] duration-200",
-          collapsed
-            ? "bg-bar backdrop-blur-[24px] backdrop-saturate-[180%] [@media(prefers-reduced-transparency:reduce)]:bg-bg"
-            : "bg-transparent",
-        )}
+        ref={barRef}
+        className="sticky top-0 z-30 -mx-4 flex h-[calc(44px+env(safe-area-inset-top))] items-end px-4 pt-[env(safe-area-inset-top)] [--collapse:0]"
       >
+        <span
+          aria-hidden
+          style={{ opacity: "var(--collapse)" }}
+          className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%] [@media(prefers-reduced-transparency:reduce)]:bg-bg"
+        />
         <div className="flex h-11 w-full items-center gap-2">
           <div className="flex min-w-11 flex-1">
             {back && (
@@ -60,13 +81,7 @@ export function ScreenHeader({
               </Link>
             )}
           </div>
-          <p
-            aria-hidden={!collapsed}
-            className={cn(
-              "text-headline transition-opacity duration-200",
-              collapsed ? "opacity-100" : "opacity-0",
-            )}
-          >
+          <p aria-hidden style={{ opacity: "var(--collapse)" }} className="text-headline">
             {title}
           </p>
           <div className="flex flex-1 items-center justify-end gap-2">{actions}</div>

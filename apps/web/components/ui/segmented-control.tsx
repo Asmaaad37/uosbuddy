@@ -35,7 +35,7 @@ export function SegmentedControl({
     >
       <span
         aria-hidden
-        className="absolute top-0.5 bottom-0.5 left-0.5 rounded-thumb bg-thumb shadow-[0_1px_3px_rgba(0,0,0,.18)] transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] motion-reduce:transition-none"
+        className="absolute top-0.5 bottom-0.5 left-0.5 rounded-thumb bg-thumb shadow-[0_1px_3px_rgba(0,0,0,.18)] transition-transform duration-(--spring-ms) ease-(--spring)"
         style={{
           width: `calc((100% - 4px) / ${segments.length})`,
           transform: `translateX(${index * 100}%)`,

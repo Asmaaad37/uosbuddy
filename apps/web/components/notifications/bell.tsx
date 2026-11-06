@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
@@ -17,6 +17,8 @@ export function NotificationBell({
 }) {
   const [unread, setUnread] = useState(initialUnread);
   const path = usePathname();
+  // The bell can render twice (toolbar and desktop sidebar); each needs its own channel.
+  const instance = useId();
 
   // Opening the notification centre clears the badge.
   useEffect(() => {
@@ -29,7 +31,7 @@ export function NotificationBell({
     void realtimeClient().then((supabase) => {
       if (cancelled) return;
       channel = supabase
-        .channel(`user:${userId}:notifications`)
+        .channel(`user:${userId}:notifications:${instance}`)
         .on(
           "postgres_changes",
           {
@@ -46,7 +48,7 @@ export function NotificationBell({
       cancelled = true;
       if (channel) void browserClient().then((s) => s.removeChannel(channel!));
     };
-  }, [userId]);
+  }, [userId, instance]);
 
   return (
     <Link

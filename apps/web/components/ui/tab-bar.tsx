@@ -35,7 +35,11 @@ export function TabBar({ className }: { className?: string }) {
                     on ? "text-accent" : "text-sec hover:text-label",
                   )}
                 >
-                  <Icon className="size-6" strokeWidth={on ? 2.1 : 1.75} aria-hidden />
+                  <Icon
+                    className={cn("size-6", on && "tab-pop")}
+                    strokeWidth={on ? 2.1 : 1.75}
+                    aria-hidden
+                  />
                   {label}
                 </Link>
               </li>

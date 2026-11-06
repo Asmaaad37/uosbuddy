@@ -37,7 +37,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </>
         }
       />
-      <div className="pb-[calc(64px+22px+24px+env(safe-area-inset-bottom))] lg:pb-10 lg:pl-[248px]">
+      <div className="app-page bg-bg pb-[calc(64px+22px+24px+env(safe-area-inset-bottom))] lg:pb-10 lg:pl-[248px]">
         {children}
       </div>
       <TabBar className="lg:hidden" />

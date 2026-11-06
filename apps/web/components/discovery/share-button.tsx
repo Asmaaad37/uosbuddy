@@ -11,10 +11,7 @@ export function ShareButton({
   label = "Invite your batch",
   icon = true,
   ...props
-}: { url: string; text: string; label?: string; icon?: boolean } & Omit<
-  ButtonProps,
-  "onClick"
->) {
+}: { url: string; text: string; label?: string; icon?: boolean } & Omit<ButtonProps, "onClick">) {
   const [copied, setCopied] = useState(false);
 
   async function share() {

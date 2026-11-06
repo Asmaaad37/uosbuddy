@@ -79,7 +79,10 @@ export function PushPrompt({ reason }: { reason: string }) {
   if (state === "hidden") return null;
   if (state === "on") {
     return (
-      <p role="status" className="rounded-card bg-tint px-4 py-3 text-subhead font-medium text-tint-text">
+      <p
+        role="status"
+        className="rounded-card bg-tint px-4 py-3 text-subhead font-medium text-tint-text"
+      >
         Notifications are on for this device.
       </p>
     );

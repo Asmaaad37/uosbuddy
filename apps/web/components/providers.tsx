@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
 
@@ -43,8 +44,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useServiceWorker();
   return (
     <ThemeProvider>
-      {children}
-      <Toaster />
+      {/* With reduced motion, Framer Motion drops transforms and keeps opacity fades. */}
+      <MotionConfig reducedMotion="user">
+        {children}
+        <Toaster />
+      </MotionConfig>
     </ThemeProvider>
   );
 }
