@@ -37,9 +37,11 @@ export function Directory({
   interests,
   hasSection,
   initialFilters = {},
+  initialQuery = "",
 }: {
   initialScope: Scope;
   initialFilters?: Filters;
+  initialQuery?: string;
   initialPage: DirectoryPage;
   counts: Record<Scope, number>;
   interests: Interest[];
@@ -47,7 +49,7 @@ export function Directory({
 }) {
   const id = useId();
   const [scope, setScope] = useState<Scope>(initialScope);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [page, setPage] = useState<DirectoryPage>(initialPage);
   const [error, setError] = useState<string>();

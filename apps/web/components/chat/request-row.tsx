@@ -34,17 +34,17 @@ export function RequestRow({
   }
 
   return (
-    <div className="grid gap-3 rounded-lg border border-line bg-surface p-3">
+    <div className="grid gap-3 rounded-card bg-surface p-4 shadow-card">
       <Link href={handle ? `/people/${handle}` : "#"} className="flex items-center gap-3">
         <Avatar name={name} src={avatar} size="md" />
         <span className="grid min-w-0">
-          <span className="truncate font-semibold">{name}</span>
-          <span className="text-[13px] text-ink-2">wants to connect</span>
+          <span className="truncate text-headline">{name}</span>
+          <span className="text-footnote text-ter">wants to connect</span>
         </span>
       </Link>
-      {note && <p className="text-sm">&ldquo;{note}&rdquo;</p>}
+      {note && <p className="text-body">&ldquo;{note}&rdquo;</p>}
       {done ? (
-        <p className="text-sm font-semibold text-ink-2">
+        <p className="text-subhead font-semibold text-sec">
           {done === "accepted" ? "Connected! Say hi from their profile." : "Declined"}
         </p>
       ) : (
@@ -54,7 +54,7 @@ export function RequestRow({
           </Button>
           <Button
             size="sm"
-            variant="secondary"
+            variant="quiet"
             className="flex-1"
             disabled={busy}
             onClick={() => answer(false)}
@@ -64,7 +64,7 @@ export function RequestRow({
         </div>
       )}
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-subhead text-danger">
           {error}
         </p>
       )}
