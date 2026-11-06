@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 type Kind = "claim" | "resolve" | "cancel" | "unclaim";
 
 const LABELS: Record<Kind, string> = {
-  claim: "I can help",
+  claim: "I've got you",
   resolve: "Mark done",
   cancel: "Cancel",
   unclaim: "I can't help after all",
@@ -43,14 +43,14 @@ export function BackupAction({ kind, request }: { kind: Kind; request: string })
     <span className="grid gap-1">
       <Button
         size="sm"
-        variant={kind === "claim" || kind === "resolve" ? "primary" : "ghost"}
+        variant={kind === "claim" ? "tinted" : kind === "resolve" ? "primary" : "plain"}
         onClick={run}
         disabled={busy}
       >
         {busy && <Loader2 className="animate-spin" />} {LABELS[kind]}
       </Button>
       {error && (
-        <span role="alert" className="text-xs text-danger">
+        <span role="alert" className="text-footnote text-danger">
           {error}
         </span>
       )}

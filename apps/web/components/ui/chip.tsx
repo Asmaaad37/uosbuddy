@@ -15,7 +15,8 @@ export function Chip({
   return (
     <button
       type="button"
-      aria-pressed={selected}
+      // A chip inside a radiogroup reports aria-checked instead.
+      aria-pressed={props.role === "radio" ? undefined : selected}
       className={cn(
         "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-pill border px-3.5 text-subhead font-medium whitespace-nowrap transition-[transform,background-color,border-color] duration-100 ease-out active:scale-[0.97]",
         selected

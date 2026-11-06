@@ -2,33 +2,96 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LifeBuoy, Loader2 } from "lucide-react";
+import {
+  Car,
+  CircleHelp,
+  FileText,
+  LifeBuoy,
+  Loader2,
+  Plus,
+  ShoppingBag,
+  Users,
+} from "lucide-react";
 import { createBackup } from "@/actions/backup";
 import { Button } from "@/components/ui/button";
+import { Card, Overline } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { CATEGORIES, CATEGORY_LABELS, URGENCY_LABELS } from "@/lib/backup";
-import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
+import { CATEGORIES, URGENCY_LABELS } from "@/lib/backup";
 
 type Category = (typeof CATEGORIES)[number];
 
-/** Phase 5 task 4: the "I need backup" sheet. */
-export function AskSheet({
+/** The ask card's chips (redesign §5.3 #2), and the button label each one gives. */
+const ASKS: Record<Category, { label: string; icon: React.ElementType; cta: string }> = {
+  notes: { label: "Notes", icon: FileText, cta: "Ask for notes" },
+  help: { label: "Explain a topic", icon: CircleHelp, cta: "Ask for an explanation" },
+  ride: { label: "Ride", icon: Car, cta: "Ask for a ride" },
+  company: { label: "Company", icon: Users, cta: "Ask for company" },
+  item: { label: "Borrow something", icon: ShoppingBag, cta: "Ask to borrow something" },
+  other: { label: "Something else", icon: Plus, cta: "Ask for backup" },
+};
+
+/**
+ * Backup's ask card (redesign §5.3 #2): pick what you need, and the primary button says
+ * so ("Ask for notes") and opens the request sheet with that choice filled in.
+ */
+export function AskCard({
   courses = [],
+  department,
 }: {
   courses?: { id: string; code: string; title: string }[];
+  department: string | null;
+}) {
+  const [picked, setPicked] = useState<Category>("notes");
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Card className="grid gap-4">
+      <div className="grid gap-3">
+        <Overline id="ask-what">What do you need?</Overline>
+        <div role="radiogroup" aria-labelledby="ask-what" className="flex flex-wrap gap-2">
+          {CATEGORIES.map((c) => (
+            <Chip
+              key={c}
+              role="radio"
+              aria-checked={picked === c}
+              selected={picked === c}
+              icon={ASKS[c].icon}
+              onClick={() => setPicked(c)}
+            >
+              {ASKS[c].label}
+            </Chip>
+          ))}
+        </div>
+      </div>
+      <Button size="lg" block onClick={() => setOpen(true)}>
+        <LifeBuoy aria-hidden /> {ASKS[picked].cta}
+      </Button>
+      <p className="-mt-1 text-center text-footnote text-sec">
+        Goes to your course and section first, then the rest of {department ?? "your department"}.
+      </p>
+      <AskSheet key={picked} open={open} onOpenChange={setOpen} preset={picked} courses={courses} />
+    </Card>
+  );
+}
+
+/** Phase 5 task 4: the request sheet, opened from the ask card. */
+function AskSheet({
+  open,
+  onOpenChange,
+  preset,
+  courses,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  preset: Category;
+  courses: { id: string; code: string; title: string }[];
 }) {
   const id = useId();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState<Category | null>(null);
+  const [category, setCategory] = useState<Category>(preset);
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [urgency, setUrgency] = useState(2);
@@ -39,7 +102,6 @@ export function AskSheet({
 
   async function submit(e: { preventDefault(): void }) {
     e.preventDefault();
-    if (!category) return setError("Pick a category");
     setBusy(true);
     const result = await createBackup({
       title,
@@ -51,46 +113,35 @@ export function AskSheet({
     });
     setBusy(false);
     if (!result.ok) return setError(result.error);
-    setOpen(false);
     setTitle("");
     setDetails("");
-    setCategory(null);
     setError(undefined);
+    onOpenChange(false);
     router.refresh();
   }
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button block variant="brand">
-          <LifeBuoy /> Ask for backup
-        </Button>
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
-        <SheetTitle className="text-xl font-bold">Ask for backup</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetTitle className="text-title2">Ask for backup</SheetTitle>
+        <SheetDescription className="mb-4 text-subhead text-sec">
           Your section and batch hear about it first. Up to 50 classmates get a ping.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <div className="grid gap-2">
-            <p className="text-sm font-semibold">What do you need?</p>
-            <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Category">
+            <p className="text-subhead font-semibold">What do you need?</p>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Category">
               {CATEGORIES.map((c) => (
-                <button
+                <Chip
                   key={c}
-                  type="button"
                   role="radio"
                   aria-checked={category === c}
+                  selected={category === c}
+                  icon={ASKS[c].icon}
                   onClick={() => setCategory(c)}
-                  className={cn(
-                    "flex h-12 items-center justify-center gap-1.5 rounded-md border text-sm font-semibold",
-                    category === c
-                      ? "border-brand bg-brand/10"
-                      : "border-line hover:border-ink-2/50",
-                  )}
                 >
-                  <span aria-hidden>{CATEGORY_LABELS[c]!.emoji}</span> {CATEGORY_LABELS[c]!.label}
-                </button>
+                  {ASKS[c].label}
+                </Chip>
               ))}
             </div>
           </div>
@@ -167,7 +218,7 @@ export function AskSheet({
             </Field>
           </div>
           {error && (
-            <p role="alert" className="text-sm font-medium text-danger">
+            <p role="alert" className="text-subhead text-danger">
               {error}
             </p>
           )}

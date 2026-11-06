@@ -3279,6 +3279,7 @@ export type Database = {
         Args: { p_department_only?: boolean }
         Returns: {
           avatar_url: string
+          batch_year: number
           department: string
           full_name: string
           handle: string
