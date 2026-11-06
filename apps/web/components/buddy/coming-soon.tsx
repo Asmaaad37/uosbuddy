@@ -14,7 +14,7 @@ export function BuddyComingSoon() {
     <div className="grid gap-5">
       <section className="grid justify-items-center gap-3 rounded-lg border border-line bg-surface px-5 py-8 text-center">
         <AIBuddyMascot mood="wink" size={168} title="AIBuddy, winking" />
-        <span className="rounded-pill bg-ink px-3 py-1 font-pixel text-xs tracking-widest text-bg">
+        <span className="rounded-pill bg-tint px-3 py-1 text-footnote font-semibold text-tint-text">
           COMING SOON
         </span>
         <h2 className="text-[24px] leading-tight font-bold">AIBuddy is almost ready</h2>

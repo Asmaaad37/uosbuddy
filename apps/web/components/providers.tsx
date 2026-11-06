@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -41,9 +42,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useAnalytics();
   useServiceWorker();
   return (
-    <>
+    <ThemeProvider>
       {children}
       <Toaster />
-    </>
+    </ThemeProvider>
   );
 }

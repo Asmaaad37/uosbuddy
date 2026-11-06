@@ -32,13 +32,15 @@ export default async function InvitePage({ params }: Props) {
           </Stamp>
           {preview?.batch ? (
             <>
-              <p className="font-pixel text-[72px] leading-none text-brand">{preview.count}</p>
+              <p className="text-[72px] leading-none font-bold tracking-[-0.03em] text-brand">
+                {preview.count}
+              </p>
               <h1 className="text-[28px] leading-tight font-bold">
                 of {preview.batch} {preview.count === 1 ? "is" : "are"} already on UOSBuddy
               </h1>
             </>
           ) : (
-            <h1 className="font-pixel text-[44px] leading-[0.95] tracking-tight">
+            <h1 className="text-[44px] leading-[1.05] font-bold tracking-[-0.03em]">
               FIND YOUR <br />
               BATCH.
             </h1>

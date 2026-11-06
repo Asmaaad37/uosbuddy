@@ -62,11 +62,11 @@ export function GpaCalculator() {
       <div className="grid grid-cols-2 gap-3 rounded-lg bg-ink p-5 text-bg">
         <div>
           <p className="text-sm text-bg/70">CGPA</p>
-          <p className="font-pixel text-4xl">{overall.gpa?.toFixed(2) ?? "–"}</p>
+          <p className="text-large-title">{overall.gpa?.toFixed(2) ?? "–"}</p>
         </div>
         <div className="text-right">
           <p className="text-sm text-bg/70">Credit hours</p>
-          <p className="font-pixel text-4xl">{overall.credits}</p>
+          <p className="text-large-title">{overall.credits}</p>
         </div>
       </div>
 

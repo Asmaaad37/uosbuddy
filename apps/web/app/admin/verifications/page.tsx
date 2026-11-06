@@ -75,7 +75,7 @@ export default async function VerificationsPage({
           href={
             from ? `/admin/verifications?from=${encodeURIComponent(from)}` : "/admin/verifications"
           }
-          className="font-pixel text-lg"
+          className="text-headline"
         >
           UOSBUDDY ADMIN
         </Link>

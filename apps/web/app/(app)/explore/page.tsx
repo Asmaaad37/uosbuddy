@@ -14,7 +14,6 @@ import { publicEnv } from "@/lib/env";
 import { inviteMessage, whatsappLink } from "@/lib/invite-text";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Marquee } from "@/components/ui/marquee";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Explore" };
@@ -67,13 +66,6 @@ export default async function ExplorePage({ searchParams }: Props) {
   const code = dept?.short_code;
   const batchLabel = code && profile.batch_year ? `${code} ${profile.batch_year}` : "your batch";
   const batchPeople = batch.ok ? batch.data.people : [];
-  const pulses = [
-    `${batchCount} from ${batchLabel} here`,
-    profile.section && `${counts?.section_count ?? 0} in your section`,
-    code && `${counts?.department_count ?? 0} from ${code} to meet`,
-    `${counts?.university_count ?? 0} UoS students to meet`,
-    "Invite your batch",
-  ].filter((p): p is string => !!p);
 
   return (
     <AppShell
@@ -106,7 +98,7 @@ export default async function ExplorePage({ searchParams }: Props) {
           href="/explore/batch"
           className="group grid gap-1 rounded-lg bg-ink p-5 text-bg shadow-[var(--shadow-card)]"
         >
-          <span className="font-pixel text-5xl leading-none">{batchCount}</span>
+          <span className="text-large-title">{batchCount}</span>
           <span className="font-semibold">
             from {batchLabel} {batchCount === 1 ? "is" : "are"} here
           </span>
@@ -116,8 +108,6 @@ export default async function ExplorePage({ searchParams }: Props) {
           </span>
         </Link>
       )}
-
-      <Marquee items={pulses} className="-mx-4 sm:mx-0 sm:rounded-md sm:border-x" />
 
       <InstallPrompt />
       <FeatureDock

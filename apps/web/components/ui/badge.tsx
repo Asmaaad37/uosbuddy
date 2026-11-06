@@ -29,16 +29,16 @@ export function Chip({
   return <span className={cn(chipVariants({ tone }), className)} {...props} />;
 }
 
-// Pixel-font stamps (Section 6.3 #7): VERIFIED, UOS EMAIL, MENTOR, BACKUP HERO.
+// Profile stamps: UOS EMAIL, MENTOR, BACKUP HERO (VERIFIED becomes the badge-check icon).
 const stampVariants = cva(
-  "inline-flex h-6 -rotate-2 items-center rounded-[4px] border-2 px-1.5 font-pixel text-[11px] leading-none tracking-wider uppercase",
+  "inline-flex h-6 items-center rounded-pill px-2 text-footnote font-semibold",
   {
     variants: {
       tone: {
-        verified: "border-brand text-brand",
-        email: "border-lane-people text-lane-people dark:border-brand-soft dark:text-brand-soft",
-        mentor: "border-success text-success",
-        hero: "border-transparent bg-lane-help text-lane-help-ink",
+        verified: "bg-tint text-tint-text",
+        email: "bg-raised text-sec",
+        mentor: "bg-raised text-sec",
+        hero: "bg-tint text-tint-text",
       },
     },
     defaultVariants: { tone: "verified" },

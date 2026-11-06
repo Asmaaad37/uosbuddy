@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import { FeatureTile } from "@/components/ui/feature-tile";
 import { Field, Input, Textarea } from "@/components/ui/input";
-import { Marquee } from "@/components/ui/marquee";
 import {
   Select,
   SelectContent,
@@ -73,7 +72,7 @@ export function Showcase({ theme }: { theme: "light" | "dark" }) {
       className="grid min-w-0 grid-cols-1 gap-8 bg-bg px-4 py-8 text-ink md:px-8"
     >
       <header className="flex items-center justify-between">
-        <p className="font-pixel text-2xl">{theme.toUpperCase()}</p>
+        <p className="text-title2">{theme.toUpperCase()}</p>
         <Stamp tone="verified">VERIFIED</Stamp>
       </header>
 
@@ -90,7 +89,7 @@ export function Showcase({ theme }: { theme: "light" | "dark" }) {
       </Section>
 
       <Section title="Typography">
-        <p className="font-pixel text-[44px] leading-none">143 BATCHMATES</p>
+        <p className="text-large-title">143 BATCHMATES</p>
         <p className="text-[28px] leading-tight font-bold">Find your batch. Find your people.</p>
         <p className="max-w-prose">
           Body 16/1.5 in Geist. Students verify they belong to UoS, find their batch and section,
@@ -218,17 +217,6 @@ export function Showcase({ theme }: { theme: "light" | "dark" }) {
           <FeatureTile href="#" label="Rides" lane="campus" icon={<Car />} />
           <FeatureTile href="#" label="Market" lane="campus" icon={<ShoppingBag />} />
         </div>
-      </Section>
-
-      <Section title="Marquee">
-        <Marquee
-          items={[
-            "12 new batchmates today",
-            "Backup claimed in CS-201",
-            "Rides to Lahore Friday",
-            "1,204 students joined",
-          ]}
-        />
       </Section>
 
       <Section title="Overlays and feedback">

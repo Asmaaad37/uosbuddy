@@ -12,7 +12,7 @@ test("design system renders every component group in both themes", async ({ page
   for (const theme of ["LIGHT", "DARK"]) {
     await expect(page.getByText(theme, { exact: true })).toBeVisible();
   }
-  for (const group of ["Buttons", "Inputs", "Tabs", "Feature dock", "Marquee"]) {
+  for (const group of ["Buttons", "Inputs", "Tabs", "Feature dock"]) {
     await expect(page.getByRole("heading", { name: group })).toHaveCount(2);
   }
   await page.screenshot({ path: `screenshots/design-${info.project.name}.png`, fullPage: true });

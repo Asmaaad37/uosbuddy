@@ -27,7 +27,7 @@ export function AdminShell({
     <div className="min-h-dvh">
       <header className="gutter grid gap-2 border-b border-line py-3">
         <div className="flex items-center justify-between">
-          <span className="font-pixel text-lg">UOSBUDDY {isAdmin ? "ADMIN" : "MODERATION"}</span>
+          <span className="text-headline">UOSBUDDY {isAdmin ? "ADMIN" : "MODERATION"}</span>
           <Link href={back} className="text-sm font-semibold text-brand">
             Back to app
           </Link>

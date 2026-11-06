@@ -53,7 +53,10 @@ export function BatchReveal({
       >
         {count > 0 ? (
           <>
-            <p className="font-pixel text-[64px] leading-none text-brand" aria-hidden>
+            <p
+              className="text-[64px] leading-none font-bold tracking-[-0.03em] text-brand"
+              aria-hidden
+            >
               {n}
             </p>
             <h2 id="reveal" className="text-xl font-bold">
