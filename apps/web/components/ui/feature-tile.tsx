@@ -3,10 +3,10 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const lanes = {
-  people: "bg-lane-people text-lane-people-ink",
-  learn: "bg-lane-learn text-lane-learn-ink",
-  help: "bg-lane-help text-lane-help-ink",
-  campus: "bg-lane-campus text-lane-campus-ink",
+  people: "bg-raised text-sec",
+  learn: "bg-raised text-sec",
+  help: "bg-raised text-sec",
+  campus: "bg-raised text-sec",
 } as const;
 
 /**
@@ -27,7 +27,7 @@ export function FeatureTile({
   return (
     <Link
       href={href}
-      className="group flex w-20 flex-col items-center gap-2 rounded-md outline-offset-4"
+      className="group flex w-20 flex-col items-center gap-2 rounded-field outline-offset-4"
     >
       <span
         className={cn(
@@ -42,7 +42,7 @@ export function FeatureTile({
         />
         {icon}
       </span>
-      <span className="rounded-pill bg-surface px-2.5 py-0.5 text-xs font-semibold text-ink shadow-card">
+      <span className="rounded-pill bg-surface px-2.5 py-0.5 text-xs font-semibold text-label shadow-card">
         {label}
       </span>
     </Link>

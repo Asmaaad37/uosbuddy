@@ -24,19 +24,19 @@ export default async function CampusPage() {
       <div
         role="radio"
         aria-checked="true"
-        className="flex items-center gap-4 rounded-lg border-2 border-brand bg-surface p-4 shadow-card"
+        className="flex items-center gap-4 rounded-card border-2 border-accent bg-surface p-4 shadow-card"
       >
-        <span className="grid size-12 shrink-0 place-items-center rounded-md bg-brand text-brand-ink">
+        <span className="grid size-12 shrink-0 place-items-center rounded-field bg-fill text-on-fill">
           <GraduationCap className="size-6" />
         </span>
         <span className="grid flex-1 gap-0.5">
           <span className="font-bold">{uni?.name ?? "University of Sargodha"}</span>
-          <span className="text-sm text-ink-2">{campus}</span>
+          <span className="text-sm text-sec">{campus}</span>
         </span>
-        <CheckCircle2 aria-hidden className="size-6 text-brand" />
+        <CheckCircle2 aria-hidden className="size-6 text-accent" />
       </div>
 
-      <p className="text-sm text-ink-2">Sub-campuses are coming later.</p>
+      <p className="text-sm text-sec">Sub-campuses are coming later.</p>
 
       <div className="mt-auto grid gap-3">
         <Button asChild block>

@@ -47,7 +47,7 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
     });
 
   return (
-    <li className="grid gap-3 rounded-lg border border-line bg-surface p-4">
+    <li className="grid gap-3 rounded-card border border-sep bg-surface p-4">
       <div className="flex flex-wrap items-center gap-1.5">
         <Pill tone="neutral" className="h-6 px-2 text-xs capitalize">
           {r.target_type}
@@ -70,13 +70,13 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
       </div>
       <p className="text-[15px] whitespace-pre-wrap">{r.preview || "(no text)"}</p>
       {r.details.length > 0 && (
-        <ul className="grid gap-1 text-sm text-ink-2">
+        <ul className="grid gap-1 text-sm text-sec">
           {r.details.map((d, i) => (
             <li key={i}>“{d}”</li>
           ))}
         </ul>
       )}
-      <p className="text-xs text-ink-2">
+      <p className="text-xs text-sec">
         By{" "}
         {r.author_handle ? (
           <Link href={`/people/${r.author_handle}`} className="font-semibold">

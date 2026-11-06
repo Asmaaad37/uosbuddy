@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ListingCard, type Listing } from "@/components/market/listing-card";
 import { ListingSheet } from "@/components/market/listing-sheet";
 import { getSession } from "@/lib/auth/session";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Market" };
 
@@ -45,15 +46,15 @@ export default async function MarketPage({ searchParams }: Props) {
   return (
     <AppShell bell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Market</h1>
-        <p className="text-ink-2">Buy, sell, give away, and find lost things around campus.</p>
+        <h1 className="text-large-title">Market</h1>
+        <p className="text-sec">Buy, sell, give away, and find lost things around campus.</p>
       </div>
       <ListingSheet initialKind={kind ?? "sell"} />
 
       <form action="/market" className="relative">
         {kind && <input type="hidden" name="kind" value={kind} />}
         <Search
-          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-2"
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-sec"
           aria-hidden
         />
         <input
@@ -62,7 +63,7 @@ export default async function MarketPage({ searchParams }: Props) {
           defaultValue={q ?? ""}
           aria-label="Search the market"
           placeholder="Search: calculator, lab coat, keys…"
-          className="h-11 w-full rounded-pill border border-line bg-surface pr-4 pl-9 text-[15px] focus-visible:border-brand focus-visible:outline-none"
+          className="h-11 w-full rounded-field bg-track pr-4 pl-9 text-body placeholder:text-ter focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         />
       </form>
 
@@ -75,10 +76,10 @@ export default async function MarketPage({ searchParams }: Props) {
               href={href(t.key)}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
+                "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
                 active
-                  ? "border-ink bg-ink text-bg"
-                  : "border-line bg-surface hover:border-ink-2/50",
+                  ? "border-accent bg-tint text-tint-text"
+                  : "border-sep text-label hover:bg-raised",
               )}
             >
               {t.label}
@@ -94,13 +95,13 @@ export default async function MarketPage({ searchParams }: Props) {
           ))}
         </div>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+        <EmptyState icon={ShoppingBag}>
           {mine
             ? "Your listings show up here."
             : q
               ? `Nothing matches “${q}”.`
               : "Nothing here yet. Post the first one!"}
-        </p>
+        </EmptyState>
       )}
     </AppShell>
   );

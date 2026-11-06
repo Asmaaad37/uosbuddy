@@ -74,9 +74,9 @@ export function ConnectPanel({
   return (
     <div className="grid gap-2">
       {state === "incoming" && (
-        <div className="grid gap-3 rounded-lg border border-brand/40 bg-brand/8 p-4">
+        <div className="grid gap-3 rounded-card border border-accent/40 bg-tint p-4">
           <p className="font-semibold">{firstName} wants to connect</p>
-          {incomingNote && <p className="text-ink-2">&ldquo;{incomingNote}&rdquo;</p>}
+          {incomingNote && <p className="text-sec">&ldquo;{incomingNote}&rdquo;</p>}
           <div className="flex gap-2">
             <Button
               size="md"
@@ -139,7 +139,7 @@ export function ConnectPanel({
       {state === "outgoing" && (
         <button
           type="button"
-          className="justify-self-start text-sm font-semibold text-ink-2 hover:text-ink"
+          className="justify-self-start text-sm font-semibold text-sec hover:text-label"
           disabled={!!busy}
           onClick={async () => {
             const done = await run("withdraw", () => removeConnection(target));
@@ -150,8 +150,8 @@ export function ConnectPanel({
         </button>
       )}
       {state === "connected" && (
-        <p className="flex items-center gap-1.5 text-sm text-ink-2">
-          <Check className="size-4 text-success" /> You&apos;re connected
+        <p className="flex items-center gap-1.5 text-sm text-sec">
+          <Check className="size-4 text-tint-text" /> You&apos;re connected
         </p>
       )}
 
@@ -164,15 +164,15 @@ export function ConnectPanel({
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
           <SheetTitle className="text-xl font-bold">Connect with {firstName}</SheetTitle>
-          <SheetDescription className="mb-4 text-sm text-ink-2">
+          <SheetDescription className="mb-4 text-sm text-sec">
             {openingMove
               ? "Reply to their Opening Move. It makes saying hi much easier."
               : "Add a short note so they know who you are."}
           </SheetDescription>
           <form onSubmit={send} className="grid gap-4">
             {openingMove && (
-              <div className="grid gap-1 rounded-lg border border-line bg-bg p-3">
-                <p className="text-sm font-semibold text-brand">{openingMove.prompt}</p>
+              <div className="grid gap-1 rounded-card border border-sep bg-bg p-3">
+                <p className="text-sm font-semibold text-accent">{openingMove.prompt}</p>
                 <p className="font-semibold">{openingMove.answer}</p>
               </div>
             )}

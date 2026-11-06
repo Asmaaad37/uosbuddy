@@ -48,22 +48,22 @@ export function EventCard({ event: e }: { event: EventItem }) {
     <article
       aria-label={e.title}
       className={cn(
-        "grid gap-3 rounded-lg border border-line bg-surface p-4",
+        "grid gap-3 rounded-card border border-sep bg-surface p-4",
         cancelled && "opacity-70",
       )}
     >
       <div className="grid gap-1">
         {e.society_name && (
-          <Link href={`/events/s/${e.society_slug}`} className="text-sm font-semibold text-brand">
+          <Link href={`/events/s/${e.society_slug}`} className="text-sm font-semibold text-accent">
             {e.society_emoji && <span aria-hidden>{e.society_emoji} </span>}
             {e.society_name}
           </Link>
         )}
         <h3 className="text-lg leading-snug font-bold">{e.title}</h3>
-        <p className="flex items-center gap-1.5 text-sm text-ink-2">
+        <p className="flex items-center gap-1.5 text-sm text-sec">
           <Clock className="size-4" aria-hidden /> {pkTime(e.starts_at)}
         </p>
-        <p className="flex items-center gap-1.5 text-sm text-ink-2">
+        <p className="flex items-center gap-1.5 text-sm text-sec">
           <MapPin className="size-4" aria-hidden /> {e.venue}
         </p>
       </div>
@@ -109,7 +109,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
           </div>
           <a
             href={`/events/${e.id}/ics`}
-            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-brand"
+            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-accent"
           >
             <CalendarPlus className="size-4" /> Add to calendar
           </a>

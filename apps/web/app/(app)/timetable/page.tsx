@@ -63,8 +63,8 @@ export default async function TimetablePage({ searchParams }: Props) {
   return (
     <AppShell bell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Timetable</h1>
-        <p className="text-ink-2">{termLabel(term)}. Only you see your classes.</p>
+        <h1 className="text-large-title">Timetable</h1>
+        <p className="text-sec">{termLabel(term)}. Only you see your classes.</p>
       </div>
       <nav aria-label="Timetable sections" className="-mx-4 flex gap-2 overflow-x-auto px-4">
         {TABS.map((t) => (
@@ -73,10 +73,10 @@ export default async function TimetablePage({ searchParams }: Props) {
             href={t.key === "week" ? "/timetable" : `/timetable?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
             className={cn(
-              "flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
+              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
               tab === t.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface hover:border-ink-2/50",
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep text-label hover:bg-raised",
             )}
           >
             {t.label}

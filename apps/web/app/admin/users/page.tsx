@@ -28,7 +28,7 @@ export default async function AdminUsersPage({ searchParams }: Props) {
     <AdminShell current="/admin/users" isAdmin back={homePath(profile)}>
       <div>
         <h1 className="text-[28px] font-bold">People</h1>
-        <p className="text-ink-2">
+        <p className="text-sec">
           Warnings, bans and moderator roles are recorded in the audit log.
         </p>
       </div>
@@ -39,10 +39,10 @@ export default async function AdminUsersPage({ searchParams }: Props) {
           defaultValue={q}
           aria-label="Search people"
           placeholder="Name, handle, email or roll number"
-          className="h-11 w-full rounded-pill border border-line bg-surface px-4 text-[15px] focus-visible:border-brand focus-visible:outline-none"
+          className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-[15px] focus-visible:border-accent focus-visible:outline-none"
         />
       </form>
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
         {(users ?? []).map((u) => (
           <UserRow
             key={u.id}
@@ -51,7 +51,7 @@ export default async function AdminUsersPage({ searchParams }: Props) {
             scopes={(scopes ?? []).filter((s) => s.user_id === u.id).map((s) => s.space)}
           />
         ))}
-        {!users?.length && <li className="p-6 text-center text-ink-2">No one matches.</li>}
+        {!users?.length && <li className="p-6 text-center text-sec">No one matches.</li>}
       </ul>
     </AdminShell>
   );

@@ -29,14 +29,14 @@ export default function EmailForkPage() {
           <li key={href}>
             <Link
               href={href}
-              className="flex items-start gap-4 rounded-lg border border-line bg-surface p-4 shadow-card transition hover:border-brand hover:shadow-lift focus-visible:ring-3 focus-visible:ring-brand/25 focus-visible:outline-none"
+              className="flex items-start gap-4 rounded-card border border-sep bg-surface p-4 shadow-card transition hover:border-accent hover:shadow-lift focus-visible:ring-3 focus-visible:ring-accent/25 focus-visible:outline-none"
             >
-              <span className="grid size-11 shrink-0 place-items-center rounded-md bg-surface-2 text-brand">
+              <span className="grid size-11 shrink-0 place-items-center rounded-field bg-raised text-accent">
                 <Icon className="size-5" />
               </span>
               <span className="grid gap-1">
                 <span className="font-bold">{title}</span>
-                <span className="text-sm text-ink-2">{body}</span>
+                <span className="text-sm text-sec">{body}</span>
               </span>
             </Link>
           </li>

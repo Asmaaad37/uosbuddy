@@ -18,8 +18,8 @@ export default async function MentorsPage() {
   return (
     <AppShell bell back="/me">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Mentors</h1>
-        <p className="text-ink-2">Seniors in your department who are happy to help.</p>
+        <h1 className="text-large-title">Mentors</h1>
+        <p className="text-sec">Seniors in your department who are happy to help.</p>
       </div>
       <MentorSwitch on={profile.is_mentor} eligible={(profile.semester ?? 0) >= 3} />
       <MentorRequests requests={requests ?? []} />

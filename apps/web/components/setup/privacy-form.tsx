@@ -33,14 +33,14 @@ function Toggle({
     <label className="flex cursor-pointer items-start justify-between gap-4">
       <span className="grid gap-0.5">
         <span className="text-sm font-semibold">{label}</span>
-        <span className="text-[13px] text-ink-2">{hint}</span>
+        <span className="text-[13px] text-sec">{hint}</span>
       </span>
       <input
         type="checkbox"
         role="switch"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 size-5 shrink-0 accent-[var(--brand)]"
+        className="mt-1 size-5 shrink-0 accent-[var(--accent)]"
       />
     </label>
   );
@@ -99,14 +99,14 @@ export function PrivacyForm({
               aria-checked={on}
               onClick={() => setSettings(p.settings)}
               className={cn(
-                "flex items-start gap-3 rounded-lg border-2 bg-surface p-4 text-left transition-colors",
-                on ? "border-brand" : "border-line hover:border-ink-2/50",
+                "flex items-start gap-3 rounded-card border-2 bg-surface p-4 text-left transition-colors",
+                on ? "border-accent" : "border-sep hover:border-sec/50",
               )}
             >
               <span
                 className={cn(
                   "mt-0.5 grid size-5 shrink-0 place-items-center rounded-pill border-2",
-                  on ? "border-brand bg-brand text-brand-ink" : "border-line",
+                  on ? "border-accent bg-fill text-on-fill" : "border-sep",
                 )}
               >
                 {on && <Check className="size-3" />}
@@ -115,18 +115,18 @@ export function PrivacyForm({
                 <span className="font-bold">
                   {p.label}
                   {name === "open" && (
-                    <span className="ml-2 text-xs font-semibold text-brand">
+                    <span className="ml-2 text-xs font-semibold text-accent">
                       Most people pick this
                     </span>
                   )}
                 </span>
-                <span className="text-sm text-ink-2">{p.description}</span>
+                <span className="text-sm text-sec">{p.description}</span>
               </span>
             </button>
           );
         })}
         {preset === "custom" && (
-          <p className="text-sm text-ink-2">You&apos;re using custom settings.</p>
+          <p className="text-sm text-sec">You&apos;re using custom settings.</p>
         )}
       </div>
 
@@ -134,13 +134,13 @@ export function PrivacyForm({
         type="button"
         aria-expanded={customise}
         onClick={() => setCustomise((c) => !c)}
-        className="justify-self-start text-sm font-semibold text-brand"
+        className="hit justify-self-start text-sm font-semibold text-accent"
       >
         {customise ? "Hide details" : "Customise"}
       </button>
 
       {customise && (
-        <div className="grid gap-4 rounded-lg border border-line bg-surface p-4">
+        <div className="grid gap-4 rounded-card border border-sep bg-surface p-4">
           {(
             [
               ["profile_visibility", "Who can see your profile"],
@@ -176,7 +176,7 @@ export function PrivacyForm({
             checked={settings.show_in_directory}
             onChange={(v) => set("show_in_directory", v)}
           />
-          <p className="text-[13px] text-ink-2">
+          <p className="text-[13px] text-sec">
             &ldquo;Connections&rdquo; are people you&apos;ve connected with. Connecting arrives in a
             later update; until then that setting means only you.
           </p>

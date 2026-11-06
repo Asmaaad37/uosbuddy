@@ -28,7 +28,7 @@ export default async function LoginPage({
   return (
     <OnboardingShell back="/" title="Welcome back">
       {error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 p-3 text-sm">
+        <p role="alert" className="rounded-field border border-danger/40 bg-danger/10 p-3 text-sm">
           {error}
         </p>
       )}
@@ -49,9 +49,9 @@ export default async function LoginPage({
           <PasswordLoginForm next={next} />
         </TabsContent>
       </Tabs>
-      <p className="text-center text-sm text-ink-2">
+      <p className="text-center text-sm text-sec">
         New here?{" "}
-        <Link href="/start/campus" className="font-semibold text-brand">
+        <Link href="/start/campus" className="font-semibold text-accent">
           Get started
         </Link>
       </p>

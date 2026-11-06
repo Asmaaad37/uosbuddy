@@ -18,7 +18,7 @@ export default async function ReportsPage() {
     <AdminShell current="/admin/reports" isAdmin={isAdmin} back={homePath(profile)}>
       <div>
         <h1 className="text-[28px] font-bold">Reports</h1>
-        <p className="text-ink-2">
+        <p className="text-sec">
           {isAdmin
             ? "Everything reported or held for review, most-reported first."
             : "Reported or held posts and comments in the feeds you moderate."}{" "}
@@ -36,7 +36,7 @@ export default async function ReportsPage() {
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-8 text-center text-ink-2">
+        <p className="rounded-card bg-surface p-8 text-center text-sec shadow-card">
           Nothing to review. Nice.
         </p>
       )}

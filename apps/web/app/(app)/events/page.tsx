@@ -8,6 +8,8 @@ import { SocietyButton, SocietySheet } from "@/components/events/society-sheet";
 import { Pill } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
+import { CalendarDays } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Events" };
 
@@ -39,8 +41,8 @@ export default async function EventsPage({ searchParams }: Props) {
   return (
     <AppShell bell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Events</h1>
-        <p className="text-ink-2">What&apos;s on at UoS, from societies you trust.</p>
+        <h1 className="text-large-title">Events</h1>
+        <p className="text-sec">What&apos;s on at UoS, from societies you trust.</p>
       </div>
       {(running.length > 0 || isAdmin) && (
         <EventSheet
@@ -56,10 +58,10 @@ export default async function EventsPage({ searchParams }: Props) {
             href={t.key === "upcoming" ? "/events" : `/events?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
             className={cn(
-              "flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
+              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
               tab === t.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface hover:border-ink-2/50",
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep text-label hover:bg-raised",
             )}
           >
             {t.label}
@@ -75,17 +77,17 @@ export default async function EventsPage({ searchParams }: Props) {
               {societies.map((s) => (
                 <li
                   key={s.id}
-                  className="flex items-center gap-3 rounded-lg border border-line bg-surface p-3"
+                  className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
                 >
                   <span
                     aria-hidden
-                    className="grid size-11 shrink-0 place-items-center rounded-md bg-lane-campus text-xl text-lane-campus-ink"
+                    className="grid size-11 shrink-0 place-items-center rounded-field bg-raised text-xl text-sec"
                   >
                     {s.emoji || s.name.slice(0, 1)}
                   </span>
                   <Link href={`/events/s/${s.slug}`} className="grid min-w-0 flex-1">
                     <span className="truncate font-semibold">{s.name}</span>
-                    <span className="text-xs text-ink-2">
+                    <span className="text-xs text-sec">
                       {s.member_count} {s.member_count === 1 ? "member" : "members"}
                     </span>
                   </Link>
@@ -104,9 +106,7 @@ export default async function EventsPage({ searchParams }: Props) {
               ))}
             </ul>
           ) : (
-            <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-              No societies yet. Run one? Start its page.
-            </p>
+            <EmptyState icon={CalendarDays}>No societies yet. Run one? Start its page.</EmptyState>
           )}
         </>
       ) : events?.length ? (
@@ -116,11 +116,11 @@ export default async function EventsPage({ searchParams }: Props) {
           ))}
         </div>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+        <EmptyState icon={CalendarDays}>
           {tab === "going"
             ? "Events you're going to or interested in show up here."
             : "No upcoming events yet."}
-        </p>
+        </EmptyState>
       )}
     </AppShell>
   );

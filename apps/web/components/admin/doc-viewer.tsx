@@ -17,7 +17,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
 
   if (!url) {
     return (
-      <div className="grid h-80 place-items-center rounded-lg border border-dashed border-line text-ink-2">
+      <div className="grid h-80 place-items-center rounded-card bg-surface text-sec shadow-card">
         Document missing or deleted
       </div>
     );
@@ -25,15 +25,15 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
 
   if (path?.endsWith(".pdf")) {
     return (
-      <div className="grid h-80 place-items-center gap-3 rounded-lg border border-line bg-surface text-center">
+      <div className="grid h-80 place-items-center gap-3 rounded-card border border-sep bg-surface text-center">
         <div className="grid justify-items-center gap-3">
-          <FileText className="size-10 text-ink-2" />
+          <FileText className="size-10 text-sec" />
           <Button asChild variant="secondary" size="md">
             <a href={url} target="_blank" rel="noopener noreferrer">
               Open PDF <ExternalLink />
             </a>
           </Button>
-          <p className="text-[13px] text-ink-2">The link expires in 15 minutes.</p>
+          <p className="text-[13px] text-sec">The link expires in 15 minutes.</p>
         </div>
       </div>
     );
@@ -41,7 +41,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
 
   return (
     <div className="grid gap-2">
-      <div className="relative h-[min(70vh,640px)] overflow-auto rounded-lg border border-line bg-surface-2">
+      <div className="relative h-[min(70vh,640px)] overflow-auto rounded-card border border-sep bg-raised">
         <div className="grid min-h-full min-w-full place-items-center p-4">
           {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL */}
           <img
@@ -82,7 +82,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-brand"
+          className="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-accent"
         >
           Original <ExternalLink className="size-4" />
         </a>

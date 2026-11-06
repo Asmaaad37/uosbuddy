@@ -24,7 +24,7 @@ export default async function InvitePage({ params }: Props) {
   const preview = await getInvitePreview((await params).code);
 
   return (
-    <div className="bg-dotted flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col bg-bg">
       <main className="gutter mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 py-10">
         <div className="grid gap-4">
           <Stamp tone="verified" className="justify-self-start">
@@ -32,10 +32,10 @@ export default async function InvitePage({ params }: Props) {
           </Stamp>
           {preview?.batch ? (
             <>
-              <p className="text-[72px] leading-none font-bold tracking-[-0.03em] text-brand">
+              <p className="text-[72px] leading-none font-bold tracking-[-0.03em] text-accent">
                 {preview.count}
               </p>
-              <h1 className="text-[28px] leading-tight font-bold">
+              <h1 className="text-large-title">
                 of {preview.batch} {preview.count === 1 ? "is" : "are"} already on UOSBuddy
               </h1>
             </>
@@ -45,7 +45,7 @@ export default async function InvitePage({ params }: Props) {
               BATCH.
             </h1>
           )}
-          <p className="text-lg text-ink-2">
+          <p className="text-lg text-sec">
             Meet your batch at University of Sargodha before classes start. Verified UoS students
             only.
           </p>

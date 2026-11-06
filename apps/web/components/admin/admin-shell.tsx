@@ -25,10 +25,10 @@ export function AdminShell({
 }) {
   return (
     <div className="min-h-dvh">
-      <header className="gutter grid gap-2 border-b border-line py-3">
+      <header className="gutter grid gap-2 border-b border-sep py-3">
         <div className="flex items-center justify-between">
           <span className="text-headline">UOSBUDDY {isAdmin ? "ADMIN" : "MODERATION"}</span>
-          <Link href={back} className="text-sm font-semibold text-brand">
+          <Link href={back} className="text-sm font-semibold text-accent">
             Back to app
           </Link>
         </div>
@@ -40,7 +40,7 @@ export function AdminShell({
               aria-current={current === n.href ? "page" : undefined}
               className={cn(
                 "flex h-9 shrink-0 items-center rounded-pill px-3.5 text-sm font-semibold",
-                current === n.href ? "bg-ink text-bg" : "hover:bg-surface-2",
+                current === n.href ? "bg-fill text-on-fill" : "hover:bg-raised",
               )}
             >
               {n.label}

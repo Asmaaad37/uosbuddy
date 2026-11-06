@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 /** Welcome (Section 7, screen 1). */
 export default function Welcome() {
   return (
-    <div className="bg-dotted flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col bg-bg">
       <main className="gutter mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 py-10">
         <div className="grid gap-4">
           <Stamp tone="verified" className="justify-self-start">
@@ -16,7 +16,7 @@ export default function Welcome() {
             FIND YOUR <br />
             BATCH.
           </h1>
-          <p className="text-lg text-ink-2">
+          <p className="text-lg text-sec">
             Your people at University of Sargodha, before classes even start.
           </p>
         </div>

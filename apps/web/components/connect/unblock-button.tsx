@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export function UnblockButton({ target }: { target: string }) {
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
-  if (done) return <span className="text-sm text-ink-2">Unblocked</span>;
+  if (done) return <span className="text-sm text-sec">Unblocked</span>;
   return (
     <Button
       size="sm"

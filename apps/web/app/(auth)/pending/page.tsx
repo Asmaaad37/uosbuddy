@@ -53,16 +53,16 @@ export default async function PendingPage() {
     <OnboardingShell title={copy.title} subtitle={copy.subtitle}>
       <PendingLive userId={user.id} />
 
-      <ol className="grid gap-0 rounded-lg border border-line bg-surface p-5 shadow-card">
+      <ol className="grid gap-0 rounded-card border border-sep bg-surface p-5 shadow-card">
         {steps.map((s, i) => (
           <li key={s.label} className="flex gap-3">
             <div className="flex flex-col items-center">
               <span
                 className={cn(
                   "grid size-7 place-items-center rounded-pill border-2",
-                  s.done && "border-ink bg-ink text-bg",
-                  s.current && "border-brand text-brand",
-                  !s.done && !s.current && "border-line text-ink-2",
+                  s.done && "border-accent bg-tint text-tint-text",
+                  s.current && "border-accent text-accent",
+                  !s.done && !s.current && "border-sep text-sec",
                 )}
               >
                 {s.done ? (
@@ -71,12 +71,12 @@ export default async function PendingPage() {
                   <Hourglass className="size-3.5 motion-safe:animate-pulse" />
                 ) : null}
               </span>
-              {i < steps.length - 1 && <span className="h-6 w-0.5 bg-line" />}
+              {i < steps.length - 1 && <span className="h-6 w-0.5 bg-sep" />}
             </div>
-            <span className={cn("pt-0.5 font-semibold", !s.done && !s.current && "text-ink-2")}>
+            <span className={cn("pt-0.5 font-semibold", !s.done && !s.current && "text-sec")}>
               {s.label}
               {i === 0 && request && (
-                <span className="block text-[13px] font-normal text-ink-2">
+                <span className="block text-[13px] font-normal text-sec">
                   {new Date(request.created_at).toLocaleString("en-PK", {
                     dateStyle: "medium",
                     timeStyle: "short",
@@ -89,16 +89,13 @@ export default async function PendingPage() {
       </ol>
 
       {status !== "pending" && request?.decision_reason && (
-        <div
-          role="status"
-          className="rounded-md border border-warning/50 bg-warning/10 p-4 text-sm"
-        >
+        <div role="status" className="rounded-field border border-danger/50 bg-raised p-4 text-sm">
           <p className="font-semibold">The reviewer said:</p>
           <p className="mt-1">{request.decision_reason}</p>
         </div>
       )}
 
-      <p className="text-sm text-ink-2">
+      <p className="text-sm text-sec">
         This page updates by itself. You can close it; we&apos;ll email you when there&apos;s news.
       </p>
 

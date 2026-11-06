@@ -59,7 +59,7 @@ export function SocietySheet() {
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">Start a society page</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           For registered UoS societies. An admin checks it before it&apos;s listed; then you can
           post events.
         </SheetDescription>

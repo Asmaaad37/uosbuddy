@@ -43,20 +43,20 @@ export function PrefsForm({ initial }: { initial: NotificationPrefs }) {
   return (
     <div className="grid gap-4">
       <PushPrompt reason="Turn on notifications for this device." />
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
         {ROWS.map((r) => (
           <li key={r.key}>
             <label className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3">
               <span className="grid gap-0.5">
                 <span className="font-semibold">{r.label}</span>
-                <span className="text-[13px] text-ink-2">{r.hint}</span>
+                <span className="text-[13px] text-sec">{r.hint}</span>
               </span>
               <input
                 type="checkbox"
                 role="switch"
                 checked={prefs[r.key]}
                 onChange={(e) => void flip(r.key, e.target.checked)}
-                className="size-5 shrink-0 accent-[var(--brand)]"
+                className="size-5 shrink-0 accent-[var(--accent)]"
               />
             </label>
           </li>

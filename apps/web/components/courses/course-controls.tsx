@@ -20,6 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { EmptyState } from "@/components/ui/empty-state";
 
 /** Join or leave the course this term, and open its chat. */
 export function CourseControls({
@@ -157,7 +158,7 @@ export function StudyGroups({
           </SheetTrigger>
           <SheetContent>
             <SheetTitle className="text-xl font-bold">Start a study group</SheetTitle>
-            <SheetDescription className="mb-4 text-sm text-ink-2">
+            <SheetDescription className="mb-4 text-sm text-sec">
               A small group chat for this course. Classmates can join until it&apos;s full.
             </SheetDescription>
             <form onSubmit={create} className="grid gap-4" noValidate>
@@ -222,14 +223,14 @@ export function StudyGroups({
             return (
               <li
                 key={g.id}
-                className="flex items-center gap-3 rounded-lg border border-line bg-surface p-3"
+                className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
               >
-                <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-lane-people text-lane-people-ink">
+                <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-raised text-sec">
                   <Users className="size-5" />
                 </span>
                 <span className="grid min-w-0 flex-1">
                   <span className="truncate font-semibold">{g.title}</span>
-                  <span className="truncate text-sm text-ink-2">
+                  <span className="truncate text-sm text-sec">
                     {g.member_count}/{g.max_members}
                     {g.meets && ` · ${g.meets}`}
                   </span>
@@ -245,15 +246,13 @@ export function StudyGroups({
                     {g.is_member ? "Open" : "Join"}
                   </Button>
                 )}
-                {!g.is_member && full && <span className="text-sm text-ink-2">Full</span>}
+                {!g.is_member && full && <span className="text-sm text-sec">Full</span>}
               </li>
             );
           })}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-          No study groups yet.
-        </p>
+        <EmptyState icon={Users}>No study groups yet.</EmptyState>
       )}
     </div>
   );

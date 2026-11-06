@@ -27,13 +27,13 @@ export default async function CampusAdminPage() {
           <h1 id="women" className="text-[24px] font-bold">
             Women-only access
           </h1>
-          <p className="text-sm text-ink-2">
+          <p className="text-sm text-sec">
             Approve only students you&apos;re confident are women (check their verification details
             if unsure). Approved students can see and join women-only rides.
           </p>
         </div>
         {women?.length ? (
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
             {women.map((w) => (
               <li key={w.user_id} className="flex flex-wrap items-center gap-3 p-3">
                 <Avatar name={w.full_name} src={w.avatar_url} size="md" />
@@ -41,7 +41,7 @@ export default async function CampusAdminPage() {
                   <Link href={`/people/${w.handle}`} className="font-semibold">
                     {w.full_name}
                   </Link>
-                  <span className="text-xs text-ink-2">
+                  <span className="text-xs text-sec">
                     {[w.department, w.batch_year].filter(Boolean).join(" · ")}
                   </span>
                   {w.note && <span className="text-sm">“{w.note}”</span>}
@@ -51,7 +51,7 @@ export default async function CampusAdminPage() {
             ))}
           </ul>
         ) : (
-          <p className="rounded-lg border border-dashed border-line p-4 text-sm text-ink-2">
+          <p className="rounded-card bg-surface p-4 text-sm text-sec shadow-card">
             No requests waiting.
           </p>
         )}
@@ -62,12 +62,12 @@ export default async function CampusAdminPage() {
           <h2 id="societies" className="text-[24px] font-bold">
             Societies to verify
           </h2>
-          <p className="text-sm text-ink-2">
+          <p className="text-sm text-sec">
             Verify only registered UoS societies. Their admins can then post events.
           </p>
         </div>
         {waiting.length ? (
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
             {waiting.map((s) => (
               <li key={s.id} className="flex flex-wrap items-center gap-3 p-3">
                 <div className="grid min-w-0 flex-1">
@@ -75,7 +75,7 @@ export default async function CampusAdminPage() {
                     {s.emoji} {s.name}
                   </Link>
                   {s.description && (
-                    <span className="line-clamp-2 text-sm text-ink-2">{s.description}</span>
+                    <span className="line-clamp-2 text-sm text-sec">{s.description}</span>
                   )}
                 </div>
                 <CampusDecision kind="society" target={s.id} name={s.name} />
@@ -83,7 +83,7 @@ export default async function CampusAdminPage() {
             ))}
           </ul>
         ) : (
-          <p className="rounded-lg border border-dashed border-line p-4 text-sm text-ink-2">
+          <p className="rounded-card bg-surface p-4 text-sm text-sec shadow-card">
             No societies waiting.
           </p>
         )}

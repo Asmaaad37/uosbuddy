@@ -43,7 +43,7 @@ export default function SafetyPage() {
           ride or event. Reports are private: the person isn&apos;t told who reported them. Admins
           and student moderators review reports and can remove content, warn or ban accounts. Read
           the{" "}
-          <Link href="/guidelines" className="font-semibold text-brand">
+          <Link href="/guidelines" className="font-semibold text-accent">
             community guidelines
           </Link>
           .

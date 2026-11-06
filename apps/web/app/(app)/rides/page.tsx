@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { Car, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { RideCard, type Ride } from "@/components/rides/ride-card";
 import { RideSheet } from "@/components/rides/ride-sheet";
 import { getSession } from "@/lib/auth/session";
 import { RIDE_SAFETY_TIPS } from "@/lib/campus";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Rides" };
 
@@ -39,29 +40,27 @@ export default async function RidesPage({ searchParams }: Props) {
   return (
     <AppShell bell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Rides</h1>
-        <p className="text-ink-2">
-          Share a ride with UoS students. Split the fare, not your number.
-        </p>
+        <h1 className="text-large-title">Rides</h1>
+        <p className="text-sec">Share a ride with UoS students. Split the fare, not your number.</p>
       </div>
       <RideSheet womenEligible={eligible} />
 
-      <details className="group rounded-lg border border-line bg-surface p-3 text-sm">
+      <details className="group rounded-card border border-sep bg-surface p-3 text-sm">
         <summary className="flex cursor-pointer list-none items-center gap-2 font-semibold">
-          <ShieldCheck className="size-4 text-brand" aria-hidden /> Ride safely
+          <ShieldCheck className="size-4 text-accent" aria-hidden /> Ride safely
         </summary>
-        <ul className="mt-2 grid list-disc gap-1 pl-5 text-ink-2">
+        <ul className="mt-2 grid list-disc gap-1 pl-5 text-sec">
           {RIDE_SAFETY_TIPS.map((t) => (
             <li key={t}>{t}</li>
           ))}
         </ul>
         {!eligible && (
-          <p className="mt-2 text-ink-2">
+          <p className="mt-2 text-sec">
             Women-only rides:{" "}
             {access?.status === "pending" ? (
               "your request is with an admin."
             ) : (
-              <Link href="/me/privacy#women-only" className="font-semibold text-brand">
+              <Link href="/me/privacy#women-only" className="font-semibold text-accent">
                 ask for access
               </Link>
             )}
@@ -76,10 +75,10 @@ export default async function RidesPage({ searchParams }: Props) {
             href={t.key === "offers" ? "/rides" : `/rides?tab=${t.key}`}
             aria-current={tab === t.key ? "page" : undefined}
             className={cn(
-              "flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
+              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
               tab === t.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface hover:border-ink-2/50",
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep text-label hover:bg-raised",
             )}
           >
             {t.label}
@@ -94,13 +93,13 @@ export default async function RidesPage({ searchParams }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+        <EmptyState icon={Car}>
           {tab === "mine"
             ? "Rides you post or join show up here."
             : tab === "offers"
               ? "No lifts offered right now. Ask for one!"
               : "Nobody's asking for a lift right now."}
-        </p>
+        </EmptyState>
       )}
     </AppShell>
   );

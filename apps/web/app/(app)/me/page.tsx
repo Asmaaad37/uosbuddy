@@ -280,9 +280,15 @@ export default async function MePage() {
           UOSBuddy is a student-run project and is not an official University of Sargodha service.
         </p>
         <nav aria-label="Legal" className="flex justify-center gap-4">
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/guidelines">Guidelines</Link>
+          <Link href="/privacy" className="hit">
+            Privacy
+          </Link>
+          <Link href="/terms" className="hit">
+            Terms
+          </Link>
+          <Link href="/guidelines" className="hit">
+            Guidelines
+          </Link>
         </nav>
       </footer>
     </AppShell>

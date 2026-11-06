@@ -24,7 +24,7 @@ export function FlagToggle({
       aria-label={label}
       checked={enabled}
       disabled={pending}
-      className="size-5 accent-[var(--brand)]"
+      className="size-5 accent-[var(--accent)]"
       onChange={(e) => {
         const on = e.target.checked;
         start(async () => {

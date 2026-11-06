@@ -70,7 +70,7 @@ export default async function VerificationsPage({
 
   return (
     <div className="min-h-dvh">
-      <header className="gutter flex items-center justify-between border-b border-line py-3">
+      <header className="gutter flex items-center justify-between border-b border-sep py-3">
         <Link
           href={
             from ? `/admin/verifications?from=${encodeURIComponent(from)}` : "/admin/verifications"
@@ -79,7 +79,7 @@ export default async function VerificationsPage({
         >
           UOSBUDDY ADMIN
         </Link>
-        <nav className="flex gap-4 text-sm font-semibold text-brand">
+        <nav className="flex gap-4 text-sm font-semibold text-accent">
           <Link href="/admin">Dashboard</Link>
           <Link href={back}>Back to app</Link>
         </nav>

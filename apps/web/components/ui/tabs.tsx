@@ -10,7 +10,7 @@ export function TabsList({ className, ...props }: React.ComponentProps<typeof Ta
   return (
     <TabsPrimitive.List
       className={cn(
-        "inline-flex max-w-full gap-1 overflow-x-auto rounded-pill bg-surface-2 p-1",
+        "inline-flex max-w-full gap-1 overflow-x-auto rounded-pill bg-raised p-1",
         className,
       )}
       {...props}
@@ -25,7 +25,7 @@ export function TabsTrigger({
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "h-10 shrink-0 rounded-pill px-4 text-sm font-semibold whitespace-nowrap text-ink-2 transition-colors hover:text-ink data-[state=active]:bg-surface data-[state=active]:text-ink data-[state=active]:shadow-card",
+        "hit h-10 shrink-0 rounded-pill px-4 text-sm font-semibold whitespace-nowrap text-sec transition-colors hover:text-label data-[state=active]:bg-surface data-[state=active]:text-label data-[state=active]:shadow-card",
         className,
       )}
       {...props}

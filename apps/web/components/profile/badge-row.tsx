@@ -11,7 +11,7 @@ export function BadgeRow({
         <li
           key={b.slug}
           title={b.description}
-          className="flex h-8 items-center gap-1.5 rounded-pill border border-line bg-surface px-3 text-sm font-semibold"
+          className="flex h-8 items-center gap-1.5 rounded-pill border border-sep bg-surface px-3 text-sm font-semibold"
         >
           <span aria-hidden>{b.emoji}</span> {b.name}
           <span className="sr-only">: {b.description}</span>

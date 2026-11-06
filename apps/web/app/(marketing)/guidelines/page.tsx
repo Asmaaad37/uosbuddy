@@ -38,7 +38,7 @@ export default function GuidelinesPage() {
         <h2>Need help?</h2>
         <p>
           See the{" "}
-          <Link href="/safety" className="font-semibold text-brand">
+          <Link href="/safety" className="font-semibold text-accent">
             safety centre
           </Link>{" "}
           for how to report, stay safe, and get help in an emergency.

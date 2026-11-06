@@ -80,14 +80,14 @@ export function AddCourse({
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">Add a course</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           Search by code or name. If it isn&apos;t here yet, add it for everyone.
         </SheetDescription>
         {!adding ? (
           <div className="grid gap-3">
             <label className="relative">
               <span className="sr-only">Search courses</span>
-              <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-ink-2" />
+              <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-sec" />
               <Input
                 type="search"
                 value={query}
@@ -97,14 +97,14 @@ export function AddCourse({
                 autoFocus
               />
             </label>
-            {searching && <Loader2 className="mx-auto size-5 animate-spin text-ink-2" />}
+            {searching && <Loader2 className="mx-auto size-5 animate-spin text-sec" />}
             {hits.length > 0 && (
-              <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line">
+              <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep">
                 {hits.map((c) => (
                   <li key={c.id} className="flex items-center gap-3 px-3 py-2.5">
                     <span className="grid min-w-0 flex-1">
                       <span className="font-semibold">{c.code}</span>
-                      <span className="truncate text-sm text-ink-2">
+                      <span className="truncate text-sm text-sec">
                         {c.title} · {c.department_code}
                       </span>
                     </span>
@@ -118,7 +118,7 @@ export function AddCourse({
             {query.trim().length >= 2 && !searching && (
               <button
                 type="button"
-                className="justify-self-start text-sm font-semibold text-brand"
+                className="justify-self-start text-sm font-semibold text-accent"
                 onClick={() => {
                   setAdding(true);
                   // A typed code fills the code; a typed name fills the title.

@@ -61,12 +61,12 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
     <article
       aria-label={l.title}
       className={cn(
-        "grid gap-3 rounded-lg border border-line bg-surface p-3",
+        "grid gap-3 rounded-card border border-sep bg-surface p-3",
         done && "opacity-70",
       )}
     >
       {l.media_paths.length > 0 && (
-        <div className="-mx-3 -mt-3 grid auto-cols-[85%] grid-flow-col gap-1 overflow-x-auto rounded-t-lg">
+        <div className="-mx-3 -mt-3 grid auto-cols-[85%] grid-flow-col gap-1 overflow-x-auto rounded-t-card">
           {l.media_paths.map((p) => (
             <PrivateImage
               key={p}
@@ -96,7 +96,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
             )}
           </div>
           <h3 className="text-[17px] leading-snug font-bold">{l.title}</h3>
-          {price && <p className="text-lg font-bold text-brand">{price}</p>}
+          {price && <p className="text-lg font-bold text-accent">{price}</p>}
         </div>
         <Menu>
           <MenuTrigger asChild>
@@ -118,7 +118,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
         </Menu>
       </div>
       {l.description && <p className="text-sm whitespace-pre-wrap">{l.description}</p>}
-      <p className="flex flex-wrap items-center gap-x-2 text-xs text-ink-2">
+      <p className="flex flex-wrap items-center gap-x-2 text-xs text-sec">
         {mine ? "You" : <Link href={`/people/${l.handle}`}>{l.full_name}</Link>}
         <span>· {shortTime(l.created_at)}</span>
         {l.location_hint && (

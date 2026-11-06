@@ -42,7 +42,7 @@ export function ProfileCard({
         <Avatar name={name} src={profile.avatar_url} size="xl" />
         <div className="grid min-w-0 gap-1.5">
           <h1 className="text-2xl leading-tight font-bold break-words">{name}</h1>
-          {profile.handle && <p className="text-ink-2">@{profile.handle}</p>}
+          {profile.handle && <p className="text-sec">@{profile.handle}</p>}
           <ProfileStamps hasUniEmail={profile.has_uni_email} isMentor={profile.is_mentor} />
         </div>
       </header>
@@ -56,9 +56,9 @@ export function ProfileCard({
               (profile.departmentName && departmentShortName(profile.departmentName))}
           </p>
           {profile.programName && profile.departmentName && (
-            <p className="text-sm text-ink-2">{departmentShortName(profile.departmentName)}</p>
+            <p className="text-sm text-sec">{departmentShortName(profile.departmentName)}</p>
           )}
-          {studies && <p className="text-sm text-ink-2">{studies}</p>}
+          {studies && <p className="text-sm text-sec">{studies}</p>}
         </section>
       )}
 
@@ -82,9 +82,9 @@ export function ProfileCard({
       {profile.opening_move_prompt && profile.opening_move && (
         <section
           aria-label="Opening Move"
-          className="grid gap-1 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-card)]"
+          className="grid gap-1 rounded-card border border-sep bg-surface p-4 shadow-card"
         >
-          <p className="flex items-center gap-1.5 text-sm font-semibold text-brand">
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-accent">
             <MessageCircleQuestion className="size-4" /> {profile.opening_move_prompt}
           </p>
           <p className="text-lg font-semibold">{profile.opening_move}</p>
@@ -93,7 +93,7 @@ export function ProfileCard({
 
       {profile.interests.length > 0 && (
         <section aria-label="Interests" className="grid gap-2">
-          <h2 className="text-sm font-semibold text-ink-2">Into</h2>
+          <h2 className="text-sm font-semibold text-sec">Into</h2>
           <ul className="flex flex-wrap gap-2">
             {profile.interests.map((i) => (
               <li key={i.id}>

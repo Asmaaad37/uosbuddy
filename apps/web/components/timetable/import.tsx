@@ -87,7 +87,7 @@ export function ImportTimetable() {
       <Sheet open={!!rows} onOpenChange={(o) => !o && setRows(null)}>
         <SheetContent>
           <SheetTitle className="text-xl font-bold">Check your classes</SheetTitle>
-          <SheetDescription className="mb-4 text-sm text-ink-2">
+          <SheetDescription className="mb-4 text-sm text-sec">
             Read by AI from your screenshot. Fix anything it got wrong, then save. Only you see your
             timetable.
           </SheetDescription>
@@ -95,7 +95,7 @@ export function ImportTimetable() {
             {rows?.map((r, n) => (
               <li
                 key={r.key}
-                className="grid gap-2 rounded-lg border border-line bg-surface p-3"
+                className="grid gap-2 rounded-card border border-sep bg-surface p-3"
                 aria-label={`Class ${n + 1}`}
               >
                 <div className="flex gap-2">

@@ -33,13 +33,13 @@ export default async function SocietyPage({ params }: Props) {
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="grid size-16 shrink-0 place-items-center rounded-lg bg-lane-campus text-3xl text-lane-campus-ink"
+          className="grid size-16 shrink-0 place-items-center rounded-card bg-raised text-3xl text-sec"
         >
           {s.emoji || s.name.slice(0, 1)}
         </span>
         <div className="grid min-w-0 gap-1">
           <h1 className="text-[26px] leading-tight font-bold">{s.name}</h1>
-          <p className="text-sm text-ink-2">
+          <p className="text-sm text-sec">
             {s.member_count} {s.member_count === 1 ? "member" : "members"}
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
@@ -51,7 +51,7 @@ export default async function SocietyPage({ params }: Props) {
       </div>
       {s.description && <p className="whitespace-pre-wrap">{s.description}</p>}
       {!s.verified && admin && (
-        <p className="rounded-lg border border-dashed border-line p-4 text-sm text-ink-2">
+        <p className="rounded-card bg-surface p-4 text-sm text-sec shadow-card">
           Only you and admins can see this page until it&apos;s verified. You&apos;ll get a
           notification, then you can post events.
         </p>
@@ -65,7 +65,7 @@ export default async function SocietyPage({ params }: Props) {
         {events?.length ? (
           events.map((e) => <EventCard key={e.id} event={e as EventItem} />)
         ) : (
-          <p className="text-sm text-ink-2">No upcoming events.</p>
+          <p className="text-sm text-sec">No upcoming events.</p>
         )}
       </section>
 
@@ -73,7 +73,7 @@ export default async function SocietyPage({ params }: Props) {
         <h2 id="members" className="text-lg font-bold">
           Members
         </h2>
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
           {(people ?? []).map((p) => (
             <li key={p.user_id} className="flex items-center gap-3 px-3 py-2.5">
               <Avatar name={p.full_name} src={p.avatar_url} size="sm" />

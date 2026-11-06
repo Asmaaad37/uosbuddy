@@ -24,7 +24,7 @@ export function SortMenu({
         <button
           type="button"
           aria-label={`Sort: ${current.label}`}
-          className="flex h-9 shrink-0 items-center gap-1 rounded-track bg-track px-3 text-footnote font-semibold transition-transform duration-100 ease-out active:scale-[0.97]"
+          className="hit flex h-9 shrink-0 items-center gap-1 rounded-track bg-track px-3 text-footnote font-semibold transition-transform duration-100 ease-out active:scale-[0.97]"
         >
           {current.label}
           <ChevronsUpDown className="size-4 text-sec" aria-hidden />

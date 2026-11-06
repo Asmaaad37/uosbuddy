@@ -30,6 +30,7 @@ import {
 import { RESOURCE_KINDS, fileSize, type ResourceKind } from "@/lib/academics";
 import { browserClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export type Resource = {
   id: string;
@@ -104,7 +105,9 @@ export function Resources({
             onClick={() => setFilter(k as ResourceKind | "all")}
             className={cn(
               "h-9 shrink-0 rounded-pill border px-3 text-sm font-semibold",
-              filter === k ? "border-ink bg-ink text-bg" : "border-line bg-surface",
+              filter === k
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep text-label hover:bg-raised",
             )}
           >
             {k === "all" ? "All" : RESOURCE_KINDS[k as ResourceKind]}
@@ -122,14 +125,14 @@ export function Resources({
             <li
               key={r.id}
               id={`r-${r.id}`}
-              className="flex scroll-mt-20 items-center gap-3 rounded-lg border border-line bg-surface p-3 target:border-brand"
+              className="flex scroll-mt-20 items-center gap-3 rounded-card border border-sep bg-surface p-3 target:border-accent"
             >
               <button
                 type="button"
                 onClick={() => open(r)}
                 className="flex min-w-0 flex-1 items-center gap-3 text-left"
               >
-                <span className="grid size-10 shrink-0 place-items-center rounded-md bg-lane-learn text-lane-learn-ink">
+                <span className="grid size-10 shrink-0 place-items-center rounded-field bg-raised text-sec">
                   {r.mime_type === "application/pdf" ? (
                     <FileText className="size-5" />
                   ) : (
@@ -138,7 +141,7 @@ export function Resources({
                 </span>
                 <span className="grid min-w-0 gap-0.5">
                   <span className="truncate font-semibold">{r.title}</span>
-                  <span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-2">
+                  <span className="flex flex-wrap items-center gap-1.5 text-xs text-sec">
                     <Pill tone="neutral" className="h-5 px-1.5 text-[11px]">
                       {RESOURCE_KINDS[r.kind as ResourceKind] ?? r.kind}
                     </Pill>
@@ -155,7 +158,7 @@ export function Resources({
                 onClick={() => vote(r)}
                 className={cn(
                   "flex h-9 items-center gap-1 rounded-pill px-2.5 text-sm font-semibold",
-                  r.voted ? "bg-brand/12 text-brand" : "bg-surface-2 text-ink-2",
+                  r.voted ? "bg-tint text-accent" : "bg-raised text-sec",
                 )}
               >
                 <ArrowBigUp className={cn("size-4", r.voted && "fill-current")} /> {r.upvotes}
@@ -165,7 +168,7 @@ export function Resources({
                   <button
                     type="button"
                     aria-label="File options"
-                    className="grid size-9 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+                    className="grid size-9 place-items-center rounded-pill text-sec hover:bg-raised"
                   >
                     <MoreHorizontal className="size-4" />
                   </button>
@@ -193,11 +196,11 @@ export function Resources({
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+        <EmptyState icon={FileText}>
           {items.length
             ? "Nothing of that kind yet."
             : "No files yet. Share your notes or a past paper!"}
-        </p>
+        </EmptyState>
       )}
       <ReportDialog
         open={!!reporting}
@@ -273,7 +276,7 @@ function UploadSheet({ course, onDone }: { course: string; onDone: () => void })
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">Share a file</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           PDF or photo, up to 10 MB. Everyone verified at UoS can open it.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>

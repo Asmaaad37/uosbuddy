@@ -216,8 +216,8 @@ export function AcademicForm({
               className={cn(
                 "h-12 rounded-pill border text-sm font-semibold transition-colors",
                 shift === s.value
-                  ? "border-ink bg-ink text-bg"
-                  : "border-line bg-surface hover:border-ink-2/50",
+                  ? "border-accent bg-tint text-tint-text"
+                  : "border-sep text-label hover:bg-raised",
               )}
             >
               {s.label}

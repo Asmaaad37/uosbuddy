@@ -27,8 +27,8 @@ export default async function LinkEmailPage() {
         <Stamp tone="email" className="justify-self-start">
           UoS email
         </Stamp>
-        <h1 className="text-[28px] leading-tight font-bold">Link your UoS email</h1>
-        <p className="text-ink-2">
+        <h1 className="text-large-title">Link your UoS email</h1>
+        <p className="text-sec">
           Got your student email? Link it to add the UoS email stamp to your profile. You keep
           logging in the way you do now.
         </p>

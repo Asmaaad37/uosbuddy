@@ -76,7 +76,7 @@ export function UserRow({
               </Pill>
             )}
           </span>
-          <span className="truncate text-xs text-ink-2">
+          <span className="truncate text-xs text-sec">
             {[u.department, u.batch_year, u.verification_status, u.email]
               .filter(Boolean)
               .join(" · ")}
@@ -145,7 +145,7 @@ export function UserRow({
       )}
       {mode === "mod" && (
         <form
-          className="grid gap-2 rounded-md border border-line p-3"
+          className="grid gap-2 rounded-field border border-sep p-3"
           onSubmit={(e) => {
             e.preventDefault();
             run(
@@ -162,7 +162,7 @@ export function UserRow({
               <label key={s.value} className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--brand)]"
+                  className="size-4 accent-[var(--accent)]"
                   checked={picked.includes(s.value)}
                   onChange={(e) =>
                     setPicked((p) =>

@@ -44,7 +44,7 @@ export function SegmentedControl({
       {segments.map((s) => {
         const on = s.value === value;
         const cls = cn(
-          "relative z-10 grid flex-1 place-items-center rounded-thumb text-footnote transition-colors",
+          "hit relative z-10 grid flex-1 place-items-center rounded-thumb text-footnote transition-colors",
           on ? "font-semibold text-label" : "font-medium text-sec hover:text-label",
         );
         return s.href ? (

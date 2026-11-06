@@ -30,7 +30,7 @@ export function ExportData() {
       {result && (
         <p className="text-sm" role="status">
           Ready.{" "}
-          <a href={result.url} className="font-semibold text-brand" download>
+          <a href={result.url} className="font-semibold text-accent" download>
             Download your data
           </a>{" "}
           (the link works for 7 days{result.emailed ? "; we've also emailed it to you" : ""}).
@@ -91,7 +91,7 @@ export function DeleteAccount({ deletesAt }: { deletesAt: string | null }) {
         });
       }}
     >
-      <p className="text-sm text-ink-2">
+      <p className="text-sm text-sec">
         Your account is hidden straight away and deleted after 14 days: your profile, photo, private
         details, posts, listings and rides. Messages you sent stay in other people&apos;s chats
         without your name. Log in within 14 days to change your mind.

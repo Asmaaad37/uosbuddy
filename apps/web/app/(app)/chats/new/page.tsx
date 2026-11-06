@@ -15,8 +15,8 @@ export default async function NewGroupPage() {
   return (
     <AppShell back="/chats?tab=groups">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">New group</h1>
-        <p className="text-ink-2">Up to 50 people, chosen from your connections.</p>
+        <h1 className="text-large-title">New group</h1>
+        <p className="text-sec">Up to 50 people, chosen from your connections.</p>
       </div>
       <NewGroupForm connections={connections ?? []} />
     </AppShell>

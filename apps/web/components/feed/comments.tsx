@@ -68,7 +68,7 @@ export function Comments({
     return (
       <div className={cn("flex gap-3", nested && "ml-10")}>
         {c.is_anonymous ? (
-          <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-ink text-bg">
+          <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-fill text-on-fill">
             <VenetianMask className="size-4" />
           </span>
         ) : (
@@ -84,13 +84,13 @@ export function Comments({
                 OP
               </Pill>
             )}
-            {c.created_at && <span className="text-xs text-ink-2">{shortTime(c.created_at)}</span>}
+            {c.created_at && <span className="text-xs text-sec">{shortTime(c.created_at)}</span>}
             <Menu>
               <MenuTrigger asChild>
                 <button
                   type="button"
                   aria-label="Comment options"
-                  className="ml-auto grid size-7 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+                  className="ml-auto grid size-7 place-items-center rounded-pill text-sec hover:bg-raised"
                 >
                   <MoreHorizontal className="size-4" />
                 </button>
@@ -118,7 +118,7 @@ export function Comments({
           <p className="text-[15px] break-words whitespace-pre-wrap">{c.body}</p>
           <button
             type="button"
-            className="justify-self-start text-xs font-semibold text-ink-2 hover:text-ink"
+            className="justify-self-start text-xs font-semibold text-sec hover:text-label"
             onClick={() => setReplyTo(c)}
           >
             Reply
@@ -136,13 +136,13 @@ export function Comments({
 
       <form onSubmit={submit} className="grid gap-2">
         {replyTo && (
-          <p className="flex items-center justify-between rounded-md bg-surface-2 px-3 py-1.5 text-sm">
+          <p className="flex items-center justify-between rounded-field bg-raised px-3 py-1.5 text-sm">
             <span>
               Replying to <strong>{replyTo.author_name ?? "a comment"}</strong>
             </span>
             <button
               type="button"
-              className="font-semibold text-ink-2"
+              className="font-semibold text-sec"
               onClick={() => setReplyTo(null)}
             >
               Cancel
@@ -164,7 +164,7 @@ export function Comments({
                 type="checkbox"
                 checked={anonymous}
                 onChange={(e) => setAnonymous(e.target.checked)}
-                className="size-4 accent-[var(--brand)]"
+                className="size-4 accent-[var(--accent)]"
               />
               Comment anonymously
             </label>

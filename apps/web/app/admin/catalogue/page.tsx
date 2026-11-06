@@ -40,7 +40,7 @@ export default async function CataloguePage({ searchParams }: Props) {
     <AdminShell current="/admin/catalogue" isAdmin back={homePath(profile)}>
       <div>
         <h1 className="text-[28px] font-bold">Catalogue</h1>
-        <p className="text-ink-2">Edits are recorded in the audit log.</p>
+        <p className="text-sec">Edits are recorded in the audit log.</p>
       </div>
 
       <section aria-labelledby="courses" className="grid gap-2">
@@ -54,11 +54,11 @@ export default async function CataloguePage({ searchParams }: Props) {
             defaultValue={q}
             aria-label="Find a course"
             placeholder="Find a course by code or title"
-            className="h-11 w-full rounded-pill border border-line bg-surface px-4 text-[15px] focus-visible:border-brand focus-visible:outline-none"
+            className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-[15px] focus-visible:border-accent focus-visible:outline-none"
           />
         </form>
         {q && (
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
             {(courses ?? []).map((c) => (
               <CourseRow
                 key={c.id}
@@ -70,7 +70,7 @@ export default async function CataloguePage({ searchParams }: Props) {
                 }}
               />
             ))}
-            {!courses?.length && <li className="p-4 text-center text-ink-2">No courses match.</li>}
+            {!courses?.length && <li className="p-4 text-center text-sec">No courses match.</li>}
           </ul>
         )}
       </section>
@@ -82,7 +82,7 @@ export default async function CataloguePage({ searchParams }: Props) {
           </h2>
           <DepartmentForm />
         </div>
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
           {(departments ?? []).map((d) => (
             <li key={d.id} className="grid gap-2 p-3">
               <details>
@@ -91,7 +91,7 @@ export default async function CataloguePage({ searchParams }: Props) {
                     {d.short_code}
                   </span>
                   <span className="flex-1 font-semibold">{d.name}</span>
-                  <span className="text-xs text-ink-2">
+                  <span className="text-xs text-sec">
                     {(programs ?? []).filter((p) => p.department_id === d.id).length} programs
                   </span>
                 </summary>
@@ -104,7 +104,7 @@ export default async function CataloguePage({ searchParams }: Props) {
                         <li key={p.id} className="flex flex-wrap items-center gap-2">
                           <span className="flex-1">
                             {p.name}{" "}
-                            <span className="text-ink-2">
+                            <span className="text-sec">
                               · {p.level} · {p.duration_semesters} semesters
                             </span>
                           </span>

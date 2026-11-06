@@ -51,7 +51,7 @@
   --sep: #e6e9ef;
   --label: #0b1220;
   --sec: #5a6475;
-  --ter: #6b7486;
+  --ter: #5f6879;
   --accent: #2563eb;
   --fill: #2563eb;
   --on-fill: #ffffff;
@@ -74,7 +74,7 @@
     --sep: #e6e9ef;
     --label: #0b1220;
     --sec: #5a6475;
-    --ter: #6b7486;
+    --ter: #5f6879;
     --accent: #2563eb;
     --fill: #2563eb;
     --on-fill: #ffffff;
@@ -107,28 +107,6 @@
   --color-bar: var(--bar);
   --color-bar-border: var(--barBorder);
 
-  /* Legacy names mapped onto the new palette until each screen is rebuilt (redesign
-     step 4). New code uses the names above. There are no colourful "lanes" any more. */
-  --color-surface-2: var(--raised);
-  --color-ink: var(--label);
-  --color-ink-2: var(--sec);
-  --color-line: var(--sep);
-  --color-brand: var(--accent);
-  --color-brand-ink: var(--bg);
-  --color-brand-soft: var(--tintText);
-  --color-brand-deep: var(--fill);
-  --color-on-ink-accent: var(--fill);
-  --color-lane-people: var(--raised);
-  --color-lane-people-ink: var(--label);
-  --color-lane-learn: var(--raised);
-  --color-lane-learn-ink: var(--label);
-  --color-lane-help: var(--raised);
-  --color-lane-help-ink: var(--label);
-  --color-lane-campus: var(--raised);
-  --color-lane-campus-ink: var(--label);
-  --color-success: var(--accent);
-  --color-warning: var(--danger);
-
   /* Radius (§2): thumb 8, track 10, field 12, button 14, well 16, card 22, pill. */
   --radius-thumb: 8px;
   --radius-track: 10px;
@@ -137,9 +115,6 @@
   --radius-well: 16px;
   --radius-card: 22px;
   --radius-pill: 999px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
 
   --shadow-card: var(--card-shadow);
   --shadow-lift: 0 12px 32px -12px rgba(0, 0, 0, 0.45);
@@ -202,13 +177,18 @@
 }
 
 @layer utilities {
-  /* The dotted canvas and holographic gradient are retired; plain fills until the
-     screens that still name them are rebuilt. */
-  .bg-dotted {
-    background-color: var(--bg);
+  /* A 44×44 tap area around a smaller control (spec §1), without changing its look. */
+  .hit {
+    position: relative;
   }
-  .bg-holo {
-    background-color: var(--fill);
+  .hit::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
   }
   .gutter {
     padding-inline: 16px;

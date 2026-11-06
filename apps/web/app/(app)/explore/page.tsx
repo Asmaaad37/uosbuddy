@@ -117,7 +117,11 @@ export default async function ExplorePage({ searchParams }: Props) {
           id="people-like-you"
           title="People like you"
           trailing={
-            suggestions.length > 0 ? <Link href="/explore/batch?tab=all">See all</Link> : null
+            suggestions.length > 0 ? (
+              <Link href="/explore/batch?tab=all" className="hit">
+                See all
+              </Link>
+            ) : null
           }
         />
         {suggestions.length > 0 ? (

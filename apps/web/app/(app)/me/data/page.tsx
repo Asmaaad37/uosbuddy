@@ -17,18 +17,18 @@ export default async function DataPage() {
   return (
     <AppShell back={deletesAt ? undefined : "/me"}>
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Your data</h1>
-        <p className="text-ink-2">It&apos;s yours. Take it with you, or delete it.</p>
+        <h1 className="text-large-title">Your data</h1>
+        <p className="text-sec">It&apos;s yours. Take it with you, or delete it.</p>
       </div>
       {!deletesAt && (
         <section
           aria-labelledby="export"
-          className="grid gap-3 rounded-lg border border-line bg-surface p-4"
+          className="grid gap-3 rounded-card border border-sep bg-surface p-4"
         >
           <h2 id="export" className="text-lg font-bold">
             Download your data
           </h2>
-          <p className="text-sm text-ink-2">
+          <p className="text-sm text-sec">
             One JSON file with your profile, private details, connections, messages you sent, posts,
             comments, listings, rides, RSVPs, timetable and AI Buddy chats. Once a day.
           </p>
@@ -37,7 +37,7 @@ export default async function DataPage() {
       )}
       <section
         aria-labelledby="delete"
-        className="grid gap-3 rounded-lg border border-line bg-surface p-4"
+        className="grid gap-3 rounded-card border border-sep bg-surface p-4"
       >
         <h2 id="delete" className="text-lg font-bold">
           {deletesAt ? "Your account is being deleted" : "Delete your account"}

@@ -76,7 +76,7 @@ export function EventSheet({
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">New event</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           Everyone at UoS can see it. Students going get a reminder an hour before.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>

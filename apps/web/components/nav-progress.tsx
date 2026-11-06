@@ -48,8 +48,8 @@ export function NavProgress() {
       <div
         className={
           state === "loading"
-            ? "h-full w-[85%] origin-left bg-brand motion-safe:animate-[nav-progress_2.5s_cubic-bezier(0.1,0.7,0.2,1)_both]"
-            : "h-full w-full bg-brand opacity-0 transition-opacity duration-200"
+            ? "h-full w-[85%] origin-left bg-fill motion-safe:animate-[nav-progress_2.5s_cubic-bezier(0.1,0.7,0.2,1)_both]"
+            : "h-full w-full bg-fill opacity-0 transition-opacity duration-200"
         }
       />
     </div>

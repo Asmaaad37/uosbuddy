@@ -39,8 +39,8 @@ export default async function BatchPage({ searchParams }: Props) {
   return (
     <AppShell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Your batch</h1>
-        <p className="text-ink-2">Start with your section, then widen out to all of UoS.</p>
+        <h1 className="text-large-title">Your batch</h1>
+        <p className="text-sec">Start with your section, then widen out to all of UoS.</p>
       </div>
       <Directory
         initialScope={scope}

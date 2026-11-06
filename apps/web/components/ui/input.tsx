@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export const fieldClass =
-  "h-12 w-full rounded-field border border-transparent bg-track px-4 text-body text-label transition-colors placeholder:text-ter focus-visible:border-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger";
+  "h-12 w-full rounded-field border border-transparent bg-track px-4 text-body text-label transition-colors placeholder:text-ter focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger";
 
 export function Input({ className, type = "text", ...props }: React.ComponentProps<"input">) {
   return <input type={type} className={cn(fieldClass, className)} {...props} />;
@@ -74,7 +74,7 @@ export function SearchField({ className, ...props }: React.ComponentProps<"input
       </svg>
       <input
         type="search"
-        className="h-10 w-full rounded-field bg-track pr-3 pl-9 text-body text-label placeholder:text-ter focus-visible:outline-2 focus-visible:outline-accent"
+        className="h-10 w-full rounded-field bg-track pr-3 pl-9 text-body text-label placeholder:text-ter focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         {...props}
       />
     </label>

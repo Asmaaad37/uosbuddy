@@ -29,19 +29,19 @@ type Kpis = {
 function Stat({ label, value, href }: { label: string; value: number | string; href?: string }) {
   const body = (
     <>
-      <span className="text-sm text-ink-2">{label}</span>
+      <span className="text-sm text-sec">{label}</span>
       <span className="text-3xl font-bold tabular-nums">{value}</span>
     </>
   );
   return href ? (
     <Link
       href={href}
-      className="grid gap-1 rounded-lg border border-line bg-surface p-4 hover:border-ink-2/50"
+      className="grid gap-1 rounded-card border border-sep bg-surface p-4 hover:border-sec/50"
     >
       {body}
     </Link>
   ) : (
-    <div className="grid gap-1 rounded-lg border border-line bg-surface p-4">{body}</div>
+    <div className="grid gap-1 rounded-card border border-sep bg-surface p-4">{body}</div>
   );
 }
 
@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
 
       <section
         aria-labelledby="daily"
-        className="grid gap-2 rounded-lg border border-line bg-surface p-4"
+        className="grid gap-2 rounded-card border border-sep bg-surface p-4"
       >
         <h2 id="daily" className="font-bold">
           Last 30 days
@@ -97,22 +97,22 @@ export default async function AdminDashboard() {
               title={`${d.day}: ${d.signups} sign-ups, ${d.active} active`}
             >
               <div
-                className="flex-1 rounded-t-sm bg-brand"
+                className="flex-1 rounded-t-track bg-fill"
                 style={{ height: `${(d.signups / max) * 100}%` }}
               />
               <div
-                className="flex-1 rounded-t-sm bg-lane-learn"
+                className="flex-1 rounded-t-track bg-raised"
                 style={{ height: `${(d.active / max) * 100}%` }}
               />
             </div>
           ))}
         </div>
-        <p className="flex gap-4 text-xs text-ink-2">
+        <p className="flex gap-4 text-xs text-sec">
           <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-brand" /> Sign-ups
+            <span className="size-2.5 rounded-track bg-fill" /> Sign-ups
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-lane-learn" /> Active
+            <span className="size-2.5 rounded-track bg-raised" /> Active
           </span>
           <span>{k.mau} active in 30 days</span>
         </p>
@@ -121,7 +121,7 @@ export default async function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <section
           aria-labelledby="funnel"
-          className="grid gap-2 rounded-lg border border-line bg-surface p-4"
+          className="grid gap-2 rounded-card border border-sep bg-surface p-4"
         >
           <h2 id="funnel" className="font-bold">
             Verification funnel
@@ -135,9 +135,9 @@ export default async function AdminDashboard() {
                   {f.signed_up > 0 && ` · ${Math.round((n / f.signed_up) * 100)}%`}
                 </span>
               </div>
-              <div className="h-2 rounded-pill bg-surface-2">
+              <div className="h-2 rounded-pill bg-raised">
                 <div
-                  className="h-2 rounded-pill bg-brand"
+                  className="h-2 rounded-pill bg-fill"
                   style={{ width: `${f.signed_up ? (n / f.signed_up) * 100 : 0}%` }}
                 />
               </div>
@@ -147,7 +147,7 @@ export default async function AdminDashboard() {
 
         <section
           aria-labelledby="depts"
-          className="grid gap-2 rounded-lg border border-line bg-surface p-4"
+          className="grid gap-2 rounded-card border border-sep bg-surface p-4"
         >
           <h2 id="depts" className="font-bold">
             Top departments
@@ -159,21 +159,21 @@ export default async function AdminDashboard() {
                 <span className="tabular-nums">{d.students}</span>
               </li>
             ))}
-            {!k.top_departments.length && <li className="text-ink-2">No verified students yet.</li>}
+            {!k.top_departments.length && <li className="text-sec">No verified students yet.</li>}
           </ol>
         </section>
       </div>
 
       <section
         aria-labelledby="retention"
-        className="grid gap-2 rounded-lg border border-line bg-surface p-4"
+        className="grid gap-2 rounded-card border border-sep bg-surface p-4"
       >
         <h2 id="retention" className="font-bold">
           Retention by week verified
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-ink-2">
+            <thead className="text-left text-sec">
               <tr>
                 <th className="py-1 font-medium">Week of</th>
                 <th className="py-1 font-medium">Students</th>
@@ -184,7 +184,7 @@ export default async function AdminDashboard() {
             </thead>
             <tbody className="tabular-nums">
               {k.cohorts.map((c) => (
-                <tr key={c.week} className="border-t border-line">
+                <tr key={c.week} className="border-t border-sep">
                   <td className="py-1.5">{c.week}</td>
                   <td>{c.size}</td>
                   <td>{c.w1}%</td>
@@ -194,7 +194,7 @@ export default async function AdminDashboard() {
               ))}
             </tbody>
           </table>
-          {!k.cohorts.length && <p className="text-sm text-ink-2">No cohorts yet.</p>}
+          {!k.cohorts.length && <p className="text-sm text-sec">No cohorts yet.</p>}
         </div>
       </section>
 
@@ -202,10 +202,10 @@ export default async function AdminDashboard() {
         <h2 id="audit" className="font-bold">
           Recent admin and moderator actions
         </h2>
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface text-sm">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface text-sm">
           {(audit ?? []).map((a) => (
             <li key={a.id} className="flex gap-3 px-3 py-2">
-              <span className="w-16 shrink-0 text-ink-2">{shortTime(a.created_at)}</span>
+              <span className="w-16 shrink-0 text-sec">{shortTime(a.created_at)}</span>
               <span className="min-w-0 flex-1 truncate">
                 <span className="font-semibold">{a.actor?.full_name ?? "System"}</span> · {a.action}{" "}
                 · {a.target_type}
