@@ -1,13 +1,14 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart3, ImagePlus, Loader2, PenSquare, X } from "lucide-react";
+import { BarChart3, Image as ImageIcon, ImagePlus, Loader2, SquarePen, X } from "lucide-react";
 import { createPost } from "@/actions/feed";
 import { toast } from "@/components/ui/toast";
 import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
 import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
-import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
+import { Button, IconButton } from "@/components/ui/button";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import {
@@ -20,6 +21,24 @@ import {
 import { browserClient } from "@/lib/supabase/lazy";
 
 type Space = { value: string; label: string };
+
+const OPEN_EVENT = "uosbuddy:compose";
+
+/** The toolbar's compose button (redesign §5.2 #1): opens the same composer sheet. */
+export function ComposeButton() {
+  return (
+    <IconButton
+      fill
+      aria-label="New post"
+      onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}
+    >
+      <SquarePen aria-hidden />
+    </IconButton>
+  );
+}
+
+/** Opens the composer from anywhere on the page (an empty state's action, say). */
+export const openComposer = () => window.dispatchEvent(new Event(OPEN_EVENT));
 
 async function prepare(file: File): Promise<File> {
   const { default: compress } = await import("browser-image-compression");
@@ -37,10 +56,14 @@ export function Composer({
   spaces,
   initialSpace,
   anonymousAllowed,
+  me,
+  placeholder,
 }: {
   spaces: Space[];
   initialSpace: string;
   anonymousAllowed: boolean;
+  me: { name: string; src: string | null };
+  placeholder: string;
 }) {
   const id = useId();
   const router = useRouter();
@@ -54,6 +77,12 @@ export function Composer({
   const [anonymous, setAnonymous] = useState(false);
   const [busy, setBusy] = useState<"upload" | "post" | null>(null);
   const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    const show = () => setOpen(true);
+    window.addEventListener(OPEN_EVENT, show);
+    return () => window.removeEventListener(OPEN_EVENT, show);
+  }, []);
 
   function reset() {
     setBody("");
@@ -120,13 +149,20 @@ export function Composer({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block>
-          <PenSquare /> Write a post
-        </Button>
+        {/* The composer row (redesign §5.2 #3): tapping anywhere on it opens the sheet. */}
+        <button
+          type="button"
+          aria-label={`Write a post. ${placeholder}`}
+          className="flex w-full items-center gap-3 rounded-card bg-surface py-3 pr-4 pl-3 text-left shadow-card transition-transform duration-100 ease-out active:scale-[0.99]"
+        >
+          <Avatar name={me.name} src={me.src} size={36} />
+          <span className="min-w-0 flex-1 truncate text-body text-ter">{placeholder}</span>
+          <ImageIcon className="size-[22px] shrink-0 text-sec" strokeWidth={1.75} aria-hidden />
+        </button>
       </SheetTrigger>
       <SheetContent>
-        <SheetTitle className="text-xl font-bold">New post</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetTitle className="text-title2">New post</SheetTitle>
+        <SheetDescription className="mb-4 text-subhead text-sec">
           Only verified UoS students can see it.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
@@ -164,13 +200,13 @@ export function Composer({
                   <img
                     src={p.preview}
                     alt=""
-                    className="aspect-square w-full rounded-md object-cover"
+                    className="aspect-square w-full rounded-field object-cover"
                   />
                   <button
                     type="button"
                     aria-label="Remove photo"
                     onClick={() => setPhotos((list) => list.filter((x) => x.path !== p.path))}
-                    className="absolute -top-2 -right-2 grid size-6 place-items-center rounded-pill bg-ink text-bg"
+                    className="absolute -top-2 -right-2 grid size-6 place-items-center rounded-pill bg-label text-bg"
                   >
                     <X className="size-3.5" />
                   </button>
@@ -180,8 +216,8 @@ export function Composer({
           )}
 
           {poll && (
-            <fieldset className="grid gap-2 rounded-md border border-line p-3">
-              <legend className="px-1 text-sm font-semibold">Poll</legend>
+            <fieldset className="grid gap-2 rounded-well bg-raised p-3">
+              <legend className="sr-only">Poll</legend>
               {poll.map((o, i) => (
                 <Input
                   key={i}
@@ -192,11 +228,11 @@ export function Composer({
                   onChange={(e) => setPoll((p) => p!.map((x, j) => (j === i ? e.target.value : x)))}
                 />
               ))}
-              <div className="flex justify-between text-sm font-semibold">
+              <div className="flex justify-between text-subhead font-semibold">
                 {poll.length < 4 ? (
                   <button
                     type="button"
-                    className="text-brand"
+                    className="text-accent"
                     onClick={() => setPoll((p) => [...p!, ""])}
                   >
                     Add option
@@ -204,7 +240,7 @@ export function Composer({
                 ) : (
                   <span />
                 )}
-                <button type="button" className="text-ink-2" onClick={() => setPoll(null)}>
+                <button type="button" className="text-sec" onClick={() => setPoll(null)}>
                   Remove poll
                 </button>
               </div>
@@ -223,7 +259,7 @@ export function Composer({
             />
             <Button
               type="button"
-              variant="secondary"
+              variant="tinted"
               size="sm"
               disabled={photos.length >= 4 || busy === "upload"}
               onClick={() => fileRef.current?.click()}
@@ -231,17 +267,17 @@ export function Composer({
               {busy === "upload" ? <Loader2 className="animate-spin" /> : <ImagePlus />} Photos
             </Button>
             {!poll && (
-              <Button type="button" variant="secondary" size="sm" onClick={() => setPoll(["", ""])}>
+              <Button type="button" variant="tinted" size="sm" onClick={() => setPoll(["", ""])}>
                 <BarChart3 /> Poll
               </Button>
             )}
           </div>
 
           {anonymousAllowed && (
-            <label className="flex cursor-pointer items-start justify-between gap-4 rounded-md border border-line p-3">
+            <label className="flex cursor-pointer items-start justify-between gap-4 rounded-well bg-raised p-3">
               <span className="grid gap-0.5">
-                <span className="text-sm font-semibold">Post anonymously</span>
-                <span className="text-[13px] text-ink-2">
+                <span className="text-body">Post anonymously</span>
+                <span className="text-footnote text-sec">
                   Other students see an alias. Moderators can still see who wrote it.
                 </span>
               </span>
@@ -250,13 +286,13 @@ export function Composer({
                 role="switch"
                 checked={anonymous}
                 onChange={(e) => setAnonymous(e.target.checked)}
-                className="mt-1 size-5 accent-[var(--brand)]"
+                className="mt-1 size-5 accent-[var(--accent)]"
               />
             </label>
           )}
 
           {error && (
-            <p role="alert" className="text-sm font-medium text-danger">
+            <p role="alert" className="text-subhead text-danger">
               {error}
             </p>
           )}

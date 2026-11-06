@@ -3,10 +3,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { loadFeed, type Sort } from "@/actions/feed";
 import { AppShell } from "@/components/app-shell";
-import { Composer } from "@/components/feed/composer";
+import { ComposeButton, Composer } from "@/components/feed/composer";
+import { SortMenu } from "@/components/feed/sort-menu";
+import { BellSlot } from "@/components/notifications/bell-slot";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { FeedList } from "@/components/feed/feed-list";
 import { getSession } from "@/lib/auth/session";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Feed" };
 
@@ -43,45 +46,34 @@ export default async function FeedPage({ searchParams }: Props) {
   const href = (t: string, s: Sort) =>
     `/feed?${new URLSearchParams({ ...(t !== "campus" && { tab: t }), ...(s !== "hot" && { sort: s }) })}`;
 
+  const name = profile.full_name ?? profile.handle ?? "Me";
+
   return (
-    <AppShell bell>
-      <h1 className="text-[28px] leading-tight font-bold">Feed</h1>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <nav aria-label="Feeds" className="flex gap-2">
-          {[
-            { key: "campus", label: "Campus" },
-            ...(deptSpace ? [{ key: "department", label: deptLabel }] : []),
-          ].map((t) => (
-            <Link
-              key={t.key}
-              href={href(t.key, sort)}
-              aria-current={tab === t.key ? "page" : undefined}
-              className={cn(
-                "flex h-10 items-center rounded-pill border px-4 text-sm font-semibold",
-                tab === t.key
-                  ? "border-ink bg-ink text-bg"
-                  : "border-line bg-surface hover:border-ink-2/50",
-              )}
-            >
-              {t.label}
-            </Link>
-          ))}
-        </nav>
-        <nav aria-label="Sort" className="flex rounded-pill bg-surface-2 p-1">
-          {(["hot", "new"] as const).map((s) => (
-            <Link
-              key={s}
-              href={href(tab, s)}
-              aria-current={sort === s ? "page" : undefined}
-              className={cn(
-                "h-8 rounded-pill px-3 text-sm leading-8 font-semibold capitalize",
-                sort === s ? "bg-surface text-ink shadow-card" : "text-ink-2",
-              )}
-            >
-              {s}
-            </Link>
-          ))}
-        </nav>
+    <AppShell>
+      <ScreenHeader
+        title="Feed"
+        actions={
+          <>
+            <span className="lg:hidden">
+              <BellSlot />
+            </span>
+            <ComposeButton />
+          </>
+        }
+      />
+      <div className="flex items-center gap-2">
+        <SegmentedControl
+          label="Feeds"
+          className="flex-1"
+          value={tab}
+          segments={[
+            { value: "campus", label: "Campus", href: href("campus", sort) },
+            ...(deptSpace
+              ? [{ value: "department", label: deptLabel, href: href("department", sort) }]
+              : []),
+          ]}
+        />
+        <SortMenu value={sort} hrefs={{ hot: href(tab, "hot"), new: href(tab, "new") }} />
       </div>
       <Composer
         spaces={[
@@ -90,11 +82,15 @@ export default async function FeedPage({ searchParams }: Props) {
         ]}
         initialSpace={space}
         anonymousAllowed={!!flag?.enabled}
+        me={{ name, src: profile.avatar_url }}
+        placeholder={
+          tab === "department" ? `Share something with ${deptLabel}` : "Share something with campus"
+        }
       />
       {!page.ok && (
-        <p role="alert" className="rounded-lg border border-danger/40 p-4 text-sm text-danger">
+        <p role="alert" className="rounded-card bg-surface p-4 text-subhead text-danger">
           {page.error}{" "}
-          <Link href={href(tab, sort)} className="font-semibold underline">
+          <Link href={href(tab, sort)} className="font-semibold text-accent">
             Try again
           </Link>
         </p>
