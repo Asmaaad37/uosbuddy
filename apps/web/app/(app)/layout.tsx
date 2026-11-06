@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         className="hidden lg:flex"
         footer={
           <>
-            <Link href="/me" aria-label="Me" className="rounded-pill">
+            <Link href="/me" aria-label="My profile" className="rounded-pill">
               <Avatar name={name} src={profile?.avatar_url} size={36} />
             </Link>
             <span className="min-w-0 flex-1 truncate text-subhead">{name}</span>
