@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { Check, ChevronLeft, ChevronRight, HelpCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { DocViewer } from "@/components/admin/doc-viewer";
@@ -212,9 +212,9 @@ export function ReviewQueue({
                 {parts && (
                   <dd className="mt-1.5 flex flex-wrap gap-1.5">
                     {parts.map((p) => (
-                      <Chip key={p} tone="outline">
+                      <Pill key={p} tone="outline">
                         {p}
-                      </Chip>
+                      </Pill>
                     ))}
                   </dd>
                 )}
@@ -327,15 +327,15 @@ function PrecheckPanel({ p }: { p: Precheck }) {
     >
       <div className="flex items-center justify-between">
         <span className="font-semibold">AI pre-check</span>
-        <Chip tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Chip>
+        <Pill tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Pill>
       </div>
       {p.flags.length > 0 && (
         <ul className="flex flex-wrap gap-1.5" aria-label="Flags">
           {p.flags.map((f) => (
             <li key={f}>
-              <Chip tone="outline" className="text-warning">
+              <Pill tone="outline" className="text-warning">
                 {FLAG_LABELS[f]}
-              </Chip>
+              </Pill>
             </li>
           ))}
         </ul>

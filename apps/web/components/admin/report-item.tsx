@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Ban, Check, EyeOff, Loader2, RotateCcw, TriangleAlert } from "lucide-react";
 import { dismissReports, moderateContent, setBanned, warnUser } from "@/actions/trust";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
@@ -49,23 +49,23 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
   return (
     <li className="grid gap-3 rounded-lg border border-line bg-surface p-4">
       <div className="flex flex-wrap items-center gap-1.5">
-        <Chip tone="neutral" className="h-6 px-2 text-xs capitalize">
+        <Pill tone="neutral" className="h-6 px-2 text-xs capitalize">
           {r.target_type}
-        </Chip>
+        </Pill>
         {r.report_count > 0 && (
-          <Chip tone="help" className="h-6 px-2 text-xs">
+          <Pill tone="help" className="h-6 px-2 text-xs">
             {r.report_count} {r.report_count === 1 ? "report" : "reports"}: {r.reasons.join(", ")}
-          </Chip>
+          </Pill>
         )}
         {r.status === "held" && (
-          <Chip tone="outline" className="h-6 px-2 text-xs">
+          <Pill tone="outline" className="h-6 px-2 text-xs">
             Held for review
-          </Chip>
+          </Pill>
         )}
         {r.space && (
-          <Chip tone="outline" className="h-6 px-2 text-xs">
+          <Pill tone="outline" className="h-6 px-2 text-xs">
             {r.space === "campus" ? "Campus feed" : "Department feed"}
-          </Chip>
+          </Pill>
         )}
       </div>
       <p className="text-[15px] whitespace-pre-wrap">{r.preview || "(no text)"}</p>

@@ -2,31 +2,33 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Chips: interests, reason chips ("Same section"), filters.
-const chipVariants = cva(
-  "inline-flex h-8 items-center gap-1.5 rounded-pill px-3 text-[13px] font-medium whitespace-nowrap",
+// Pills: static labels (interests, reasons like "Same section", statuses). Selectable
+// filter chips are Chip in chip.tsx. Colour stays quiet: neutral, or tinted for emphasis.
+const pillVariants = cva(
+  "inline-flex h-7 items-center gap-1.5 rounded-pill px-2.5 text-footnote font-medium whitespace-nowrap",
   {
     variants: {
       tone: {
-        neutral: "bg-surface-2 text-ink",
-        outline: "border border-line text-ink",
-        brand: "bg-brand/12 text-brand",
-        people: "bg-lane-people text-lane-people-ink",
-        learn: "bg-lane-learn text-lane-learn-ink",
-        help: "bg-lane-help text-lane-help-ink",
-        campus: "bg-lane-campus text-lane-campus-ink",
+        neutral: "bg-raised text-sec",
+        outline: "border border-sep text-sec",
+        brand: "bg-tint text-tint-text",
+        // Older lane tones: no rainbow any more.
+        people: "bg-raised text-sec",
+        learn: "bg-raised text-sec",
+        help: "bg-tint text-tint-text",
+        campus: "bg-raised text-sec",
       },
     },
     defaultVariants: { tone: "neutral" },
   },
 );
 
-export function Chip({
+export function Pill({
   className,
   tone,
   ...props
-}: React.ComponentProps<"span"> & VariantProps<typeof chipVariants>) {
-  return <span className={cn(chipVariants({ tone }), className)} {...props} />;
+}: React.ComponentProps<"span"> & VariantProps<typeof pillVariants>) {
+  return <span className={cn(pillVariants({ tone }), className)} {...props} />;
 }
 
 // Profile stamps: UOS EMAIL, MENTOR, BACKUP HERO (VERIFIED becomes the badge-check icon).

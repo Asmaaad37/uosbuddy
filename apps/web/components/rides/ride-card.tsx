@@ -13,7 +13,7 @@ import {
   type RideRequest,
 } from "@/actions/campus";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { pkTime, recurringLabel } from "@/lib/campus";
@@ -80,24 +80,24 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
             )}
           </p>
           <div className="flex flex-wrap gap-1.5 pt-0.5">
-            <Chip tone={offer ? "campus" : "neutral"} className="h-6 px-2 text-xs">
+            <Pill tone={offer ? "campus" : "neutral"} className="h-6 px-2 text-xs">
               {offer ? "Offering seats" : "Needs a lift"}
-            </Chip>
+            </Pill>
             {offer && (
-              <Chip tone="outline" className="h-6 px-2 text-xs">
+              <Pill tone="outline" className="h-6 px-2 text-xs">
                 <Users className="size-3.5" aria-hidden />{" "}
                 {ride.status === "full" ? "Full" : `${left} of ${ride.seats} seats left`}
-              </Chip>
+              </Pill>
             )}
             {ride.women_only && (
-              <Chip tone="people" className="h-6 px-2 text-xs">
+              <Pill tone="people" className="h-6 px-2 text-xs">
                 Women only
-              </Chip>
+              </Pill>
             )}
             {ride.status === "cancelled" && (
-              <Chip tone="outline" className="h-6 px-2 text-xs text-danger">
+              <Pill tone="outline" className="h-6 px-2 text-xs text-danger">
                 Cancelled
-              </Chip>
+              </Pill>
             )}
           </div>
           {ride.notes && <p className="text-sm">{ride.notes}</p>}
@@ -134,7 +134,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
         )}
         {!mine && ride.my_request === "pending" && (
           <>
-            <Chip tone="outline">Waiting for an answer</Chip>
+            <Pill tone="outline">Waiting for an answer</Pill>
             <Button
               size="sm"
               variant="ghost"
@@ -218,9 +218,9 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
                   </Button>
                 </div>
               ) : (
-                <Chip tone="learn" className="h-6 px-2 text-xs">
+                <Pill tone="learn" className="h-6 px-2 text-xs">
                   In the ride
-                </Chip>
+                </Pill>
               )}
             </li>
           ))}

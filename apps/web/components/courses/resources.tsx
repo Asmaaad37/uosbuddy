@@ -15,7 +15,7 @@ import {
 import { addResource, deleteResource, voteResource } from "@/actions/courses";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Field, Input } from "@/components/ui/input";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -139,9 +139,9 @@ export function Resources({
                 <span className="grid min-w-0 gap-0.5">
                   <span className="truncate font-semibold">{r.title}</span>
                   <span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-2">
-                    <Chip tone="neutral" className="h-5 px-1.5 text-[11px]">
+                    <Pill tone="neutral" className="h-5 px-1.5 text-[11px]">
                       {RESOURCE_KINDS[r.kind as ResourceKind] ?? r.kind}
-                    </Chip>
+                    </Pill>
                     {r.year && <span>{r.year}</span>}
                     {r.teacher_name && <span>· {r.teacher_name}</span>}
                     <span>· {fileSize(r.size_bytes)}</span>

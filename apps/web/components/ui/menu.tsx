@@ -18,7 +18,7 @@ export function MenuContent({
         align="end"
         sideOffset={6}
         className={cn(
-          "z-50 min-w-44 rounded-md border border-line bg-surface p-1 text-ink shadow-lift",
+          "z-50 min-w-48 origin-(--radix-dropdown-menu-content-transform-origin) rounded-well bg-raised p-1 text-label shadow-lift",
           className,
         )}
         {...props}
@@ -35,8 +35,8 @@ export function MenuItem({
   return (
     <MenuPrimitive.Item
       className={cn(
-        "flex h-10 cursor-pointer items-center gap-2 rounded-sm px-3 text-sm font-medium outline-none select-none data-[highlighted]:bg-surface-2 [&_svg]:size-4",
-        danger && "text-danger",
+        "flex h-11 cursor-pointer items-center gap-2.5 rounded-field px-3 text-body outline-none select-none data-[highlighted]:bg-thumb [&_svg]:size-[18px] [&_svg]:text-sec",
+        danger && "text-danger [&_svg]:text-danger",
         className,
       )}
       {...props}

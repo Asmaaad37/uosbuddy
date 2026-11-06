@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarPlus, Clock, Loader2, MapPin, Users } from "lucide-react";
 import { cancelEvent, rsvpEvent } from "@/actions/campus";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { pkTime } from "@/lib/campus";
@@ -69,19 +69,19 @@ export function EventCard({ event: e }: { event: EventItem }) {
       </div>
       {e.description && <p className="text-sm whitespace-pre-wrap">{e.description}</p>}
       <div className="flex flex-wrap gap-1.5">
-        <Chip tone="outline" className="h-6 px-2 text-xs">
+        <Pill tone="outline" className="h-6 px-2 text-xs">
           <Users className="size-3.5" aria-hidden /> {e.going} going
           {e.capacity !== null && ` of ${e.capacity}`}
-        </Chip>
+        </Pill>
         {e.interested > 0 && (
-          <Chip tone="outline" className="h-6 px-2 text-xs">
+          <Pill tone="outline" className="h-6 px-2 text-xs">
             {e.interested} interested
-          </Chip>
+          </Pill>
         )}
         {cancelled && (
-          <Chip tone="outline" className="h-6 px-2 text-xs text-danger">
+          <Pill tone="outline" className="h-6 px-2 text-xs text-danger">
             Cancelled
-          </Chip>
+          </Pill>
         )}
       </div>
       {!cancelled && (

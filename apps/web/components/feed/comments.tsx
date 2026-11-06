@@ -11,7 +11,7 @@ import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/input";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { shortTime } from "@/lib/chat";
@@ -80,9 +80,9 @@ export function Comments({
           <div className="flex items-center gap-2 text-sm">
             <span className="truncate font-semibold">{name}</span>
             {c.is_op && (
-              <Chip tone="brand" className="h-5 px-1.5 text-[10px]">
+              <Pill tone="brand" className="h-5 px-1.5 text-[10px]">
                 OP
-              </Chip>
+              </Pill>
             )}
             {c.created_at && <span className="text-xs text-ink-2">{shortTime(c.created_at)}</span>}
             <Menu>

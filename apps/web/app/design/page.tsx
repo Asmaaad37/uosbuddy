@@ -8,22 +8,20 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-// Living style guide (Phase 0): every component in light and dark, side by side from xl up.
+// Living style guide: every primitive in dark and light (docs/design/UOSBuddy_REDESIGN_SPEC.md).
 export default function DesignPage() {
   return (
     <div className="min-h-dvh">
-      <header className="gutter sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-bg/90 py-3 backdrop-blur">
+      <header className="gutter sticky top-0 z-10 flex items-center justify-between gap-4 bg-bar py-3 backdrop-blur-[24px] backdrop-saturate-[180%]">
         <div>
-          <h1 className="text-lg font-bold">UOSBuddy design system</h1>
-          <p className="hidden text-sm text-ink-2 sm:block">
-            Retro-tactile campus · tokens from BUILD_PLAN §6.2
-          </p>
+          <h1 className="text-headline">UOSBuddy design system</h1>
+          <p className="hidden text-footnote text-sec sm:block">Quiet, campus-native, one accent</p>
         </div>
         <ThemeToggle />
       </header>
       <main className="grid grid-cols-1 xl:grid-cols-2">
-        <Showcase theme="light" />
         <Showcase theme="dark" />
+        <Showcase theme="light" />
       </main>
       <SiteFooter />
     </div>

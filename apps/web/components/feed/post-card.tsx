@@ -14,7 +14,7 @@ import {
 import { deletePost, votePoll, votePost, type Post } from "@/actions/feed";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { PrivateImage } from "@/components/ui/private-image";
 import { shortTime } from "@/lib/chat";
@@ -97,14 +97,14 @@ export function PostCard({
               </Link>
             )}
             {post.is_anonymous && (
-              <Chip tone="neutral" className="h-5 px-2 text-[11px]">
+              <Pill tone="neutral" className="h-5 px-2 text-[11px]">
                 Anonymous
-              </Chip>
+              </Pill>
             )}
             {post.status === "held" && (
-              <Chip tone="outline" className="h-5 px-2 text-[11px]">
+              <Pill tone="outline" className="h-5 px-2 text-[11px]">
                 Under review
-              </Chip>
+              </Pill>
             )}
           </div>
           {post.created_at && (

@@ -1,6 +1,6 @@
 import { Home, MapPin, MessageCircleQuestion } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip, Stamp } from "@/components/ui/badge";
+import { Pill, Stamp } from "@/components/ui/badge";
 import type { ProfileCardData } from "@/lib/profile.server";
 import { RESIDENCE_LABELS, studiesLine } from "@/lib/profile";
 import { departmentShortName } from "@/lib/setup";
@@ -65,14 +65,14 @@ export function ProfileCard({
       {(profile.hometown_city || residence) && (
         <div className="flex flex-wrap gap-2">
           {profile.hometown_city && (
-            <Chip tone="outline">
+            <Pill tone="outline">
               <MapPin className="size-4" /> {profile.hometown_city}
-            </Chip>
+            </Pill>
           )}
           {residence && (
-            <Chip tone="outline">
+            <Pill tone="outline">
               <Home className="size-4" /> {residence}
-            </Chip>
+            </Pill>
           )}
         </div>
       )}
@@ -97,10 +97,10 @@ export function ProfileCard({
           <ul className="flex flex-wrap gap-2">
             {profile.interests.map((i) => (
               <li key={i.id}>
-                <Chip tone="people">
+                <Pill tone="people">
                   {i.emoji && <span aria-hidden>{i.emoji}</span>}
                   {i.label}
-                </Chip>
+                </Pill>
               </li>
             ))}
           </ul>

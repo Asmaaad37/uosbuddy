@@ -7,7 +7,7 @@ import { AskSheet } from "@/components/backup/ask-sheet";
 import { BackupAction } from "@/components/backup/backup-actions";
 import { PushPrompt } from "@/components/notifications/push-prompt";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip, Stamp } from "@/components/ui/badge";
+import { Pill, Stamp } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
 import { CATEGORY_LABELS, STATUS_LABELS, URGENCY_LABELS, timeLeft } from "@/lib/backup";
 import { cn } from "@/lib/utils";
@@ -117,18 +117,18 @@ export default async function BackupPage() {
                       </p>
                       {r.details && <p className="text-sm text-ink-2">{r.details}</p>}
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        <Chip tone="brand" className="h-6 px-2 text-xs">
+                        <Pill tone="brand" className="h-6 px-2 text-xs">
                           {NEARNESS[r.nearness] ?? "UoS"}
-                        </Chip>
-                        <Chip
+                        </Pill>
+                        <Pill
                           tone={r.urgency === 3 ? "help" : "neutral"}
                           className="h-6 px-2 text-xs"
                         >
                           {URGENCY_LABELS[r.urgency]}
-                        </Chip>
-                        <Chip tone="outline" className="h-6 px-2 text-xs">
+                        </Pill>
+                        <Pill tone="outline" className="h-6 px-2 text-xs">
                           {timeLeft(r.expires_at)}
-                        </Chip>
+                        </Pill>
                       </div>
                       <p className="text-xs text-ink-2">
                         {name}
@@ -168,12 +168,12 @@ export default async function BackupPage() {
                     <p className="font-semibold">
                       {CATEGORY_LABELS[r.category]?.emoji} {r.title}
                     </p>
-                    <Chip
+                    <Pill
                       tone={r.status === "claimed" ? "brand" : "outline"}
                       className="h-6 shrink-0 px-2 text-xs"
                     >
                       {STATUS_LABELS[r.status]}
-                    </Chip>
+                    </Pill>
                   </div>
                   {r.status === "open" && (
                     <p className="text-xs text-ink-2">

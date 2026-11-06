@@ -6,7 +6,7 @@ import { EventCard, type EventItem } from "@/components/events/event-card";
 import { EventSheet } from "@/components/events/event-sheet";
 import { SocietyButton } from "@/components/events/society-sheet";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Society" };
@@ -43,7 +43,7 @@ export default async function SocietyPage({ params }: Props) {
             {s.member_count} {s.member_count === 1 ? "member" : "members"}
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
-            {!s.verified && <Chip tone="outline">Awaiting an admin check</Chip>}
+            {!s.verified && <Pill tone="outline">Awaiting an admin check</Pill>}
             {s.verified && !s.my_role && <SocietyButton society={s.id} kind="join" />}
             {s.my_role && <SocietyButton society={s.id} kind="leave" />}
           </div>
@@ -81,9 +81,9 @@ export default async function SocietyPage({ params }: Props) {
                 {p.full_name}
               </Link>
               {p.role === "admin" ? (
-                <Chip tone="learn" className="h-6 px-2 text-xs">
+                <Pill tone="learn" className="h-6 px-2 text-xs">
                   Admin
-                </Chip>
+                </Pill>
               ) : (
                 admin && <SocietyButton society={s.id} kind="make-admin" user={p.user_id} />
               )}

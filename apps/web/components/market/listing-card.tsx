@@ -7,7 +7,7 @@ import { Check, Flag, MapPin, MessageCircle, MoreHorizontal, Trash2 } from "luci
 import { deleteListing, markListingDone } from "@/actions/campus";
 import { startDm } from "@/actions/chat";
 import { ReportDialog } from "@/components/connect/safety-menu";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { PrivateImage } from "@/components/ui/private-image";
@@ -81,18 +81,18 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
       <div className="flex items-start justify-between gap-2">
         <div className="grid min-w-0 gap-1">
           <div className="flex flex-wrap items-center gap-1.5">
-            <Chip tone="campus" className="h-6 px-2 text-xs">
+            <Pill tone="campus" className="h-6 px-2 text-xs">
               <span aria-hidden>{kind.emoji}</span> {kind.label}
-            </Chip>
+            </Pill>
             {done && (
-              <Chip tone="outline" className="h-6 px-2 text-xs">
+              <Pill tone="outline" className="h-6 px-2 text-xs">
                 {kind.doneLabel}
-              </Chip>
+              </Pill>
             )}
             {l.status === "held" && (
-              <Chip tone="outline" className="h-6 px-2 text-xs">
+              <Pill tone="outline" className="h-6 px-2 text-xs">
                 Under review
-              </Chip>
+              </Pill>
             )}
           </div>
           <h3 className="text-[17px] leading-snug font-bold">{l.title}</h3>

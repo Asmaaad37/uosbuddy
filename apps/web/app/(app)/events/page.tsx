@@ -5,7 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { EventCard, type EventItem } from "@/components/events/event-card";
 import { EventSheet } from "@/components/events/event-sheet";
 import { SocietyButton, SocietySheet } from "@/components/events/society-sheet";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
@@ -90,13 +90,13 @@ export default async function EventsPage({ searchParams }: Props) {
                     </span>
                   </Link>
                   {!s.verified ? (
-                    <Chip tone="outline" className="h-6 px-2 text-xs">
+                    <Pill tone="outline" className="h-6 px-2 text-xs">
                       Awaiting check
-                    </Chip>
+                    </Pill>
                   ) : s.my_role ? (
-                    <Chip tone="learn" className="h-6 px-2 text-xs">
+                    <Pill tone="learn" className="h-6 px-2 text-xs">
                       {s.my_role === "admin" ? "Admin" : "Member"}
-                    </Chip>
+                    </Pill>
                   ) : (
                     <SocietyButton society={s.id} kind="join" />
                   )}
