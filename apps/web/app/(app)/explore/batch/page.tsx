@@ -8,7 +8,7 @@ import { SCOPES, type Scope } from "@/lib/discovery";
 
 export const metadata: Metadata = { title: "Your batch" };
 
-type Props = { searchParams: Promise<{ tab?: string; hometown?: string }> };
+type Props = { searchParams: Promise<{ tab?: string; hometown?: string; interest?: string }> };
 
 /** Phase 3 task 3: the batch directory. */
 export default async function BatchPage({ searchParams }: Props) {
@@ -16,7 +16,8 @@ export default async function BatchPage({ searchParams }: Props) {
   if (!user || !profile) redirect("/login?next=/explore/batch");
 
   const hasSection = !!profile.section;
-  const { tab, hometown: rawHometown } = await searchParams;
+  const { tab, hometown: rawHometown, interest: rawInterest } = await searchParams;
+  const interest = rawInterest && /^[0-9a-f-]{36}$/i.test(rawInterest) ? rawInterest : undefined;
   const hometown = rawHometown?.trim().slice(0, 60) || undefined;
   const requested = SCOPES.find((s) => s.key === tab)?.key;
   const scope: Scope =
@@ -27,7 +28,7 @@ export default async function BatchPage({ searchParams }: Props) {
         : "batch";
 
   const [page, counts, { data: interests }] = await Promise.all([
-    loadDirectory({ scope, hometown }),
+    loadDirectory({ scope, hometown, interest }),
     getDirectoryCounts(),
     supabase.from("interests").select("id, label, emoji").order("sort"),
   ]);
@@ -49,7 +50,7 @@ export default async function BatchPage({ searchParams }: Props) {
         }}
         interests={interests ?? []}
         hasSection={hasSection}
-        initialFilters={hometown ? { hometown } : undefined}
+        initialFilters={hometown || interest ? { hometown, interest } : undefined}
       />
     </AppShell>
   );

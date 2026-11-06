@@ -85,7 +85,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await page.getByRole("button", { name: "Finish" }).click();
   // Phase 3: finishing setup lands on the batch reveal.
   await expect(page).toHaveURL(/\/explore\?welcome=1$/);
-  await expect(page.getByRole("heading", { name: /^Welcome/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Explore", level: 1 })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: /already here|first from CS 2024/ }),
   ).toBeVisible();

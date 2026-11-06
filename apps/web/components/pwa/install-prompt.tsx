@@ -64,19 +64,19 @@ export function InstallPrompt() {
   return (
     <aside
       aria-label="Install UOSBuddy"
-      className="relative grid gap-2 rounded-lg border border-brand/30 bg-brand/8 p-4 pr-10"
+      className="relative grid gap-2 rounded-card bg-surface p-4 pr-12 shadow-card"
     >
       <button
         type="button"
         onClick={dismiss}
         aria-label="Not now"
-        className="absolute top-2 right-2 grid size-8 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+        className="absolute top-1 right-1 grid size-11 place-items-center rounded-pill text-ter active:bg-raised"
       >
         <X className="size-4" />
       </button>
-      <p className="font-semibold">Add UOSBuddy to your home screen</p>
+      <p className="text-headline">Add UOSBuddy to your home screen</p>
       {mode === "ios" ? (
-        <p className="text-sm text-ink-2">
+        <p className="text-subhead text-sec">
           Tap <Share className="inline size-4 align-text-bottom" aria-label="Share" /> in Safari,
           then{" "}
           <span className="whitespace-nowrap">
@@ -87,7 +87,7 @@ export function InstallPrompt() {
         </p>
       ) : (
         <>
-          <p className="text-sm text-ink-2">
+          <p className="text-subhead text-sec">
             It opens like an app, uses less data, and can notify you.
           </p>
           <Button
