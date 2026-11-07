@@ -3746,6 +3746,16 @@ export type Database = {
         Args: { p_body: string; p_status: string; p_token: string }
         Returns: string
       }
+      mutual_connections: {
+        Args: { p_other: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          total: number
+          user_id: string
+        }[]
+      }
       my_blocked: {
         Args: never
         Returns: {
