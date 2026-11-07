@@ -41,6 +41,10 @@ insert into public.connections (requester_id, addressee_id, status) values
 
 insert into tests.chat values ('AB', tests.as('A', 'select public.start_dm(%2$L)')::uuid);
 select tests.as('A', $q$ select (public.send_message(%4$L, 'Notes from today?')).body $q$);
+-- Inside one transaction now() never moves, so date the first message two minutes back
+-- (as it would be in real life by the time B hides the chat).
+update public.messages set created_at = created_at - interval '2 minutes'
+where body = 'Notes from today?';
 
 select is(has_function_privilege('anon', 'public.unread_chat_count()', 'execute'), false,
   'signed-out visitors have no count');
