@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { MotionConfig } from "motion/react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -41,9 +43,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useAnalytics();
   useServiceWorker();
   return (
-    <>
-      {children}
-      <Toaster />
-    </>
+    <ThemeProvider>
+      {/* With reduced motion, Framer Motion drops transforms and keeps opacity fades. */}
+      <MotionConfig reducedMotion="user">
+        {children}
+        <Toaster />
+      </MotionConfig>
+    </ThemeProvider>
   );
 }

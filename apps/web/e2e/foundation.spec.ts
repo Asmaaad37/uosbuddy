@@ -9,10 +9,10 @@ test("home renders the disclaimer footer", async ({ page }) => {
 test("design system renders every component group in both themes", async ({ page }, info) => {
   test.slow(); // full-page screenshot of a long page
   await page.goto("/design");
-  for (const theme of ["LIGHT", "DARK"]) {
+  for (const theme of ["DARK", "LIGHT"]) {
     await expect(page.getByText(theme, { exact: true })).toBeVisible();
   }
-  for (const group of ["Buttons", "Inputs", "Tabs", "Feature dock", "Marquee"]) {
+  for (const group of ["Buttons", "Inputs", "Segmented control", "Grouped list", "Tab bar"]) {
     await expect(page.getByRole("heading", { name: group })).toHaveCount(2);
   }
   await page.screenshot({ path: `screenshots/design-${info.project.name}.png`, fullPage: true });

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Newspaper } from "lucide-react";
 import { loadFeed, type FeedPage, type Sort } from "@/actions/feed";
+import { openComposer } from "@/components/feed/composer";
 import { PostCard } from "@/components/feed/post-card";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 /** The posts of one feed, with "Load more" (keyset pages of 20). */
 export function FeedList({
@@ -36,9 +38,17 @@ export function FeedList({
   if (failed) return null;
   if (page.posts.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-        Nothing here yet. Be the first to post!
-      </p>
+      <EmptyState
+        icon={Newspaper}
+        title="Nothing here yet"
+        action={
+          <Button variant="tinted" size="sm" onClick={openComposer}>
+            Write the first post
+          </Button>
+        }
+      >
+        Lost something, found a great teacher, or have a question? Ask here.
+      </EmptyState>
     );
   }
 
@@ -52,14 +62,20 @@ export function FeedList({
         ))}
       </ul>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-subhead text-danger">
           {error}
         </p>
       )}
-      {page.next && (
-        <Button variant="secondary" block onClick={more} disabled={busy}>
+      {page.next ? (
+        <Button variant="tinted" block onClick={more} disabled={busy}>
           {busy && <Loader2 className="animate-spin" />} {busy ? "Loading…" : "Load more"}
         </Button>
+      ) : (
+        <p className="flex items-center gap-4 px-8 py-3 text-subhead text-ter">
+          <span aria-hidden className="h-px flex-1 bg-sep" />
+          You&apos;re all caught up
+          <span aria-hidden className="h-px flex-1 bg-sep" />
+        </p>
       )}
     </div>
   );

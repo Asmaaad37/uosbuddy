@@ -13,11 +13,13 @@ describe("cn", () => {
 });
 
 describe("Button", () => {
-  it("renders a pill with a 48px default height", () => {
+  it("renders a 52px primary button with radius 14 that presses to 0.97", () => {
     render(<Button>Get started</Button>);
     const button = screen.getByRole("button", { name: "Get started" });
-    expect(button.className).toContain("rounded-pill");
-    expect(button.className).toContain("h-12");
+    expect(button.className).toContain("rounded-btn");
+    expect(button.className).toContain("h-[52px]");
+    expect(button.className).toContain("bg-fill");
+    expect(button.className).toContain("active:scale-[0.97]");
   });
 
   it("renders its child element when asChild is set", () => {
@@ -26,7 +28,7 @@ describe("Button", () => {
         <a href="/design">Design</a>
       </Button>,
     );
-    expect(screen.getByRole("link", { name: "Design" }).className).toContain("rounded-pill");
+    expect(screen.getByRole("link", { name: "Design" }).className).toContain("rounded-btn");
   });
 });
 
@@ -40,5 +42,14 @@ describe("Field", () => {
     const input = screen.getByLabelText("Roll number");
     expect(input.getAttribute("aria-invalid")).toBe("true");
     expect(input.getAttribute("aria-describedby")).toBe("roll-hint roll-error");
+  });
+});
+
+describe("cn with the redesign tokens", () => {
+  it("keeps a text colour next to a type size", () => {
+    expect(cn("text-accent text-headline")).toBe("text-accent text-headline");
+    expect(cn("text-sec", "text-label")).toBe("text-label");
+    expect(cn("text-body", "text-footnote")).toBe("text-footnote");
+    expect(cn("rounded-btn", "rounded-pill")).toBe("rounded-pill");
   });
 });

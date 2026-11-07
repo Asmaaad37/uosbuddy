@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, GraduationCap, Loader2, X } from "lucide-react";
 import { requestMentor, respondMentorship, setMentor } from "@/actions/timetable";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 
 /** Mentor switch (seniors from semester 3). */
 export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean }) {
@@ -16,16 +17,16 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
   const [error, setError] = useState<string>();
   if (!eligible) {
     return (
-      <p className="rounded-lg border border-line px-4 py-3 text-sm text-ink-2">
+      <p className="rounded-card border border-sep px-4 py-3 text-sm text-sec">
         From your third semester you can mentor juniors in your department.
       </p>
     );
   }
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-line bg-surface px-4 py-3">
+    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-card border border-sep bg-surface px-4 py-3">
       <span className="grid gap-0.5">
         <span className="font-semibold">Mentor juniors</span>
-        <span className="text-[13px] text-ink-2">
+        <span className="text-[13px] text-sec">
           Juniors in your department can ask you for advice. You add the MENTOR stamp.
         </span>
       </span>
@@ -42,7 +43,7 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
             setError(r.error);
           } else router.refresh();
         }}
-        className="size-5 shrink-0 accent-[var(--brand)]"
+        className="size-5 shrink-0 accent-[var(--accent)]"
       />
       {error && (
         <span role="alert" className="text-sm text-danger">
@@ -76,9 +77,9 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
 
   if (!mentors.length) {
     return (
-      <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+      <EmptyState icon={GraduationCap}>
         No mentors in your department yet. Seniors can switch it on from this page.
-      </p>
+      </EmptyState>
     );
   }
 
@@ -87,7 +88,7 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
       {mentors.map((m) => {
         const name = m.full_name ?? m.handle ?? "Senior";
         return (
-          <li key={m.id} className="grid gap-3 rounded-lg border border-line bg-surface p-3">
+          <li key={m.id} className="grid gap-3 rounded-card border border-sep bg-surface p-3">
             <div className="flex items-center gap-3">
               <Link href={`/people/${m.handle}`}>
                 <Avatar name={name} src={m.avatar_url} size="md" />
@@ -99,13 +100,13 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
                 >
                   {name}
                 </Link>
-                <span className="text-sm text-ink-2">
+                <span className="text-sm text-sec">
                   {m.batch_year && `Batch ${m.batch_year}`}
                   {m.semester && ` · Semester ${m.semester}`}
                 </span>
               </span>
               {sent.has(m.id) ? (
-                <span className="text-sm font-semibold text-ink-2">Asked</span>
+                <span className="text-sm font-semibold text-sec">Asked</span>
               ) : (
                 asking !== m.id && (
                   <Button size="sm" onClick={() => setAsking(m.id)}>
@@ -114,7 +115,7 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
                 )
               )}
             </div>
-            {m.bio && <p className="text-sm text-ink-2">{m.bio}</p>}
+            {m.bio && <p className="text-sm text-sec">{m.bio}</p>}
             {asking === m.id && (
               <div className="grid gap-2">
                 <Textarea
@@ -187,16 +188,16 @@ export function MentorRequests({ requests }: { requests: Request[] }) {
         return (
           <div
             key={r.mentee_id}
-            className="grid gap-2 rounded-lg border border-brand/40 bg-surface p-3"
+            className="grid gap-2 rounded-card border border-accent/40 bg-surface p-3"
           >
             <div className="flex items-center gap-3">
               <Avatar name={name} src={r.avatar_url} size="sm" />
               <span className="flex-1 font-semibold">{name}</span>
-              {r.batch_year && <span className="text-sm text-ink-2">Batch {r.batch_year}</span>}
+              {r.batch_year && <span className="text-sm text-sec">Batch {r.batch_year}</span>}
             </div>
             {r.message && <p className="text-sm">&ldquo;{r.message}&rdquo;</p>}
             {done[r.mentee_id] ? (
-              <p className="text-sm font-semibold text-ink-2">
+              <p className="text-sm font-semibold text-sec">
                 {done[r.mentee_id] === "accepted" ? "You're connected now. Say hi!" : "Declined"}
               </p>
             ) : (

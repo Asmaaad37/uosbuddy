@@ -2,43 +2,45 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Chips: interests, reason chips ("Same section"), filters.
-const chipVariants = cva(
-  "inline-flex h-8 items-center gap-1.5 rounded-pill px-3 text-[13px] font-medium whitespace-nowrap",
+// Pills: static labels (interests, reasons like "Same section", statuses). Selectable
+// filter chips are Chip in chip.tsx. Colour stays quiet: neutral, or tinted for emphasis.
+const pillVariants = cva(
+  "inline-flex h-7 items-center gap-1.5 rounded-pill px-2.5 text-footnote font-medium whitespace-nowrap",
   {
     variants: {
       tone: {
-        neutral: "bg-surface-2 text-ink",
-        outline: "border border-line text-ink",
-        brand: "bg-brand/12 text-brand",
-        people: "bg-lane-people text-lane-people-ink",
-        learn: "bg-lane-learn text-lane-learn-ink",
-        help: "bg-lane-help text-lane-help-ink",
-        campus: "bg-lane-campus text-lane-campus-ink",
+        neutral: "bg-raised text-sec",
+        outline: "border border-sep text-sec",
+        brand: "bg-tint text-tint-text",
+        // Older lane tones: no rainbow any more.
+        people: "bg-raised text-sec",
+        learn: "bg-raised text-sec",
+        help: "bg-tint text-tint-text",
+        campus: "bg-raised text-sec",
       },
     },
     defaultVariants: { tone: "neutral" },
   },
 );
 
-export function Chip({
+export function Pill({
   className,
   tone,
   ...props
-}: React.ComponentProps<"span"> & VariantProps<typeof chipVariants>) {
-  return <span className={cn(chipVariants({ tone }), className)} {...props} />;
+}: React.ComponentProps<"span"> & VariantProps<typeof pillVariants>) {
+  return <span className={cn(pillVariants({ tone }), className)} {...props} />;
 }
 
-// Pixel-font stamps (Section 6.3 #7): VERIFIED, UOS EMAIL, MENTOR, BACKUP HERO.
+// Profile stamps: UOS EMAIL, MENTOR, BACKUP HERO (VERIFIED becomes the badge-check icon).
 const stampVariants = cva(
-  "inline-flex h-6 -rotate-2 items-center rounded-[4px] border-2 px-1.5 font-pixel text-[11px] leading-none tracking-wider uppercase",
+  "inline-flex h-6 items-center rounded-pill px-2 text-footnote font-semibold",
   {
     variants: {
       tone: {
-        verified: "border-brand text-brand",
-        email: "border-lane-people text-lane-people dark:border-brand-soft dark:text-brand-soft",
-        mentor: "border-success text-success",
-        hero: "border-transparent bg-lane-help text-lane-help-ink",
+        verified: "bg-tint text-tint-text",
+        email: "bg-raised text-sec",
+        mentor: "bg-raised text-sec",
+        hero: "bg-tint text-tint-text",
       },
     },
     defaultVariants: { tone: "verified" },

@@ -167,7 +167,7 @@ export function ProofForm({
 
       <fieldset className="grid gap-3">
         <legend className="mb-1.5 text-sm font-semibold">Proof that you&apos;re at UoS</legend>
-        <p className="text-[13px] text-ink-2">
+        <p className="text-[13px] text-sec">
           Any one of: admission letter, fee challan, student card, or a screenshot of the student
           portal showing your name and roll number.
         </p>
@@ -193,13 +193,13 @@ export function ProofForm({
           }}
         />
         {file ? (
-          <div className="flex items-center gap-3 rounded-md border border-line bg-surface p-3">
+          <div className="flex items-center gap-3 rounded-field border border-sep bg-surface p-3">
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
-              <img src={preview} alt="Your proof" className="size-16 rounded-sm object-cover" />
+              <img src={preview} alt="Your proof" className="size-16 rounded-track object-cover" />
             ) : (
-              <span className="grid size-16 place-items-center rounded-sm bg-surface-2">
-                <FileText className="size-6 text-ink-2" />
+              <span className="grid size-16 place-items-center rounded-track bg-raised">
+                <FileText className="size-6 text-sec" />
               </span>
             )}
             <span className="min-w-0 flex-1 truncate text-sm">{file.name}</span>
@@ -224,8 +224,8 @@ export function ProofForm({
         )}
       </fieldset>
 
-      <p className="flex gap-2 rounded-md bg-surface-2 p-3 text-[13px] text-ink-2">
-        <ShieldCheck className="size-4 shrink-0 text-success" />
+      <p className="flex gap-2 rounded-field bg-raised p-3 text-[13px] text-sec">
+        <ShieldCheck className="size-4 shrink-0 text-tint-text" />
         Only a verifier sees your document. It&apos;s deleted 30 days after review.
       </p>
 

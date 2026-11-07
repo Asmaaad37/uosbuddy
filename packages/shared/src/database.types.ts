@@ -3117,6 +3117,8 @@ export type Database = {
       posts_public: {
         Row: {
           author_avatar: string | null
+          author_batch_year: number | null
+          author_department_code: string | null
           author_handle: string | null
           author_id: string | null
           author_name: string | null
@@ -3277,6 +3279,7 @@ export type Database = {
         Args: { p_department_only?: boolean }
         Returns: {
           avatar_url: string
+          batch_year: number
           department: string
           full_name: string
           handle: string
@@ -3574,6 +3577,8 @@ export type Database = {
         }
         Returns: {
           author_avatar: string | null
+          author_batch_year: number | null
+          author_department_code: string | null
           author_handle: string | null
           author_id: string | null
           author_name: string | null

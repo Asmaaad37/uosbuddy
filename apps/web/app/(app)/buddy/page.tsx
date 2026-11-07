@@ -23,7 +23,7 @@ export default async function BuddyPage({ searchParams }: Props) {
   if (!aiEnabled()) {
     return (
       <AppShell bell back="/explore">
-        <h1 className="text-[28px] leading-tight font-bold">AIBuddy</h1>
+        <h1 className="text-large-title">AIBuddy</h1>
         <BuddyComingSoon />
       </AppShell>
     );
@@ -63,8 +63,8 @@ export default async function BuddyPage({ searchParams }: Props) {
     <AppShell bell back="/explore">
       <div className="flex items-start justify-between gap-3">
         <div className="grid gap-1">
-          <h1 className="text-[28px] leading-tight font-bold">AI Buddy</h1>
-          <p className="text-ink-2">Answers from your course files, with sources.</p>
+          <h1 className="text-large-title">AI Buddy</h1>
+          <p className="text-sec">Answers from your course files, with sources.</p>
         </div>
         {open && (
           <Button asChild size="sm" variant="secondary">
@@ -90,18 +90,18 @@ export default async function BuddyPage({ searchParams }: Props) {
           <h2 id="past-chats" className="text-lg font-bold">
             Past chats
           </h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
             {threads!.map((t) => (
               <li key={t.id}>
                 <Link
                   href={`/buddy?thread=${t.id}`}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 hover:bg-surface-2",
-                    t.id === open?.id && "bg-brand/5",
+                    "flex items-center gap-3 px-4 py-3 hover:bg-raised",
+                    t.id === open?.id && "bg-tint",
                   )}
                 >
                   <span className="flex-1 truncate">{t.title}</span>
-                  <span className="shrink-0 text-xs text-ink-2">{shortTime(t.updated_at)}</span>
+                  <span className="shrink-0 text-xs text-sec">{shortTime(t.updated_at)}</span>
                 </Link>
               </li>
             ))}

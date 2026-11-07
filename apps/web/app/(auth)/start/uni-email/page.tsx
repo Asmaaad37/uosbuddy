@@ -25,11 +25,14 @@ export default async function UniEmailPage({
       subtitle="You'll be verified instantly. Nobody sees your email."
     >
       {error === "not_uni" && (
-        <div role="alert" className="rounded-md border border-danger/40 bg-danger/10 p-4 text-sm">
+        <div
+          role="alert"
+          className="rounded-field border border-danger/40 bg-danger/10 p-4 text-sm"
+        >
           <p className="font-semibold">That isn&apos;t a UoS email.</p>
-          <p className="mt-1 text-ink-2">
+          <p className="mt-1 text-sec">
             Pick your @{domains[0]} account, or{" "}
-            <Link href="/start/freshman" className="font-semibold text-brand">
+            <Link href="/start/freshman" className="font-semibold text-accent">
               join as a fresher instead
             </Link>
             .
@@ -40,10 +43,10 @@ export default async function UniEmailPage({
       {uni?.googleLive && (
         <>
           <GoogleButton domain={domains[0]!} />
-          <div className="flex items-center gap-3 text-sm text-ink-2">
-            <span className="h-px flex-1 bg-line" />
+          <div className="flex items-center gap-3 text-sm text-sec">
+            <span className="h-px flex-1 bg-sep" />
             or
-            <span className="h-px flex-1 bg-line" />
+            <span className="h-px flex-1 bg-sep" />
           </div>
         </>
       )}

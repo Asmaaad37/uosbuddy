@@ -12,3 +12,6 @@ apps/web/test-results
 apps/web/playwright-report
 supabase/seed/uos-catalogue.json
 supabase/templates
+
+# The redesign spec is kept exactly as written.
+docs/design/

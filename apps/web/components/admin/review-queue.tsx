@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { Check, ChevronLeft, ChevronRight, HelpCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { DocViewer } from "@/components/admin/doc-viewer";
@@ -156,22 +156,22 @@ export function ReviewQueue({
     <div className="grid gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[28px] leading-tight font-bold">Verification queue</h1>
-          <p className="text-ink-2">
+          <h1 className="text-large-title">Verification queue</h1>
+          <p className="text-sec">
             {queue.length} waiting · {waitingOnStudents} waiting on students
           </p>
         </div>
-        <p className="hidden text-[13px] text-ink-2 md:block">
+        <p className="hidden text-[13px] text-sec md:block">
           <kbd>A</kbd> approve · <kbd>R</kbd> reject · <kbd>N</kbd> needs info · <kbd>J</kbd>/
           <kbd>K</kbd> next/previous
         </p>
       </div>
 
       {!current ? (
-        <div className="grid h-72 place-items-center rounded-lg border border-dashed border-line text-center">
+        <div className="grid h-72 place-items-center rounded-card bg-surface text-center shadow-card">
           <div>
             <p className="text-lg font-bold">The queue is clear</p>
-            <p className="text-ink-2">New submissions appear here automatically.</p>
+            <p className="text-sec">New submissions appear here automatically.</p>
           </div>
         </div>
       ) : (
@@ -180,7 +180,7 @@ export function ReviewQueue({
 
           <aside className="grid content-start gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-ink-2">
+              <span className="text-sm text-sec">
                 {Math.min(index, queue.length - 1) + 1} of {queue.length} · submitted{" "}
                 {ago(current.updatedAt)}
               </span>
@@ -196,38 +196,38 @@ export function ReviewQueue({
 
             {current.precheck && <PrecheckPanel p={current.precheck} />}
 
-            <dl className="grid gap-3 rounded-lg border border-line bg-surface p-4">
+            <dl className="grid gap-3 rounded-card border border-sep bg-surface p-4">
               <div>
-                <dt className="text-[13px] text-ink-2">Name on submission</dt>
+                <dt className="text-[13px] text-sec">Name on submission</dt>
                 <dd className="font-semibold">{current.submittedName ?? "—"}</dd>
                 {namesDiffer && (
-                  <dd className="text-[13px] text-warning">Account name: {current.accountName}</dd>
+                  <dd className="text-[13px] text-danger">Account name: {current.accountName}</dd>
                 )}
               </div>
               <div>
-                <dt className="text-[13px] text-ink-2">Roll / registration number</dt>
+                <dt className="text-[13px] text-sec">Roll / registration number</dt>
                 <dd className="font-mono font-semibold tracking-wide">
                   {current.studentId ?? "—"}
                 </dd>
                 {parts && (
                   <dd className="mt-1.5 flex flex-wrap gap-1.5">
                     {parts.map((p) => (
-                      <Chip key={p} tone="outline">
+                      <Pill key={p} tone="outline">
                         {p}
-                      </Chip>
+                      </Pill>
                     ))}
                   </dd>
                 )}
               </div>
               <div>
-                <dt className="text-[13px] text-ink-2">
+                <dt className="text-[13px] text-sec">
                   {current.emailIsUni ? "UoS email" : "Personal email"}
                 </dt>
                 <dd className="break-all">{current.email ?? "—"}</dd>
               </div>
               {current.whatsapp && (
                 <div>
-                  <dt className="text-[13px] text-ink-2">WhatsApp</dt>
+                  <dt className="text-[13px] text-sec">WhatsApp</dt>
                   <dd>{current.whatsapp}</dd>
                 </div>
               )}
@@ -235,7 +235,7 @@ export function ReviewQueue({
 
             {picker ? (
               <form
-                className="grid gap-3 rounded-lg border border-line bg-surface p-4"
+                className="grid gap-3 rounded-card border border-sep bg-surface p-4"
                 onSubmit={(e) => {
                   e.preventDefault();
                   void decide(picker, reason);
@@ -251,10 +251,8 @@ export function ReviewQueue({
                       type="button"
                       onClick={() => setReason(t)}
                       className={cn(
-                        "rounded-md border px-3 py-2 text-left text-[13px]",
-                        reason === t
-                          ? "border-brand bg-brand/10"
-                          : "border-line hover:border-ink-2/50",
+                        "rounded-field border px-3 py-2 text-left text-[13px]",
+                        reason === t ? "border-accent bg-tint" : "border-sep hover:border-sec/50",
                       )}
                     >
                       {t}
@@ -323,24 +321,24 @@ function PrecheckPanel({ p }: { p: Precheck }) {
   return (
     <section
       aria-label="AI pre-check"
-      className="grid gap-2 rounded-lg border border-line bg-surface p-4 text-sm"
+      className="grid gap-2 rounded-card border border-sep bg-surface p-4 text-sm"
     >
       <div className="flex items-center justify-between">
         <span className="font-semibold">AI pre-check</span>
-        <Chip tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Chip>
+        <Pill tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Pill>
       </div>
       {p.flags.length > 0 && (
         <ul className="flex flex-wrap gap-1.5" aria-label="Flags">
           {p.flags.map((f) => (
             <li key={f}>
-              <Chip tone="outline" className="text-warning">
+              <Pill tone="outline" className="text-danger">
                 {FLAG_LABELS[f]}
-              </Chip>
+              </Pill>
             </li>
           ))}
         </ul>
       )}
-      <p className="text-[13px] text-ink-2">
+      <p className="text-[13px] text-sec">
         Read from the document: {x.name ?? "no name"} · {x.roll_no ?? "no roll number"} ·{" "}
         {x.university ?? "no university"}
         {x.session ? ` · ${x.session}` : ""}

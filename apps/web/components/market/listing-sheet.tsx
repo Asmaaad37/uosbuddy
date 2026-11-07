@@ -114,7 +114,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">New listing</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           Seen by verified UoS students. Meet on campus to hand things over, and never pay in
           advance.
         </SheetDescription>
@@ -128,8 +128,8 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
                 aria-checked={kind === k}
                 onClick={() => setKind(k)}
                 className={cn(
-                  "grid h-14 place-items-center rounded-md border text-xs font-semibold",
-                  kind === k ? "border-brand bg-brand/10" : "border-line hover:border-ink-2/50",
+                  "grid h-14 place-items-center rounded-field border text-xs font-semibold",
+                  kind === k ? "border-accent bg-tint" : "border-sep hover:border-sec/50",
                 )}
               >
                 <span aria-hidden className="text-base">
@@ -191,12 +191,12 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
             {photos.map((p) => (
               <div key={p.path} className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element -- local preview */}
-                <img src={p.preview} alt="" className="size-20 rounded-md object-cover" />
+                <img src={p.preview} alt="" className="size-20 rounded-field object-cover" />
                 <button
                   type="button"
                   aria-label="Remove photo"
                   onClick={() => setPhotos((x) => x.filter((y) => y.path !== p.path))}
-                  className="absolute -top-2 -right-2 grid size-6 place-items-center rounded-pill bg-ink text-bg"
+                  className="absolute -top-2 -right-2 grid size-6 place-items-center rounded-pill bg-fill text-on-fill"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -207,7 +207,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={busy === "upload"}
-                className="grid size-20 place-items-center rounded-md border border-dashed border-line text-ink-2"
+                className="grid size-20 place-items-center rounded-field border border-dashed border-sep text-sec"
                 aria-label="Add photos"
               >
                 {busy === "upload" ? <Loader2 className="animate-spin" /> : <ImagePlus />}

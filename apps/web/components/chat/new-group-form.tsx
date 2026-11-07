@@ -2,12 +2,13 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Search } from "lucide-react";
+import { Check, Loader2, Search, Users } from "lucide-react";
 import { createGroup } from "@/actions/chat";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Connection = {
   id: string;
@@ -48,9 +49,9 @@ export function NewGroupForm({ connections }: { connections: Connection[] }) {
 
   if (connections.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+      <EmptyState icon={Users}>
         Groups are made from your connections. Connect with a few batchmates first.
-      </p>
+      </EmptyState>
     );
   }
 
@@ -85,13 +86,13 @@ export function NewGroupForm({ connections }: { connections: Connection[] }) {
       <div className="grid gap-2">
         <div className="flex items-baseline justify-between">
           <p className="text-sm font-semibold">Add people</p>
-          <p className="text-sm text-ink-2" aria-live="polite">
+          <p className="text-sm text-sec" aria-live="polite">
             {picked.length} picked
           </p>
         </div>
         <label className="relative">
           <span className="sr-only">Search your connections</span>
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-ink-2" />
+          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-sec" />
           <Input
             type="search"
             value={query}
@@ -100,7 +101,7 @@ export function NewGroupForm({ connections }: { connections: Connection[] }) {
             className="pl-10"
           />
         </label>
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
           {shown.map((c) => {
             const name = c.full_name ?? c.handle ?? "Student";
             const on = picked.includes(c.id);
@@ -111,14 +112,14 @@ export function NewGroupForm({ connections }: { connections: Connection[] }) {
                   role="checkbox"
                   aria-checked={on}
                   onClick={() => toggle(c.id)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-surface-2"
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left hover:bg-raised"
                 >
                   <Avatar name={name} src={c.avatar_url} size="sm" />
                   <span className="flex-1 truncate font-medium">{name}</span>
                   <span
                     className={cn(
                       "grid size-6 place-items-center rounded-pill border-2",
-                      on ? "border-brand bg-brand text-brand-ink" : "border-line",
+                      on ? "border-accent bg-fill text-on-fill" : "border-sep",
                     )}
                   >
                     {on && <Check className="size-3.5" />}

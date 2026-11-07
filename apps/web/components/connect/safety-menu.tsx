@@ -108,7 +108,7 @@ export function ReportDialog({
               {REASONS.map((r) => (
                 <label
                   key={r.value}
-                  className="flex cursor-pointer items-center gap-3 rounded-md border border-line px-3 py-2.5 has-[:checked]:border-brand"
+                  className="flex cursor-pointer items-center gap-3 rounded-field border border-sep px-3 py-2.5 has-[:checked]:border-accent"
                 >
                   <input
                     type="radio"
@@ -116,7 +116,7 @@ export function ReportDialog({
                     value={r.value}
                     checked={reason === r.value}
                     onChange={() => setReason(r.value)}
-                    className="accent-[var(--brand)]"
+                    className="accent-[var(--accent)]"
                   />
                   <span className="text-sm font-medium">{r.label}</span>
                 </label>

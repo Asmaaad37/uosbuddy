@@ -79,34 +79,37 @@ export function PushPrompt({ reason }: { reason: string }) {
   if (state === "hidden") return null;
   if (state === "on") {
     return (
-      <p role="status" className="rounded-lg bg-success/10 px-4 py-3 text-sm font-medium">
+      <p
+        role="status"
+        className="rounded-card bg-tint px-4 py-3 text-subhead font-medium text-tint-text"
+      >
         Notifications are on for this device.
       </p>
     );
   }
   if (state === "blocked") {
     return (
-      <p className="rounded-lg border border-line px-4 py-3 text-sm text-ink-2">
+      <p className="rounded-card bg-surface px-4 py-3 text-subhead text-sec">
         Notifications are blocked for UOSBuddy in this browser. Allow them in the site settings to
         get pings.
       </p>
     );
   }
   return (
-    <div className="relative grid gap-3 rounded-lg border border-brand/40 bg-surface p-4 pr-12">
+    <div className="relative grid gap-3 rounded-card bg-surface p-4 pr-12 shadow-card">
       <button
         type="button"
         aria-label="Not now"
         onClick={dismiss}
-        className="absolute top-2 right-2 grid size-9 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+        className="absolute top-1 right-1 grid size-11 place-items-center rounded-pill text-ter active:bg-raised"
       >
         <X className="size-4" />
       </button>
-      <p className="flex items-start gap-2 font-semibold">
-        <BellRing className="mt-0.5 size-5 shrink-0 text-brand" /> {reason}
+      <p className="flex items-start gap-2 text-headline">
+        <BellRing className="mt-0.5 size-5 shrink-0 text-accent" /> {reason}
       </p>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-subhead text-danger">
           {error}
         </p>
       )}

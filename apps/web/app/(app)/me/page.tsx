@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
-  AtSign,
   Ban,
   Bell,
   BookOpen,
@@ -10,67 +9,67 @@ import {
   CalendarDays,
   ChevronRight,
   Download,
-  Eye,
   GraduationCap,
   Heart,
   Library,
   LifeBuoy,
   Lock,
-  Mail,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { BadgeRow } from "@/components/profile/badge-row";
-import { ProfileStamps } from "@/components/profile/profile-card";
+import { AppearanceRow, LogOutRow } from "@/components/me/me-controls";
+import { BellSlot } from "@/components/notifications/bell-slot";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { signOut } from "@/actions/onboarding";
+import { GroupedList, Row } from "@/components/ui/grouped-list";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { getSession } from "@/lib/auth/session";
 import { completeness } from "@/lib/profile";
 
 export const metadata: Metadata = { title: "Me" };
 
-function Row({
-  href,
-  icon: Icon,
-  label,
-  hint,
-}: {
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  hint?: string;
-}) {
+function SmallPill({ children }: { children: React.ReactNode }) {
   return (
-    <li>
-      <Link
-        href={href}
-        className="flex min-h-14 items-center gap-3 px-4 py-3 hover:bg-surface-2 focus-visible:bg-surface-2"
-      >
-        <Icon className="size-5 shrink-0 text-ink-2" />
-        <span className="grid flex-1 gap-0.5">
-          <span className="font-semibold">{label}</span>
-          {hint && <span className="text-[13px] text-ink-2">{hint}</span>}
-        </span>
-        <ChevronRight className="size-4 shrink-0 text-ink-2" />
-      </Link>
+    <li className="inline-flex h-7 items-center gap-1 rounded-pill bg-raised px-2.5 text-footnote font-semibold text-label">
+      {children}
     </li>
   );
 }
 
-/** Own profile hub: completeness, edit links, privacy and the UoS email upgrade. */
+/** Me (redesign §5.5): your profile, what's left to fill in, and every setting. */
 export default async function MePage() {
   const { supabase, user, profile } = await getSession();
   if (!user || !profile) redirect("/login?next=/me");
+  const isAdmin = profile.role === "admin";
 
-  const [{ data: pii }, { count: interestCount }, { data: badges }] = await Promise.all([
+  const [
+    { data: pii },
+    { count: interestCount },
+    { data: badges },
+    { data: dept },
+    { count: waiting },
+  ] = await Promise.all([
     supabase.from("private_profile").select("uni_email").eq("user_id", user.id).maybeSingle(),
     supabase
       .from("profile_interests")
       .select("interest_id", { count: "exact", head: true })
       .eq("user_id", user.id),
     supabase.rpc("profile_badges", { p_user: user.id }),
+    profile.department_id
+      ? supabase
+          .from("departments")
+          .select("short_code")
+          .eq("id", profile.department_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    // RLS lets only admins count other students' requests.
+    isAdmin
+      ? supabase
+          .from("verification_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending")
+      : Promise.resolve({ count: null }),
   ]);
   const hasUniEmail = !!pii?.uni_email;
   const { percent, nudges } = completeness({
@@ -79,153 +78,219 @@ export default async function MePage() {
     hasUniEmail,
   });
   const name = profile.full_name ?? profile.handle ?? "You";
+  const studies =
+    dept?.short_code && profile.batch_year
+      ? `${dept.short_code} · Class of ${profile.batch_year}`
+      : null;
+
+  const profileBody = (
+    <>
+      <Avatar name={name} src={profile.avatar_url} size={64} />
+      <span className="grid min-w-0 flex-1 gap-1">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <span className="truncate text-[20px] leading-6 font-bold tracking-[-0.01em]">
+            {name}
+          </span>
+          <VerifiedBadge className="size-[18px] shrink-0" />
+        </span>
+        {studies && <span className="text-subhead text-sec">{studies}</span>}
+        {((badges?.length ?? 0) > 0 || hasUniEmail || profile.is_mentor) && (
+          <ul aria-label="Badges" className="flex flex-wrap gap-1.5 pt-0.5">
+            {hasUniEmail && <SmallPill>UoS email</SmallPill>}
+            {profile.is_mentor && <SmallPill>Mentor</SmallPill>}
+            {badges?.map((b) => (
+              <SmallPill key={b.slug}>
+                <span aria-hidden>{b.emoji}</span> {b.name}
+                <span className="sr-only">: {b.description}</span>
+              </SmallPill>
+            ))}
+          </ul>
+        )}
+      </span>
+    </>
+  );
 
   return (
-    <AppShell back="/explore" bell>
-      <header className="flex items-center gap-4">
-        <Avatar name={name} src={profile.avatar_url} size="lg" />
-        <div className="grid min-w-0 gap-1.5">
-          <h1 className="text-2xl leading-tight font-bold break-words">{name}</h1>
-          {profile.handle && <p className="text-ink-2">@{profile.handle}</p>}
-          <ProfileStamps hasUniEmail={hasUniEmail} isMentor={profile.is_mentor} />
+    <AppShell>
+      <ScreenHeader
+        title="Me"
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
+
+      {profile.handle ? (
+        <Link
+          href={`/people/${profile.handle}`}
+          className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card transition-transform duration-100 ease-out active:scale-[0.99]"
+        >
+          {profileBody}
+          <span className="sr-only">View my profile</span>
+          <ChevronRight className="size-[18px] shrink-0 text-ter" aria-hidden />
+        </Link>
+      ) : (
+        <div className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card">
+          {profileBody}
         </div>
-      </header>
-      <BadgeRow badges={badges ?? []} />
+      )}
 
       {nudges.length > 0 && (
         <section
           aria-labelledby="completeness"
-          className="grid gap-3 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-card)]"
+          className="overflow-hidden rounded-card bg-surface shadow-card"
         >
-          <div className="flex items-baseline justify-between gap-3">
-            <h2 id="completeness" className="font-bold">
-              Your profile is {percent}% done
-            </h2>
-            <span className="text-sm text-ink-2">{nudges.length} to go</span>
+          <div className="grid gap-3 p-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id="completeness" className="text-headline">
+                Finish your profile
+              </h2>
+              <span className="text-footnote text-sec tabular-nums">{percent}%</span>
+            </div>
+            <div
+              role="progressbar"
+              aria-label="Profile completeness"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={percent}
+              className="h-1.5 overflow-hidden rounded-pill bg-track"
+            >
+              <div className="h-full rounded-pill bg-accent" style={{ width: `${percent}%` }} />
+            </div>
+            <p className="text-footnote text-sec">
+              Complete profiles get more hellos from batchmates.
+            </p>
           </div>
-          <div
-            role="progressbar"
-            aria-label="Profile completeness"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={percent}
-            className="h-2 overflow-hidden rounded-pill bg-surface-2"
-          >
-            <div className="h-full rounded-pill bg-brand" style={{ width: `${percent}%` }} />
-          </div>
-          <p className="text-sm text-ink-2">Complete profiles get more hellos from batchmates.</p>
-          <ul className="flex flex-wrap gap-2">
-            {nudges.slice(0, 3).map((n) => (
-              <li key={n.key}>
-                <Link
-                  href={n.href}
-                  className="inline-flex h-9 items-center rounded-pill border border-line px-3 text-sm font-semibold hover:bg-surface-2"
-                >
-                  {n.label}
-                </Link>
-              </li>
+          <ul className="shadow-[inset_0_1px_0_var(--sep)] [&>li:last-child_[data-row-text]]:shadow-none">
+            {nudges.map((n) => (
+              <Row
+                key={n.key}
+                href={n.href}
+                title={n.label}
+                leading={
+                  <span
+                    aria-hidden
+                    className="size-[22px] shrink-0 rounded-pill border-[1.5px] border-ter"
+                  />
+                }
+              />
             ))}
           </ul>
         </section>
       )}
 
-      <nav aria-label="Profile">
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
-          {profile.handle && (
+      <GroupedList header="Profile">
+        <Row href="/setup/about?edit=1" icon={UserRound} title="Photo, handle and bio" />
+        <Row
+          href="/setup/academic?edit=1"
+          icon={BookOpen}
+          title="Studies"
+          subtitle="Department, batch, section"
+        />
+        <Row href="/setup/interests?edit=1" icon={Heart} title="Interests and Opening Move" />
+      </GroupedList>
+
+      <GroupedList header="Study">
+        <Row
+          href="/courses"
+          icon={Library}
+          title="My courses"
+          subtitle="Files, study groups and course chats"
+        />
+        <Row
+          href="/timetable"
+          icon={CalendarDays}
+          title="Timetable"
+          subtitle="Your week, and free time with friends"
+        />
+        <Row
+          href="/gpa"
+          icon={Calculator}
+          title="GPA calculator"
+          subtitle="UoS grading, saved on this phone"
+        />
+        <Row
+          href="/mentors"
+          icon={GraduationCap}
+          title="Mentors"
+          subtitle="Find a senior, or mentor juniors"
+        />
+      </GroupedList>
+
+      <GroupedList header="Privacy and settings">
+        <Row
+          href="/me/privacy"
+          icon={Lock}
+          title="Privacy"
+          subtitle="Who sees your profile and can message you"
+        />
+        <Row href="/me/notifications" icon={Bell} title="Notifications" />
+        <Row href="/me/blocked" icon={Ban} title="Blocked people" />
+        <AppearanceRow />
+      </GroupedList>
+
+      <GroupedList header="Help">
+        <Row
+          href="/safety"
+          icon={LifeBuoy}
+          title="Safety centre"
+          subtitle="Reporting, privacy, help"
+        />
+        <Row
+          href="/me/data"
+          icon={Download}
+          title="Your data"
+          subtitle="Download it, or delete your account"
+        />
+      </GroupedList>
+
+      {(isAdmin || profile.role === "moderator") && (
+        <GroupedList header="Admin">
+          {isAdmin ? (
             <Row
-              href={`/people/${profile.handle}`}
-              icon={Eye}
-              label="View my profile"
-              hint="See what other students see"
+              href="/admin"
+              icon={ShieldCheck}
+              title="Admin"
+              subtitle="Verification queue, reports, people"
+              trailing={
+                waiting ? (
+                  <span className="rounded-pill bg-tint px-2.5 py-0.5 text-footnote font-semibold text-tint-text">
+                    Review
+                    <span className="sr-only">: {waiting} waiting</span>
+                  </span>
+                ) : undefined
+              }
             />
-          )}
-          <Row href="/setup/about?edit=1" icon={UserRound} label="Photo, handle and bio" />
-          <Row href="/setup/academic?edit=1" icon={BookOpen} label="Studies" />
-          <Row href="/setup/interests?edit=1" icon={Heart} label="Interests and Opening Move" />
-          <Row
-            href="/me/privacy"
-            icon={Lock}
-            label="Privacy"
-            hint="Who sees your profile and photo, and who can message you"
-          />
-          <Row
-            href="/courses"
-            icon={Library}
-            label="My courses"
-            hint="Files, study groups and course chats"
-          />
-          <Row
-            href="/timetable"
-            icon={CalendarDays}
-            label="Timetable"
-            hint="Your week, and free time with friends"
-          />
-          <Row
-            href="/gpa"
-            icon={Calculator}
-            label="GPA calculator"
-            hint="UoS grading table, saved on this phone"
-          />
-          <Row
-            href="/mentors"
-            icon={GraduationCap}
-            label="Mentors"
-            hint="Find a senior, or mentor juniors"
-          />
-          <Row
-            href="/me/notifications"
-            icon={Bell}
-            label="Notifications"
-            hint="What pings you, and push on this phone"
-          />
-          <Row href="/me/blocked" icon={Ban} label="Blocked" />
-          <Row
-            href="/me/data"
-            icon={Download}
-            label="Your data"
-            hint="Download it, or delete your account"
-          />
-          <Row
-            href="/safety"
-            icon={LifeBuoy}
-            label="Safety centre"
-            hint="Reporting, privacy, help"
-          />
-          {hasUniEmail ? (
-            <li className="flex min-h-14 items-center gap-3 px-4 py-3">
-              <AtSign className="size-5 shrink-0 text-ink-2" />
-              <span className="grid flex-1 gap-0.5">
-                <span className="font-semibold">UoS email linked</span>
-                <span className="text-[13px] break-all text-ink-2">{pii?.uni_email}</span>
-              </span>
-            </li>
           ) : (
-            <Row
-              href="/me/email"
-              icon={Mail}
-              label="Link your UoS email"
-              hint="Adds the UoS email stamp to your profile"
-            />
-          )}
-          {profile.role === "admin" && (
-            <Row href="/admin" icon={ShieldCheck} label="Admin" hint="Dashboard, reports, people" />
-          )}
-          {profile.role === "moderator" && (
             <Row
               href="/admin/reports"
               icon={ShieldCheck}
-              label="Moderation"
-              hint="Reports in your feeds"
+              title="Moderation"
+              subtitle="Reports in your feeds"
             />
           )}
-        </ul>
-      </nav>
+        </GroupedList>
+      )}
 
-      <form action={signOut} className="mt-auto">
-        <Button type="submit" block variant="ghost">
-          Log out
-        </Button>
-      </form>
+      <LogOutRow />
+
+      <footer className="grid gap-2 pt-2 text-center text-footnote text-sec">
+        <p>
+          UOSBuddy is a student-run project and is not an official University of Sargodha service.
+        </p>
+        <nav aria-label="Legal" className="flex justify-center gap-4">
+          <Link href="/privacy" className="hit">
+            Privacy
+          </Link>
+          <Link href="/terms" className="hit">
+            Terms
+          </Link>
+          <Link href="/guidelines" className="hit">
+            Guidelines
+          </Link>
+        </nav>
+      </footer>
     </AppShell>
   );
 }

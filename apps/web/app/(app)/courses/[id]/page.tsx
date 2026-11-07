@@ -7,6 +7,8 @@ import { Resources } from "@/components/courses/resources";
 import { Avatar } from "@/components/ui/avatar";
 import { getSession } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
+import { BookOpen } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Course" };
 
@@ -59,11 +61,11 @@ export default async function CoursePage({ params, searchParams }: Props) {
   return (
     <AppShell back="/courses">
       <div className="grid gap-1">
-        <p className="text-sm font-semibold text-brand">
+        <p className="text-sm font-semibold text-accent">
           {course.code} · {course.department_code}
         </p>
-        <h1 className="text-[28px] leading-tight font-bold">{course.title}</h1>
-        <p className="text-ink-2">
+        <h1 className="text-large-title">{course.title}</h1>
+        <p className="text-sec">
           {course.enrolled_count} {course.enrolled_count === 1 ? "student is" : "students are"}{" "}
           taking it this term
         </p>
@@ -79,8 +81,8 @@ export default async function CoursePage({ params, searchParams }: Props) {
             className={cn(
               "flex h-10 items-center rounded-pill border px-4 text-sm font-semibold",
               tab === t.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface hover:border-ink-2/50",
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep text-label hover:bg-raised",
             )}
           >
             {t.label}
@@ -102,27 +104,25 @@ export default async function CoursePage({ params, searchParams }: Props) {
       )}
       {tab === "classmates" &&
         (people?.length ? (
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
             {people.map((p) => {
               const name = p.full_name ?? p.handle ?? "Student";
               return (
                 <li key={p.id}>
                   <Link
                     href={`/people/${p.handle}`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-surface-2"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-raised"
                   >
                     <Avatar name={name} src={p.avatar_url} size="sm" />
                     <span className="flex-1 truncate font-medium">{name}</span>
-                    {p.section && <span className="text-sm text-ink-2">Sec {p.section}</span>}
+                    {p.section && <span className="text-sm text-sec">Sec {p.section}</span>}
                   </Link>
                 </li>
               );
             })}
           </ul>
         ) : (
-          <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-            Nobody else has added this course yet.
-          </p>
+          <EmptyState icon={BookOpen}>Nobody else has added this course yet.</EmptyState>
         ))}
     </AppShell>
   );

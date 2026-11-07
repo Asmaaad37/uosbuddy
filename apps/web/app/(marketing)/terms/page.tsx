@@ -67,7 +67,7 @@ export default function TermsPage() {
         <h2>Changes and contact</h2>
         <p>
           We may update these terms; the date at the top shows the latest version. See our{" "}
-          <Link href="/privacy" className="font-semibold text-brand">
+          <Link href="/privacy" className="font-semibold text-accent">
             privacy page
           </Link>{" "}
           for how we handle your data. For questions, <ContactLine />.

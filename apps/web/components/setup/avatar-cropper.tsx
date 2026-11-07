@@ -74,7 +74,7 @@ export function AvatarCropper({
       <DialogContent>
         <DialogTitle>Crop your photo</DialogTitle>
         <DialogDescription>Drag to move. Pinch or use the slider to zoom.</DialogDescription>
-        <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-ink">
+        <div className="relative aspect-square w-full overflow-hidden rounded-card bg-black">
           <Cropper
             image={src}
             crop={crop}
@@ -95,7 +95,7 @@ export function AvatarCropper({
           value={zoom}
           onChange={(e) => setZoom(Number(e.target.value))}
           aria-label="Zoom"
-          className="w-full accent-[var(--brand)]"
+          className="w-full accent-[var(--accent)]"
         />
         <div className="flex justify-end gap-2">
           <Button variant="ghost" size="md" onClick={onCancel}>

@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Loader2, SendHorizontal, Sparkles } from "lucide-react";
+import { BookOpen, Loader2, MessageCircle, SendHorizontal, Sparkles } from "lucide-react";
 import type { BuddyEvent } from "@/app/api/buddy/route";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import type { Source } from "@/lib/ai/buddy";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Course = { id: string; code: string; title: string };
 type Turn = { role: "user" | "assistant"; content: string; sources: Source[]; pending?: boolean };
@@ -112,13 +113,13 @@ export function BuddyChat({
 
   if (!courses.length) {
     return (
-      <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+      <EmptyState icon={MessageCircle}>
         AI Buddy answers from your course files.{" "}
-        <Link href="/courses" className="font-semibold text-brand">
+        <Link href="/courses" className="font-semibold text-accent">
           Add your courses
         </Link>{" "}
         first.
-      </p>
+      </EmptyState>
     );
   }
 
@@ -129,7 +130,7 @@ export function BuddyChat({
       <div className="flex flex-wrap items-center justify-between gap-2">
         {threadId ? (
           <p className="flex items-center gap-1.5 text-sm font-semibold">
-            <BookOpen className="size-4 text-brand" />{" "}
+            <BookOpen className="size-4 text-accent" />{" "}
             {course ? `${course.code} · ${course.title}` : "Course"}
           </p>
         ) : (
@@ -149,18 +150,18 @@ export function BuddyChat({
             </NativeSelect>
           </label>
         )}
-        <span className="text-sm text-ink-2" aria-live="polite">
+        <span className="text-sm text-sec" aria-live="polite">
           {remaining} of {limit} questions left today
         </span>
       </div>
 
       <div className="grid gap-4" role="log" aria-live="polite" aria-label="AI Buddy chat">
         {turns.length === 0 && (
-          <div className="grid gap-2 rounded-lg border border-line bg-surface p-4">
+          <div className="grid gap-2 rounded-card border border-sep bg-surface p-4">
             <p className="flex items-center gap-2 font-semibold">
-              <Sparkles className="size-4 text-brand" /> Ask about your course
+              <Sparkles className="size-4 text-accent" /> Ask about your course
             </p>
-            <p className="text-sm text-ink-2">
+            <p className="text-sm text-sec">
               AI Buddy answers from the notes, past papers and outlines shared in this course, and
               shows where each answer comes from. It explains and teaches, and won&apos;t write
               graded work for you.
@@ -171,11 +172,11 @@ export function BuddyChat({
           <div key={i} className={cn("grid gap-2", t.role === "user" && "justify-items-end")}>
             <div
               className={cn(
-                "max-w-[90%] rounded-lg px-4 py-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap",
-                t.role === "user" ? "bg-ink text-bg" : "border border-line bg-surface",
+                "max-w-[90%] rounded-card px-4 py-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap",
+                t.role === "user" ? "bg-fill text-on-fill" : "bg-surface",
               )}
             >
-              {t.content || (t.pending && <Loader2 className="size-4 animate-spin text-ink-2" />)}
+              {t.content || (t.pending && <Loader2 className="size-4 animate-spin text-sec" />)}
             </div>
             {t.role === "assistant" && t.sources.length > 0 && (
               <ol className="grid gap-1.5" aria-label="Sources">
@@ -183,12 +184,12 @@ export function BuddyChat({
                   <li key={n}>
                     <Link
                       href={`/courses/${courseId}#r-${s.resourceId}`}
-                      className="flex gap-2 rounded-md border border-line bg-bg px-3 py-2 text-sm hover:border-ink-2/50"
+                      className="flex gap-2 rounded-field border border-sep bg-bg px-3 py-2 text-sm hover:border-sec/50"
                     >
-                      <span className="font-semibold text-brand">[{n + 1}]</span>
+                      <span className="font-semibold text-accent">[{n + 1}]</span>
                       <span className="grid min-w-0">
                         <span className="truncate font-semibold">{s.title}</span>
-                        <span className="line-clamp-2 text-xs text-ink-2">
+                        <span className="line-clamp-2 text-xs text-sec">
                           &ldquo;{s.quote}&rdquo;
                         </span>
                       </span>
@@ -221,7 +222,7 @@ export function BuddyChat({
             }
           }}
           placeholder="Explain how merge sort works"
-          className="min-h-12 flex-1 resize-none rounded-md border border-line bg-surface px-3 py-2.5 text-[15px] focus-visible:border-brand focus-visible:outline-none"
+          className="min-h-12 flex-1 resize-none rounded-field border border-sep bg-surface px-3 py-2.5 text-[15px] focus-visible:border-accent focus-visible:outline-none"
         />
         <Button
           type="submit"

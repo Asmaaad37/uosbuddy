@@ -14,125 +14,148 @@
   }
 }
 
-/* ---------- Tokens (BUILD_PLAN §6.2) ----------
-   [data-theme] works on any element, so a subtree can be pinned (the /design page uses this). */
+/* ---------- Tokens (docs/design/UOSBuddy_REDESIGN_SPEC.md §2) ----------
+   "Quiet, campus-native, one accent." Dark is the default; light comes from
+   <html data-theme="light"> or, with no setting, from the OS. Components use only these
+   variables, never hex. [data-theme] works on any element, so a subtree can be pinned. */
 :root,
-[data-theme="light"] {
-  color-scheme: light;
-  /* Surfaces */
-  --bg: #f2ece1; /* cream (Ref D) */
-  --bg-grid-dot: #ddd5c6;
-  --surface: #ffffff;
-  --surface-2: #e9e2d4;
-  --ink: #0b0838; /* navy ink */
-  --ink-2: #4a4766;
-  --line: #ddd5c6;
-  /* Brand */
-  --brand: #0034d3; /* cobalt */
-  --brand-ink: #ffffff;
-  --brand-soft: #99ccff; /* sky */
-  /* Accent text on an ink-coloured card (navy in light mode, cream in dark). */
-  --on-ink-accent: #99ccff;
-  --brand-deep: #003087;
-  /* Feature lanes (Ref C): tiles, stamps, headers only */
-  --lane-people: #6553f5;
-  --lane-people-ink: #ffffff;
-  --lane-learn: #00d68f;
-  --lane-learn-ink: #0b0838;
-  --lane-help: #2ec8ff;
-  --lane-help-ink: #0b0838;
-  --lane-campus: #0034d3;
-  --lane-campus-ink: #ffffff;
-  --accent-holo: linear-gradient(135deg, #99ccff 0%, #6553f5 35%, #2ec8ff 65%, #00d68f 100%);
-  --success: #00a86b;
-  --warning: #d99a1e;
-  --danger: #d64545;
-  /* Shape */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-pill: 999px;
-  --shadow-card: 0 1px 0 rgb(11 8 56 / 0.04), 0 8px 24px -12px rgb(11 8 56 / 0.18);
-  --shadow-lift: 0 18px 40px -16px rgb(11 8 56 / 0.35);
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0f17; /* app background */
+  --surface: #151a24; /* cards, grouped lists */
+  --raised: #1f2635; /* icon wells, chips, nested fills */
+  --track: #1a202c; /* segmented track, search field */
+  --thumb: #2e3647; /* segmented selected thumb */
+  --sep: #252c3a; /* hairlines inside groups */
+  --label: #f3f5f9; /* primary text */
+  --sec: #a1a9b8; /* secondary text */
+  --ter: #8a93a6; /* tertiary text, meta, chevrons */
+  --accent: #5b9bff; /* links, selected, icons that act */
+  --fill: #2563eb; /* filled primary buttons (white text) */
+  --on-fill: #ffffff;
+  --tint: rgba(91, 155, 255, 0.16); /* tinted button and chip background */
+  --tintText: #a9c8ff; /* text on --tint */
+  --danger: #ff8a80;
+  --bar: rgba(24, 30, 42, 0.72); /* tab bar and sheet material */
+  --barBorder: rgba(255, 255, 255, 0.08);
+  --card-shadow: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #0b0838;
-    --bg-grid-dot: #1c1757;
-    --surface: #141046;
-    --surface-2: #1c1757;
-    --ink: #f2ece1;
-    --ink-2: #a9a6c9;
-    --line: #2a2566;
-    --brand: #99ccff;
-    --brand-ink: #0b0838;
-    --on-ink-accent: #0034d3;
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f2f4f7;
+  --surface: #ffffff;
+  --raised: #f0f2f6;
+  --track: #e3e7ed;
+  --thumb: #ffffff;
+  --sep: #e6e9ef;
+  --label: #0b1220;
+  --sec: #5a6475;
+  --ter: #5f6879;
+  --accent: #2563eb;
+  --fill: #2563eb;
+  --on-fill: #ffffff;
+  --tint: #e8f0fe;
+  --tintText: #1d4ed8;
+  --danger: #b42318;
+  --bar: rgba(255, 255, 255, 0.78);
+  --barBorder: rgba(11, 18, 32, 0.07);
+  --card-shadow: 0 1px 2px rgba(11, 18, 32, 0.04);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #f2f4f7;
+    --surface: #ffffff;
+    --raised: #f0f2f6;
+    --track: #e3e7ed;
+    --thumb: #ffffff;
+    --sep: #e6e9ef;
+    --label: #0b1220;
+    --sec: #5a6475;
+    --ter: #5f6879;
+    --accent: #2563eb;
+    --fill: #2563eb;
+    --on-fill: #ffffff;
+    --tint: #e8f0fe;
+    --tintText: #1d4ed8;
+    --danger: #b42318;
+    --bar: rgba(255, 255, 255, 0.78);
+    --barBorder: rgba(11, 18, 32, 0.07);
+    --card-shadow: 0 1px 2px rgba(11, 18, 32, 0.04);
   }
 }
 
-[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0b0838;
-  --bg-grid-dot: #1c1757;
-  --surface: #141046;
-  --surface-2: #1c1757;
-  --ink: #f2ece1;
-  --ink-2: #a9a6c9;
-  --line: #2a2566;
-  --brand: #99ccff;
-  --brand-ink: #0b0838;
-  --on-ink-accent: #0034d3;
-}
-
-/* Expose tokens as Tailwind utilities (bg-surface, text-ink-2, rounded-pill, …). */
+/* Tokens as Tailwind utilities: bg-surface, text-sec, rounded-card, text-headline… */
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
-  --color-ink: var(--ink);
-  --color-ink-2: var(--ink-2);
-  --color-line: var(--line);
-  --color-brand: var(--brand);
-  --color-brand-ink: var(--brand-ink);
-  --color-brand-soft: var(--brand-soft);
-  --color-on-ink-accent: var(--on-ink-accent);
-  --color-brand-deep: var(--brand-deep);
-  --color-lane-people: var(--lane-people);
-  --color-lane-people-ink: var(--lane-people-ink);
-  --color-lane-learn: var(--lane-learn);
-  --color-lane-learn-ink: var(--lane-learn-ink);
-  --color-lane-help: var(--lane-help);
-  --color-lane-help-ink: var(--lane-help-ink);
-  --color-lane-campus: var(--lane-campus);
-  --color-lane-campus-ink: var(--lane-campus-ink);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
+  --color-raised: var(--raised);
+  --color-track: var(--track);
+  --color-thumb: var(--thumb);
+  --color-sep: var(--sep);
+  --color-label: var(--label);
+  --color-sec: var(--sec);
+  --color-ter: var(--ter);
+  --color-accent: var(--accent);
+  --color-fill: var(--fill);
+  --color-on-fill: var(--on-fill);
+  --color-tint: var(--tint);
+  --color-tint-text: var(--tintText);
   --color-danger: var(--danger);
+  --color-bar: var(--bar);
+  --color-bar-border: var(--barBorder);
 
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-pill: var(--radius-pill);
+  /* Radius (§2): thumb 8, track 10, field 12, button 14, well 16, card 22, pill. */
+  --radius-thumb: 8px;
+  --radius-track: 10px;
+  --radius-field: 12px;
+  --radius-btn: 14px;
+  --radius-well: 16px;
+  --radius-card: 22px;
+  --radius-pill: 999px;
 
-  --shadow-card: var(--shadow-card);
-  --shadow-lift: var(--shadow-lift);
+  --shadow-card: var(--card-shadow);
+  --shadow-lift: 0 12px 32px -12px rgba(0, 0, 0, 0.45);
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-pixel: var(--font-silkscreen), ui-monospace, monospace;
+  /* System type: SF Pro on Apple devices, Inter elsewhere (§2). */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter), Inter, system-ui,
+    sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  /* Type scale (§2): text-large-title, -title2, -section, -headline, -body, -subhead,
+     -footnote, -overline (add uppercase), -tab-label. */
+  --text-large-title: 2.125rem;
+  --text-large-title--line-height: 2.5625rem;
+  --text-large-title--font-weight: 700;
+  --text-large-title--letter-spacing: -0.022em;
+  --text-title2: 1.375rem;
+  --text-title2--line-height: 1.75rem;
+  --text-title2--font-weight: 700;
+  --text-title2--letter-spacing: -0.012em;
+  --text-section: 1.25rem;
+  --text-section--line-height: 1.5625rem;
+  --text-section--font-weight: 700;
+  --text-section--letter-spacing: -0.01em;
+  --text-headline: 1.0625rem;
+  --text-headline--line-height: 1.375rem;
+  --text-headline--font-weight: 600;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.5rem;
+  --text-subhead: 0.9375rem;
+  --text-subhead--line-height: 1.3125rem;
+  --text-footnote: 0.8125rem;
+  --text-footnote--line-height: 1.125rem;
+  --text-overline: 0.8125rem;
+  --text-overline--line-height: 1.125rem;
+  --text-overline--font-weight: 600;
+  --text-overline--letter-spacing: 0.02em;
+  --text-tab-label: 0.6875rem;
+  --text-tab-label--line-height: 0.8125rem;
+  --text-tab-label--font-weight: 600;
+  --text-tab-label--letter-spacing: 0.01em;
 }
 
 @layer base {
@@ -141,27 +164,31 @@
   }
   body {
     background-color: var(--bg);
-    color: var(--ink);
+    color: var(--label);
     font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 1.0625rem; /* body: 17 / 24 */
+    line-height: 1.5rem;
     -webkit-font-smoothing: antialiased;
   }
   :focus-visible {
-    outline: 2px solid var(--brand);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  /* Dotted canvas (Section 6.3 #1). */
-  .bg-dotted {
-    background-color: var(--bg);
-    background-image: radial-gradient(var(--bg-grid-dot) 1.2px, transparent 1.2px);
-    background-size: 20px 20px;
+  /* A 44×44 tap area around a smaller control (spec §1), without changing its look. */
+  .hit {
+    position: relative;
   }
-  .bg-holo {
-    background-image: var(--accent-holo);
+  .hit::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
   }
   .gutter {
     padding-inline: 16px;
@@ -171,16 +198,202 @@
   }
 }
 
-/* No fans, marquee or confetti under reduced motion (Section 6.4). */
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
+/* ===========================================================================
+   Motion (redesign §1, §6). Springs are Framer Motion's duration/bounce springs sampled
+   into CSS linear() curves, so Radix can still wait for the exit animation:
+   --spring        bounce 0,   0.35 s (the default; settles in ~475 ms)
+   --spring-sheet  bounce 0.2, 0.30 s (sheets; settles in ~390 ms)
+   Only transform and opacity animate.
+   =========================================================================== */
+:root {
+  --spring: linear(
+    0,
+    0.0415,
+    0.1306,
+    0.2392,
+    0.3509,
+    0.4534,
+    0.5486,
+    0.6315,
+    0.7019,
+    0.7606,
+    0.8091,
+    0.8485,
+    0.8804,
+    0.9059,
+    0.9263,
+    0.942,
+    0.9548,
+    0.9648,
+    0.9727,
+    0.9789,
+    0.9837,
+    0.9874,
+    0.9903,
+    0.9925,
+    0.9942,
+    0.9956,
+    0.9966,
+    0.9974,
+    1
+  );
+  --spring-ms: 475ms;
+  --spring-sheet: linear(
+    0,
+    0.0407,
+    0.128,
+    0.2437,
+    0.3677,
+    0.4841,
+    0.5948,
+    0.6916,
+    0.7704,
+    0.8372,
+    0.89,
+    0.9292,
+    0.9595,
+    0.9812,
+    0.996,
+    1.0052,
+    1.0108,
+    1.0136,
+    1.0144,
+    1.014,
+    1.0127,
+    1.0111,
+    1.0094,
+    1.0076,
+    1.006,
+    1.0046,
+    1.0034,
+    1.0025,
+    1
+  );
+  --spring-sheet-ms: 390ms;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0.92);
+  }
+}
+@keyframes vote-pop {
+  40% {
+    transform: scale(1.15);
+  }
+}
+@keyframes roll-up {
+  from {
+    transform: translateY(60%);
+    opacity: 0;
+  }
+}
+@keyframes roll-down {
+  from {
+    transform: translateY(-60%);
+    opacity: 0;
+  }
+}
+
+/* Sheets slide up and back down the same path; the overlay dims to 40%. */
+.sheet[data-state="open"] {
+  animation: sheet-in var(--spring-sheet-ms) var(--spring-sheet);
+}
+.sheet[data-state="closed"] {
+  animation: sheet-out 240ms cubic-bezier(0.4, 0, 1, 1);
+}
+.sheet-overlay[data-state="open"],
+.dialog-pop[data-state="open"] {
+  animation: fade-in 200ms ease-out;
+}
+.sheet-overlay[data-state="closed"],
+.dialog-pop[data-state="closed"] {
+  animation: fade-out 160ms ease-in;
+}
+/* ...and the page behind steps back to 96%, scaled around the middle of the screen. */
+.app-page {
+  transform-origin: var(--sheet-origin, 50% 50vh);
+  transition: scale var(--spring-sheet-ms) var(--spring-sheet);
+}
+html:has(.sheet[data-state="open"]) .app-page {
+  scale: 0.96;
+}
+
+/* Menus scale out of their trigger (transform-origin is the trigger). */
+@keyframes menu-in {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+}
+.menu-pop[data-state="open"] {
+  animation: menu-in 300ms var(--spring);
+}
+.menu-pop[data-state="closed"] {
+  animation: fade-out 120ms ease-in;
+}
+
+/* Tab switch: the content cross-fades; the newly active tab icon pops in. */
+.page-fade {
+  animation: fade-in 150ms ease-out;
+}
+.tab-pop {
+  animation: pop var(--spring-ms) var(--spring);
+}
+.vote-pop {
+  animation: vote-pop var(--spring-ms) var(--spring);
+}
+.roll-up {
+  animation: roll-up 300ms var(--spring);
+}
+.roll-down {
+  animation: roll-down 300ms var(--spring);
+}
+
+/* Reduced motion: no slides or scales anywhere, only 200 ms opacity fades (spec §6). */
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms !important;
+    transition-property: opacity, color, background-color, border-color !important;
+    transition-duration: 200ms !important;
     animation-iteration-count: 1 !important;
+  }
+  .sheet[data-state="open"],
+  .menu-pop[data-state="open"],
+  .roll-up,
+  .roll-down {
+    animation: fade-in 200ms ease-out;
+  }
+  .sheet[data-state="closed"] {
+    animation: fade-out 200ms ease-in;
+  }
+  .tab-pop,
+  .vote-pop {
+    animation: none;
+  }
+  html:has(.sheet[data-state="open"]) .app-page {
+    scale: none;
   }
 }
 

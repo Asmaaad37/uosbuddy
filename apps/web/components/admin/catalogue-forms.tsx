@@ -62,7 +62,7 @@ export function DepartmentForm({ dept }: { dept?: Dept }) {
   }
   return (
     <form
-      className="grid w-full gap-2 rounded-md border border-line p-3 sm:grid-cols-2"
+      className="grid w-full gap-2 rounded-field border border-sep p-3 sm:grid-cols-2"
       onSubmit={(e) => {
         e.preventDefault();
         run(
@@ -131,7 +131,7 @@ export function ProgramForm({ department, program }: { department: string; progr
     return (
       <button
         type="button"
-        className="text-xs font-semibold text-brand"
+        className="text-xs font-semibold text-accent"
         onClick={() => setOpen(true)}
         aria-label={program ? `Edit ${program.name}` : "Add a program"}
       >
@@ -209,7 +209,7 @@ export function CourseRow({
         onChange={(e) => setTitle(e.target.value)}
         className="min-w-40 flex-1"
       />
-      <span className="text-xs text-ink-2">{course.department}</span>
+      <span className="text-xs text-sec">{course.department}</span>
       {changed && (
         <Button
           size="sm"

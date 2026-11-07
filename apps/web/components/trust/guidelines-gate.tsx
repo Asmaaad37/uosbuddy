@@ -46,7 +46,7 @@ export function useGuidelinesGate() {
     <Dialog open={open} onOpenChange={(o) => !o && close(false)}>
       <DialogContent>
         <DialogTitle className="text-xl font-bold">Before you post</DialogTitle>
-        <DialogDescription className="text-sm text-ink-2">
+        <DialogDescription className="text-sm text-sec">
           UOSBuddy works because everyone follows a few rules.
         </DialogDescription>
         <ul className="my-3 grid max-h-[50vh] gap-2.5 overflow-y-auto text-sm">
@@ -56,9 +56,9 @@ export function useGuidelinesGate() {
             </li>
           ))}
         </ul>
-        <p className="text-xs text-ink-2">
+        <p className="text-xs text-sec">
           {CONSEQUENCES}{" "}
-          <Link href="/guidelines" target="_blank" className="font-semibold text-brand">
+          <Link href="/guidelines" target="_blank" className="font-semibold text-accent">
             Read the full guidelines
           </Link>
         </p>

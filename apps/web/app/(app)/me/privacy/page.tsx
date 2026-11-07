@@ -27,8 +27,8 @@ export default async function PrivacySettingsPage() {
   return (
     <AppShell back="/me">
       <div className="grid gap-2">
-        <h1 className="text-[28px] leading-tight font-bold">Privacy</h1>
-        <p className="text-ink-2">
+        <h1 className="text-large-title">Privacy</h1>
+        <p className="text-sec">
           Only verified UoS students can ever see you. Your roll number and email stay private.
         </p>
       </div>

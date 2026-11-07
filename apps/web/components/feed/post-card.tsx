@@ -3,20 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  ArrowBigDown,
-  ArrowBigUp,
+  ArrowDown,
+  ArrowUp,
   Flag,
-  MessageSquare,
+  Link as LinkIcon,
+  MessageCircle,
   MoreHorizontal,
+  Share,
   Trash2,
   VenetianMask,
 } from "lucide-react";
+import { toast } from "sonner";
 import { deletePost, votePoll, votePost, type Post } from "@/actions/feed";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { PrivateImage } from "@/components/ui/private-image";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { shortTime } from "@/lib/chat";
 import { cn } from "@/lib/utils";
 
@@ -34,12 +38,16 @@ export function PostCard({
   const [removed, setRemoved] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [error, setError] = useState<string>();
+  const [bump, setBump] = useState<{ n: number; dir: number }>({ n: 0, dir: 1 });
   if (removed || !post.id) return null;
   const id = post.id;
 
   async function vote(dir: 1 | -1) {
     const old = post.my_vote ?? 0;
     const next = old === dir ? 0 : dir;
+    // Spec §6: the icon pops, the score rolls the way it moved, and a light haptic fires.
+    setBump((b) => ({ n: b.n + 1, dir: next === 0 ? -dir : dir }));
+    navigator.vibrate?.(8);
     const up = (post.upvotes ?? 0) - (old === 1 ? 1 : 0) + (next === 1 ? 1 : 0);
     const down = (post.downvotes ?? 0) - (old === -1 ? 1 : 0) + (next === -1 ? 1 : 0);
     setPost((p) => ({ ...p, my_vote: next || null, upvotes: up, downvotes: down }));
@@ -72,56 +80,94 @@ export function PostCard({
   const totalVotes = (post.poll_counts ?? []).reduce((a, b) => a + b, 0);
   const media = post.media_paths ?? [];
 
+  const meta = [
+    post.author_department_code,
+    post.author_batch_year,
+    post.created_at && shortTime(post.created_at),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const link = () => new URL(`/feed/${id}`, window.location.origin).toString();
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(link());
+      toast.success("Link copied");
+    } catch {
+      toast.error("Couldn't copy the link");
+    }
+  }
+
+  async function share() {
+    if (!navigator.share) return copyLink();
+    try {
+      await navigator.share({ title: "UOSBuddy", url: link() });
+    } catch {
+      // Closing the share sheet throws; nothing to do.
+    }
+  }
+
+  // 44px hit area; the active vote gets a --tint circle and the --accent colour.
+  const voteClass = (on: boolean) =>
+    cn(
+      "grid size-11 place-items-center rounded-pill transition-transform duration-100 ease-out active:scale-[0.97] [&_svg]:size-[22px]",
+      on ? "text-accent [&>span]:bg-tint" : "text-sec hover:text-label",
+    );
+
   return (
-    <article className="grid gap-3 rounded-lg border border-line bg-surface p-4">
+    <article className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
       <header className="flex items-center gap-3">
         {post.is_anonymous ? (
-          <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-ink text-bg">
-            <VenetianMask className="size-5" />
+          <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-raised text-sec">
+            <VenetianMask className="size-5" aria-hidden />
           </span>
         ) : (
-          <Link href={`/people/${post.author_handle}`}>
-            <Avatar name={name} src={post.author_avatar} size="md" />
+          <Link href={`/people/${post.author_handle}`} tabIndex={-1} aria-hidden>
+            <Avatar name={name} src={post.author_avatar} size={40} />
           </Link>
         )}
         <div className="grid min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
             {post.is_anonymous ? (
-              <span className="truncate font-semibold">{name}</span>
+              <span className="truncate text-subhead font-semibold">{name}</span>
             ) : (
-              <Link
-                href={`/people/${post.author_handle}`}
-                className="truncate font-semibold hover:underline"
-              >
-                {name}
-              </Link>
+              <>
+                <Link
+                  href={`/people/${post.author_handle}`}
+                  className="truncate text-subhead font-semibold"
+                >
+                  {name}
+                </Link>
+                <VerifiedBadge className="size-4 shrink-0" />
+              </>
             )}
             {post.is_anonymous && (
-              <Chip tone="neutral" className="h-5 px-2 text-[11px]">
+              <Pill tone="neutral" className="h-5 px-2 text-[11px]">
                 Anonymous
-              </Chip>
+              </Pill>
             )}
             {post.status === "held" && (
-              <Chip tone="outline" className="h-5 px-2 text-[11px]">
+              <Pill tone="outline" className="h-5 px-2 text-[11px]">
                 Under review
-              </Chip>
+              </Pill>
             )}
           </div>
-          {post.created_at && (
-            <span className="text-xs text-ink-2">{shortTime(post.created_at)}</span>
-          )}
+          {meta && <span className="truncate text-footnote text-ter">{meta}</span>}
         </div>
         <Menu>
           <MenuTrigger asChild>
             <button
               type="button"
               aria-label="Post options"
-              className="grid size-9 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+              className="-mr-2 grid size-11 place-items-center rounded-pill text-sec active:bg-raised"
             >
               <MoreHorizontal className="size-5" />
             </button>
           </MenuTrigger>
           <MenuContent>
+            <MenuItem onSelect={copyLink}>
+              <LinkIcon /> Copy link
+            </MenuItem>
             {post.is_mine ? (
               <MenuItem
                 danger
@@ -142,11 +188,14 @@ export function PostCard({
         </Menu>
       </header>
 
-      {post.body && <p className="leading-relaxed break-words whitespace-pre-wrap">{post.body}</p>}
+      {post.body && <p className="text-body break-words whitespace-pre-wrap">{post.body}</p>}
 
       {media.length > 0 && (
         <div
-          className={cn("grid gap-1 overflow-hidden rounded-md", media.length > 1 && "grid-cols-2")}
+          className={cn(
+            "grid gap-1 overflow-hidden rounded-well",
+            media.length > 1 && "grid-cols-2",
+          )}
         >
           {media.map((path) => (
             <PrivateImage
@@ -175,80 +224,107 @@ export function PostCard({
                 onClick={() => answer(i)}
                 aria-pressed={mine}
                 className={cn(
-                  "relative overflow-hidden rounded-md border px-3 py-2 text-left text-sm font-medium",
-                  mine ? "border-brand" : "border-line hover:border-ink-2/50",
+                  "relative min-h-11 overflow-hidden rounded-field border px-3 py-2 text-left text-subhead",
+                  mine ? "border-accent" : "border-sep",
                 )}
               >
                 {answered && (
                   <span
                     aria-hidden
-                    className={cn(
-                      "absolute inset-y-0 left-0",
-                      mine ? "bg-brand/15" : "bg-surface-2",
-                    )}
+                    className={cn("absolute inset-y-0 left-0", mine ? "bg-tint" : "bg-raised")}
                     style={{ width: `${pct}%` }}
                   />
                 )}
                 <span className="relative flex justify-between gap-2">
-                  <span>{label}</span>
-                  {answered && <span className="text-ink-2">{pct}%</span>}
+                  <span className={cn(mine && "font-semibold text-tint-text")}>{label}</span>
+                  {answered && <span className="text-sec">{pct}%</span>}
                 </span>
               </button>
             );
           })}
-          <p className="text-xs text-ink-2">
+          <p className="text-footnote text-ter">
             {totalVotes} {totalVotes === 1 ? "vote" : "votes"}
           </p>
         </div>
       )}
 
-      <footer className="flex items-center gap-1">
-        <div className="flex items-center rounded-pill bg-surface-2">
-          <button
-            type="button"
-            aria-label="Upvote"
-            aria-pressed={post.my_vote === 1}
-            onClick={() => vote(1)}
+      <footer className="-mx-2 -mb-1 flex items-center">
+        <button
+          type="button"
+          aria-label="Upvote"
+          aria-pressed={post.my_vote === 1}
+          onClick={() => vote(1)}
+          className={voteClass(post.my_vote === 1)}
+        >
+          <span
+            key={post.my_vote === 1 ? bump.n : "up"}
             className={cn(
               "grid size-9 place-items-center rounded-pill",
-              post.my_vote === 1 ? "text-brand" : "text-ink-2 hover:text-ink",
+              post.my_vote === 1 && bump.n > 0 && "vote-pop",
             )}
           >
-            <ArrowBigUp className={cn("size-5", post.my_vote === 1 && "fill-current")} />
-          </button>
-          <span className="min-w-6 text-center text-sm font-semibold" aria-label={`Score ${score}`}>
+            <ArrowUp strokeWidth={post.my_vote === 1 ? 2.4 : 1.9} />
+          </span>
+        </button>
+        <span
+          className={cn(
+            "min-w-6 overflow-hidden text-center text-subhead font-semibold tabular-nums",
+            post.my_vote ? "text-accent" : "text-label",
+          )}
+          aria-label={`Score ${score}`}
+        >
+          <span
+            key={bump.n}
+            className={cn("block", bump.n > 0 && (bump.dir > 0 ? "roll-up" : "roll-down"))}
+          >
             {score}
           </span>
-          <button
-            type="button"
-            aria-label="Downvote"
-            aria-pressed={post.my_vote === -1}
-            onClick={() => vote(-1)}
+        </span>
+        <button
+          type="button"
+          aria-label="Downvote"
+          aria-pressed={post.my_vote === -1}
+          onClick={() => vote(-1)}
+          className={voteClass(post.my_vote === -1)}
+        >
+          <span
+            key={post.my_vote === -1 ? bump.n : "down"}
             className={cn(
               "grid size-9 place-items-center rounded-pill",
-              post.my_vote === -1 ? "text-danger" : "text-ink-2 hover:text-ink",
+              post.my_vote === -1 && bump.n > 0 && "vote-pop",
             )}
           >
-            <ArrowBigDown className={cn("size-5", post.my_vote === -1 && "fill-current")} />
-          </button>
-        </div>
+            <ArrowDown strokeWidth={post.my_vote === -1 ? 2.4 : 1.9} />
+          </span>
+        </button>
         {linkToThread ? (
           <Link
             href={`/feed/${id}`}
-            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-ink-2 hover:bg-surface-2 hover:text-ink"
+            className="ml-4 flex h-11 items-center gap-1.5 rounded-pill px-2 text-subhead text-sec active:bg-raised"
           >
-            <MessageSquare className="size-4" /> {post.comment_count ?? 0}
+            <MessageCircle className="size-[22px]" strokeWidth={1.9} aria-hidden />
+            {post.comment_count ?? 0}
             <span className="sr-only">comments</span>
           </Link>
         ) : (
-          <span className="flex h-9 items-center gap-1.5 px-3 text-sm font-semibold text-ink-2">
-            <MessageSquare className="size-4" /> {post.comment_count ?? 0}
+          <span className="ml-4 flex h-11 items-center gap-1.5 px-2 text-subhead text-sec">
+            <MessageCircle className="size-[22px]" strokeWidth={1.9} aria-hidden />
+            {post.comment_count ?? 0}
+            <span className="sr-only">comments</span>
           </span>
         )}
+        <button
+          type="button"
+          aria-label="Share post"
+          onClick={share}
+          className="ml-auto grid size-11 place-items-center rounded-pill text-sec active:bg-raised"
+        >
+          <Share className="size-[22px]" strokeWidth={1.9} aria-hidden />
+        </button>
       </footer>
 
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-subhead text-danger">
           {error}
         </p>
       )}

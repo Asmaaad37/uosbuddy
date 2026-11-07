@@ -22,17 +22,17 @@ export function WomenOnlyRequest({ status }: { status: string | null }) {
     <section
       id="women-only"
       aria-labelledby={`${id}-h`}
-      className="grid gap-3 rounded-lg border border-line bg-surface p-4"
+      className="grid gap-3 rounded-card border border-sep bg-surface p-4"
     >
       <h2 id={`${id}-h`} className="text-lg font-bold">
         Women-only spaces
       </h2>
-      <p className="text-sm text-ink-2">
+      <p className="text-sm text-sec">
         Women students can see and join women-only rides. An admin confirms each request (they may
         check your verification details), so these spaces stay safe.
       </p>
       {status === "approved" ? (
-        <p className="text-sm font-semibold text-success">You have access to women-only rides.</p>
+        <p className="text-sm font-semibold text-tint-text">You have access to women-only rides.</p>
       ) : status === "pending" ? (
         <p className="text-sm font-semibold">Your request is with an admin.</p>
       ) : (
@@ -49,7 +49,7 @@ export function WomenOnlyRequest({ status }: { status: string | null }) {
           }}
         >
           {status === "rejected" && (
-            <p className="text-sm text-ink-2">
+            <p className="text-sm text-sec">
               Your last request wasn&apos;t approved. You can ask again a week after it.
             </p>
           )}

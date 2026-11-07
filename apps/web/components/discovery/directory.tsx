@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useTransition } from "react";
-import { Loader2, Search, SlidersHorizontal, X } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, Users, X } from "lucide-react";
 import { loadDirectory, type DirectoryPage, type DirectoryQuery } from "@/actions/discovery";
 import { PersonCard } from "@/components/discovery/person-card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
 import { SCOPES, type Scope } from "@/lib/discovery";
 import { RESIDENCE_LABELS, SHIFT_LABELS } from "@/lib/profile";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Filters = Pick<DirectoryQuery, "shift" | "residence" | "hometown" | "interest">;
 type Interest = { id: string; label: string; emoji: string };
@@ -37,9 +38,11 @@ export function Directory({
   interests,
   hasSection,
   initialFilters = {},
+  initialQuery = "",
 }: {
   initialScope: Scope;
   initialFilters?: Filters;
+  initialQuery?: string;
   initialPage: DirectoryPage;
   counts: Record<Scope, number>;
   interests: Interest[];
@@ -47,7 +50,7 @@ export function Directory({
 }) {
   const id = useId();
   const [scope, setScope] = useState<Scope>(initialScope);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [page, setPage] = useState<DirectoryPage>(initialPage);
   const [error, setError] = useState<string>();
@@ -103,14 +106,14 @@ export function Directory({
             aria-selected={scope === s.key}
             onClick={() => setScope(s.key)}
             className={cn(
-              "flex h-10 shrink-0 items-center gap-1.5 rounded-pill border px-4 text-sm font-semibold transition-colors",
+              "hit flex h-10 shrink-0 items-center gap-1.5 rounded-pill border px-4 text-sm font-semibold transition-colors",
               scope === s.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface text-ink hover:border-ink-2/50",
+                ? "border-accent bg-tint text-tint-text"
+                : "border-sep bg-surface text-label hover:border-sec/50",
             )}
           >
             {s.label}
-            <span className={cn("text-xs", scope === s.key ? "text-bg/70" : "text-ink-2")}>
+            <span className={cn("text-xs", scope === s.key ? "text-bg/70" : "text-sec")}>
               {counts[s.key]}
             </span>
           </button>
@@ -120,7 +123,7 @@ export function Directory({
       <div className="flex gap-2">
         <label className="relative flex-1">
           <span className="sr-only">Search by name or handle</span>
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-ink-2" />
+          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-sec" />
           <Input
             type="search"
             value={query}
@@ -140,7 +143,7 @@ export function Directory({
             >
               <SlidersHorizontal />
               {active > 0 && (
-                <span className="absolute -top-1 -right-1 grid size-5 place-items-center rounded-pill bg-brand text-[11px] text-brand-ink">
+                <span className="absolute -top-1 -right-1 grid size-5 place-items-center rounded-pill bg-fill text-[11px] text-on-fill">
                   {active}
                 </span>
               )}
@@ -148,7 +151,7 @@ export function Directory({
           </SheetTrigger>
           <SheetContent>
             <SheetTitle className="text-xl font-bold">Filters</SheetTitle>
-            <SheetDescription className="mb-4 text-sm text-ink-2">
+            <SheetDescription className="mb-4 text-sm text-sec">
               Narrow down who you see in this tab.
             </SheetDescription>
             <div className="grid gap-4">
@@ -233,7 +236,7 @@ export function Directory({
         <button
           type="button"
           onClick={() => setFilters({})}
-          className="flex items-center gap-1 justify-self-start text-sm font-semibold text-brand"
+          className="flex items-center gap-1 justify-self-start text-sm font-semibold text-accent"
         >
           <X className="size-4" /> Clear {active} {active === 1 ? "filter" : "filters"}
         </button>
@@ -251,9 +254,9 @@ export function Directory({
         className={cn("grid gap-2", pending && "opacity-60")}
       >
         {page.people.length === 0 && !pending ? (
-          <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+          <EmptyState icon={Users}>
             {query || active ? "Nobody matches. Try fewer filters." : EMPTY[scope]}
-          </p>
+          </EmptyState>
         ) : (
           <ul className="grid gap-2">
             {page.people.map((p) => (

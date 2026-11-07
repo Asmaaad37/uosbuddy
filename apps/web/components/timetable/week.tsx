@@ -35,13 +35,13 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
           <section
             key={day}
             aria-label={day}
-            className="grid gap-2 rounded-lg border border-line bg-surface p-3"
+            className="grid gap-2 rounded-card border border-sep bg-surface p-3"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold">{day}</h3>
               <button
                 type="button"
-                className="flex items-center gap-1 text-sm font-semibold text-brand"
+                className="hit flex items-center gap-1 text-sm font-semibold text-accent"
                 onClick={() => setEditing({ day: i, start_min: 540, end_min: 630 })}
                 aria-label={`Add a class on ${day}`}
               >
@@ -55,7 +55,7 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
                     <button
                       type="button"
                       onClick={() => setEditing(s)}
-                      className="flex w-full items-center gap-3 rounded-md bg-lane-learn/15 px-3 py-2 text-left hover:bg-lane-learn/25"
+                      className="flex w-full items-center gap-3 rounded-field bg-raised/15 px-3 py-2 text-left hover:bg-raised/25"
                     >
                       <span className="w-24 shrink-0 text-sm font-semibold tabular-nums">
                         {minToTime(s.start_min)}–{minToTime(s.end_min)}
@@ -63,7 +63,7 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
                       <span className="grid min-w-0 flex-1">
                         <span className="truncate font-medium">{s.label}</span>
                         {s.room && (
-                          <span className="flex items-center gap-1 text-xs text-ink-2">
+                          <span className="flex items-center gap-1 text-xs text-sec">
                             <MapPin className="size-3" /> {s.room}
                           </span>
                         )}
@@ -73,7 +73,7 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-ink-2">No classes</p>
+              <p className="text-sm text-sec">No classes</p>
             )}
           </section>
         );
@@ -141,7 +141,7 @@ function SlotSheet({
         <SheetTitle className="text-xl font-bold">
           {slot.id ? "Edit class" : "Add a class"}
         </SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           Only you see your timetable. Connections only ever see when you&apos;re busy.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>

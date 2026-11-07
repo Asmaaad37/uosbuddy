@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BellOff, Plus, Users } from "lucide-react";
+import { Inbox, MessageCircle, Plus, SquarePen, Users } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { type ChatRowData } from "@/components/chat/chat-row";
+import { ChatsBrowser } from "@/components/chat/chats-browser";
 import { ChatsLive } from "@/components/chat/chats-live";
 import { JoinBatchChat } from "@/components/chat/join-batch-chat";
 import { RequestRow } from "@/components/chat/request-row";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import { BellSlot } from "@/components/notifications/bell-slot";
+import { Button, IconButton } from "@/components/ui/button";
+import { Overline } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { getSession } from "@/lib/auth/session";
 import { shortTime } from "@/lib/chat";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Chats" };
 
@@ -50,16 +55,16 @@ export default async function ChatsPage({ searchParams }: Props) {
     ? [
         !keys.has(`batch:${profile!.department_id}:${profile!.batch_year}`) && {
           scope: "batch" as const,
-          title: `${batchName} batch chat`,
-          hint: "Everyone in your department batch",
+          title: `${dept!.short_code} · Class of ${profile!.batch_year}`,
+          hint: "Your batch chat",
         },
         profile!.section &&
           !keys.has(
             `section:${profile!.department_id}:${profile!.batch_year}:${profile!.section}:${profile!.shift ?? "-"}`,
           ) && {
             scope: "section" as const,
-            title: `${batchName} · Sec ${profile!.section} chat`,
-            hint: "Just your section",
+            title: `${batchName} · Section ${profile!.section}`,
+            hint: "Your section chat",
           },
       ].filter((o): o is { scope: "batch" | "section"; title: string; hint: string } => !!o)
     : [];
@@ -76,145 +81,128 @@ export default async function ChatsPage({ searchParams }: Props) {
   };
   const shown = lists[tab];
 
-  return (
-    <AppShell bell>
-      <ChatsLive userId={user.id} />
-      <h1 className="text-[28px] leading-tight font-bold">Chats</h1>
+  const rows: ChatRowData[] = shown.map((c) => {
+    const dm = c.kind === "dm" || c.kind === "ping";
+    const mine = c.last_sender_id === user.id;
+    return {
+      id: c.id,
+      name: dm ? (c.other_name ?? c.other_handle ?? "Student") : (c.title ?? "Group"),
+      avatar: dm ? c.other_avatar : null,
+      group: !dm,
+      emoji: c.emoji,
+      preview: c.last_body ? `${mine ? "You: " : ""}${c.last_body}` : "Say hi",
+      time: shortTime(c.last_at),
+      unread: c.unread,
+      muted: c.muted,
+    };
+  });
 
-      <nav aria-label="Chat folders" className="flex gap-2">
-        {TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "primary" ? "/chats" : `/chats?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={cn(
-              "flex h-10 items-center gap-1.5 rounded-pill border px-4 text-sm font-semibold",
-              tab === t.key
-                ? "border-ink bg-ink text-bg"
-                : "border-line bg-surface text-ink hover:border-ink-2/50",
-            )}
-          >
-            {t.label}
-            {counts[t.key] > 0 && (
-              <span
-                className={cn(
-                  "grid min-w-5 place-items-center rounded-pill px-1 text-[11px]",
-                  tab === t.key ? "bg-brand-soft text-ink" : "bg-brand text-brand-ink",
-                )}
-              >
-                {counts[t.key]}
-              </span>
-            )}
-          </Link>
-        ))}
-      </nav>
+  const empty = {
+    primary: (
+      <EmptyState
+        icon={MessageCircle}
+        title="No chats yet"
+        action={
+          <Button asChild variant="tinted" size="sm">
+            <Link href="/explore/batch">Find your batch</Link>
+          </Button>
+        }
+      >
+        Say hi to someone in your batch. Chats you start show up here.
+      </EmptyState>
+    ),
+    requests: (requests?.length ?? 0) === 0 && (
+      <EmptyState icon={Inbox} title="No message requests">
+        When someone you&apos;re not connected with messages you, it waits here until you accept.
+      </EmptyState>
+    ),
+    groups: offers.length === 0 && (
+      <EmptyState
+        icon={Users}
+        title="No group chats yet"
+        action={
+          <Button asChild variant="tinted" size="sm">
+            <Link href="/chats/new">New group</Link>
+          </Button>
+        }
+      >
+        Start one for a study group, a trip or your hostel floor.
+      </EmptyState>
+    ),
+  }[tab];
 
-      {tab === "groups" && (
-        <div className="grid gap-2">
-          {offers.map((o) => (
-            <JoinBatchChat key={o.scope} {...o} />
-          ))}
-          <Button asChild variant="secondary" block>
+  const before =
+    tab === "groups" ? (
+      <div className="grid gap-3">
+        {offers.length > 0 && (
+          <section aria-labelledby="suggested" className="grid gap-2">
+            <Overline id="suggested" className="px-4">
+              Suggested
+            </Overline>
+            <div className="overflow-hidden rounded-card bg-surface shadow-card">
+              {offers.map((o) => (
+                <JoinBatchChat key={o.scope} {...o} />
+              ))}
+            </div>
+          </section>
+        )}
+        {(offers.length > 0 || lists.groups.length > 0) && (
+          <Button asChild variant="tinted" block>
             <Link href="/chats/new">
-              <Plus /> New group
+              <Plus aria-hidden /> New group
             </Link>
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+    ) : tab === "requests" && (requests?.length ?? 0) > 0 ? (
+      <section aria-label="Connection requests" className="grid gap-3">
+        {requests!.map((r) => (
+          <RequestRow
+            key={r.requester_id}
+            requester={r.requester_id}
+            handle={r.handle}
+            name={r.full_name ?? r.handle ?? "Student"}
+            avatar={r.avatar_url}
+            note={r.message}
+          />
+        ))}
+      </section>
+    ) : null;
 
-      {tab === "requests" && (requests?.length ?? 0) > 0 && (
-        <section aria-label="Connection requests" className="grid gap-2">
-          {requests!.map((r) => (
-            <RequestRow
-              key={r.requester_id}
-              requester={r.requester_id}
-              handle={r.handle}
-              name={r.full_name ?? r.handle ?? "Student"}
-              avatar={r.avatar_url}
-              note={r.message}
-            />
-          ))}
-        </section>
-      )}
-
-      {shown.length > 0 ? (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
-          {shown.map((c) => {
-            const name =
-              c.kind === "dm" || c.kind === "ping"
-                ? (c.other_name ?? c.other_handle ?? "Student")
-                : (c.title ?? "Group");
-            const mine = c.last_sender_id === user.id;
-            return (
-              <li key={c.id}>
-                <Link
-                  href={`/chats/${c.id}`}
-                  className="flex items-center gap-3 px-3 py-3 hover:bg-surface-2"
-                >
-                  {c.kind === "dm" || c.kind === "ping" ? (
-                    <Avatar name={name} src={c.other_avatar} size="md" />
-                  ) : (
-                    <span className="grid size-11 shrink-0 place-items-center rounded-pill bg-lane-people text-lg text-lane-people-ink">
-                      {c.emoji ?? <Users className="size-5" />}
-                    </span>
-                  )}
-                  <span className="grid min-w-0 flex-1 gap-0.5">
-                    <span className="flex items-center gap-2">
-                      <span
-                        className={cn("truncate", c.unread > 0 ? "font-bold" : "font-semibold")}
-                      >
-                        {name}
-                      </span>
-                      {c.muted && (
-                        <BellOff className="size-3.5 shrink-0 text-ink-2" aria-label="Muted" />
-                      )}
-                      <span className="ml-auto shrink-0 text-xs text-ink-2">
-                        {shortTime(c.last_at)}
-                      </span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "truncate text-sm",
-                          c.unread > 0 ? "font-semibold text-ink" : "text-ink-2",
-                        )}
-                      >
-                        {c.last_body ? `${mine ? "You: " : ""}${c.last_body}` : "Say hi 👋"}
-                      </span>
-                      {c.unread > 0 && (
-                        <span
-                          className={cn(
-                            "ml-auto grid min-w-5 shrink-0 place-items-center rounded-pill px-1 text-[11px] font-semibold",
-                            c.muted ? "bg-surface-2 text-ink-2" : "bg-brand text-brand-ink",
-                          )}
-                        >
-                          {c.unread > 99 ? "99+" : c.unread}
-                        </span>
-                      )}
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        !(tab === "requests" && (requests?.length ?? 0) > 0) && (
-          <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-            {tab === "primary" && (
-              <>
-                No chats yet.{" "}
-                <Link href="/explore/batch" className="font-semibold text-brand">
-                  Find your batch
-                </Link>{" "}
-                and say hi.
-              </>
-            )}
-            {tab === "requests" && "No requests right now."}
-            {tab === "groups" && "No group chats yet."}
-          </p>
-        )
-      )}
+  return (
+    <AppShell>
+      <ChatsLive userId={user.id} />
+      <ScreenHeader
+        title="Chats"
+        actions={
+          <>
+            <span className="lg:hidden">
+              <BellSlot />
+            </span>
+            <IconButton asChild>
+              <Link href="/chats/new" aria-label="New group chat">
+                <SquarePen aria-hidden />
+              </Link>
+            </IconButton>
+          </>
+        }
+      />
+      <ChatsBrowser
+        chats={rows}
+        before={before}
+        empty={empty}
+        folders={
+          <SegmentedControl
+            label="Chat folders"
+            value={tab}
+            segments={TABS.map((t) => ({
+              value: t.key,
+              label: counts[t.key] > 0 ? `${t.label} (${counts[t.key]})` : t.label,
+              href: t.key === "primary" ? "/chats" : `/chats?tab=${t.key}`,
+            }))}
+          />
+        }
+      />
     </AppShell>
   );
 }

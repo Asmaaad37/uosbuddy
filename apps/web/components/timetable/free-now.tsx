@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Zap } from "lucide-react";
+import { Clock, Loader2, Zap } from "lucide-react";
 import { sendPing, setOnCampus, setShowFreeNow } from "@/actions/timetable";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { minToTime } from "@/lib/academics";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Person = {
   id: string;
@@ -81,11 +82,11 @@ export function FreeNow({
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-3 rounded-lg border border-line bg-surface p-4">
+      <div className="grid gap-3 rounded-card border border-sep bg-surface p-4">
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
             <span className="font-semibold">Show me here</span>
-            <span className="text-[13px] text-ink-2">
+            <span className="text-[13px] text-sec">
               When you&apos;re on campus and not in class
             </span>
           </span>
@@ -94,13 +95,13 @@ export function FreeNow({
             role="switch"
             checked={visible}
             onChange={(e) => void toggleVisible(e.target.checked)}
-            className="size-5 accent-[var(--brand)]"
+            className="size-5 accent-[var(--accent)]"
           />
         </label>
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
             <span className="font-semibold">I&apos;m on campus</span>
-            <span className="text-[13px] text-ink-2">
+            <span className="text-[13px] text-sec">
               {until
                 ? `Until ${new Date(until).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" })}`
                 : "Turns itself off after 3 hours"}
@@ -111,7 +112,7 @@ export function FreeNow({
             role="switch"
             checked={!!until}
             onChange={(e) => void toggleCampus(e.target.checked)}
-            className="size-5 accent-[var(--brand)]"
+            className="size-5 accent-[var(--accent)]"
           />
         </label>
       </div>
@@ -127,12 +128,12 @@ export function FreeNow({
             return (
               <li
                 key={p.id}
-                className="flex items-center gap-3 rounded-lg border border-line bg-surface p-3"
+                className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
               >
                 <Avatar name={name} src={p.avatar_url} size="md" />
                 <span className="grid min-w-0 flex-1">
                   <span className="truncate font-semibold">{name}</span>
-                  <span className="text-sm text-ink-2">
+                  <span className="text-sm text-sec">
                     {p.free_until_min !== null
                       ? `Free until ${minToTime(p.free_until_min)}`
                       : "Free for the day"}
@@ -144,9 +145,7 @@ export function FreeNow({
           })}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
-          Nobody&apos;s free on campus right now.
-        </p>
+        <EmptyState icon={Clock}>Nobody&apos;s free on campus right now.</EmptyState>
       )}
     </div>
   );

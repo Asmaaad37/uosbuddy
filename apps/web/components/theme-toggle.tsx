@@ -1,52 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
+import { useAppearance, type Appearance } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
-type Theme = "system" | "light" | "dark";
-const KEY = "uosbuddy-theme";
-
-function apply(theme: Theme) {
-  const root = document.documentElement;
-  if (theme === "system") root.removeAttribute("data-theme");
-  else root.setAttribute("data-theme", theme);
-}
-
-const options: { value: Theme; label: string; Icon: typeof Sun }[] = [
+const options: { value: Appearance; label: string; Icon: typeof Sun }[] = [
   { value: "system", label: "System theme", Icon: Monitor },
-  { value: "light", label: "Light theme", Icon: Sun },
   { value: "dark", label: "Dark theme", Icon: Moon },
+  { value: "light", label: "Light theme", Icon: Sun },
 ];
 
+/** A compact System / Dark / Light switch (Settings → Appearance uses the same provider). */
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>("system");
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(KEY) as Theme | null;
-      if (saved) {
-        setTheme(saved);
-        apply(saved);
-      }
-    } catch {
-      // Storage unavailable (private mode): fall back to the system theme.
-    }
-  }, []);
-
-  function choose(next: Theme) {
-    setTheme(next);
-    apply(next);
-    try {
-      localStorage.setItem(KEY, next);
-    } catch {}
-  }
+  const { appearance: theme, setAppearance: choose } = useAppearance();
 
   return (
     <div
       role="radiogroup"
       aria-label="Theme"
-      className={cn("inline-flex gap-1 rounded-pill bg-surface-2 p-1", className)}
+      className={cn("inline-flex gap-1 rounded-track bg-track p-0.5", className)}
     >
       {options.map(({ value, label, Icon }) => (
         <button
@@ -56,7 +28,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           aria-checked={theme === value}
           aria-label={label}
           onClick={() => choose(value)}
-          className="grid size-11 place-items-center rounded-pill text-ink-2 transition-colors hover:text-ink aria-checked:bg-surface aria-checked:text-ink aria-checked:shadow-card"
+          className="grid size-11 place-items-center rounded-thumb text-sec transition-colors hover:text-label aria-checked:bg-thumb aria-checked:text-label aria-checked:shadow-[0_1px_3px_rgba(0,0,0,.18)]"
         >
           <Icon className="size-[18px]" aria-hidden />
         </button>

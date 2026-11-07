@@ -19,8 +19,8 @@ export default async function NotificationSettingsPage() {
   return (
     <AppShell back="/me">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Notifications</h1>
-        <p className="text-ink-2">Choose what pings you. Blocked students never notify you.</p>
+        <h1 className="text-large-title">Notifications</h1>
+        <p className="text-sec">Choose what pings you. Blocked students never notify you.</p>
       </div>
       <PrefsForm
         initial={

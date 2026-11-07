@@ -72,7 +72,7 @@ test("a Backup request: ask, claim, chat, mark done", async ({ browser }) => {
 
   // A asks; B (same section) is notified and sees it near them.
   await a.page.goto("/backup");
-  await a.page.getByRole("button", { name: "Ask for backup" }).click();
+  await a.page.getByRole("button", { name: "Ask for notes" }).click();
   await a.page.getByRole("radio", { name: /Notes/ }).click();
   await a.page.getByLabel("In a few words").fill(`Need DSA notes from Monday ${run}`);
   await a.page.screenshot({ path: "test-results/screens/phase-5/04-ask.png" });
@@ -95,7 +95,7 @@ test("a Backup request: ask, claim, chat, mark done", async ({ browser }) => {
   const card = b.page.locator("li", { hasText: `Need DSA notes from Monday ${run}` });
   await expect(card.getByText("Your section")).toBeVisible();
   await shot(b.page, "05-backup");
-  await card.getByRole("button", { name: "I can help" }).click();
+  await card.getByRole("button", { name: "I've got you" }).click();
   await expect(b.page).toHaveURL(/\/chats\/[0-9a-f-]{36}$/);
   await expect(b.page.getByText(/Backup: Need DSA notes/)).toBeVisible();
 

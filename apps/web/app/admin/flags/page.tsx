@@ -20,14 +20,14 @@ export default async function FlagsPage() {
     <AdminShell current="/admin/flags" isAdmin back={homePath(profile)}>
       <div>
         <h1 className="text-[28px] font-bold">Feature flags</h1>
-        <p className="text-ink-2">Changes apply immediately and are recorded in the audit log.</p>
+        <p className="text-sec">Changes apply immediately and are recorded in the audit log.</p>
       </div>
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
         {(flags ?? []).map((f) => (
           <li key={f.key} className="flex items-center gap-4 p-4">
             <div className="grid min-w-0 flex-1">
               <span className="font-mono font-semibold">{f.key}</span>
-              {f.note && <span className="text-sm text-ink-2">{f.note}</span>}
+              {f.note && <span className="text-sm text-sec">{f.note}</span>}
             </div>
             <FlagToggle flag={f.key} enabled={f.enabled} label={f.key} />
           </li>

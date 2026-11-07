@@ -8,7 +8,9 @@ import { SCOPES, type Scope } from "@/lib/discovery";
 
 export const metadata: Metadata = { title: "Your batch" };
 
-type Props = { searchParams: Promise<{ tab?: string; hometown?: string }> };
+type Props = {
+  searchParams: Promise<{ tab?: string; hometown?: string; interest?: string; q?: string }>;
+};
 
 /** Phase 3 task 3: the batch directory. */
 export default async function BatchPage({ searchParams }: Props) {
@@ -16,7 +18,9 @@ export default async function BatchPage({ searchParams }: Props) {
   if (!user || !profile) redirect("/login?next=/explore/batch");
 
   const hasSection = !!profile.section;
-  const { tab, hometown: rawHometown } = await searchParams;
+  const { tab, hometown: rawHometown, interest: rawInterest, q } = await searchParams;
+  const query = q?.trim().slice(0, 60) || undefined;
+  const interest = rawInterest && /^[0-9a-f-]{36}$/i.test(rawInterest) ? rawInterest : undefined;
   const hometown = rawHometown?.trim().slice(0, 60) || undefined;
   const requested = SCOPES.find((s) => s.key === tab)?.key;
   const scope: Scope =
@@ -27,7 +31,7 @@ export default async function BatchPage({ searchParams }: Props) {
         : "batch";
 
   const [page, counts, { data: interests }] = await Promise.all([
-    loadDirectory({ scope, hometown }),
+    loadDirectory({ scope, hometown, interest, query }),
     getDirectoryCounts(),
     supabase.from("interests").select("id, label, emoji").order("sort"),
   ]);
@@ -35,8 +39,8 @@ export default async function BatchPage({ searchParams }: Props) {
   return (
     <AppShell back="/explore">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">Your batch</h1>
-        <p className="text-ink-2">Start with your section, then widen out to all of UoS.</p>
+        <h1 className="text-large-title">Your batch</h1>
+        <p className="text-sec">Start with your section, then widen out to all of UoS.</p>
       </div>
       <Directory
         initialScope={scope}
@@ -49,7 +53,8 @@ export default async function BatchPage({ searchParams }: Props) {
         }}
         interests={interests ?? []}
         hasSection={hasSection}
-        initialFilters={hometown ? { hometown } : undefined}
+        initialFilters={hometown || interest ? { hometown, interest } : undefined}
+        initialQuery={query}
       />
     </AppShell>
   );

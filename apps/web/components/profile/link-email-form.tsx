@@ -43,8 +43,8 @@ export function LinkEmailForm({ domain }: { domain: string }) {
   if (stage === "code") {
     return (
       <form onSubmit={confirm} className="grid gap-4" noValidate>
-        <p className="text-ink-2">
-          We sent a 6-digit code to <strong className="text-ink">{email}</strong>. It can take a
+        <p className="text-sec">
+          We sent a 6-digit code to <strong className="text-label">{email}</strong>. It can take a
           minute, and may land in spam.
         </p>
         <Field id={`${id}-code`} label="Code" error={error}>
@@ -62,7 +62,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
           )}
         </Field>
         {notice && (
-          <p role="status" className="text-sm text-ink-2">
+          <p role="status" className="text-sm text-sec">
             {notice}
           </p>
         )}
@@ -72,7 +72,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
         <div className="flex justify-between text-sm">
           <button
             type="button"
-            className="font-semibold text-brand"
+            className="font-semibold text-accent"
             onClick={() => {
               setError(undefined);
               setNotice(undefined);
@@ -83,7 +83,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
           </button>
           <button
             type="button"
-            className="font-semibold text-brand"
+            className="font-semibold text-accent"
             onClick={() => sendCode()}
             disabled={busy}
           >

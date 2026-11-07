@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { CalendarDays, Check, Loader2 } from "lucide-react";
 import { freeTogether, type DayWindows } from "@/actions/timetable";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { minToTime } from "@/lib/academics";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Person = {
   id: string;
@@ -33,9 +34,9 @@ export function FreeTogether({ connections }: { connections: Person[] }) {
 
   if (!connections.length) {
     return (
-      <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+      <EmptyState icon={CalendarDays}>
         Connect with classmates to find time you&apos;re all free.
-      </p>
+      </EmptyState>
     );
   }
 
@@ -57,12 +58,12 @@ export function FreeTogether({ connections }: { connections: Person[] }) {
                 }}
                 className={cn(
                   "flex h-10 items-center gap-2 rounded-pill border py-1 pr-3 pl-1 text-sm font-semibold",
-                  on ? "border-brand bg-brand/10" : "border-line bg-surface",
+                  on ? "border-accent bg-tint" : "border-sep bg-surface",
                 )}
               >
                 <Avatar name={name} src={c.avatar_url} size="sm" className="size-8" />
                 {name.split(" ")[0]}
-                {on && <Check className="size-4 text-brand" />}
+                {on && <Check className="size-4 text-accent" />}
               </button>
             </li>
           );
@@ -81,7 +82,7 @@ export function FreeTogether({ connections }: { connections: Person[] }) {
           {result.map((d) => (
             <div
               key={d.day}
-              className="flex items-start gap-3 rounded-lg border border-line bg-surface p-3"
+              className="flex items-start gap-3 rounded-card border border-sep bg-surface p-3"
             >
               <span className="w-10 shrink-0 font-bold">{d.day}</span>
               {d.windows.length ? (
@@ -89,18 +90,18 @@ export function FreeTogether({ connections }: { connections: Person[] }) {
                   {d.windows.map((w) => (
                     <li
                       key={w.start}
-                      className="rounded-pill bg-lane-learn/20 px-2.5 py-1 text-sm font-semibold tabular-nums"
+                      className="rounded-pill bg-raised/20 px-2.5 py-1 text-sm font-semibold tabular-nums"
                     >
                       {minToTime(w.start)}–{minToTime(w.end)}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <span className="text-sm text-ink-2">No common free time</span>
+                <span className="text-sm text-sec">No common free time</span>
               )}
             </div>
           ))}
-          <p className="text-xs text-ink-2">
+          <p className="text-xs text-sec">
             Between 8:00 and 17:00, gaps of 30 minutes or more. Friends who keep their free time
             private count as free.
           </p>

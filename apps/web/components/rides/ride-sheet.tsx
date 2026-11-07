@@ -105,7 +105,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-xl font-bold">New ride</SheetTitle>
-        <SheetDescription className="mb-4 text-sm text-ink-2">
+        <SheetDescription className="mb-4 text-sm text-sec">
           Verified UoS students only. Phone numbers are never shown; you&apos;ll talk in a group
           chat once you accept someone.
         </SheetDescription>
@@ -124,12 +124,12 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
                 aria-checked={kind === k}
                 onClick={() => setKind(k)}
                 className={cn(
-                  "grid rounded-md border p-3 text-left",
-                  kind === k ? "border-brand bg-brand/10" : "border-line hover:border-ink-2/50",
+                  "grid rounded-field border p-3 text-left",
+                  kind === k ? "border-accent bg-tint" : "border-sep hover:border-sec/50",
                 )}
               >
                 <span className="font-semibold">{title}</span>
-                <span className="text-xs text-ink-2">{sub}</span>
+                <span className="text-xs text-sec">{sub}</span>
               </button>
             ))}
           </div>
@@ -177,7 +177,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
                   }
                   className={cn(
                     "h-9 rounded-pill border px-3 text-sm font-semibold",
-                    days.includes(i) ? "border-ink bg-ink text-bg" : "border-line",
+                    days.includes(i) ? "border-accent bg-tint text-tint-text" : "border-sep",
                   )}
                 >
                   {d}
@@ -186,16 +186,16 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
             </div>
           </fieldset>
           {womenEligible && (
-            <label className="flex items-center gap-3 rounded-md border border-line p-3">
+            <label className="flex items-center gap-3 rounded-field border border-sep p-3">
               <input
                 type="checkbox"
                 checked={womenOnly}
                 onChange={(e) => setWomenOnly(e.target.checked)}
-                className="size-5 accent-[var(--brand)]"
+                className="size-5 accent-[var(--accent)]"
               />
               <span className="grid">
                 <span className="font-semibold">Women only</span>
-                <span className="text-xs text-ink-2">
+                <span className="text-xs text-sec">
                   Only students confirmed for women-only spaces can see and join it.
                 </span>
               </span>

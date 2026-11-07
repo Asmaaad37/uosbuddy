@@ -43,10 +43,7 @@ export default async function ProofPage() {
       subtitle="A real person checks this, usually within 12 hours."
     >
       {reason && (
-        <div
-          role="status"
-          className="rounded-md border border-warning/50 bg-warning/10 p-4 text-sm"
-        >
+        <div role="status" className="rounded-field border border-danger/50 bg-raised p-4 text-sm">
           <p className="font-semibold">The reviewer said:</p>
           <p className="mt-1">{reason}</p>
         </div>

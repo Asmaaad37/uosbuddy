@@ -179,7 +179,7 @@ export function AboutForm({
         <div className="relative">
           <Avatar name={initial.name || handle || "?"} src={avatarUrl ?? undefined} size="xl" />
           {uploading && (
-            <span className="absolute inset-0 grid place-items-center rounded-pill bg-ink/50">
+            <span className="absolute inset-0 grid place-items-center rounded-pill bg-label/50">
               <Loader2 className="size-6 animate-spin text-bg" />
             </span>
           )}
@@ -207,7 +207,7 @@ export function AboutForm({
           {avatarUrl && (
             <button
               type="button"
-              className="justify-self-start text-sm font-semibold text-ink-2 hover:text-danger"
+              className="justify-self-start text-sm font-semibold text-sec hover:text-danger"
               onClick={() => setAvatarUrl(null)}
             >
               Remove photo
@@ -253,7 +253,7 @@ export function AboutForm({
       >
         {(aria) => (
           <div className="relative">
-            <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-2">
+            <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sec">
               @
             </span>
             <Input
@@ -268,10 +268,10 @@ export function AboutForm({
             />
             <span className="absolute top-1/2 right-4 -translate-y-1/2" aria-live="polite">
               {handleState === "checking" && (
-                <Loader2 className="size-4 animate-spin text-ink-2" aria-label="Checking" />
+                <Loader2 className="size-4 animate-spin text-sec" aria-label="Checking" />
               )}
               {handleState === "available" && (
-                <Check className="size-4 text-success" aria-label="Available" />
+                <Check className="size-4 text-tint-text" aria-label="Available" />
               )}
               {(handleState === "taken" || handleState === "invalid") && (
                 <X className="size-4 text-danger" aria-label="Not available" />
@@ -326,8 +326,8 @@ export function AboutForm({
               className={cn(
                 "h-12 rounded-pill border text-sm font-semibold transition-colors",
                 residence === r.value
-                  ? "border-ink bg-ink text-bg"
-                  : "border-line bg-surface hover:border-ink-2/50",
+                  ? "border-accent bg-tint text-tint-text"
+                  : "border-sep text-label hover:bg-raised",
               )}
             >
               {r.label}

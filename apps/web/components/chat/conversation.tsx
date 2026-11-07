@@ -93,11 +93,16 @@ function useAttachmentUrl(path: string | null, seed?: string) {
 
 function Attachment({ path, seed }: { path: string | null; seed?: string }) {
   const url = useAttachmentUrl(path, seed);
-  if (!url) return <div className="aspect-[4/3] w-56 animate-pulse rounded-md bg-surface-2" />;
+  if (!url) return <div className="aspect-[4/3] w-56 animate-pulse rounded-field bg-raised" />;
   return (
     <a href={url} target="_blank" rel="noreferrer" className="block">
       {/* eslint-disable-next-line @next/next/no-img-element -- signed private URL */}
-      <img src={url} alt="Photo" className="max-h-80 w-56 rounded-md object-cover" loading="lazy" />
+      <img
+        src={url}
+        alt="Photo"
+        className="max-h-80 w-56 rounded-field object-cover"
+        loading="lazy"
+      />
     </a>
   );
 }
@@ -392,11 +397,11 @@ export function Conversation({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-bg">
-      <header className="gutter flex items-center gap-3 border-b border-line bg-surface py-2">
+      <header className="gutter flex items-center gap-3 border-b border-sep bg-surface py-2">
         <Link
           href={request ? "/chats?tab=requests" : oneToOne ? "/chats" : "/chats?tab=groups"}
           aria-label="Back to chats"
-          className="-ml-2 grid size-11 place-items-center rounded-pill hover:bg-surface-2"
+          className="-ml-2 grid size-11 place-items-center rounded-pill hover:bg-raised"
         >
           <ArrowLeft className="size-5" />
         </Link>
@@ -407,12 +412,12 @@ export function Conversation({
           </Link>
         ) : (
           <span className="flex min-w-0 items-center gap-2">
-            <span className="grid size-8 place-items-center rounded-pill bg-lane-people text-lane-people-ink">
+            <span className="grid size-8 place-items-center rounded-pill bg-raised text-sec">
               <Users className="size-4" />
             </span>
             <span className="grid min-w-0">
               <span className="truncate font-semibold">{title}</span>
-              <span className="text-xs text-ink-2">{people.length} members</span>
+              <span className="text-xs text-sec">{people.length} members</span>
             </span>
           </span>
         )}
@@ -466,12 +471,12 @@ export function Conversation({
       >
         <div className="gutter mx-auto grid max-w-2xl gap-0.5 py-4">
           <div ref={top} aria-hidden className="h-1" />
-          {loadingOlder && <Loader2 className="mx-auto size-5 animate-spin text-ink-2" />}
+          {loadingOlder && <Loader2 className="mx-auto size-5 animate-spin text-sec" />}
           {!hasMore && messages.length > 0 && (
-            <p className="pb-4 text-center text-xs text-ink-2">This is the start of your chat.</p>
+            <p className="pb-4 text-center text-xs text-sec">This is the start of your chat.</p>
           )}
           {messages.length === 0 && (
-            <p className="py-10 text-center text-ink-2">No messages yet. Say hi! 👋</p>
+            <p className="py-10 text-center text-sec">No messages yet. Say hi! 👋</p>
           )}
           {messages.map((m, i) => {
             const prev = messages[i - 1];
@@ -481,14 +486,12 @@ export function Conversation({
             return (
               <div key={m.id}>
                 {newDay && (
-                  <p className="py-3 text-center text-xs font-semibold text-ink-2">
+                  <p className="py-3 text-center text-xs font-semibold text-sec">
                     {dayLabel(m.created_at)}
                   </p>
                 )}
                 {head && !mine && !oneToOne && (
-                  <p className="mt-2 px-3 text-xs font-semibold text-ink-2">
-                    {nameOf(m.sender_id)}
-                  </p>
+                  <p className="mt-2 px-3 text-xs font-semibold text-sec">{nameOf(m.sender_id)}</p>
                 )}
                 <div
                   className={cn(
@@ -499,8 +502,8 @@ export function Conversation({
                 >
                   <div
                     className={cn(
-                      "grid max-w-[80%] gap-1 rounded-lg px-3 py-2",
-                      mine ? "bg-ink text-bg" : "border border-line bg-surface",
+                      "grid max-w-[80%] gap-1 rounded-card px-3 py-2",
+                      mine ? "bg-fill text-on-fill" : "bg-surface",
                       m.pending && "opacity-60",
                       m.failed && "border border-danger",
                     )}
@@ -520,7 +523,7 @@ export function Conversation({
                         )}
                       </>
                     )}
-                    <p className={cn("text-right text-[10px]", mine ? "text-bg/60" : "text-ink-2")}>
+                    <p className={cn("text-right text-[10px]", mine ? "text-bg/60" : "text-sec")}>
                       {m.failed ? "Not sent" : m.pending ? "Sending…" : clockTime(m.created_at)}
                     </p>
                   </div>
@@ -530,7 +533,7 @@ export function Conversation({
                         <button
                           type="button"
                           aria-label="Message options"
-                          className="grid size-8 place-items-center rounded-pill text-ink-2 opacity-40 group-hover:opacity-100 hover:bg-surface-2 focus-visible:opacity-100"
+                          className="grid size-8 place-items-center rounded-pill text-sec opacity-40 group-hover:opacity-100 hover:bg-raised focus-visible:opacity-100"
                         >
                           <MoreHorizontal className="size-4" />
                         </button>
@@ -568,7 +571,7 @@ export function Conversation({
                   )}
                 </div>
                 {m.id === myLast?.id && oneToOne && (
-                  <p className="pt-1 pr-1 text-right text-[11px] text-ink-2">
+                  <p className="pt-1 pr-1 text-right text-[11px] text-sec">
                     {seen ? "Seen" : "Sent"}
                   </p>
                 )}
@@ -576,7 +579,7 @@ export function Conversation({
             );
           })}
           {typers.length > 0 && (
-            <p className="mt-2 px-3 text-sm text-ink-2 italic" aria-live="polite">
+            <p className="mt-2 px-3 text-sm text-sec italic" aria-live="polite">
               {typers.join(", ")} {typers.length === 1 ? "is" : "are"} typing…
             </p>
           )}
@@ -584,7 +587,7 @@ export function Conversation({
       </div>
 
       {request && other && (
-        <div className="gutter grid gap-2 border-t border-line bg-surface py-3">
+        <div className="gutter grid gap-2 border-t border-sep bg-surface py-3">
           <p className="text-sm">
             <strong>{title}</strong> isn&apos;t connected with you. Reply to accept, or decline to
             delete this chat.
@@ -619,7 +622,7 @@ export function Conversation({
 
       <form
         onSubmit={submit}
-        className="gutter flex items-end gap-2 border-t border-line bg-surface pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
+        className="gutter flex items-end gap-2 border-t border-sep bg-surface pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
       >
         <input
           ref={fileRef}
@@ -656,7 +659,7 @@ export function Conversation({
               }
             }}
             placeholder="Message"
-            className="max-h-32 min-h-11 w-full resize-none rounded-md border border-line bg-bg px-3 py-2.5 text-[15px] focus-visible:border-brand focus-visible:outline-none"
+            className="max-h-32 min-h-11 w-full resize-none rounded-field border border-sep bg-bg px-3 py-2.5 text-[15px] focus-visible:border-accent focus-visible:outline-none"
           />
         </div>
         <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>

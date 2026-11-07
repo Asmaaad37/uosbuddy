@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip, Stamp } from "@/components/ui/badge";
+import { Pill, Stamp } from "@/components/ui/badge";
 import { cardLine, type DirectoryPerson } from "@/lib/discovery";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export function PersonCard({
     <Link
       href={`/people/${person.handle}`}
       className={cn(
-        "flex gap-3 rounded-lg border border-line bg-surface p-3 transition-colors [contain-intrinsic-size:auto_96px] [content-visibility:auto] hover:border-ink-2/40",
+        "flex gap-3 rounded-card border border-sep bg-surface p-3 transition-colors [contain-intrinsic-size:auto_96px] [content-visibility:auto] hover:border-sec/40",
         className,
       )}
     >
@@ -37,18 +37,18 @@ export function PersonCard({
             </Stamp>
           )}
         </div>
-        {line && <p className="truncate text-[13px] text-ink-2">{line}</p>}
+        {line && <p className="truncate text-[13px] text-sec">{line}</p>}
         {(reason || (person.interests?.length ?? 0) > 0) && (
           <div className="flex flex-wrap gap-1.5 pt-0.5">
             {reason && (
-              <Chip tone="brand" className="h-6 px-2 text-xs">
+              <Pill tone="brand" className="h-6 px-2 text-xs">
                 {reason}
-              </Chip>
+              </Pill>
             )}
             {person.interests?.slice(0, reason ? 2 : 3).map((label) => (
-              <Chip key={label} tone="neutral" className="h-6 px-2 text-xs">
+              <Pill key={label} tone="neutral" className="h-6 px-2 text-xs">
                 {label}
-              </Chip>
+              </Pill>
             ))}
           </div>
         )}

@@ -50,7 +50,7 @@ export function PrivateImage({
     };
   }, [bucket, path, seed]);
 
-  if (!url) return <div className={cn("animate-pulse bg-surface-2", className)} />;
+  if (!url) return <div className={cn("animate-pulse bg-raised", className)} />;
   return (
     <a href={url} target="_blank" rel="noreferrer" className="block">
       {/* eslint-disable-next-line @next/next/no-img-element -- signed private URL */}

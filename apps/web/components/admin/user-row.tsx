@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setBanned, setModerator, warnUser } from "@/actions/trust";
 import { Avatar } from "@/components/ui/avatar";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
@@ -61,22 +61,22 @@ export function UserRow({
           <span className="flex flex-wrap items-center gap-1.5 font-semibold">
             {u.handle ? <Link href={`/people/${u.handle}`}>{name}</Link> : name}
             {u.role !== "student" && (
-              <Chip tone="brand" className="h-5 px-2 text-[11px] capitalize">
+              <Pill tone="brand" className="h-5 px-2 text-[11px] capitalize">
                 {u.role}
-              </Chip>
+              </Pill>
             )}
             {u.banned_at && (
-              <Chip tone="help" className="h-5 px-2 text-[11px]">
+              <Pill tone="help" className="h-5 px-2 text-[11px]">
                 Banned
-              </Chip>
+              </Pill>
             )}
             {u.deleted_at && (
-              <Chip tone="outline" className="h-5 px-2 text-[11px]">
+              <Pill tone="outline" className="h-5 px-2 text-[11px]">
                 Deleting
-              </Chip>
+              </Pill>
             )}
           </span>
-          <span className="truncate text-xs text-ink-2">
+          <span className="truncate text-xs text-sec">
             {[u.department, u.batch_year, u.verification_status, u.email]
               .filter(Boolean)
               .join(" · ")}
@@ -145,7 +145,7 @@ export function UserRow({
       )}
       {mode === "mod" && (
         <form
-          className="grid gap-2 rounded-md border border-line p-3"
+          className="grid gap-2 rounded-field border border-sep p-3"
           onSubmit={(e) => {
             e.preventDefault();
             run(
@@ -162,7 +162,7 @@ export function UserRow({
               <label key={s.value} className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--brand)]"
+                  className="size-4 accent-[var(--accent)]"
                   checked={picked.includes(s.value)}
                   onChange={(e) =>
                     setPicked((p) =>

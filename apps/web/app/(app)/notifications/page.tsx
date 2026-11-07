@@ -19,6 +19,7 @@ import { getSession } from "@/lib/auth/session";
 import { shortTime } from "@/lib/chat";
 import { describe } from "@/lib/notifications";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Notifications" };
 
@@ -44,19 +45,19 @@ export default async function NotificationsPage() {
         <Link
           href="/me/notifications"
           aria-label="Notification settings"
-          className="grid size-11 place-items-center rounded-pill hover:bg-surface-2"
+          className="grid size-11 place-items-center rounded-pill hover:bg-raised"
         >
           <Settings className="size-5" />
         </Link>
       }
     >
       <MarkAllRead />
-      <h1 className="text-[28px] leading-tight font-bold">Notifications</h1>
+      <h1 className="text-large-title">Notifications</h1>
       {(items?.length ?? 0) > 0 && (
         <PushPrompt reason="Get a ping on this phone when classmates need backup or message you." />
       )}
       {items?.length ? (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
           {items.map((n) => {
             const d = describe(n);
             const Icon = ICONS[n.type.split(".")[0]!] ?? Bell;
@@ -64,20 +65,17 @@ export default async function NotificationsPage() {
               <li key={n.id}>
                 <Link
                   href={d.href}
-                  className={cn(
-                    "flex gap-3 px-4 py-3 hover:bg-surface-2",
-                    !n.read_at && "bg-brand/5",
-                  )}
+                  className={cn("flex gap-3 px-4 py-3 hover:bg-raised", !n.read_at && "bg-tint")}
                 >
                   <span className="relative shrink-0">
                     {n.actor_name ? (
                       <Avatar name={n.actor_name} src={n.actor_avatar} size="md" />
                     ) : (
-                      <span className="grid size-11 place-items-center rounded-pill bg-ink text-bg">
+                      <span className="grid size-11 place-items-center rounded-pill bg-fill text-on-fill">
                         <VenetianMask className="size-5" />
                       </span>
                     )}
-                    <span className="absolute -right-1 -bottom-1 grid size-5 place-items-center rounded-pill border-2 border-surface bg-brand text-brand-ink">
+                    <span className="absolute -right-1 -bottom-1 grid size-5 place-items-center rounded-pill border-2 border-surface bg-fill text-on-fill">
                       <Icon className="size-3" />
                     </span>
                   </span>
@@ -85,13 +83,13 @@ export default async function NotificationsPage() {
                     <span className={cn("text-[15px]", !n.read_at && "font-semibold")}>
                       {d.title}
                     </span>
-                    {d.body && <span className="truncate text-sm text-ink-2">{d.body}</span>}
-                    <span className="text-xs text-ink-2">{shortTime(n.created_at)}</span>
+                    {d.body && <span className="truncate text-sm text-sec">{d.body}</span>}
+                    <span className="text-xs text-sec">{shortTime(n.created_at)}</span>
                   </span>
                   {!n.read_at && (
                     <span
                       aria-label="Unread"
-                      className="mt-2 size-2 shrink-0 rounded-pill bg-brand"
+                      className="mt-2 size-2 shrink-0 rounded-pill bg-fill"
                     />
                   )}
                 </Link>
@@ -100,9 +98,9 @@ export default async function NotificationsPage() {
           })}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-ink-2">
+        <EmptyState icon={Bell}>
           Nothing yet. Connect requests, Backup pings and comments show up here.
-        </p>
+        </EmptyState>
       )}
     </AppShell>
   );

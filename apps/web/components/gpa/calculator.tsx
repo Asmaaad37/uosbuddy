@@ -59,14 +59,14 @@ export function GpaCalculator() {
 
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3 rounded-lg bg-ink p-5 text-bg">
+      <div className="grid grid-cols-2 gap-3 rounded-card bg-surface p-5 text-label shadow-card">
         <div>
-          <p className="text-sm text-bg/70">CGPA</p>
-          <p className="font-pixel text-4xl">{overall.gpa?.toFixed(2) ?? "–"}</p>
+          <p className="text-sm text-sec">CGPA</p>
+          <p className="text-large-title">{overall.gpa?.toFixed(2) ?? "–"}</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-bg/70">Credit hours</p>
-          <p className="font-pixel text-4xl">{overall.credits}</p>
+          <p className="text-sm text-sec">Credit hours</p>
+          <p className="text-large-title">{overall.credits}</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export function GpaCalculator() {
           <section
             key={s.id}
             aria-label={`Semester ${i + 1}`}
-            className="grid gap-3 rounded-lg border border-line bg-surface p-4"
+            className="grid gap-3 rounded-card border border-sep bg-surface p-4"
           >
             <div className="flex items-baseline justify-between">
               <h2 className="font-bold">Semester {i + 1}</h2>
@@ -84,7 +84,7 @@ export function GpaCalculator() {
                 GPA <strong>{result.gpa?.toFixed(2) ?? "–"}</strong>
               </p>
             </div>
-            <div className="grid grid-cols-[1fr_4.5rem_4.5rem_2.5rem_2rem] items-center gap-2 text-xs font-semibold text-ink-2">
+            <div className="grid grid-cols-[1fr_4.5rem_4.5rem_2.5rem_2rem] items-center gap-2 text-xs font-semibold text-sec">
               <span>Course</span>
               <span>Credits</span>
               <span>Marks</span>
@@ -103,13 +103,13 @@ export function GpaCalculator() {
                       maxLength={40}
                       onChange={(e) => update(s.id, c.id, { name: e.target.value })}
                       placeholder="DSA"
-                      className="h-10 min-w-0 rounded-md border border-line bg-bg px-2 text-sm"
+                      className="h-11 min-w-0 rounded-field bg-track px-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     />
                     <select
                       aria-label="Credit hours"
                       value={c.credits}
                       onChange={(e) => update(s.id, c.id, { credits: Number(e.target.value) })}
-                      className="h-10 rounded-md border border-line bg-bg px-1 text-sm"
+                      className="h-11 rounded-field bg-track px-1 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
                       {[1, 2, 3, 4, 5, 6].map((n) => (
                         <option key={n} value={n}>
@@ -129,12 +129,12 @@ export function GpaCalculator() {
                         });
                       }}
                       placeholder="0–100"
-                      className="h-10 rounded-md border border-line bg-bg px-2 text-sm tabular-nums"
+                      className="h-11 rounded-field bg-track px-2 text-sm tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     />
                     <span
                       className={cn(
                         "text-center text-sm font-bold",
-                        grade && !grade.passed ? "text-danger" : "text-ink",
+                        grade && !grade.passed ? "text-danger" : "text-label",
                       )}
                       aria-label={
                         grade
@@ -156,13 +156,13 @@ export function GpaCalculator() {
                           ),
                         )
                       }
-                      className="grid size-8 place-items-center rounded-pill text-ink-2 hover:bg-surface-2"
+                      className="hit grid size-8 place-items-center rounded-pill text-sec hover:bg-raised"
                     >
                       <Trash2 className="size-4" />
                     </button>
                   </div>
                   {grade && (
-                    <p className={cn("text-xs", grade.passed ? "text-ink-2" : "text-danger")}>
+                    <p className={cn("text-xs", grade.passed ? "text-sec" : "text-danger")}>
                       {grade.points.toFixed(2)} grade points
                       {!grade.passed && ` · below the ${PASS_MARK}% pass mark`}
                     </p>
@@ -173,7 +173,7 @@ export function GpaCalculator() {
             <div className="flex justify-between">
               <button
                 type="button"
-                className="flex items-center gap-1 text-sm font-semibold text-brand"
+                className="hit flex items-center gap-1 text-sm font-semibold text-accent"
                 onClick={() =>
                   setSemesters((list) =>
                     list.map((x) =>
@@ -187,7 +187,7 @@ export function GpaCalculator() {
               {semesters.length > 1 && (
                 <button
                   type="button"
-                  className="text-sm font-semibold text-ink-2"
+                  className="text-sm font-semibold text-sec"
                   onClick={() => setSemesters((list) => list.filter((x) => x.id !== s.id))}
                 >
                   Remove semester
@@ -205,7 +205,7 @@ export function GpaCalculator() {
       >
         <Plus /> Add a semester
       </Button>
-      <p className="text-xs text-ink-2">
+      <p className="text-xs text-sec">
         Uses the University of Sargodha grading table: 80+ = A (4.00), 65–79 = B, 50–64 = C, 40–49 =
         D, below 40 = F. A course needs {PASS_MARK}% to pass in the semester system. Saved only on
         this device. Your official result is what counts.

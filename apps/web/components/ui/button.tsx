@@ -3,25 +3,37 @@ import { Slot } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Pill buttons (Section 6.3 #3): ink-filled primary, outlined secondary, 48px on mobile, 0.97 press.
+/**
+ * Buttons (redesign §3). Primary: --fill with white text. Tinted: --tint with --tintText.
+ * Plain: transparent with --accent. Destructive: --danger text on --surface. Quiet: neutral
+ * text for overflow and dismiss actions (blue is only for what acts). Every button scales
+ * to 0.97 on pointer-down. The older variant names map onto these.
+ */
 export const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-pill font-semibold whitespace-nowrap transition-[transform,background-color,box-shadow,opacity] duration-200 select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-[1.15em] [&_svg]:shrink-0",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-btn font-semibold whitespace-nowrap transition-[transform,background-color,opacity] duration-100 ease-out select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-[1.15em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-ink text-bg hover:opacity-90",
-        brand: "bg-brand text-brand-ink hover:opacity-90",
-        secondary: "border-[1.5px] border-ink/80 bg-transparent text-ink hover:bg-ink/5",
-        ghost: "bg-transparent text-ink hover:bg-ink/5",
-        danger: "bg-danger text-white hover:opacity-90",
+        primary: "bg-fill text-on-fill hover:brightness-110",
+        tinted: "bg-tint text-tint-text hover:brightness-110",
+        plain: "bg-transparent text-accent hover:bg-tint",
+        destructive: "bg-surface text-danger hover:bg-raised",
+        quiet: "bg-transparent text-label hover:bg-raised",
+        // Older names, kept so existing screens restyle without edits.
+        brand: "bg-fill text-on-fill hover:brightness-110",
+        secondary: "bg-tint text-tint-text hover:brightness-110",
+        ghost: "bg-transparent text-label hover:bg-raised",
+        danger: "bg-surface text-danger hover:bg-raised",
       },
       size: {
-        lg: "h-12 px-6 text-base",
-        md: "h-11 px-5 text-[15px]",
-        sm: "h-9 px-4 text-sm",
-        icon: "size-11",
+        lg: "h-[52px] px-6 text-headline",
+        md: "h-12 px-5 text-headline",
+        sm: "hit h-9 rounded-field px-3.5 text-subhead",
+        xl: "h-[52px] px-6 text-headline",
+        icon: "size-11 rounded-pill",
       },
-      block: { true: "w-full" },
+      // Full-width buttons wrap long labels instead of widening the column.
+      block: { true: "w-full min-w-0 shrink whitespace-normal text-center" },
     },
     defaultVariants: { variant: "primary", size: "lg" },
   },
@@ -35,4 +47,24 @@ export interface ButtonProps
 export function Button({ className, variant, size, block, asChild, ...props }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button";
   return <Comp className={cn(buttonVariants({ variant, size, block }), className)} {...props} />;
+}
+
+/** A 44px round toolbar button on --surface (bell, compose, back). `fill` = primary. */
+export function IconButton({
+  className,
+  fill = false,
+  asChild,
+  ...props
+}: React.ComponentProps<"button"> & { fill?: boolean; asChild?: boolean }) {
+  const Comp = asChild ? Slot.Root : "button";
+  return (
+    <Comp
+      className={cn(
+        "grid size-11 shrink-0 place-items-center rounded-pill transition-transform duration-100 ease-out active:scale-[0.97] [&_svg]:size-[22px]",
+        fill ? "bg-fill text-on-fill" : "bg-surface text-label hover:bg-raised",
+        className,
+      )}
+      {...props}
+    />
+  );
 }

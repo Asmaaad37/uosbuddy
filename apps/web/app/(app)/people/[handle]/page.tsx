@@ -58,7 +58,7 @@ export default async function PersonPage({ params }: Props) {
       }
     >
       {own && (
-        <p className="rounded-md bg-brand/12 px-3 py-2 text-sm text-ink">
+        <p className="rounded-field bg-tint px-3 py-2 text-sm text-label">
           This is how your profile looks to students your privacy settings allow.
         </p>
       )}

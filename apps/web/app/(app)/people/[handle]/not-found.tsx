@@ -6,8 +6,8 @@ export default function ProfileNotFound() {
   return (
     <AppShell back="/explore">
       <div className="grid gap-2">
-        <h1 className="text-[28px] leading-tight font-bold">Profile not available</h1>
-        <p className="text-ink-2">
+        <h1 className="text-large-title">Profile not available</h1>
+        <p className="text-sec">
           The handle may be wrong, or this student has chosen who can see their profile.
         </p>
       </div>

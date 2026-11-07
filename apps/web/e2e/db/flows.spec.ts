@@ -85,7 +85,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await page.getByRole("button", { name: "Finish" }).click();
   // Phase 3: finishing setup lands on the batch reveal.
   await expect(page).toHaveURL(/\/explore\?welcome=1$/);
-  await expect(page.getByRole("heading", { name: /^Welcome/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Explore", level: 1 })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: /already here|first from CS 2024/ }),
   ).toBeVisible();
@@ -110,7 +110,11 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await expect(page).toHaveURL(/\/me$/);
   await expect(page.getByText("UoS email", { exact: true })).toBeVisible();
   // Section, UoS email: 2 of 7 done.
-  await expect(page.getByRole("heading", { name: "Your profile is 29% done" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Finish your profile" })).toBeVisible();
+  await expect(page.getByRole("progressbar", { name: "Profile completeness" })).toHaveAttribute(
+    "aria-valuenow",
+    "29",
+  );
 
   await page.getByRole("link", { name: "Write a short bio" }).click();
   await expect(page).toHaveURL(/\/setup\/about\?edit=1$/);
@@ -118,7 +122,10 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await page.getByLabel("Bio (optional)").fill("Here for the cricket.");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page).toHaveURL(/\/me$/);
-  await expect(page.getByRole("heading", { name: "Your profile is 43% done" })).toBeVisible();
+  await expect(page.getByRole("progressbar", { name: "Profile completeness" })).toHaveAttribute(
+    "aria-valuenow",
+    "43",
+  );
 
   await page.getByRole("link", { name: /View my profile/ }).click();
   await expect(page).toHaveURL(new RegExp(`/people/${handle}$`));

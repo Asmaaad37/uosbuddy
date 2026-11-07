@@ -100,8 +100,8 @@ export function FreshmanAccountForm() {
   const content =
     stage === "code" ? (
       <form onSubmit={confirm} className="grid gap-4" noValidate>
-        <p className="text-ink-2">
-          Enter the code we sent to <strong className="text-ink">{email}</strong> to confirm
+        <p className="text-sec">
+          Enter the code we sent to <strong className="text-label">{email}</strong> to confirm
           it&apos;s yours. Check spam if it doesn&apos;t arrive in a minute.
         </p>
         <Field id={`${id}-code`} label="Code" error={errors.code}>
@@ -125,7 +125,7 @@ export function FreshmanAccountForm() {
           type="button"
           onClick={resend}
           disabled={!captcha.ready}
-          className="justify-self-start text-sm font-semibold text-brand"
+          className="justify-self-start text-sm font-semibold text-accent"
         >
           Send a new code
         </button>
@@ -181,12 +181,12 @@ export function FreshmanAccountForm() {
                       key={i}
                       className={cn(
                         "h-1.5 rounded-pill",
-                        i <= strength ? (strength >= 3 ? "bg-success" : "bg-warning") : "bg-line",
+                        i <= strength ? (strength >= 3 ? "bg-fill" : "bg-danger") : "bg-sep",
                       )}
                     />
                   ))}
                 </div>
-                <span className="w-24 text-right text-[13px] text-ink-2">
+                <span className="w-24 text-right text-[13px] text-sec">
                   {password && STRENGTH[strength]}
                 </span>
               </div>
@@ -196,9 +196,9 @@ export function FreshmanAccountForm() {
         <Button type="submit" block disabled={busy || !captcha.ready}>
           {busy ? "Creating account…" : "Continue"}
         </Button>
-        <p className="text-center text-sm text-ink-2">
+        <p className="text-center text-sm text-sec">
           Already joined?{" "}
-          <Link href="/login" className="font-semibold text-brand">
+          <Link href="/login" className="font-semibold text-accent">
             Log in
           </Link>
         </p>

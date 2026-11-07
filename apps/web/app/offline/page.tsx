@@ -12,8 +12,8 @@ export default function OfflinePage() {
       <span aria-hidden className="text-5xl">
         📶
       </span>
-      <h1 className="text-[28px] leading-tight font-bold">You&apos;re offline</h1>
-      <p className="text-ink-2">
+      <h1 className="text-large-title">You&apos;re offline</h1>
+      <p className="text-sec">
         UOSBuddy needs a connection to load new things. Check your data or Wi-Fi, then try again.
       </p>
       <RetryButton />

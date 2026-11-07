@@ -64,8 +64,8 @@ export function PendingLive({ userId }: { userId: string }) {
 
   if (!live) return null;
   return (
-    <p role="status" className="flex items-center gap-2 text-sm text-ink-2">
-      <span className="size-2 animate-pulse rounded-pill bg-success" aria-hidden />
+    <p role="status" className="flex items-center gap-2 text-sm text-sec">
+      <span className="size-2 animate-pulse rounded-pill bg-fill" aria-hidden />
       Live: this page updates by itself when there&apos;s news.
     </p>
   );

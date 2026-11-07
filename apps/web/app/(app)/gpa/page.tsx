@@ -9,8 +9,8 @@ export default function GpaPage() {
   return (
     <AppShell back="/me">
       <div className="grid gap-1">
-        <h1 className="text-[28px] leading-tight font-bold">GPA calculator</h1>
-        <p className="text-ink-2">Enter your marks per course to see your GPA and CGPA.</p>
+        <h1 className="text-large-title">GPA calculator</h1>
+        <p className="text-sec">Enter your marks per course to see your GPA and CGPA.</p>
       </div>
       <GpaCalculator />
     </AppShell>

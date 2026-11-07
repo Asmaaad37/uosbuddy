@@ -69,11 +69,11 @@ export function InterestsForm({
       <div className="grid gap-5">
         <p className="text-sm font-semibold" aria-live="polite">
           {selected.length}/{MAX} picked
-          {full && <span className="font-normal text-ink-2"> · remove one to pick another</span>}
+          {full && <span className="font-normal text-sec"> · remove one to pick another</span>}
         </p>
         {categories.map(([category, list]) => (
           <fieldset key={category} className="grid gap-2">
-            <legend className="mb-1 text-xs font-semibold tracking-[0.12em] text-ink-2 uppercase">
+            <legend className="mb-1 text-xs font-semibold tracking-[0.12em] text-sec uppercase">
               {category}
             </legend>
             <div className="flex flex-wrap gap-2">
@@ -89,8 +89,8 @@ export function InterestsForm({
                     className={cn(
                       "inline-flex h-10 items-center gap-1.5 rounded-pill border px-3.5 text-sm font-medium transition-colors",
                       on
-                        ? "border-ink bg-ink text-bg"
-                        : "border-line bg-surface hover:border-ink-2/50 disabled:opacity-40",
+                        ? "border-accent bg-tint text-tint-text"
+                        : "border-sep bg-surface hover:border-sec/50 disabled:opacity-40",
                     )}
                   >
                     <span aria-hidden>{i.emoji}</span>
@@ -103,10 +103,10 @@ export function InterestsForm({
         ))}
       </div>
 
-      <div className="grid gap-3 rounded-lg border border-line bg-surface p-4">
+      <div className="grid gap-3 rounded-card border border-sep bg-surface p-4">
         <div>
           <p className="font-bold">Your Opening Move (optional)</p>
-          <p className="text-sm text-ink-2">
+          <p className="text-sm text-sec">
             Batchmates can reply to it when they connect, so saying hi isn&apos;t awkward.
           </p>
         </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarPlus, Clock, Loader2, MapPin, Users } from "lucide-react";
 import { cancelEvent, rsvpEvent } from "@/actions/campus";
-import { Chip } from "@/components/ui/badge";
+import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { pkTime } from "@/lib/campus";
@@ -48,40 +48,40 @@ export function EventCard({ event: e }: { event: EventItem }) {
     <article
       aria-label={e.title}
       className={cn(
-        "grid gap-3 rounded-lg border border-line bg-surface p-4",
+        "grid gap-3 rounded-card border border-sep bg-surface p-4",
         cancelled && "opacity-70",
       )}
     >
       <div className="grid gap-1">
         {e.society_name && (
-          <Link href={`/events/s/${e.society_slug}`} className="text-sm font-semibold text-brand">
+          <Link href={`/events/s/${e.society_slug}`} className="text-sm font-semibold text-accent">
             {e.society_emoji && <span aria-hidden>{e.society_emoji} </span>}
             {e.society_name}
           </Link>
         )}
         <h3 className="text-lg leading-snug font-bold">{e.title}</h3>
-        <p className="flex items-center gap-1.5 text-sm text-ink-2">
+        <p className="flex items-center gap-1.5 text-sm text-sec">
           <Clock className="size-4" aria-hidden /> {pkTime(e.starts_at)}
         </p>
-        <p className="flex items-center gap-1.5 text-sm text-ink-2">
+        <p className="flex items-center gap-1.5 text-sm text-sec">
           <MapPin className="size-4" aria-hidden /> {e.venue}
         </p>
       </div>
       {e.description && <p className="text-sm whitespace-pre-wrap">{e.description}</p>}
       <div className="flex flex-wrap gap-1.5">
-        <Chip tone="outline" className="h-6 px-2 text-xs">
+        <Pill tone="outline" className="h-6 px-2 text-xs">
           <Users className="size-3.5" aria-hidden /> {e.going} going
           {e.capacity !== null && ` of ${e.capacity}`}
-        </Chip>
+        </Pill>
         {e.interested > 0 && (
-          <Chip tone="outline" className="h-6 px-2 text-xs">
+          <Pill tone="outline" className="h-6 px-2 text-xs">
             {e.interested} interested
-          </Chip>
+          </Pill>
         )}
         {cancelled && (
-          <Chip tone="outline" className="h-6 px-2 text-xs text-danger">
+          <Pill tone="outline" className="h-6 px-2 text-xs text-danger">
             Cancelled
-          </Chip>
+          </Pill>
         )}
       </div>
       {!cancelled && (
@@ -109,7 +109,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
           </div>
           <a
             href={`/events/${e.id}/ics`}
-            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-brand"
+            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-accent"
           >
             <CalendarPlus className="size-4" /> Add to calendar
           </a>

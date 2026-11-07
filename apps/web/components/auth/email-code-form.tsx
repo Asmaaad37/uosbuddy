@@ -91,9 +91,9 @@ export function EmailCodeForm({
   const content =
     stage === "code" ? (
       <form onSubmit={verify} className="grid gap-4" noValidate>
-        <p className="text-ink-2">
-          We sent a code to <strong className="text-ink">{email}</strong>. It can take a minute, and
-          may land in spam.
+        <p className="text-sec">
+          We sent a code to <strong className="text-label">{email}</strong>. It can take a minute,
+          and may land in spam.
         </p>
         <Field id={`${id}-code`} label="Code" error={error}>
           {(aria) => (
@@ -115,14 +115,14 @@ export function EmailCodeForm({
         <div className="flex justify-between text-sm">
           <button
             type="button"
-            className="font-semibold text-brand"
+            className="font-semibold text-accent"
             onClick={() => setStage("email")}
           >
             Change email
           </button>
           <button
             type="button"
-            className="font-semibold text-brand"
+            className="font-semibold text-accent"
             onClick={() => sendCode()}
             disabled={busy || !captcha.ready}
           >
@@ -151,7 +151,7 @@ export function EmailCodeForm({
           )}
         </Field>
         {wrongDomain && (
-          <Link href="/start/freshman" className="text-sm font-semibold text-brand">
+          <Link href="/start/freshman" className="text-sm font-semibold text-accent">
             Don&apos;t have a UoS email? Join with your student ID instead →
           </Link>
         )}

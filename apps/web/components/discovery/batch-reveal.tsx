@@ -49,20 +49,23 @@ export function BatchReveal({
     <LazyMotion features={domAnimation} strict>
       <section
         aria-labelledby="reveal"
-        className="grid gap-5 rounded-lg border border-line bg-surface p-5 text-center shadow-[var(--shadow-card)]"
+        className="grid gap-5 rounded-card bg-surface p-5 text-center shadow-card"
       >
         {count > 0 ? (
           <>
-            <p className="font-pixel text-[64px] leading-none text-brand" aria-hidden>
+            <p
+              className="text-[64px] leading-none font-bold tracking-[-0.03em] text-accent"
+              aria-hidden
+            >
               {n}
             </p>
-            <h2 id="reveal" className="text-xl font-bold">
+            <h2 id="reveal" className="text-title2">
               <span className="sr-only">{count} </span>
               of {label} {count === 1 ? "is" : "are"} already here
             </h2>
           </>
         ) : (
-          <h2 id="reveal" className="text-xl font-bold">
+          <h2 id="reveal" className="text-title2">
             You&apos;re the first from {label}!
           </h2>
         )}
@@ -75,7 +78,7 @@ export function BatchReveal({
               return (
                 <m.div
                   key={p.id}
-                  className="absolute top-2 left-1/2 -ml-20 flex w-40 items-center gap-2 rounded-md border border-line bg-bg p-2 text-left shadow-card"
+                  className="absolute top-2 left-1/2 -ml-20 flex w-40 items-center gap-2 rounded-well bg-raised p-2 text-left shadow-card"
                   initial={reduce ? false : { opacity: 0, y: 24, rotate: 0 }}
                   animate={{ opacity: 1, y: Math.abs(angle) / 2, rotate: angle, x: angle * 5 }}
                   transition={{
@@ -86,7 +89,7 @@ export function BatchReveal({
                   }}
                 >
                   <Avatar name={name} src={p.avatar_url} size="sm" />
-                  <span className="truncate text-sm font-semibold">{name.split(" ")[0]}</span>
+                  <span className="truncate text-subhead font-semibold">{name.split(" ")[0]}</span>
                 </m.div>
               );
             })}
@@ -101,7 +104,7 @@ export function BatchReveal({
           )}
           <ShareButton
             block
-            variant={count > 0 ? "secondary" : "primary"}
+            variant={count > 0 ? "tinted" : "primary"}
             url={inviteUrl}
             text="I'm on UOSBuddy. Come find our batch:"
           />
