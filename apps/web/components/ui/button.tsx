@@ -32,7 +32,8 @@ export const buttonVariants = cva(
         xl: "h-[52px] px-6 text-headline",
         icon: "size-11 rounded-pill",
       },
-      block: { true: "w-full" },
+      // Full-width buttons wrap long labels instead of widening the column.
+      block: { true: "w-full min-w-0 shrink whitespace-normal text-center" },
     },
     defaultVariants: { variant: "primary", size: "lg" },
   },

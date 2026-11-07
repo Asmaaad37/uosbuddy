@@ -152,11 +152,15 @@ export function Composer({
         {/* The composer row (redesign §5.2 #3): tapping anywhere on it opens the sheet. */}
         <button
           type="button"
-          aria-label={`Write a post. ${placeholder}`}
           className="flex w-full items-center gap-3 rounded-card bg-surface py-3 pr-4 pl-3 text-left shadow-card transition-transform duration-100 ease-out active:scale-[0.99]"
         >
-          <Avatar name={me.name} src={me.src} size={36} />
-          <span className="min-w-0 flex-1 truncate text-body text-ter">{placeholder}</span>
+          <span aria-hidden>
+            <Avatar name={me.name} src={me.src} size={36} />
+          </span>
+          <span className="min-w-0 flex-1 truncate text-body text-ter">
+            <span className="sr-only">Write a post. </span>
+            {placeholder}
+          </span>
           <ImageIcon className="size-[22px] shrink-0 text-sec" strokeWidth={1.75} aria-hidden />
         </button>
       </SheetTrigger>
