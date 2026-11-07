@@ -700,6 +700,7 @@ export type Database = {
         Row: {
           accepted_at: string | null
           conversation_id: string
+          hidden_at: string | null
           joined_at: string
           last_read_at: string | null
           muted: boolean
@@ -709,6 +710,7 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           conversation_id: string
+          hidden_at?: string | null
           joined_at?: string
           last_read_at?: string | null
           muted?: boolean
@@ -718,6 +720,7 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           conversation_id?: string
+          hidden_at?: string | null
           joined_at?: string
           last_read_at?: string | null
           muted?: boolean
@@ -1141,6 +1144,89 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_waitlist: {
+        Row: {
+          created_at: string
+          feature: string
+          notified_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          notified_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          notified_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hidden_posts: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hidden_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interests: {
         Row: {
           category: string
@@ -1485,6 +1571,53 @@ export type Database = {
           {
             foreignKeyName: "moderator_scopes_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mutes: {
+        Row: {
+          created_at: string
+          muted_id: string
+          muter_id: string
+        }
+        Insert: {
+          created_at?: string
+          muted_id: string
+          muter_id: string
+        }
+        Update: {
+          created_at?: string
+          muted_id?: string
+          muter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mutes_muted_id_fkey"
+            columns: ["muted_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muted_id_fkey"
+            columns: ["muted_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muter_id_fkey"
+            columns: ["muter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muter_id_fkey"
+            columns: ["muter_id"]
             isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
@@ -3235,6 +3368,7 @@ export type Database = {
       ai_limit: { Args: { p_kind: string }; Returns: number }
       ai_remaining: { Args: { p_kind: string }; Returns: number }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
+      announce_feature: { Args: { p_feature: string }; Returns: number }
       answer_message_request: {
         Args: { p_accept: boolean; p_conversation: string }
         Returns: undefined
@@ -3634,6 +3768,10 @@ export type Database = {
         }[]
       }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
+      hide_conversation: {
+        Args: { p_conversation: string }
+        Returns: undefined
+      }
       hot_score: {
         Args: { p_created: string; p_down: number; p_up: number }
         Returns: number
@@ -3671,6 +3809,7 @@ export type Database = {
       join_course_chat: { Args: { p_course: string }; Returns: string }
       join_society: { Args: { p_society: string }; Returns: undefined }
       join_study_group: { Args: { p_group: string }; Returns: string }
+      launch_status: { Args: never; Returns: Json }
       leave_conversation: {
         Args: { p_conversation: string }
         Returns: undefined
@@ -3746,6 +3885,16 @@ export type Database = {
         Args: { p_body: string; p_status: string; p_token: string }
         Returns: string
       }
+      mutual_connections: {
+        Args: { p_other: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          total: number
+          user_id: string
+        }[]
+      }
       my_blocked: {
         Args: never
         Returns: {
@@ -3797,6 +3946,16 @@ export type Database = {
         }[]
       }
       my_invite_code: { Args: never; Returns: string }
+      my_mutes: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          muted_at: string
+          user_id: string
+        }[]
+      }
       my_notifications: {
         Args: { p_limit?: number }
         Returns: {
@@ -3981,6 +4140,7 @@ export type Database = {
         }
       }
       send_ping: { Args: { p_target: string }; Returns: string }
+      send_test_notification: { Args: never; Returns: string }
       set_digest: {
         Args: { p_on: boolean; p_user: string }
         Returns: undefined
@@ -3994,14 +4154,23 @@ export type Database = {
         Args: { p_spaces: string[]; p_user: string }
         Returns: undefined
       }
+      set_mute: { Args: { p_on: boolean; p_target: string }; Returns: boolean }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
       }
       set_on_campus: { Args: { p_hours: number }; Returns: string }
+      set_post_hidden: {
+        Args: { p_on: boolean; p_post: string }
+        Returns: boolean
+      }
       set_society_admin: {
         Args: { p_admin: boolean; p_society: string; p_user: string }
         Returns: undefined
+      }
+      set_waitlist: {
+        Args: { p_feature: string; p_on: boolean }
+        Returns: boolean
       }
       shown_avatar: { Args: { p_user: string }; Returns: string }
       societies_list: {
@@ -4053,6 +4222,7 @@ export type Database = {
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
+      unread_chat_count: { Args: never; Returns: number }
       use_ai: { Args: { p_kind: string }; Returns: number }
       verify_society: {
         Args: { p_society: string; p_verified: boolean }
@@ -4077,6 +4247,7 @@ export type Database = {
         Args: { p_resource: string; p_up: boolean }
         Returns: number
       }
+      waitlist_pending: { Args: { p_feature: string }; Returns: number }
       wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
       warn_user: {
         Args: { p_message: string; p_user: string }

@@ -57,6 +57,15 @@ test("courses, files, study groups, free time together and a ping", async ({ bro
   await b.page.getByRole("button", { name: /Upvote, 0/ }).click();
   await expect(b.page.getByRole("button", { name: /Upvote, 1/ })).toBeVisible();
   await shot(b.page, "01-course-files");
+
+  // The Resources hub finds it across courses, by course code and by the file's title.
+  await b.page.goto(`/resources?q=${pretty}`);
+  await expect(b.page.getByRole("button", { name: /^week1-notes/ })).toBeVisible();
+  await expect(b.page.getByText(new RegExp(`^${pretty} · Data Structures`))).toBeVisible();
+  await b.page.goto("/resources?q=week1");
+  await expect(b.page.getByRole("button", { name: /Upvote week1-notes, 1/ })).toBeVisible();
+  await b.page.goto("/resources?kind=past_paper&q=week1");
+  await expect(b.page.getByText("Nothing matches")).toBeVisible();
   await b.page.goto(`${courseUrl}?tab=groups`);
   await b.page.getByRole("button", { name: "Start a study group" }).click();
   await b.page.getByLabel("Name").fill("Mid-term prep");

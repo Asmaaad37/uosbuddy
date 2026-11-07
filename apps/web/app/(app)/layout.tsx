@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { UnreadChatsProvider } from "@/components/chat/unread-chats";
 import { NavProgress } from "@/components/nav-progress";
 import { BellSlot } from "@/components/notifications/bell-slot";
 import { Avatar } from "@/components/ui/avatar";
@@ -17,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const name = profile?.full_name ?? profile?.handle ?? "Me";
 
   return (
-    <>
+    <UnreadChatsProvider userId={profile?.id ?? null}>
       <Suspense>
         <NavProgress />
       </Suspense>
@@ -45,6 +46,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {children}
       </div>
       <TabBar className="lg:hidden" />
-    </>
+    </UnreadChatsProvider>
   );
 }

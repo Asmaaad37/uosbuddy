@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Newspaper } from "lucide-react";
 import { loadFeed, type FeedPage, type Sort } from "@/actions/feed";
 import { openComposer } from "@/components/feed/composer";
-import { PostCard } from "@/components/feed/post-card";
+import { MUTE_EVENT, PostCard } from "@/components/feed/post-card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -25,6 +25,22 @@ export function FeedList({
   const [page, setPage] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
+  const [muted, setMuted] = useState<Set<string>>(new Set());
+
+  // A post card muted (or unmuted) its author: drop (or bring back) their named posts.
+  useEffect(() => {
+    const on = (e: Event) => {
+      const { author, on: muting } = (e as CustomEvent<{ author: string; on: boolean }>).detail;
+      setMuted((prev) => {
+        const next = new Set(prev);
+        if (muting) next.add(author);
+        else next.delete(author);
+        return next;
+      });
+    };
+    window.addEventListener(MUTE_EVENT, on);
+    return () => window.removeEventListener(MUTE_EVENT, on);
+  }, []);
 
   async function more() {
     if (!page.next) return;
@@ -55,11 +71,16 @@ export function FeedList({
   return (
     <div className="grid gap-3">
       <ul className="grid gap-3">
-        {page.posts.map((p) => (
-          <li key={p.id} className="[contain-intrinsic-size:auto_240px] [content-visibility:auto]">
-            <PostCard post={p} mediaUrls={mediaUrls} />
-          </li>
-        ))}
+        {page.posts
+          .filter((p) => p.is_anonymous || !p.author_id || !muted.has(p.author_id))
+          .map((p) => (
+            <li
+              key={p.id}
+              className="[contain-intrinsic-size:auto_240px] [content-visibility:auto]"
+            >
+              <PostCard post={p} mediaUrls={mediaUrls} />
+            </li>
+          ))}
       </ul>
       {error && (
         <p role="alert" className="text-subhead text-danger">

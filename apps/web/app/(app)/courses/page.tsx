@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen, FileSearch } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AddCourse } from "@/components/courses/add-course";
 import { termLabel } from "@/lib/academics";
 import { getSession } from "@/lib/auth/session";
 import { EmptyState } from "@/components/ui/empty-state";
+import { GroupedList, Row } from "@/components/ui/grouped-list";
 
 export const metadata: Metadata = { title: "My courses" };
 
@@ -34,29 +34,29 @@ export default async function CoursesPage() {
       </div>
       <AddCourse departments={departments ?? []} myDepartment={profile.department_id} />
       {courses?.length ? (
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <GroupedList header="This term">
           {courses.map((c) => (
-            <li key={c.id}>
-              <Link
-                href={`/courses/${c.id}`}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-raised"
-              >
-                <span className="grid min-w-0 flex-1">
-                  <span className="font-semibold">{c.code}</span>
-                  <span className="truncate text-sm text-sec">
-                    {c.title} · {c.enrolled_count} taking it
-                  </span>
-                </span>
-                <ChevronRight className="size-4 text-sec" />
-              </Link>
-            </li>
+            <Row
+              key={c.id}
+              href={`/courses/${c.id}`}
+              title={c.code}
+              subtitle={`${c.title} · ${c.enrolled_count} taking it`}
+            />
           ))}
-        </ul>
+        </GroupedList>
       ) : (
         <EmptyState icon={BookOpen}>
           Add the courses you&apos;re taking this term to find classmates, notes and past papers.
         </EmptyState>
       )}
+      <GroupedList header="Across UoS">
+        <Row
+          href="/resources"
+          icon={FileSearch}
+          title="Resources"
+          subtitle="Search notes and past papers from every course"
+        />
+      </GroupedList>
     </AppShell>
   );
 }

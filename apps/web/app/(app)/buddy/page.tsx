@@ -21,10 +21,16 @@ export default async function BuddyPage({ searchParams }: Props) {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/buddy");
   if (!aiEnabled()) {
+    const { data: waitlisted } = await supabase
+      .from("feature_waitlist")
+      .select("feature")
+      .eq("user_id", user.id)
+      .eq("feature", "aibuddy")
+      .maybeSingle();
     return (
       <AppShell bell back="/explore">
         <h1 className="text-large-title">AIBuddy</h1>
-        <BuddyComingSoon />
+        <BuddyComingSoon waiting={!!waitlisted} />
       </AppShell>
     );
   }

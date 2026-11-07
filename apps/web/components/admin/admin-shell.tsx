@@ -9,6 +9,7 @@ const NAV = [
   { href: "/admin/campus", label: "Campus", admin: true },
   { href: "/admin/catalogue", label: "Catalogue", admin: true },
   { href: "/admin/flags", label: "Flags", admin: true },
+  { href: "/admin/launch", label: "Launch check", admin: true },
 ];
 
 /** Phase 9: the admin area's frame. Moderators see only the reports queue. */

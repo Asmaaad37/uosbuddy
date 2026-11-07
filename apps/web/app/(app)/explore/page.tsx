@@ -35,26 +35,39 @@ export default async function ExplorePage({ searchParams }: Props) {
   // The university is in Sargodha; students who share a hometown see their own city.
   const city = profile.hometown_city?.trim() || "Sargodha";
 
-  const [counts, suggestions, batch, { data: dept }, { data: inviteCode }, { data: interest }] =
-    await Promise.all([
-      getDirectoryCounts(),
-      getSuggestions(8),
-      loadDirectory({ scope: "batch" }),
-      profile.department_id
-        ? supabase
-            .from("departments")
-            .select("short_code")
-            .eq("id", profile.department_id)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-      supabase.rpc("my_invite_code"),
-      supabase
-        .from("profile_interests")
-        .select("interest_id")
-        .eq("user_id", user.id)
-        .limit(1)
-        .maybeSingle(),
-    ]);
+  const [
+    counts,
+    suggestions,
+    batch,
+    { data: dept },
+    { data: inviteCode },
+    { data: interest },
+    { data: waitlisted },
+  ] = await Promise.all([
+    getDirectoryCounts(),
+    getSuggestions(8),
+    loadDirectory({ scope: "batch" }),
+    profile.department_id
+      ? supabase
+          .from("departments")
+          .select("short_code")
+          .eq("id", profile.department_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase.rpc("my_invite_code"),
+    supabase
+      .from("profile_interests")
+      .select("interest_id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("feature_waitlist")
+      .select("feature")
+      .eq("user_id", user.id)
+      .eq("feature", "aibuddy")
+      .maybeSingle(),
+  ]);
 
   const inviteUrl = inviteCode ? `/i/${inviteCode}` : "/";
   const batchCount = counts?.batch_count ?? 0;
@@ -114,7 +127,7 @@ export default async function ExplorePage({ searchParams }: Props) {
 
       <InstallPrompt />
       <Shortcuts />
-      <AIBuddyCard ready={aiEnabled()} />
+      <AIBuddyCard ready={aiEnabled()} waiting={!!waitlisted} />
 
       <section aria-labelledby="people-like-you" className="grid gap-3">
         <SectionHeader

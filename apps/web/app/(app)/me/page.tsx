@@ -9,6 +9,7 @@ import {
   CalendarDays,
   ChevronRight,
   Download,
+  FileSearch,
   GraduationCap,
   Heart,
   Library,
@@ -16,6 +17,7 @@ import {
   Lock,
   ShieldCheck,
   UserRound,
+  VolumeX,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AppearanceRow, LogOutRow } from "@/components/me/me-controls";
@@ -199,6 +201,12 @@ export default async function MePage() {
           subtitle="Files, study groups and course chats"
         />
         <Row
+          href="/resources"
+          icon={FileSearch}
+          title="Resources"
+          subtitle="Notes and past papers from every course"
+        />
+        <Row
           href="/timetable"
           icon={CalendarDays}
           title="Timetable"
@@ -227,6 +235,7 @@ export default async function MePage() {
         />
         <Row href="/me/notifications" icon={Bell} title="Notifications" />
         <Row href="/me/blocked" icon={Ban} title="Blocked people" />
+        <Row href="/me/muted" icon={VolumeX} title="Muted" />
         <AppearanceRow />
       </GroupedList>
 

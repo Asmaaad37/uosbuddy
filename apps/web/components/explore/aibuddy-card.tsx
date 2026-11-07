@@ -1,37 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { setWaitlist } from "@/actions/notifications";
 import { AIBuddyMascot } from "@/components/buddy/ai-buddy-mascot";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-const KEY = "uosbuddy-aibuddy-notify";
-
 /**
- * AIBuddy teaser (redesign §5.1 #4). While AI is off, "Notify me" remembers the request
- * on this phone, and this card is where AIBuddy appears first once it's live. With AI on,
- * the whole card opens the chat.
+ * AIBuddy teaser (redesign §5.1 #4). While AI is off, "Notify me" puts you on the waitlist
+ * (saved to your account), and you get a notification when an admin announces the launch.
+ * With AI on, the whole card opens the chat.
  */
-export function AIBuddyCard({ ready }: { ready: boolean }) {
-  const [asked, setAsked] = useState(false);
+export function AIBuddyCard({ ready, waiting }: { ready: boolean; waiting: boolean }) {
+  const [asked, setAsked] = useState(waiting);
+  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    try {
-      setAsked(localStorage.getItem(KEY) === "1");
-    } catch {
-      // Private mode: the button just shows again.
+  async function save(on: boolean) {
+    setBusy(true);
+    const result = await setWaitlist("aibuddy", on);
+    setBusy(false);
+    if (!result.ok) return void toast.error(result.error);
+    setAsked(on);
+    if (on) {
+      toast("We'll notify you when AIBuddy is ready", {
+        action: { label: "Undo", onClick: () => void save(false) },
+      });
     }
-  }, []);
-
-  function notify() {
-    try {
-      localStorage.setItem(KEY, "1");
-    } catch {
-      // Ignore; the state still flips for this visit.
-    }
-    setAsked(true);
   }
 
   const body = (
@@ -52,10 +49,17 @@ export function AIBuddyCard({ ready }: { ready: boolean }) {
         {!ready &&
           (asked ? (
             <p role="status" className="flex items-center gap-1 pt-1 text-subhead text-accent">
-              <Check className="size-4" aria-hidden /> We&apos;ll show you here first
+              <Check className="size-4" aria-hidden /> You&apos;re on the list
             </p>
           ) : (
-            <Button size="sm" variant="quiet" onClick={notify} className="mt-1 bg-raised px-4">
+            <Button
+              size="sm"
+              variant="quiet"
+              onClick={() => save(true)}
+              disabled={busy}
+              className="mt-1 bg-raised px-4"
+            >
+              {busy && <Loader2 className="animate-spin" aria-hidden />}
               Notify me
             </Button>
           ))}
