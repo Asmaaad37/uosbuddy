@@ -73,8 +73,12 @@ export default async function ExplorePage({ searchParams }: Props) {
         actions={
           <span className="flex items-center gap-2 lg:hidden">
             <BellSlot />
-            <Link href="/me" aria-label="My profile" className="rounded-pill">
-              <Avatar name={name} src={profile.avatar_url} size={44} />
+            <Link href="/me" className="rounded-pill">
+              {/* Named by the hidden text, so the visible initials don't clash with it. */}
+              <span aria-hidden>
+                <Avatar name={name} src={profile.avatar_url} size={44} />
+              </span>
+              <span className="sr-only">My profile</span>
             </Link>
           </span>
         }

@@ -29,8 +29,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         className="hidden lg:flex"
         footer={
           <>
-            <Link href="/me" aria-label="My profile" className="rounded-pill">
-              <Avatar name={name} src={profile?.avatar_url} size={36} />
+            <Link href="/me" className="rounded-pill">
+              {/* Named by the hidden text, so the visible initials don't clash with it. */}
+              <span aria-hidden>
+                <Avatar name={name} src={profile?.avatar_url} size={36} />
+              </span>
+              <span className="sr-only">My profile</span>
             </Link>
             <span className="min-w-0 flex-1 truncate text-subhead">{name}</span>
             <BellSlot />
