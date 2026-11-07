@@ -12,9 +12,11 @@ import {
   Share,
   Trash2,
   VenetianMask,
+  VolumeX,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
-import { deletePost, votePoll, votePost, type Post } from "@/actions/feed";
+import { deletePost, setMute, setPostHidden, votePoll, votePost, type Post } from "@/actions/feed";
 import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
@@ -23,6 +25,9 @@ import { PrivateImage } from "@/components/ui/private-image";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { shortTime } from "@/lib/chat";
 import { cn } from "@/lib/utils";
+
+/** Fired when a post card mutes or unmutes its author, so the feed list can filter. */
+export const MUTE_EVENT = "uosbuddy:mute";
 
 /** Phase 5 task 2: one post. Votes and poll answers update optimistically. */
 export function PostCard({
@@ -88,6 +93,45 @@ export function PostCard({
     .filter(Boolean)
     .join(" · ");
   const link = () => new URL(`/feed/${id}`, window.location.origin).toString();
+
+  const firstName = name.split(" ")[0] ?? name;
+
+  // Hide this one post from your feeds (the option on anonymous posts). Undo brings it back.
+  async function hide() {
+    setRemoved(true);
+    const r = await setPostHidden(id, true);
+    if (!r.ok) {
+      setRemoved(false);
+      return void toast.error(r.error);
+    }
+    toast("Post hidden", {
+      action: {
+        label: "Undo",
+        onClick: () => void setPostHidden(id, false).then((u) => u.ok && setRemoved(false)),
+      },
+    });
+  }
+
+  // Mute the author: their named posts leave your feeds (the feed list listens for this).
+  // They aren't told. Undo, or unmute later from Me → Muted.
+  async function mute() {
+    const author = post.author_id;
+    if (!author) return;
+    const r = await setMute(author, true);
+    if (!r.ok) return void toast.error(r.error);
+    window.dispatchEvent(new CustomEvent(MUTE_EVENT, { detail: { author, on: true } }));
+    toast(`Muted ${firstName}. Their posts won't show in your feed.`, {
+      action: {
+        label: "Undo",
+        onClick: () =>
+          void setMute(author, false).then(
+            (u) =>
+              u.ok &&
+              window.dispatchEvent(new CustomEvent(MUTE_EVENT, { detail: { author, on: false } })),
+          ),
+      },
+    });
+  }
 
   async function copyLink() {
     try {
@@ -180,9 +224,20 @@ export function PostCard({
                 <Trash2 /> Delete post
               </MenuItem>
             ) : (
-              <MenuItem onSelect={() => setReporting(true)}>
-                <Flag /> Report post
-              </MenuItem>
+              <>
+                {post.is_anonymous || !post.author_id ? (
+                  <MenuItem onSelect={hide}>
+                    <EyeOff /> Hide this post
+                  </MenuItem>
+                ) : (
+                  <MenuItem onSelect={mute}>
+                    <VolumeX /> Mute {firstName}
+                  </MenuItem>
+                )}
+                <MenuItem onSelect={() => setReporting(true)}>
+                  <Flag /> Report post
+                </MenuItem>
+              </>
             )}
           </MenuContent>
         </Menu>

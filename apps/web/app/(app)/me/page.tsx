@@ -17,6 +17,7 @@ import {
   Lock,
   ShieldCheck,
   UserRound,
+  VolumeX,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AppearanceRow, LogOutRow } from "@/components/me/me-controls";
@@ -234,6 +235,7 @@ export default async function MePage() {
         />
         <Row href="/me/notifications" icon={Bell} title="Notifications" />
         <Row href="/me/blocked" icon={Ban} title="Blocked people" />
+        <Row href="/me/muted" icon={VolumeX} title="Muted" />
         <AppearanceRow />
       </GroupedList>
 

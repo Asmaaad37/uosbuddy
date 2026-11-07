@@ -132,6 +132,26 @@ export async function deletePost(post: string): Promise<ActionResult> {
   return { ok: true, data: undefined };
 }
 
+/** Mute (true) or unmute (false) a student: their named posts leave your feeds. Private. */
+export async function setMute(target: string, on: boolean): Promise<ActionResult<boolean>> {
+  if (!id.safeParse(target).success) return fail("Student not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("set_mute", { p_target: target, p_on: on });
+  if (error) return fail(friendly(error, "Couldn't save that. Try again."));
+  return { ok: true, data: on };
+}
+
+/** Hide (true) or unhide (false) one post from your feeds (works on anonymous posts). */
+export async function setPostHidden(post: string, on: boolean): Promise<ActionResult<boolean>> {
+  if (!id.safeParse(post).success) return fail("Post not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("set_post_hidden", { p_post: post, p_on: on });
+  if (error) return fail(friendly(error, "Couldn't save that. Try again."));
+  return { ok: true, data: on };
+}
+
 const commentSchema = z.object({
   post: z.uuid(),
   body: z

@@ -1177,6 +1177,53 @@ export type Database = {
           },
         ]
       }
+      hidden_posts: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hidden_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hidden_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interests: {
         Row: {
           category: string
@@ -1521,6 +1568,53 @@ export type Database = {
           {
             foreignKeyName: "moderator_scopes_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mutes: {
+        Row: {
+          created_at: string
+          muted_id: string
+          muter_id: string
+        }
+        Insert: {
+          created_at?: string
+          muted_id: string
+          muter_id: string
+        }
+        Update: {
+          created_at?: string
+          muted_id?: string
+          muter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mutes_muted_id_fkey"
+            columns: ["muted_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muted_id_fkey"
+            columns: ["muted_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muter_id_fkey"
+            columns: ["muter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mutes_muter_id_fkey"
+            columns: ["muter_id"]
             isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
@@ -3844,6 +3938,16 @@ export type Database = {
         }[]
       }
       my_invite_code: { Args: never; Returns: string }
+      my_mutes: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          muted_at: string
+          user_id: string
+        }[]
+      }
       my_notifications: {
         Args: { p_limit?: number }
         Returns: {
@@ -4041,11 +4145,16 @@ export type Database = {
         Args: { p_spaces: string[]; p_user: string }
         Returns: undefined
       }
+      set_mute: { Args: { p_on: boolean; p_target: string }; Returns: boolean }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
       }
       set_on_campus: { Args: { p_hours: number }; Returns: string }
+      set_post_hidden: {
+        Args: { p_on: boolean; p_post: string }
+        Returns: boolean
+      }
       set_society_admin: {
         Args: { p_admin: boolean; p_society: string; p_user: string }
         Returns: undefined
