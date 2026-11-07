@@ -74,3 +74,27 @@ export async function saveNotificationPrefs(input: NotificationPrefs): Promise<A
   if (error) return fail("Couldn't save. Try again.");
   return { ok: true, data: undefined };
 }
+
+/** "Notify me" for a feature that isn't live yet: join (true) or leave (false) its list. */
+export async function setWaitlist(feature: "aibuddy", on: boolean): Promise<ActionResult<boolean>> {
+  if (feature !== "aibuddy") return { ok: false, error: "Unknown feature" };
+  const { supabase, user } = await getSession();
+  if (!user) return { ok: false, error: "Your session expired. Log in again." };
+  const { data, error } = await supabase.rpc("set_waitlist", { p_feature: feature, p_on: on });
+  if (error) return { ok: false, error: "Couldn't save that. Try again." };
+  return { ok: true, data: !!data };
+}
+
+/** Admins: tell everyone waiting for a feature that it's live. Returns how many were told. */
+export async function announceFeature(feature: "aibuddy"): Promise<ActionResult<number>> {
+  if (feature !== "aibuddy") return { ok: false, error: "Unknown feature" };
+  const { supabase, user } = await getSession();
+  if (!user) return { ok: false, error: "Your session expired. Log in again." };
+  const { data, error } = await supabase.rpc("announce_feature", { p_feature: feature });
+  if (error)
+    return {
+      ok: false,
+      error: error.code === "42501" ? "Admins only" : "Couldn't send. Try again.",
+    };
+  return { ok: true, data: data ?? 0 };
+}

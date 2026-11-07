@@ -73,6 +73,14 @@ group("describe", () => {
     );
   });
 
+  it("describes a feature going live (Notify me)", () => {
+    expect(describe({ ...base, type: "feature.live", payload: { feature: "aibuddy" } })).toEqual({
+      title: "AIBuddy is here",
+      body: "Ask about your courses. Answers come from your notes and past papers.",
+      href: "/buddy",
+    });
+  });
+
   it("describes trust notifications", () => {
     expect(
       describe({ ...base, type: "badge.awarded", payload: { name: "Connector", emoji: "🤝" } }),

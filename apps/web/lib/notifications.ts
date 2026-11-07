@@ -146,6 +146,14 @@ export function describe(n: NotificationLike): Described {
         title: `New badge: ${typeof p.emoji === "string" ? `${p.emoji} ` : ""}${typeof p.name === "string" ? p.name : "unlocked"}`,
         href: "/me",
       };
+    case "feature.live":
+      return p.feature === "aibuddy"
+        ? {
+            title: "AIBuddy is here",
+            body: "Ask about your courses. Answers come from your notes and past papers.",
+            href: "/buddy",
+          }
+        : { title: "Something new is live on UOSBuddy", href: "/explore" };
     default:
       return { title: "Something new on UOSBuddy", href: "/notifications" };
   }

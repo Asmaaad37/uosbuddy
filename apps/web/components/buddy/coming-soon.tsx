@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen, Quote, Sparkles } from "lucide-react";
 import { AIBuddyMascot } from "@/components/buddy/ai-buddy-mascot";
+import { BuddyNotifyButton } from "@/components/buddy/notify-button";
 
 const PREVIEW = [
   { icon: BookOpen, text: "Answers from your course's notes, past papers and outlines" },
@@ -9,7 +10,7 @@ const PREVIEW = [
 ];
 
 /** What students see while the AI features are switched off (MVP): AIBuddy says hi. */
-export function BuddyComingSoon() {
+export function BuddyComingSoon({ waiting = false }: { waiting?: boolean }) {
   return (
     <div className="grid gap-5">
       <section className="grid justify-items-center gap-3 rounded-card border border-sep bg-surface px-5 py-8 text-center">
@@ -23,6 +24,7 @@ export function BuddyComingSoon() {
           course&apos;s shared files. We&apos;re finishing it now.
         </p>
       </section>
+      <BuddyNotifyButton waiting={waiting} />
       <ul className="grid gap-2">
         {PREVIEW.map(({ icon: Icon, text }) => (
           <li

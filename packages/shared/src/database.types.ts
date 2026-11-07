@@ -1141,6 +1141,42 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_waitlist: {
+        Row: {
+          created_at: string
+          feature: string
+          notified_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          notified_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          notified_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interests: {
         Row: {
           category: string
@@ -3235,6 +3271,7 @@ export type Database = {
       ai_limit: { Args: { p_kind: string }; Returns: number }
       ai_remaining: { Args: { p_kind: string }; Returns: number }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
+      announce_feature: { Args: { p_feature: string }; Returns: number }
       answer_message_request: {
         Args: { p_accept: boolean; p_conversation: string }
         Returns: undefined
@@ -4013,6 +4050,10 @@ export type Database = {
         Args: { p_admin: boolean; p_society: string; p_user: string }
         Returns: undefined
       }
+      set_waitlist: {
+        Args: { p_feature: string; p_on: boolean }
+        Returns: boolean
+      }
       shown_avatar: { Args: { p_user: string }; Returns: string }
       societies_list: {
         Args: never
@@ -4087,6 +4128,7 @@ export type Database = {
         Args: { p_resource: string; p_up: boolean }
         Returns: number
       }
+      waitlist_pending: { Args: { p_feature: string }; Returns: number }
       wants: { Args: { p_type: string; p_user: string }; Returns: boolean }
       warn_user: {
         Args: { p_message: string; p_user: string }
