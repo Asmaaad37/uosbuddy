@@ -60,7 +60,7 @@ test("courses, files, study groups, free time together and a ping", async ({ bro
 
   // The Resources hub finds it across courses, by course code and by the file's title.
   await b.page.goto(`/resources?q=${pretty}`);
-  await expect(b.page.getByRole("button", { name: /week1-notes/ })).toBeVisible();
+  await expect(b.page.getByRole("button", { name: /^week1-notes/ })).toBeVisible();
   await expect(b.page.getByText(new RegExp(`^${pretty} · Data Structures`))).toBeVisible();
   await b.page.goto("/resources?q=week1");
   await expect(b.page.getByRole("button", { name: /Upvote week1-notes, 1/ })).toBeVisible();
