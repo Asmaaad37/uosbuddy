@@ -9,6 +9,7 @@ import {
   CalendarDays,
   ChevronRight,
   Download,
+  FileSearch,
   GraduationCap,
   Heart,
   Library,
@@ -197,6 +198,12 @@ export default async function MePage() {
           icon={Library}
           title="My courses"
           subtitle="Files, study groups and course chats"
+        />
+        <Row
+          href="/resources"
+          icon={FileSearch}
+          title="Resources"
+          subtitle="Notes and past papers from every course"
         />
         <Row
           href="/timetable"
