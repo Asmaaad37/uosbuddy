@@ -3809,6 +3809,7 @@ export type Database = {
       join_course_chat: { Args: { p_course: string }; Returns: string }
       join_society: { Args: { p_society: string }; Returns: undefined }
       join_study_group: { Args: { p_group: string }; Returns: string }
+      launch_status: { Args: never; Returns: Json }
       leave_conversation: {
         Args: { p_conversation: string }
         Returns: undefined
@@ -4139,6 +4140,7 @@ export type Database = {
         }
       }
       send_ping: { Args: { p_target: string }; Returns: string }
+      send_test_notification: { Args: never; Returns: string }
       set_digest: {
         Args: { p_on: boolean; p_user: string }
         Returns: undefined

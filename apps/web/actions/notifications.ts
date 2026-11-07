@@ -98,3 +98,19 @@ export async function announceFeature(feature: "aibuddy"): Promise<ActionResult<
     };
   return { ok: true, data: data ?? 0 };
 }
+
+/**
+ * Admins (Launch check): a notification to yourself. It goes the real way, through the
+ * database trigger and /api/push, so a push arriving proves the whole chain works.
+ */
+export async function sendTestNotification(): Promise<ActionResult> {
+  const { supabase, user } = await getSession();
+  if (!user) return { ok: false, error: "Your session expired. Log in again." };
+  const { error } = await supabase.rpc("send_test_notification");
+  if (error)
+    return {
+      ok: false,
+      error: error.code === "42501" ? "Admins only" : "Couldn't send. Try again.",
+    };
+  return { ok: true, data: undefined };
+}

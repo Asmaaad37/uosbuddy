@@ -154,6 +154,12 @@ export function describe(n: NotificationLike): Described {
             href: "/buddy",
           }
         : { title: "Something new is live on UOSBuddy", href: "/explore" };
+    case "system.test":
+      return {
+        title: "Test notification",
+        body: "Notifications are working on this device.",
+        href: "/notifications",
+      };
     default:
       return { title: "Something new on UOSBuddy", href: "/notifications" };
   }

@@ -79,6 +79,7 @@ group("describe", () => {
       body: "Ask about your courses. Answers come from your notes and past papers.",
       href: "/buddy",
     });
+    expect(describe({ ...base, type: "system.test", payload: {} }).title).toBe("Test notification");
   });
 
   it("describes trust notifications", () => {
