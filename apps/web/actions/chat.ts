@@ -165,3 +165,13 @@ export async function leaveConversation(conversationId: string): Promise<ActionR
   if (error) return fail("Couldn't leave. Try again.");
   return { ok: true, data: undefined };
 }
+
+/** Delete a one-to-one chat from your list (only yours; it returns with a new message). */
+export async function hideConversation(conversationId: string): Promise<ActionResult> {
+  if (!id.safeParse(conversationId).success) return fail("Chat not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("hide_conversation", { p_conversation: conversationId });
+  if (error) return fail("Couldn't delete. Try again.");
+  return { ok: true, data: undefined };
+}

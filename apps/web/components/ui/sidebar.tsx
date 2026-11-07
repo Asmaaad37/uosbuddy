@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { UnreadBadge, useUnreadChats } from "@/components/chat/unread-chats";
 import { NAV_ITEMS, isActive } from "./nav-items";
 
 /**
@@ -18,6 +19,7 @@ export function Sidebar({
   className?: string;
 }) {
   const path = usePathname();
+  const unread = useUnreadChats();
   return (
     <aside
       className={cn(
@@ -37,6 +39,9 @@ export function Sidebar({
                 <Link
                   href={href}
                   aria-current={on ? "page" : undefined}
+                  aria-label={
+                    label === "Chats" && unread > 0 ? `Chats, ${unread} unread` : undefined
+                  }
                   className={cn(
                     "flex h-11 items-center gap-3 rounded-field px-3 text-headline transition-colors",
                     on ? "bg-tint text-accent" : "text-label hover:bg-surface",
@@ -44,6 +49,7 @@ export function Sidebar({
                 >
                   <Icon className="size-[22px]" strokeWidth={on ? 2.1 : 1.75} aria-hidden />
                   {label}
+                  {label === "Chats" && <UnreadBadge count={unread} className="ml-auto" />}
                 </Link>
               </li>
             );

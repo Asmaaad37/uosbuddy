@@ -700,6 +700,7 @@ export type Database = {
         Row: {
           accepted_at: string | null
           conversation_id: string
+          hidden_at: string | null
           joined_at: string
           last_read_at: string | null
           muted: boolean
@@ -709,6 +710,7 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           conversation_id: string
+          hidden_at?: string | null
           joined_at?: string
           last_read_at?: string | null
           muted?: boolean
@@ -718,6 +720,7 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           conversation_id?: string
+          hidden_at?: string | null
           joined_at?: string
           last_read_at?: string | null
           muted?: boolean
@@ -3765,6 +3768,10 @@ export type Database = {
         }[]
       }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
+      hide_conversation: {
+        Args: { p_conversation: string }
+        Returns: undefined
+      }
       hot_score: {
         Args: { p_created: string; p_down: number; p_up: number }
         Returns: number
@@ -4213,6 +4220,7 @@ export type Database = {
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
+      unread_chat_count: { Args: never; Returns: number }
       use_ai: { Args: { p_kind: string }; Returns: number }
       verify_society: {
         Args: { p_society: string; p_verified: boolean }

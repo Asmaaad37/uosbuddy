@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { UnreadBadge, useUnreadChats } from "@/components/chat/unread-chats";
 import { NAV_ITEMS, isActive } from "./nav-items";
 
 /**
@@ -12,6 +13,7 @@ import { NAV_ITEMS, isActive } from "./nav-items";
  */
 export function TabBar({ className }: { className?: string }) {
   const path = usePathname();
+  const unread = useUnreadChats();
   return (
     <div className={cn("pointer-events-none fixed inset-x-0 bottom-0 z-40", className)}>
       <div
@@ -30,16 +32,27 @@ export function TabBar({ className }: { className?: string }) {
                 <Link
                   href={href}
                   aria-current={on ? "page" : undefined}
+                  aria-label={
+                    label === "Chats" && unread > 0 ? `Chats, ${unread} unread` : undefined
+                  }
                   className={cn(
                     "flex h-full flex-col items-center justify-center gap-1 rounded-pill text-tab-label transition-transform duration-100 ease-out active:scale-[0.92]",
                     on ? "text-accent" : "text-sec hover:text-label",
                   )}
                 >
-                  <Icon
-                    className={cn("size-6", on && "tab-pop")}
-                    strokeWidth={on ? 2.1 : 1.75}
-                    aria-hidden
-                  />
+                  <span className="relative">
+                    <Icon
+                      className={cn("size-6", on && "tab-pop")}
+                      strokeWidth={on ? 2.1 : 1.75}
+                      aria-hidden
+                    />
+                    {label === "Chats" && (
+                      <UnreadBadge
+                        count={unread}
+                        className="absolute -top-1.5 left-1/2 ml-1 ring-2 ring-bar"
+                      />
+                    )}
+                  </span>
                   {label}
                 </Link>
               </li>

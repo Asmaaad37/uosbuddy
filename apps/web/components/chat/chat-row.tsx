@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, BellOff, LogOut, Users } from "lucide-react";
+import { Bell, BellOff, LogOut, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
-import { leaveConversation, setMuted } from "@/actions/chat";
+import { hideConversation, leaveConversation, setMuted } from "@/actions/chat";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -27,7 +27,8 @@ const ACTION_W = 80;
 
 /**
  * A chat row (redesign §5.4 #5): avatar 52, name 17/600, one-line preview, time, and an
- * --accent dot when unread. Swipe left for Mute (and Leave on groups, which confirms first).
+ * --accent dot when unread. Swipe left for Mute, and Leave (groups) or Delete (one-to-one
+ * chats, from your list only); both confirm first.
  */
 export function ChatRow({ chat }: { chat: ChatRowData }) {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
   const [dragging, setDragging] = useState(false);
   const start = useRef<{ x: number; y: number; base: number; swiping: boolean } | null>(null);
   const moved = useRef(false);
-  const width = ACTION_W * (chat.group ? 2 : 1);
+  const width = ACTION_W * 2;
   const open = x !== 0;
   const unread = chat.unread > 0 && !muted;
 
@@ -84,7 +85,7 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
 
   async function leave() {
     setConfirm(false);
-    const r = await leaveConversation(chat.id);
+    const r = chat.group ? await leaveConversation(chat.id) : await hideConversation(chat.id);
     if (!r.ok) return void toast.error(r.error);
     router.refresh();
   }
@@ -111,19 +112,21 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
             {muted ? "Unmute" : "Mute"}
           </span>
         </button>
-        {chat.group && (
-          <button
-            type="button"
-            tabIndex={open ? 0 : -1}
-            onClick={() => setConfirm(true)}
-            className="grid flex-1 place-items-center bg-danger text-footnote font-semibold text-white"
-          >
-            <span className="grid justify-items-center gap-1">
+        <button
+          type="button"
+          tabIndex={open ? 0 : -1}
+          onClick={() => setConfirm(true)}
+          className="grid flex-1 place-items-center bg-danger text-footnote font-semibold text-bg"
+        >
+          <span className="grid justify-items-center gap-1">
+            {chat.group ? (
               <LogOut className="size-5" aria-hidden />
-              Leave
-            </span>
-          </button>
-        )}
+            ) : (
+              <Trash2 className="size-5" aria-hidden />
+            )}
+            {chat.group ? "Leave" : "Delete"}
+          </span>
+        </button>
       </div>
       <Link
         href={`/chats/${chat.id}`}
@@ -184,13 +187,17 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
       </Link>
       <Dialog open={confirm} onOpenChange={setConfirm}>
         <DialogContent>
-          <DialogTitle className="text-headline">Leave {chat.name}?</DialogTitle>
+          <DialogTitle className="text-headline">
+            {chat.group ? `Leave ${chat.name}?` : `Delete chat with ${chat.name}?`}
+          </DialogTitle>
           <DialogDescription className="text-subhead text-sec">
-            You&apos;ll stop getting its messages. You can join a batch chat again any time.
+            {chat.group
+              ? "You'll stop getting its messages. You can join a batch chat again any time."
+              : `It leaves your list only; ${chat.name.split(" ")[0]} keeps it. It comes back if either of you sends a new message.`}
           </DialogDescription>
           <div className="mt-4 grid gap-2">
             <Button variant="destructive" block onClick={leave}>
-              Leave
+              {chat.group ? "Leave" : "Delete"}
             </Button>
             <Button variant="quiet" block onClick={() => setConfirm(false)}>
               Cancel
