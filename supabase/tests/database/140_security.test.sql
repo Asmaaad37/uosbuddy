@@ -22,8 +22,8 @@ select is(
    from information_schema.role_table_grants
    where grantee = 'anon' and table_schema = 'public'
      and privilege_type in ('INSERT', 'UPDATE', 'DELETE', 'TRUNCATE')),
-  -- The only exception: "request your university" on the public campus screen.
-  'university_requests:INSERT', 'signed-out visitors can only write to the university waitlist');
+  -- Even the waitlist goes through the server, after the bot check and rate limit.
+  '', 'signed-out visitors can''t write anything directly');
 
 select is(
   (select coalesce(string_agg(c.relname, ', ' order by c.relname), '')

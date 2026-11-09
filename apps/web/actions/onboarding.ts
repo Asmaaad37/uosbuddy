@@ -38,8 +38,8 @@ export async function joinWaitlist(input: {
   }
   if (!(await withinLimit("waitlist", ip))) return fail(TOO_MANY);
 
-  const supabase = await createClient();
-  const { error } = await supabase.from("university_requests").insert(parsed.data);
+  // The table takes no direct writes, so these checks can't be skipped.
+  const { error } = await createAdminClient().from("university_requests").insert(parsed.data);
   return error ? fail("Couldn't save that. Try again in a minute.") : { ok: true, data: undefined };
 }
 

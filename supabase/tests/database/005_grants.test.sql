@@ -6,8 +6,8 @@ select plan(8);
 
 select table_privs_are('public', 'departments', 'anon', array['SELECT'],
   'visitors can read the catalogue');
-select table_privs_are('public', 'university_requests', 'anon', array['INSERT'],
-  'visitors can only add themselves to the waitlist');
+select table_privs_are('public', 'university_requests', 'anon', array[]::text[],
+  'visitors can''t write to the waitlist directly; the checked form does it on the server');
 select table_privs_are('public', 'profiles', 'anon', array[]::text[],
   'visitors cannot touch profiles');
 select table_privs_are('public', 'private_profile', 'anon', array[]::text[],
