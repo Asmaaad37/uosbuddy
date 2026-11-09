@@ -86,7 +86,7 @@ export async function makeStudent(
 
 export async function logIn(page: Page, email: string, password: string) {
   await page.goto("/login");
-  await page.getByRole("tab", { name: "Personal email" }).click();
+  await page.getByRole("tab", { name: "Password" }).click();
   const panel = page.getByRole("tabpanel", { name: "Personal email" });
   await panel.getByLabel("Email", { exact: true }).fill(email);
   await panel.getByLabel("Password", { exact: true }).fill(password);

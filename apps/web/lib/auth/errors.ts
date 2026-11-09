@@ -18,6 +18,8 @@ export function authErrorMessage(error: AuthError | null | undefined) {
       return "An account with this email already exists. Log in instead.";
     case "weak_password":
       return "Choose a stronger password.";
+    case "same_password":
+      return "That's your current password. Choose a new one.";
     case "otp_disabled":
     case "signup_disabled":
       return "New sign-ups are paused right now. Try again later.";

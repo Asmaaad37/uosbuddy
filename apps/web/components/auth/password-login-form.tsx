@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { useTurnstile } from "@/components/turnstile";
@@ -64,6 +65,9 @@ export function PasswordLoginForm({ next }: { next?: string }) {
           />
         )}
       </Field>
+      <Link href="/forgot-password" className="justify-self-end text-sm font-semibold text-accent">
+        Forgot password?
+      </Link>
       {captcha.widget}
       <Button type="submit" block disabled={busy || !captcha.ready}>
         {busy ? "Logging in…" : "Log in"}
