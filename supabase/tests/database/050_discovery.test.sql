@@ -63,7 +63,7 @@ update public.profiles p set
   verification_status = case when u.name = 'U' then 'unverified' else 'verified' end::public.verification_status,
   department_id = (select id from public.departments where short_code = case when u.name = 'O' then 'IT' else 'CS' end),
   batch_year = case when u.name = 'D' then 2023 else 2024 end,
-  section = case when u.name = 'S' then 'C' else 'B' end,
+  section = case when u.name = 'S' then 'SS1' else 'REG' end,
   shift = 'morning',
   residence = 'hostelite',
   handle = 'disc_' || lower(u.name),

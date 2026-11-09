@@ -95,8 +95,8 @@ select throws_ok($$ update public.profiles set verification_status = 'verified' 
 select tests.login_as((select id from u where name = 'uni'));
 select throws_ok($$ update public.profiles set role = 'admin' where id = auth.uid() $$,
   '42501', null, 'a user cannot make themselves admin');
-select lives_ok($$ update public.profiles set bio = 'Chai and C++' where id = auth.uid() $$,
-  'a user can edit their own bio');
+select throws_ok($$ update public.profiles set bio = 'Chai and C++' where id = auth.uid() $$,
+  '42501', null, 'profile edits go through checked functions, not direct updates');
 
 -- ---------- document verification ----------
 select tests.logout();

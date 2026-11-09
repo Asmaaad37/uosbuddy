@@ -62,3 +62,40 @@ export async function decideVerification(
   );
   return { ok: true, data: undefined };
 }
+
+const studiesDecisionSchema = z
+  .object({
+    requestId: z.uuid(),
+    approve: z.boolean(),
+    reason: z.string().trim().max(500, "Keep the reason under 500 characters").optional(),
+  })
+  .refine((d) => d.approve || !!d.reason, { message: "Give the student a reason" });
+
+/** Approve or reject a studies change. The database applies it, audits it and tells the student. */
+export async function decideStudiesChange(
+  input: z.input<typeof studiesDecisionSchema>,
+): Promise<ActionResult> {
+  const parsed = studiesDecisionSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Check the decision" };
+  }
+  const { requestId, approve, reason } = parsed.data;
+
+  const { supabase, profile } = await getSession();
+  if (profile?.role !== "admin") return { ok: false, error: "Only admins can review." };
+
+  const { error } = await supabase.rpc("decide_studies_change", {
+    p_request: requestId,
+    p_approve: approve,
+    p_reason: reason,
+  });
+  if (error) {
+    return {
+      ok: false,
+      error: ["22023", "P0001"].includes(error.code)
+        ? error.message
+        : "Couldn't save the decision.",
+    };
+  }
+  return { ok: true, data: undefined };
+}

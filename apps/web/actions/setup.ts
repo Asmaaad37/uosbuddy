@@ -2,10 +2,13 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { withinLimit } from "@/lib/abuse.server";
 import { getSession } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
-import { OPENING_MOVES, SETUP_STEPS, stepNumber, type SetupStep } from "@/lib/setup";
+import { OPENING_MOVES, SETUP_STEPS } from "@/lib/setup";
 import { INVITE_COOKIE } from "@/lib/invites.server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { DOC_TYPES } from "@/lib/validation/onboarding";
 import { handleSchema } from "@/lib/validation/handle";
 import type { ActionResult } from "./onboarding";
 
@@ -25,22 +28,11 @@ async function verifiedSession() {
   return { ...session, user: session.user, profile: session.profile };
 }
 
-/** Saves a step's profile fields and records the step as done (never moves backwards). */
-async function saveStep(
-  session: Exclude<Awaited<ReturnType<typeof verifiedSession>>, { error: string }>,
-  step: SetupStep,
-  fields: Record<string, unknown>,
-): Promise<ActionResult> {
-  const { error } = await session.supabase
-    .from("profiles")
-    .update({
-      ...fields,
-      onboarding_step: Math.max(session.profile.onboarding_step, stepNumber(step)),
-    })
-    .eq("id", session.user.id);
+/** The database explains refusals in plain words (22023/42501); anything else stays generic. */
+function saved(error: { code?: string; message: string } | null): ActionResult {
   if (!error) return done;
   if (error.code === "23505") return fail("That handle was just taken. Try another.");
-  if (error.code === "22023") return fail(error.message);
+  if (error.code === "22023" || error.code === "42501") return fail(error.message);
   return fail("Couldn't save. Try again.");
 }
 
@@ -52,11 +44,7 @@ const academicSchema = z.object({
   programId: z.uuid("Choose your program"),
   batchYear: z.coerce.number().int().min(1990).max(2100),
   semester: z.coerce.number().int().min(1, "Choose your semester").max(12),
-  section: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z0-9]{0,3}$/, "Use a short section name, like B or 2"),
+  section: z.enum(["", "REG", "SS1", "SS2"], { message: "Choose REG, SS1 or SS2" }),
   shift: z.enum(["morning", "evening", "weekend"], { message: "Choose your shift" }),
 });
 
@@ -67,24 +55,64 @@ export async function saveAcademic(input: z.input<typeof academicSchema>): Promi
   if ("error" in session) return fail(session.error!);
   const { departmentId, programId, batchYear, semester, section, shift } = parsed.data;
 
-  const { data: program } = await session.supabase
-    .from("programs")
-    .select("duration_semesters")
-    .eq("id", programId)
-    .maybeSingle();
-  if (!program) return fail("Choose your program");
-  if (semester > program.duration_semesters) {
-    return fail(`That program has ${program.duration_semesters} semesters.`);
-  }
-
-  return saveStep(session, "academic", {
-    department_id: departmentId,
-    program_id: programId,
-    batch_year: batchYear,
-    semester,
-    section: section || null,
-    shift,
+  const { error } = await session.supabase.rpc("save_my_academic", {
+    p_department: departmentId,
+    p_program: programId,
+    p_batch: batchYear,
+    p_semester: semester,
+    p_section: section,
+    p_shift: shift,
   });
+  return saved(error);
+}
+
+/** Starts the upload of proof for a studies change. Same private bucket as verification. */
+export async function createStudiesProofUpload(
+  mimeType: string,
+): Promise<ActionResult<{ path: string; token: string }>> {
+  const session = await verifiedSession();
+  if ("error" in session) return fail(session.error!);
+  if (!(await withinLimit("proofUpload", session.user.id))) {
+    return fail("Too many attempts. Wait a while and try again.");
+  }
+  const ext = DOC_TYPES[mimeType];
+  if (!ext) return fail("Upload a JPG, PNG, WebP or PDF.");
+
+  const path = `${session.user.id}/${crypto.randomUUID()}.${ext}`;
+  const { data, error } = await createAdminClient()
+    .storage.from("verification-docs")
+    .createSignedUploadUrl(path);
+  if (error || !data) return fail("Couldn't start the upload. Try again.");
+  return { ok: true, data: { path: data.path, token: data.token } };
+}
+
+const studiesChangeSchema = academicSchema.extend({
+  docPath: z.string().min(1, "Upload your proof"),
+});
+
+/** Asks an admin to change department, session, section or shift. The database checks it all. */
+export async function requestStudiesChange(
+  input: z.input<typeof studiesChangeSchema>,
+): Promise<ActionResult> {
+  const parsed = studiesChangeSchema.safeParse(input);
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+  const session = await verifiedSession();
+  if ("error" in session) return fail(session.error!);
+  if (!(await withinLimit("proofSubmit", session.user.id))) {
+    return fail("Too many attempts. Wait a while and try again.");
+  }
+  const { departmentId, programId, batchYear, semester, section, shift, docPath } = parsed.data;
+
+  const { error } = await session.supabase.rpc("request_studies_change", {
+    p_department: departmentId,
+    p_program: programId,
+    p_batch: batchYear,
+    p_semester: semester,
+    p_section: section,
+    p_shift: shift,
+    p_doc_path: docPath,
+  });
+  return saved(error);
 }
 
 // ---------------------------------------------------------------------------
@@ -119,13 +147,14 @@ export async function saveAbout(input: z.input<typeof aboutSchema>): Promise<Act
     .eq("user_id", session.user.id);
   if (error) return fail("Couldn't save. Try again.");
 
-  const result = await saveStep(session, "about", {
-    handle,
-    bio: bio || null,
-    hometown_city: hometown || null,
-    residence,
-    avatar_url: avatarUrl,
+  const { error: saveError } = await session.supabase.rpc("save_my_about", {
+    p_handle: handle,
+    p_bio: bio,
+    p_hometown: hometown,
+    p_residence: residence,
+    p_avatar_url: avatarUrl as string,
   });
+  const result = saved(saveError);
   if (result.ok) await removeOldAvatars(session, avatarUrl);
   return result;
 }
@@ -173,10 +202,11 @@ export async function saveInterests(input: z.input<typeof interestsSchema>): Pro
   });
   if (error) return fail(error.code === "22023" ? error.message : "Couldn't save. Try again.");
 
-  return saveStep(session, "interests", {
-    opening_move_prompt: prompt || null,
-    opening_move: prompt ? answer : null,
+  const { error: moveError } = await session.supabase.rpc("save_my_opening_move", {
+    p_prompt: prompt,
+    p_answer: answer,
   });
+  return saved(moveError);
 }
 
 // ---------------------------------------------------------------------------
@@ -202,7 +232,8 @@ export async function savePrivacy(input: z.input<typeof privacySchema>): Promise
     .eq("user_id", session.user.id);
   if (error) return fail("Couldn't save. Try again.");
   const finishing = session.profile.onboarding_step < SETUP_STEPS.length;
-  const result = await saveStep(session, "privacy", {});
+  const { error: finishError } = await session.supabase.rpc("finish_setup");
+  const result = saved(finishError);
   if (result.ok && finishing) await redeemInvite(session);
   return result;
 }

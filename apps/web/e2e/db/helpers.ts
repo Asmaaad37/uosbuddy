@@ -55,7 +55,7 @@ export async function makeStudent(
       program_id: program!.id,
       batch_year: 2024,
       semester: 5,
-      section: "B",
+      section: "REG",
       shift: "morning",
       residence: "hostelite",
       hometown_city: "Sargodha",

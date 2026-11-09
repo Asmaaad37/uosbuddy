@@ -32,7 +32,7 @@ update public.profiles p set
   full_name = 'Feed ' || u.name, handle = 'feed_' || lower(u.name),
   department_id = (select id from public.departments where short_code = case when u.name = 'O' then 'IT' else 'CS' end),
   batch_year = case when u.name = 'M' then 2022 else 2024 end,
-  section = case when u.name in ('R', 'H') then 'B' else 'A' end,
+  section = case when u.name in ('R', 'H') then 'REG' else 'SS1' end,
   is_mentor = u.name = 'M'
 from tests.u u where p.id = u.id;
 

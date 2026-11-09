@@ -2093,6 +2093,7 @@ export type Database = {
           section: string | null
           semester: number | null
           shift: Database["public"]["Enums"]["shift_type"] | null
+          studies_changed_at: string | null
           university_id: string | null
           verification_method:
             | Database["public"]["Enums"]["verification_method"]
@@ -2125,6 +2126,7 @@ export type Database = {
           section?: string | null
           semester?: number | null
           shift?: Database["public"]["Enums"]["shift_type"] | null
+          studies_changed_at?: string | null
           university_id?: string | null
           verification_method?:
             | Database["public"]["Enums"]["verification_method"]
@@ -2157,6 +2159,7 @@ export type Database = {
           section?: string | null
           semester?: number | null
           shift?: Database["public"]["Enums"]["shift_type"] | null
+          studies_changed_at?: string | null
           university_id?: string | null
           verification_method?:
             | Database["public"]["Enums"]["verification_method"]
@@ -2729,6 +2732,100 @@ export type Database = {
           },
           {
             foreignKeyName: "society_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studies_change_requests: {
+        Row: {
+          batch_year: number
+          created_at: string
+          decided_at: string | null
+          decision_reason: string | null
+          department_id: string
+          doc_path: string
+          id: string
+          program_id: string
+          reviewer_id: string | null
+          section: string | null
+          semester: number
+          shift: Database["public"]["Enums"]["shift_type"]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          batch_year: number
+          created_at?: string
+          decided_at?: string | null
+          decision_reason?: string | null
+          department_id: string
+          doc_path: string
+          id?: string
+          program_id: string
+          reviewer_id?: string | null
+          section?: string | null
+          semester: number
+          shift: Database["public"]["Enums"]["shift_type"]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          batch_year?: number
+          created_at?: string
+          decided_at?: string | null
+          decision_reason?: string | null
+          department_id?: string
+          doc_path?: string
+          id?: string
+          program_id?: string
+          reviewer_id?: string | null
+          section?: string | null
+          semester?: number
+          shift?: Database["public"]["Enums"]["shift_type"]
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studies_change_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studies_change_requests_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studies_change_requests_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studies_change_requests_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studies_change_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studies_change_requests_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles_public"
@@ -3368,6 +3465,7 @@ export type Database = {
       ai_limit: { Args: { p_kind: string }; Returns: number }
       ai_remaining: { Args: { p_kind: string }; Returns: number }
       alias_for: { Args: { p_post: string; p_user: string }; Returns: string }
+      allow_studies_change: { Args: { p_user: string }; Returns: undefined }
       announce_feature: { Args: { p_feature: string }; Returns: number }
       answer_message_request: {
         Args: { p_accept: boolean; p_conversation: string }
@@ -3605,6 +3703,10 @@ export type Database = {
         Returns: string
       }
       current_term: { Args: never; Returns: string }
+      decide_studies_change: {
+        Args: { p_approve: boolean; p_reason?: string; p_request: string }
+        Returns: undefined
+      }
       decide_verification: {
         Args: {
           p_decision: Database["public"]["Enums"]["verification_status"]
@@ -3753,6 +3855,7 @@ export type Database = {
           semester: number
         }[]
       }
+      finish_setup: { Args: never; Returns: undefined }
       flag: { Args: { p_key: string }; Returns: boolean }
       free_now: {
         Args: { p_limit?: number }
@@ -3767,6 +3870,7 @@ export type Database = {
           section: string
         }[]
       }
+      handle_allowed: { Args: { p_handle: string }; Returns: boolean }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
       hide_conversation: {
         Args: { p_conversation: string }
@@ -4020,6 +4124,18 @@ export type Database = {
         Args: { p_message?: string; p_ride: string }
         Returns: undefined
       }
+      request_studies_change: {
+        Args: {
+          p_batch: number
+          p_department: string
+          p_doc_path: string
+          p_program: string
+          p_section: string
+          p_semester: number
+          p_shift: Database["public"]["Enums"]["shift_type"]
+        }
+        Returns: undefined
+      }
       request_women_only: { Args: { p_note?: string }; Returns: undefined }
       resolve_backup: { Args: { p_request: string }; Returns: undefined }
       respond_connection: {
@@ -4086,6 +4202,31 @@ export type Database = {
           p_short_code: string
         }
         Returns: string
+      }
+      save_my_about: {
+        Args: {
+          p_avatar_url: string
+          p_bio: string
+          p_handle: string
+          p_hometown: string
+          p_residence: Database["public"]["Enums"]["residence_type"]
+        }
+        Returns: undefined
+      }
+      save_my_academic: {
+        Args: {
+          p_batch: number
+          p_department: string
+          p_program: string
+          p_section: string
+          p_semester: number
+          p_shift: Database["public"]["Enums"]["shift_type"]
+        }
+        Returns: undefined
+      }
+      save_my_opening_move: {
+        Args: { p_answer: string; p_prompt: string }
+        Returns: undefined
       }
       save_program: {
         Args: {

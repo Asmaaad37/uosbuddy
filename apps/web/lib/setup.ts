@@ -18,6 +18,13 @@ export function isEditing(edit: string | string[] | undefined, onboardingStep: n
   return edit === "1" && onboardingStep >= SETUP_STEPS.length;
 }
 
+/** The university's sections. Some classes have none, so the field stays optional. */
+export const SECTIONS = [
+  { value: "REG", label: "Regular (REG)" },
+  { value: "SS1", label: "Self-support 1 (SS1)" },
+  { value: "SS2", label: "Self-support 2 (SS2)" },
+] as const;
+
 /** Where to resume: the first step not yet completed. */
 export function resumeStep(onboardingStep: number): SetupStep {
   return SETUP_STEPS[Math.min(Math.max(onboardingStep, 0), SETUP_STEPS.length - 1)]!;
