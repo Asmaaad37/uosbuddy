@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowUp, FileText, ImageIcon, Loader2 } from "lucide-react";
+import { ArrowUp, FileText, Flag, ImageIcon, Loader2 } from "lucide-react";
 import { voteResource } from "@/actions/courses";
+import { ReportDialog } from "@/components/connect/safety-menu";
 import { Chip } from "@/components/ui/chip";
 import { SearchField } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -22,6 +23,7 @@ export type HubItem = {
   teacher_name: string | null;
   upvotes: number;
   voted: boolean;
+  mine: boolean;
   course: { id: string; code: string; title: string } | null;
 };
 
@@ -122,6 +124,7 @@ export function ResourceSearch({
 export function ResourceResults({ items: initial }: { items: HubItem[] }) {
   const [items, setItems] = useState(initial);
   const [error, setError] = useState<string>();
+  const [reporting, setReporting] = useState<string | null>(null);
 
   async function open(r: HubItem) {
     const url = await signedUrl("course-resources", r.file_path);
@@ -205,10 +208,27 @@ export function ResourceResults({ items: initial }: { items: HubItem[] }) {
               >
                 <ArrowUp className="size-4" aria-hidden /> {r.upvotes}
               </button>
+              {!r.mine && (
+                <button
+                  type="button"
+                  aria-label={`Report ${r.title}`}
+                  onClick={() => setReporting(r.id)}
+                  className="hit ml-1 grid size-9 shrink-0 place-items-center rounded-pill text-sec hover:bg-raised"
+                >
+                  <Flag className="size-4" aria-hidden />
+                </button>
+              )}
             </span>
           </li>
         ))}
       </ul>
+      <ReportDialog
+        open={!!reporting}
+        onOpenChange={(o) => !o && setReporting(null)}
+        title="Report file"
+        targetType="resource"
+        targetId={reporting ?? ""}
+      />
     </section>
   );
 }

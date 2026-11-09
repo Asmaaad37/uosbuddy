@@ -27,7 +27,7 @@ async function session() {
 // ---------------------------------------------------------------------------
 // Moderation (admins everywhere; moderators in their spaces). Audited in the database.
 // ---------------------------------------------------------------------------
-const targetTypes = z.enum(["post", "comment", "listing", "resource", "ride", "event"]);
+const targetTypes = z.enum(["post", "comment", "listing", "resource", "ride", "event", "message"]);
 
 export async function moderateContent(input: {
   type: string;
@@ -39,6 +39,13 @@ export async function moderateContent(input: {
   if (!type.success || !id.safeParse(input.id).success) return fail("Not found");
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
+  // A removed message's photo goes too. The database clears the path, so find it first.
+  const db = createAdminClient();
+  const photo =
+    type.data === "message" && input.action === "hide"
+      ? (await db.from("messages").select("attachment_path").eq("id", input.id).maybeSingle()).data
+          ?.attachment_path
+      : null;
   const { error } = await s.supabase.rpc("moderate_content", {
     p_type: type.data,
     p_id: input.id,
@@ -46,6 +53,7 @@ export async function moderateContent(input: {
     p_reason: input.reason?.trim().slice(0, 300) || undefined,
   });
   if (error) return fail(friendly(error, "Couldn't do that. Try again."));
+  if (photo) await db.storage.from("chat-attachments").remove([photo]);
   return ok;
 }
 

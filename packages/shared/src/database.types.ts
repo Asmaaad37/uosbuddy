@@ -3976,6 +3976,8 @@ export type Database = {
           details: string[]
           is_anonymous: boolean
           last_reported_at: string
+          media_bucket: string
+          media_paths: string[]
           preview: string
           reasons: string[]
           report_count: number

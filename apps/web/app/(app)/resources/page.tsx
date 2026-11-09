@@ -84,6 +84,7 @@ export default async function ResourcesPage({ searchParams }: Props) {
       teacher_name: r.teacher_name,
       upvotes: r.upvotes,
       voted: voted.has(r.id),
+      mine: r.uploader_id === user.id,
       course: course ? { id: course.id, code: course.code, title: course.title } : null,
     };
   });

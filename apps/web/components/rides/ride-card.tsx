@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, MessageCircle, Repeat, Users } from "lucide-react";
+import { ArrowRight, Flag, Loader2, MessageCircle, Repeat, Users } from "lucide-react";
 import {
   cancelRide,
   cancelSeat,
@@ -12,6 +12,7 @@ import {
   rideRequests,
   type RideRequest,
 } from "@/actions/campus";
+import { ReportDialog } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [requests, setRequests] = useState<RideRequest[] | null>(null);
+  const [reporting, setReporting] = useState(false);
   const mine = ride.user_id === me;
   const offer = ride.kind === "offer";
   const left = Math.max(ride.seats - ride.seats_taken, 0);
@@ -155,6 +157,11 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
             Leave ride
           </Button>
         )}
+        {!mine && (
+          <Button size="sm" variant="ghost" onClick={() => setReporting(true)}>
+            <Flag /> Report
+          </Button>
+        )}
         {mine && ride.status !== "cancelled" && (
           <>
             <Button size="sm" variant="secondary" onClick={() => void loadRequests()}>
@@ -171,6 +178,14 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
           </>
         )}
       </div>
+
+      <ReportDialog
+        open={reporting}
+        onOpenChange={setReporting}
+        title="Report ride"
+        targetType="ride"
+        targetId={ride.id}
+      />
 
       {mine && requests && (
         <ul className="grid gap-2 border-t border-sep pt-3" aria-label="Requests">

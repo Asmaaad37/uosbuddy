@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ban, Check, EyeOff, Loader2, RotateCcw, TriangleAlert } from "lucide-react";
+import { Ban, Check, EyeOff, FileText, Loader2, RotateCcw, TriangleAlert } from "lucide-react";
 import { dismissReports, moderateContent, setBanned, warnUser } from "@/actions/trust";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,16 +25,29 @@ export type QueueRow = {
   is_anonymous: boolean;
 };
 
-const HIDEABLE = ["post", "comment", "listing", "resource", "ride", "event"];
+const HIDEABLE = ["post", "comment", "listing", "resource", "ride", "event", "message"];
 const LIVE = ["published", "active", "open"];
 
 /** Phase 9: one reported or held item with what staff can do about it. */
-export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolean }) {
+export function ReportItem({
+  row: r,
+  media,
+  isAdmin,
+}: {
+  row: QueueRow;
+  media: { url: string; image: boolean }[];
+  isAdmin: boolean;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [mode, setMode] = useState<"warn" | "ban" | null>(null);
   const [text, setText] = useState("");
   const hidden = !LIVE.includes(r.status);
+  // Whoever started a reported chat may not be who it's about, so warn or ban from People.
+  const isChat = r.target_type === "conversation";
+  const canAct = !!r.author_id && !isChat;
+  // Removing a message can't be undone, so it takes a second press.
+  const [confirming, setConfirming] = useState(false);
 
   const run = (fn: () => Promise<{ ok: boolean; error?: string }>, done: string) =>
     start(async () => {
@@ -68,7 +81,32 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
           </Pill>
         )}
       </div>
-      <p className="text-[15px] whitespace-pre-wrap">{r.preview || "(no text)"}</p>
+      <p className="text-[15px] whitespace-pre-wrap">
+        {r.preview || (media.length ? "(no text, see below)" : "(no text)")}
+      </p>
+      {media.length > 0 && (
+        <ul className="flex flex-wrap gap-2">
+          {media.map((m) => (
+            <li key={m.url}>
+              <a
+                href={m.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block overflow-hidden rounded-field border border-sep"
+              >
+                {m.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- short-lived signed link
+                  <img src={m.url} alt="Reported file" className="size-32 object-cover" />
+                ) : (
+                  <span className="flex h-11 items-center gap-2 px-3 text-sm font-semibold text-accent">
+                    <FileText className="size-4" aria-hidden /> Open the file
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
       {r.details.length > 0 && (
         <ul className="grid gap-1 text-sm text-sec">
           {r.details.map((d, i) => (
@@ -77,7 +115,7 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
         </ul>
       )}
       <p className="text-xs text-sec">
-        By{" "}
+        {isChat ? "Started by" : "By"}{" "}
         {r.author_handle ? (
           <Link href={`/people/${r.author_handle}`} className="font-semibold">
             {r.author_name}
@@ -91,25 +129,29 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
       <div className="flex flex-wrap gap-2">
         {HIDEABLE.includes(r.target_type) &&
           (hidden ? (
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                run(
-                  () =>
-                    moderateContent({ type: r.target_type, id: r.target_id, action: "restore" }),
-                  "Restored",
-                )
-              }
-            >
-              <RotateCcw /> Restore
-            </Button>
+            r.target_type !== "message" && (
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={pending}
+                onClick={() =>
+                  run(
+                    () =>
+                      moderateContent({ type: r.target_type, id: r.target_id, action: "restore" }),
+                    "Restored",
+                  )
+                }
+              >
+                <RotateCcw /> Restore
+              </Button>
+            )
           ) : (
             <Button
               size="sm"
               disabled={pending}
-              onClick={() =>
+              variant={confirming ? "danger" : "primary"}
+              onClick={() => {
+                if (r.target_type === "message" && !confirming) return setConfirming(true);
                 run(
                   () =>
                     moderateContent({
@@ -119,10 +161,11 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
                       reason: r.reasons[0],
                     }),
                   "Removed",
-                )
-              }
+                );
+              }}
             >
-              {pending ? <Loader2 className="animate-spin" /> : <EyeOff />} Remove
+              {pending ? <Loader2 className="animate-spin" /> : <EyeOff />}{" "}
+              {confirming ? "Erase for everyone?" : "Remove"}
             </Button>
           ))}
         {r.report_count > 0 && (
@@ -137,7 +180,7 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
             <Check /> Dismiss reports
           </Button>
         )}
-        {r.author_id && (
+        {canAct && (
           <Button
             size="sm"
             variant="ghost"
@@ -146,7 +189,7 @@ export function ReportItem({ row: r, isAdmin }: { row: QueueRow; isAdmin: boolea
             <TriangleAlert /> Warn
           </Button>
         )}
-        {r.author_id && isAdmin && (
+        {canAct && isAdmin && (
           <Button size="sm" variant="ghost" onClick={() => setMode(mode === "ban" ? null : "ban")}>
             <Ban /> Ban
           </Button>

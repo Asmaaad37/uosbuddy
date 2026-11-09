@@ -4,6 +4,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { ReportItem, type QueueRow } from "@/components/admin/report-item";
 import { homePath } from "@/lib/auth/routing";
 import { getSession } from "@/lib/auth/session";
+import { moderationMediaLinks } from "@/lib/moderation-media.server";
 
 export const metadata: Metadata = { title: "Reports", robots: { index: false } };
 
@@ -13,6 +14,7 @@ export default async function ReportsPage() {
   if (profile?.role !== "admin" && profile?.role !== "moderator") notFound();
   const isAdmin = profile.role === "admin";
   const { data: rows } = await supabase.rpc("moderation_queue");
+  const links = await moderationMediaLinks(rows ?? []);
 
   return (
     <AdminShell current="/admin/reports" isAdmin={isAdmin} back={homePath(profile)}>
@@ -31,6 +33,10 @@ export default async function ReportsPage() {
             <ReportItem
               key={`${r.target_type}:${r.target_id}`}
               row={r as QueueRow}
+              media={r.media_paths.flatMap((path) => {
+                const url = links.get(`${r.media_bucket}/${path}`);
+                return url ? [{ url, image: !path.toLowerCase().endsWith(".pdf") }] : [];
+              })}
               isAdmin={isAdmin}
             />
           ))}

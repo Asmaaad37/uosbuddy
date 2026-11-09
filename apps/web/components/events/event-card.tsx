@@ -1,10 +1,11 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CalendarPlus, Clock, Loader2, MapPin, Users } from "lucide-react";
+import { CalendarPlus, Clock, Flag, Loader2, MapPin, Users } from "lucide-react";
 import { cancelEvent, rsvpEvent } from "@/actions/campus";
+import { ReportDialog } from "@/components/connect/safety-menu";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
@@ -33,6 +34,7 @@ export type EventItem = {
 export function EventCard({ event: e }: { event: EventItem }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [reporting, setReporting] = useState(false);
   const cancelled = e.status === "cancelled";
   const full = e.capacity !== null && e.going >= e.capacity && e.my_rsvp !== "going";
 
@@ -130,8 +132,20 @@ export function EventCard({ event: e }: { event: EventItem }) {
               Cancel event
             </Button>
           )}
+          {!e.can_manage && (
+            <Button size="sm" variant="ghost" onClick={() => setReporting(true)}>
+              <Flag /> Report
+            </Button>
+          )}
         </div>
       )}
+      <ReportDialog
+        open={reporting}
+        onOpenChange={setReporting}
+        title="Report event"
+        targetType="event"
+        targetId={e.id}
+      />
     </article>
   );
 }
