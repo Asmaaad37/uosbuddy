@@ -103,6 +103,7 @@ export function ReportDialog({
           <>
             <DialogDescription>
               Only moderators and admins see reports. Only admins can see who sent it.
+              {targetType === "conversation" && " Admins can read this chat's recent messages."}
             </DialogDescription>
             <div className="grid gap-2" role="radiogroup" aria-label="Reason">
               {REASONS.map((r) => (
