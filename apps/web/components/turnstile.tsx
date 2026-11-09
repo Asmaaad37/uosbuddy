@@ -23,7 +23,12 @@ function loadTurnstile() {
     script.src = SCRIPT;
     script.async = true;
     script.onload = () => (window.turnstile ? resolve(window.turnstile) : reject());
-    script.onerror = () => reject(new Error("Turnstile failed to load"));
+    script.onerror = () => {
+      // Let "Try again" load it afresh.
+      script.remove();
+      loading = undefined;
+      reject(new Error("Turnstile failed to load"));
+    };
     document.head.appendChild(script);
   });
   return loading;
@@ -32,13 +37,15 @@ function loadTurnstile() {
 /**
  * Cloudflare Turnstile (Phase 1 task 9). Usually invisible; shows a checkbox only when unsure.
  * Tokens are single-use: call `reset()` after each request that sent one. Without a site key
- * this is a no-op and `ready` is always true, so forms work unchanged.
+ * this is a no-op and `ready` is always true, so forms work unchanged. Forms stay disabled
+ * until there's a token, so a check that can't finish says so and offers "Try again".
  */
 export function useTurnstile() {
   const ref = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | undefined>(undefined);
   const [token, setToken] = useState<string>();
   const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!SITE_KEY || !ref.current) return;
@@ -51,9 +58,20 @@ export function useTurnstile() {
           appearance: "interaction-only",
           size: "flexible",
           theme: "auto",
-          callback: (t: string) => setToken(t),
+          callback: (t: string) => {
+            setToken(t);
+            setFailed(false);
+          },
           "expired-callback": () => setToken(undefined),
-          "error-callback": () => setToken(undefined),
+          "error-callback": () => {
+            setToken(undefined);
+            setFailed(true);
+          },
+          "timeout-callback": () => {
+            setToken(undefined);
+            setFailed(true);
+          },
+          "unsupported-callback": () => setFailed(true),
         });
       })
       .catch(() => setFailed(true));
@@ -62,11 +80,18 @@ export function useTurnstile() {
       if (widgetId.current) window.turnstile?.remove(widgetId.current);
       widgetId.current = undefined;
     };
-  }, []);
+  }, [attempt]);
 
   const reset = useCallback(() => {
     setToken(undefined);
     if (widgetId.current) window.turnstile?.reset(widgetId.current);
+  }, []);
+
+  const retry = useCallback(() => {
+    setFailed(false);
+    setToken(undefined);
+    if (widgetId.current) window.turnstile?.reset(widgetId.current);
+    else setAttempt((n) => n + 1); // The script itself never loaded.
   }, []);
 
   return {
@@ -77,9 +102,18 @@ export function useTurnstile() {
       <div>
         <div ref={ref} />
         {failed && (
-          <p role="alert" className="text-[13px] text-danger">
-            The security check didn&apos;t load. Check your connection and refresh the page.
-          </p>
+          <div role="alert" className="flex items-center justify-between gap-3 py-1">
+            <p className="text-footnote text-danger">
+              The security check didn&apos;t finish. Check your connection and try again.
+            </p>
+            <button
+              type="button"
+              onClick={retry}
+              className="hit relative shrink-0 text-subhead font-semibold text-accent"
+            >
+              Try again
+            </button>
+          </div>
         )}
       </div>
     ) : null,

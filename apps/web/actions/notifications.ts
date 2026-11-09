@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "./onboarding";
 
 const fail = (error: string) => ({ ok: false, error }) as const;
@@ -34,7 +35,9 @@ export async function savePushSubscription(
   if (!s) return fail("Your session expired. Log in again.");
   const { endpoint, keys } = parsed.data;
   // One row per browser: if this endpoint was someone else's (shared phone), it moves to you.
-  await s.supabase.from("push_subscriptions").delete().eq("endpoint", endpoint);
+  // RLS would hide their row from you, so this needs the service role. Only this browser
+  // holds its unguessable endpoint, and the push then stops going to the previous student.
+  await createAdminClient().from("push_subscriptions").delete().eq("endpoint", endpoint);
   const { error } = await s.supabase.from("push_subscriptions").insert({
     user_id: s.user.id,
     endpoint,

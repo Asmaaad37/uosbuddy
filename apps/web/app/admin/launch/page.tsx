@@ -8,6 +8,7 @@ import { homePath } from "@/lib/auth/routing";
 import { getSession } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
 import { serverEnv } from "@/lib/env.server";
+import { redis } from "@/lib/redis.server";
 
 export const metadata: Metadata = { title: "Launch check", robots: { index: false } };
 
@@ -20,8 +21,8 @@ const JOBS = [
   "purge-deleted-accounts",
 ];
 
-type Status = "ok" | "missing" | "optional";
-type Check = { label: string; status: Status; note?: string };
+type Status = "ok" | "missing" | "optional" | "manual";
+type Check = { label: string; status: Status; note?: string; value?: string };
 
 type LaunchStatus = {
   push_url: string | null;
@@ -50,6 +51,17 @@ const nice = (ok: boolean, label: string, note?: string): Check => ({
   status: ok ? "ok" : "optional",
   note,
 });
+
+/** Really asks Redis: the app carries on silently without it, so "the keys exist" proves little. */
+async function redisConnected() {
+  if (!redis) return false;
+  const timeout = new Promise<false>((resolve) => setTimeout(() => resolve(false), 3000));
+  const ping = redis
+    .ping()
+    .then((answer) => answer === "PONG")
+    .catch(() => false);
+  return Promise.race([ping, timeout]);
+}
 
 function origin(url: string | null | undefined) {
   try {
@@ -82,7 +94,7 @@ function lastPush(s: LaunchStatus["recent_pushes"]) {
 export default async function LaunchPage() {
   const { supabase, profile } = await getSession();
   if (profile?.role !== "admin") notFound();
-  const { data } = await supabase.rpc("launch_status");
+  const [{ data }, redisOk] = await Promise.all([supabase.rpc("launch_status"), redisConnected()]);
   const db = data as LaunchStatus | null;
 
   const site = publicEnv.NEXT_PUBLIC_SITE_URL;
@@ -116,7 +128,7 @@ export default async function LaunchPage() {
         ),
         {
           label: "Captcha on in Supabase Auth",
-          status: "optional",
+          status: "manual",
           note: "Can't be read from here: Supabase → Authentication → Attack Protection. Turn it on only after the site key above is live.",
         },
       ],
@@ -154,7 +166,7 @@ export default async function LaunchPage() {
           "Your devices",
           !db?.my_push_on
             ? "Push is off in your notification settings."
-            : `${db?.my_devices ?? 0} of yours, ${db?.devices ?? 0} in total. Turn notifications on from the Notifications screen on your phone.`,
+            : `${db?.my_devices ?? 0} of yours, ${db?.devices ?? 0} in total. Turn them on in Me → Notifications on your phone.`,
         ),
       ],
       footer: <TestPush />,
@@ -170,10 +182,16 @@ export default async function LaunchPage() {
           "Email (SMTP) in Vercel",
           "App emails such as the weekly digest. Login codes use Supabase's own SMTP settings.",
         ),
-        need(
-          set(serverEnv.UPSTASH_REDIS_REST_URL) && set(serverEnv.UPSTASH_REDIS_REST_TOKEN),
-          "Rate limits (Upstash)",
-        ),
+        {
+          label: "Rate limits (Upstash)",
+          status: redisOk ? "ok" : "missing",
+          value: redisOk ? "Connected" : redis ? "Can't connect" : "Missing",
+          note: redisOk
+            ? undefined
+            : redis
+              ? "The keys are set but Redis refused or didn't answer. Copy the REST URL and token from Upstash again."
+              : "UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN in Vercel.",
+        },
       ],
     },
     {
@@ -229,7 +247,14 @@ export default async function LaunchPage() {
                     {c.note && <span className="text-sm break-words text-sec">{c.note}</span>}
                   </div>
                   <span className="shrink-0 text-sm text-sec">
-                    {c.status === "ok" ? "Set" : c.status === "missing" ? "Missing" : "Off"}
+                    {c.value ??
+                      (c.status === "ok"
+                        ? "Set"
+                        : c.status === "missing"
+                          ? "Missing"
+                          : c.status === "manual"
+                            ? "Check by hand"
+                            : "Off")}
                   </span>
                 </li>
               ))}

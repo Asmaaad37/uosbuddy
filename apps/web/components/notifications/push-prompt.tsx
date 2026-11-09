@@ -2,17 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { BellRing, Loader2, X } from "lucide-react";
-import { savePushSubscription } from "@/actions/notifications";
+import { subscribeThisDevice } from "@/components/notifications/push-client";
 import { Button } from "@/components/ui/button";
 import { publicEnv } from "@/lib/env";
 
 const DISMISSED = "uosb-push-prompt-dismissed";
-
-function urlBase64ToUint8Array(base64: string) {
-  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
-  const raw = atob((base64 + padding).replace(/-/g, "+").replace(/_/g, "/"));
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
-}
 
 type State = "hidden" | "ask" | "busy" | "on" | "blocked";
 
@@ -45,26 +39,12 @@ export function PushPrompt({ reason }: { reason: string }) {
     if (!key) return;
     setState("busy");
     setError(undefined);
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") return setState("blocked");
-      const reg = await navigator.serviceWorker.ready;
-      const sub =
-        (await reg.pushManager.getSubscription()) ??
-        (await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(key),
-        }));
-      const result = await savePushSubscription(sub.toJSON(), navigator.userAgent);
-      if (!result.ok) {
-        setError(result.error);
-        return setState("ask");
-      }
-      setState("on");
-    } catch {
-      setError("Couldn't turn on notifications in this browser.");
-      setState("ask");
+    const result = await subscribeThisDevice(key);
+    if (result.state === "error") {
+      setError(result.error);
+      return setState("ask");
     }
+    setState(result.state);
   }
 
   function dismiss() {
