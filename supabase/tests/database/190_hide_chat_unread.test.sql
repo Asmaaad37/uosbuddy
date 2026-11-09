@@ -2,7 +2,7 @@
 -- A, B and C are verified, connected CS 2024 students.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(15);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -61,6 +61,14 @@ select is(tests.as('A', 'select count(*)::text from public.my_conversations()'),
   'A still has it');
 select throws_ok($$ select tests.as('C', 'select ''ok'' from public.hide_conversation(%4$L)') $$,
   'P0002', null, 'C cannot touch a chat they are not in');
+
+select is(tests.as('B', 'select public.start_dm(%1$L)::text'),
+  (select id::text from tests.chat where name = 'AB'), 'messaging A again finds the same chat');
+select is(tests.as('B', 'select count(*)::text from public.my_conversations()'), '1',
+  'and brings it back, so it can open');
+select is(tests.as('B', 'select public.unread_chat_count()::text'), '0',
+  'without counting old messages as unread');
+select tests.as('B', 'select ''hidden'' from public.hide_conversation(%4$L)');
 
 -- Time passes (inside one transaction now() never moves), then A writes again.
 update public.conversation_members set hidden_at = hidden_at - interval '1 minute',
