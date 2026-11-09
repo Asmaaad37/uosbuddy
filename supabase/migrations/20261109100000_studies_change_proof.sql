@@ -38,6 +38,8 @@ alter table public.studies_change_requests enable row level security;
 create policy studies_change_requests_read on public.studies_change_requests
   for select to authenticated
   using (user_id = (select auth.uid()) or (select public.is_admin()));
+-- Only the functions below write here; some projects grant new tables to everyone by default.
+revoke all on public.studies_change_requests from anon, authenticated;
 grant select on public.studies_change_requests to authenticated;
 
 -- Setup step 1, and Me → Studies. After setup only program and semester are free, plus

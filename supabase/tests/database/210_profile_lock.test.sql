@@ -2,7 +2,7 @@
 -- through a checked function. A and B are verified, finished students; Admin is an admin.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(43);
+select plan(45);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -67,6 +67,11 @@ select throws_ok($$ select tests.as('A', 'update public.profiles set full_name =
   '42501', null, 'or their name');
 select throws_ok($$ select tests.as('A', 'update public.profiles set deleted_at = null, onboarding_step = 4 where id = auth.uid() returning ''x''') $$,
   '42501', null, 'or their deletion and setup state');
+
+select is(has_table_privilege('authenticated', 'public.studies_change_requests', 'insert, update, delete'), false,
+  'students cannot write studies change requests directly');
+select is(has_table_privilege('anon', 'public.studies_change_requests', 'select, insert, update, delete'), false,
+  'and signed-out visitors have no access at all');
 
 -- ---------- handles ----------
 create function tests.about(p_handle text, p_avatar text default null) returns text language sql stable as $$
