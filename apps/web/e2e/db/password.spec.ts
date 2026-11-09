@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { db, logIn, makeStudent, run } from "./helpers";
 
+test.skip(!process.env.E2E_DB, "needs a local Supabase stack (E2E_DB=1)");
+
 test("the reset link lets a student choose a new password", async ({ page, browser }, info) => {
   const handle = `pw${info.project.name[0]}_${run}`.slice(0, 20);
   const student = await makeStudent("Reset Tester", handle, 4);
