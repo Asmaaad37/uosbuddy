@@ -23,7 +23,7 @@ export const GUIDELINES: { title: string; body: string }[] = [
   },
   {
     title: "Anonymous isn't a loophole",
-    body: "Anonymous posts follow the same rules. Moderators can see who posted when the rules are broken.",
+    body: "Anonymous posts follow the same rules. Admins can see who posted when the rules are broken.",
   },
   {
     title: "Trade and travel safely",
