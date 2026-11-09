@@ -52,6 +52,8 @@ export type PrivacySettings = {
   allow_dms_from: Visibility;
   show_hometown: boolean;
   show_in_directory: boolean;
+  /** Connections see when you're busy (times only) in "Free together". */
+  share_free_time: boolean;
 };
 
 /** Screen 9 presets. "Custom" is whatever doesn't match one of these exactly. */
@@ -65,6 +67,7 @@ export const PRIVACY_PRESETS = {
       allow_dms_from: "everyone",
       show_hometown: true,
       show_in_directory: true,
+      share_free_time: true,
     },
   },
   batch: {
@@ -76,6 +79,7 @@ export const PRIVACY_PRESETS = {
       allow_dms_from: "batch",
       show_hometown: true,
       show_in_directory: true,
+      share_free_time: true,
     },
   },
   private: {
@@ -87,6 +91,7 @@ export const PRIVACY_PRESETS = {
       allow_dms_from: "connections",
       show_hometown: false,
       show_in_directory: false,
+      share_free_time: false,
     },
   },
 } satisfies Record<string, { label: string; description: string; settings: PrivacySettings }>;
