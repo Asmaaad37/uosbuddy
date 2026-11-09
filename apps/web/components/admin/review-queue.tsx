@@ -27,6 +27,7 @@ export type QueueItem = {
   emailIsUni: boolean;
   whatsapp: string | null;
   precheck: Precheck | null;
+  duplicates: { full_name: string | null; handle: string | null; status: string }[];
 };
 
 type Picker = "rejected" | "needs_info";
@@ -51,7 +52,11 @@ const ago = (iso: string) => {
   return hours < 48 ? `${hours} h ago` : `${Math.round(hours / 24)} days ago`;
 };
 
-/** Admin verification queue (Phase 1 task 7). Keys: A approve, R reject, N needs info, J/K move. */
+/**
+ * Admin verification queue (Phase 1 task 7). Keys: A approve (press twice), R reject, N needs
+ * info, J/K move. A slip of the finger shouldn't verify anyone, and neither should a click past
+ * a warning, so those take a second press.
+ */
 export function ReviewQueue({
   items,
   waitingOnStudents,
@@ -66,6 +71,7 @@ export function ReviewQueue({
   const [picker, setPicker] = useState<Picker | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [armedFor, setArmedFor] = useState<string | null>(null);
   const reasonRef = useRef<HTMLTextAreaElement>(null);
 
   const current = queue[Math.min(index, queue.length - 1)];
@@ -74,10 +80,14 @@ export function ReviewQueue({
     !!current?.accountName &&
     !!current.submittedName &&
     current.accountName.trim().toLowerCase() !== current.submittedName.trim().toLowerCase();
+  const risky =
+    !!current && (namesDiffer || current.duplicates.length > 0 || !!current.precheck?.flags.length);
+  const armed = !!current && armedFor === current.id;
 
   const move = useCallback(
     (step: number) => {
       setPicker(null);
+      setArmedFor(null);
       setIndex((i) => Math.max(0, Math.min(queue.length - 1, i + step)));
     },
     [queue.length],
@@ -106,6 +116,16 @@ export function ReviewQueue({
     [current, busy],
   );
 
+  const approve = useCallback(
+    (byKey: boolean) => {
+      if (!current) return;
+      if ((byKey || risky) && !armed) return setArmedFor(current.id);
+      setArmedFor(null);
+      void decide("verified");
+    },
+    [current, risky, armed, decide],
+  );
+
   const openPicker = useCallback((kind: Picker) => {
     setPicker(kind);
     setReason("");
@@ -121,7 +141,7 @@ export function ReviewQueue({
       const key = e.key.toLowerCase();
       if (key === "j") move(1);
       else if (key === "k") move(-1);
-      else if (key === "a") void decide("verified");
+      else if (key === "a") approve(true);
       else if (key === "r") openPicker("rejected");
       else if (key === "n") openPicker("needs_info");
       else return;
@@ -129,7 +149,7 @@ export function ReviewQueue({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [move, decide, openPicker]);
+  }, [move, approve, openPicker]);
 
   // New and updated submissions appear without a reload.
   useEffect(() => {
@@ -162,8 +182,8 @@ export function ReviewQueue({
           </p>
         </div>
         <p className="hidden text-[13px] text-sec md:block">
-          <kbd>A</kbd> approve · <kbd>R</kbd> reject · <kbd>N</kbd> needs info · <kbd>J</kbd>/
-          <kbd>K</kbd> next/previous
+          <kbd>A</kbd> twice to approve · <kbd>R</kbd> reject · <kbd>N</kbd> needs info ·{" "}
+          <kbd>J</kbd>/<kbd>K</kbd> next/previous
         </p>
       </div>
 
@@ -193,6 +213,22 @@ export function ReviewQueue({
                 </Button>
               </div>
             </div>
+
+            {current.duplicates.length > 0 && (
+              <section
+                aria-label="Roll number already used"
+                className="grid gap-1 rounded-card border border-danger/40 bg-danger/10 p-4 text-sm"
+              >
+                <p className="font-semibold">This roll number is already on another account</p>
+                <ul>
+                  {current.duplicates.map((d) => (
+                    <li key={d.handle ?? d.full_name ?? d.status}>
+                      {d.full_name ?? d.handle ?? "Unnamed"} ({d.status})
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {current.precheck && <PrecheckPanel p={current.precheck} />}
 
@@ -284,8 +320,13 @@ export function ReviewQueue({
               </form>
             ) : (
               <div className="grid gap-2">
-                <Button block onClick={() => void decide("verified")} disabled={busy}>
-                  <Check /> Approve
+                <Button
+                  block
+                  variant={armed && risky ? "danger" : "primary"}
+                  onClick={() => approve(false)}
+                  disabled={busy}
+                >
+                  <Check /> {armed ? "Press again to approve" : "Approve"}
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
