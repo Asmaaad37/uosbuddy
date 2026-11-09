@@ -1,8 +1,9 @@
 "use server";
 
+import { after } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
-import { sendEmail } from "@/lib/email/send.server";
+import { sendEmail, sendStatusEmail } from "@/lib/email/send.server";
 import { renderExportEmail } from "@/lib/email/templates";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "./onboarding";
@@ -63,6 +64,18 @@ export async function warnUser(user: string, message: string): Promise<ActionRes
   if (!s) return fail("Your session expired. Log in again.");
   const { error } = await s.supabase.rpc("warn_user", { p_user: user, p_message: message });
   if (error) return fail(friendly(error, "Couldn't send the warning. Try again."));
+  return ok;
+}
+
+/** Takes verification away. They see the reason and can try again with proof. */
+export async function revokeVerification(user: string, reason: string): Promise<ActionResult> {
+  if (!id.safeParse(user).success) return fail("Student not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const why = reason.trim();
+  const { error } = await s.supabase.rpc("revoke_verification", { p_user: user, p_reason: why });
+  if (error) return fail(friendly(error, "Couldn't revoke. Try again."));
+  after(() => sendStatusEmail(user, { kind: "rejected", reason: why }));
   return ok;
 }
 

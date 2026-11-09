@@ -4087,6 +4087,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      person_hidden: { Args: { p_user: string }; Returns: boolean }
       profile_badges: {
         Args: { p_user: string }
         Returns: {
@@ -4149,6 +4150,10 @@ export type Database = {
       respond_seat: {
         Args: { p_accept: boolean; p_request: string }
         Returns: string
+      }
+      revoke_verification: {
+        Args: { p_reason: string; p_user: string }
+        Returns: undefined
       }
       ride_requests_for: {
         Args: { p_ride: string }
