@@ -4372,6 +4372,15 @@ export type Database = {
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
       unread_chat_count: { Args: never; Returns: number }
       use_ai: { Args: { p_kind: string }; Returns: number }
+      verification_duplicates: {
+        Args: never
+        Returns: {
+          full_name: string
+          handle: string
+          request_id: string
+          status: string
+        }[]
+      }
       verify_society: {
         Args: { p_society: string; p_verified: boolean }
         Returns: undefined

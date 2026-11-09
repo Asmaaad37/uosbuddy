@@ -24,7 +24,7 @@ export default async function VerificationsPage({
   const from = safeNext((await searchParams).from);
   const back = from ?? homePath(profile);
 
-  const [{ data: rows }, { count: waitingOnStudents }] = await Promise.all([
+  const [{ data: rows }, { count: waitingOnStudents }, { data: duplicates }] = await Promise.all([
     supabase
       .from("verification_requests")
       .select(
@@ -37,6 +37,7 @@ export default async function VerificationsPage({
       .from("verification_requests")
       .select("id", { count: "exact", head: true })
       .eq("status", "needs_info"),
+    supabase.rpc("verification_duplicates"),
   ]);
 
   const paths = (rows ?? []).flatMap((r) => (r.doc_path ? [r.doc_path] : []));
@@ -59,6 +60,7 @@ export default async function VerificationsPage({
       emailIsUni: !pii?.personal_email && !!pii?.uni_email,
       whatsapp: pii?.whatsapp ?? null,
       precheck: (r.ai_precheck as Precheck | null) ?? null,
+      duplicates: (duplicates ?? []).filter((d) => d.request_id === r.id),
     };
   });
   // Phase 7: high pre-check confidence first (§4.6); unscored last; oldest first otherwise.
