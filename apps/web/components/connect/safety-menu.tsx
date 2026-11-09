@@ -102,7 +102,7 @@ export function ReportDialog({
         ) : (
           <>
             <DialogDescription>
-              Only moderators see reports. They aren&apos;t told who sent it.
+              Only moderators and admins see reports. Only admins can see who sent it.
             </DialogDescription>
             <div className="grid gap-2" role="radiogroup" aria-label="Reason">
               {REASONS.map((r) => (
