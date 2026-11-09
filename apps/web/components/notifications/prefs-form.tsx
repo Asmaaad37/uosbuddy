@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 import { saveNotificationPrefs, type NotificationPrefs } from "@/actions/notifications";
-import { PushPrompt } from "@/components/notifications/push-prompt";
+import { PushDevice } from "@/components/notifications/push-device";
+import { GroupedList } from "@/components/ui/grouped-list";
+import { Switch } from "@/components/ui/switch";
 
-const ROWS: { key: keyof NotificationPrefs; label: string; hint: string }[] = [
+type PrefRow = { key: keyof NotificationPrefs; label: string; hint: string };
+
+const ALERTS: PrefRow[] = [
   {
     key: "connections",
     label: "Connect requests",
@@ -13,20 +17,29 @@ const ROWS: { key: keyof NotificationPrefs; label: string; hint: string }[] = [
   { key: "backup", label: "Backup pings", hint: "Classmates nearby need backup (5 a day at most)" },
   { key: "comments", label: "Comments and replies", hint: "On your posts and comments" },
   { key: "messages", label: "Chat messages", hint: "As pushes; muted chats never ping" },
+];
+
+const DELIVERY: PrefRow[] = [
+  {
+    key: "push",
+    label: "Push notifications",
+    hint: "Alerts on your phones and computers. When off, you only see them inside the app.",
+  },
   {
     key: "digest",
     label: "Weekly email",
     hint: "A short Sunday summary of what's new for you",
   },
-  {
-    key: "push",
-    label: "Push notifications",
-    hint: "Off: everything stays in the app, on all your devices",
-  },
 ];
 
 /** Settings → Notifications: per-type switches, saved as you flip them. */
-export function PrefsForm({ initial }: { initial: NotificationPrefs }) {
+export function PrefsForm({
+  initial,
+  endpoints,
+}: {
+  initial: NotificationPrefs;
+  endpoints: string[];
+}) {
   const [prefs, setPrefs] = useState(initial);
   const [error, setError] = useState<string>();
 
@@ -40,30 +53,30 @@ export function PrefsForm({ initial }: { initial: NotificationPrefs }) {
     } else setError(undefined);
   }
 
+  const row = (r: PrefRow) => (
+    <li key={r.key}>
+      <label className="flex w-full cursor-pointer items-center gap-4 pl-4 transition-colors active:bg-raised">
+        <span
+          data-row-text
+          className="flex min-h-[60px] min-w-0 flex-1 items-center gap-3 self-stretch py-3 pr-4 shadow-[inset_0_-1px_0_var(--sep)]"
+        >
+          <span className="grid min-w-0 flex-1">
+            <span className="text-body text-label">{r.label}</span>
+            <span className="text-footnote text-ter">{r.hint}</span>
+          </span>
+          <Switch checked={prefs[r.key]} onChange={(e) => void flip(r.key, e.target.checked)} />
+        </span>
+      </label>
+    </li>
+  );
+
   return (
-    <div className="grid gap-4">
-      <PushPrompt reason="Turn on notifications for this device." />
-      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
-        {ROWS.map((r) => (
-          <li key={r.key}>
-            <label className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3">
-              <span className="grid gap-0.5">
-                <span className="font-semibold">{r.label}</span>
-                <span className="text-[13px] text-sec">{r.hint}</span>
-              </span>
-              <input
-                type="checkbox"
-                role="switch"
-                checked={prefs[r.key]}
-                onChange={(e) => void flip(r.key, e.target.checked)}
-                className="size-5 shrink-0 accent-[var(--accent)]"
-              />
-            </label>
-          </li>
-        ))}
-      </ul>
+    <div className="grid gap-6">
+      <PushDevice endpoints={endpoints} />
+      <GroupedList header="What alerts you">{ALERTS.map(row)}</GroupedList>
+      <GroupedList header="How you hear about it">{DELIVERY.map(row)}</GroupedList>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-subhead text-danger">
           {error}
         </p>
       )}

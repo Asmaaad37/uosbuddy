@@ -10,11 +10,14 @@ export const metadata: Metadata = { title: "Notification settings" };
 export default async function NotificationSettingsPage() {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/me/notifications");
-  const { data: prefs } = await supabase
-    .from("notification_prefs")
-    .select("connections, backup, comments, messages, push, digest")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [{ data: prefs }, { data: devices }] = await Promise.all([
+    supabase
+      .from("notification_prefs")
+      .select("connections, backup, comments, messages, push, digest")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase.from("push_subscriptions").select("endpoint").eq("user_id", user.id),
+  ]);
 
   return (
     <AppShell back="/me">
@@ -23,6 +26,7 @@ export default async function NotificationSettingsPage() {
         <p className="text-sec">Choose what pings you. Blocked students never notify you.</p>
       </div>
       <PrefsForm
+        endpoints={(devices ?? []).map((d) => d.endpoint)}
         initial={
           prefs ?? {
             connections: true,

@@ -88,6 +88,8 @@ self.addEventListener("push", (event) => {
       body: data.body,
       tag: data.tag,
       renotify: !!data.tag,
+      // Sound is the device's choice; a buzz still gets noticed where sound is off (Android).
+      vibrate: [120, 60, 120],
       icon: "/icons/192",
       badge: "/icons/192",
       data: { url: data.url || "/notifications" },

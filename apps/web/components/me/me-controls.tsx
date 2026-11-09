@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LogOut, SunMoon } from "lucide-react";
 import { signOut } from "@/actions/onboarding";
+import { forgetThisDevice } from "@/components/notifications/push-client";
 import { useAppearance, type Appearance } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -43,6 +44,13 @@ export function AppearanceRow() {
   );
 }
 
+/** Forgets this browser for pushes, then logs out. A slow network never blocks logging out. */
+async function logOut() {
+  const giveUp = new Promise((resolve) => setTimeout(resolve, 2000));
+  await Promise.race([forgetThisDevice().catch(() => {}), giveUp]);
+  await signOut();
+}
+
 /** Log out (redesign §5.5 #5): a full-width destructive row that confirms in a sheet. */
 export function LogOutRow() {
   const [open, setOpen] = useState(false);
@@ -57,7 +65,7 @@ export function LogOutRow() {
           <SheetDescription className="mb-5 text-subhead text-sec">
             You can log back in any time with your email.
           </SheetDescription>
-          <form action={signOut} className="grid gap-2">
+          <form action={logOut} className="grid gap-2">
             <Button type="submit" variant="destructive" block>
               <LogOut aria-hidden /> Log out
             </Button>
