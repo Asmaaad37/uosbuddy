@@ -66,7 +66,7 @@ select ok(tests.queue('Admin', 'conversation', tests.id('group'), 'preview') lik
   'with its recent messages');
 select is(tests.queue('Admin', 'conversation', tests.id('group'), 'media_paths[1]'), tests.id('group') || '/photo.jpg',
   'and photos');
-select is(tests.queue('Mod', 'conversation', tests.id('group'), 'count(*)::text'), null,
+select is(tests.queue('Mod', 'conversation', tests.id('group'), 'count(*)::text'), '0',
   'moderators don''t see chats');
 select is(tests.queue('Admin', 'conversation', tests.id('group'), 'author_name'), 'Queue S', 'it names who started it');
 
