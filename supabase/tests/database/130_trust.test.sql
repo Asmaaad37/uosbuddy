@@ -2,7 +2,7 @@
 -- spaces; a deletion request removes PII after the 14-day grace (time travel); badges.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(21);
+select plan(24);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -65,6 +65,9 @@ select is((select role::text from public.profiles where id = tests.uid('Mod')), 
 select is(tests.audits('moderator.set'), 1, '…and is audited');
 select is(tests.as('Mod', 'select count(*)::text from public.moderation_queue()'), '1',
   'a moderator''s queue shows only reports in their spaces');
+select is(tests.as('Mod', 'select count(*)::text from public.reports'), '0',
+  'a moderator can''t read the reports table, so not who sent a report');
+select is(tests.as('Admin', 'select count(*)::text from public.reports'), '2', 'an admin can');
 select throws_ok($$ select tests.as('Mod', format('select public.moderate_content(''post'', %L, ''hide'')',
   (select id from post_ids where name = 'dept'))) $$,
   '42501', null, 'a moderator can''t act outside their spaces');
@@ -83,9 +86,14 @@ select is(tests.audits('reports.dismiss'), 1, '…audited');
 -- ---------- people, flags and catalogue ----------
 select throws_ok($$ select tests.as('Mod', format('select public.ban_user(%L, ''spam'')', tests.uid('T'))) $$,
   '42501', null, 'only admins ban');
+insert into public.posts (university_id, author_id, space, body)
+select university_id, tests.uid('T'), (select space from public.posts where id = (select id from post_ids where name = 'dept')), 'elsewhere'
+from public.departments where short_code = 'CS';
+select throws_ok($$ select tests.as('Mod', format('select public.warn_user(%L, ''Please keep it civil'')', tests.uid('T'))) $$,
+  '42501', null, 'a moderator can''t warn someone who only posted outside their feeds');
 do $$
 begin
-  perform tests.as('Mod', format('select public.warn_user(%L, ''Please keep it civil'')', tests.uid('T')));
+  perform tests.as('Mod', format('select public.warn_user(%L, ''Please keep it civil'')', tests.uid('S')));
   perform tests.as('Admin', format('select public.ban_user(%L, ''Repeated harassment'')', tests.uid('T')));
   perform tests.as('Admin', format('select public.unban_user(%L)', tests.uid('T')));
   perform tests.as('Admin', 'select public.set_flag(''anonymous_posts'', true)');
@@ -95,7 +103,7 @@ end $$;
 select is(tests.audits('user.warn') || ',' || tests.audits('user.ban') || ',' || tests.audits('user.unban') || ','
           || tests.audits('flag.set') || ',' || tests.audits('catalogue.department'),
   '1,1,1,1,1', 'warning, banning, unbanning, flags and catalogue edits are all audited');
-select is((select count(*)::text from public.notifications where user_id = tests.uid('T') and type = 'account.warning'),
+select is((select count(*)::text from public.notifications where user_id = tests.uid('S') and type = 'account.warning'),
   '1', 'a warned student is told');
 
 -- ---------- account deletion: 14-day grace, then PII is gone ----------
