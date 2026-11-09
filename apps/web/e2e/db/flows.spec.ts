@@ -57,7 +57,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await page.getByLabel("Program").selectOption({ label: "BS in Computer Science" });
   await page.getByLabel(/Session/).selectOption("2024");
   await page.getByLabel("Semester").selectOption("5");
-  await page.getByLabel(/Section/).fill("b");
+  await page.getByLabel(/Section/).selectOption("REG");
   await page.getByRole("radio", { name: "Morning" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
 
@@ -97,7 +97,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
     .eq("handle", `stu_${run}`.slice(0, 20))
     .single();
   expect(saved).toMatchObject({
-    section: "B",
+    section: "REG",
     shift: "morning",
     residence: "hostelite",
     onboarding_step: 4,
@@ -130,7 +130,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await page.getByRole("link", { name: /View my profile/ }).click();
   await expect(page).toHaveURL(new RegExp(`/people/${handle}$`));
   await expect(page.getByText("BS in Computer Science")).toBeVisible();
-  await expect(page.getByText("Batch 2024 · Semester 5 · Section B · Morning")).toBeVisible();
+  await expect(page.getByText("Batch 2024 · Semester 5 · Section REG · Morning")).toBeVisible();
   await expect(page.getByText("Here for the cricket.")).toBeVisible();
   await expect(page.getByRole("list").getByText("Cricket")).toBeVisible();
   // Handles are case-insensitive; the canonical one wins.

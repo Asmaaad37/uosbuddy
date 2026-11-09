@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { setBanned, setModerator, warnUser } from "@/actions/trust";
+import { allowStudiesChange, setBanned, setModerator, warnUser } from "@/actions/trust";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -113,6 +113,16 @@ export function UserRow({
           )}
           <Button size="sm" variant="ghost" onClick={() => setMode(mode === "mod" ? null : "mod")}>
             {u.role === "moderator" ? "Moderator feeds" : "Make moderator"}
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            disabled={pending}
+            onClick={() =>
+              run(() => allowStudiesChange(u.id), `${name} can ask for one more studies change`)
+            }
+          >
+            Allow studies change
           </Button>
         </div>
       )}

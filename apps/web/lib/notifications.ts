@@ -141,6 +141,14 @@ export function describe(n: NotificationLike): Described {
         body: "It broke the community guidelines.",
         href: "/guidelines",
       };
+    case "studies.approved":
+      return { title: "Your studies were updated", href: "/me" };
+    case "studies.rejected":
+      return {
+        title: "We couldn't change your studies",
+        body: typeof p.reason === "string" ? p.reason : undefined,
+        href: "/setup/academic?edit=1",
+      };
     case "badge.awarded":
       return {
         title: `New badge: ${typeof p.emoji === "string" ? `${p.emoji} ` : ""}${typeof p.name === "string" ? p.name : "unlocked"}`,

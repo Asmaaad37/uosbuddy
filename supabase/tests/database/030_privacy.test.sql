@@ -119,10 +119,11 @@ $$, '22023', null, 'an 11th interest is refused');
 
 -- ---------- academic consistency ----------
 select throws_ok($$
-  update public.profiles
-     set program_id = (select pr.id from public.programs pr join public.departments d on d.id = pr.department_id
-                       where d.short_code = 'IT' limit 1)
-   where id = auth.uid()
+  select public.save_my_academic(
+    (select department_id from public.profiles where id = auth.uid()),
+    (select pr.id from public.programs pr join public.departments d on d.id = pr.department_id
+     where d.short_code = 'IT' limit 1),
+    2024, 1, 'REG', 'morning')
 $$, '22023', null, 'a program from another department is refused');
 
 -- ---------- anonymous visitors ----------

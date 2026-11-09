@@ -47,7 +47,7 @@ update public.profiles p set
   department_id = (select id from depts where depts.n = people.dept_n),
   batch_year = 2020 + (people.n % 6),
   semester = 1 + (people.n % 8),
-  section = (array['A','B','C','D'])[1 + (people.n / 6) % 4],
+  section = (array['REG','SS1','SS2'])[1 + (people.n / 6) % 3],
   shift = (array['morning','morning','evening'])[1 + people.n % 3]::public.shift_type,
   residence = (array['day_scholar','hostelite','day_scholar'])[1 + people.n % 3]::public.residence_type,
   hometown_city = (select v from seed_names where kind = 'city' and i = 1 + (people.n * 5) % 12),
@@ -88,7 +88,7 @@ declare
 begin
   select p.id into v_viewer
   from public.profiles p join people on people.id = p.id
-  where p.batch_year = 2024 and p.section = 'B'
+  where p.batch_year = 2024 and p.section = 'SS1'
     and p.department_id = (select department_id from public.profiles p2 join people using (id)
                            group by department_id order by count(*) desc limit 1)
   limit 1;

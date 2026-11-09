@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { Camera, FileText, ShieldCheck, Upload } from "lucide-react";
+import { useId, useState } from "react";
+import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
-import { browserClient } from "@/lib/supabase/lazy";
+import { DocPicker, uploadDoc } from "@/components/onboarding/doc-picker";
 import { createProofUpload, submitProof } from "@/actions/onboarding";
 import {
-  DOC_TYPES,
-  MAX_DOC_BYTES,
   fullNameSchema,
   isStudentId,
   whatsappSchema,
@@ -16,20 +14,6 @@ import {
 } from "@/lib/validation/onboarding";
 
 type Errors = Partial<Record<"fullName" | "studentId" | "whatsapp" | "file" | "form", string>>;
-
-/** Re-encode photos as JPEG: smaller uploads, and EXIF (GPS, device) is dropped. */
-async function prepare(file: File): Promise<File> {
-  if (file.type === "application/pdf") return file;
-  const { default: compress } = await import("browser-image-compression");
-  return compress(file, {
-    maxSizeMB: 2,
-    maxWidthOrHeight: 2400,
-    fileType: "image/jpeg",
-    preserveExif: false,
-    // The worker build loads from a CDN, which our CSP blocks; a one-off photo is fine inline.
-    useWebWorker: false,
-  });
-}
 
 /** Fresher step 2: student ID and proof (Section 7, screen 4b; §3.3 B steps 2–3). */
 export function ProofForm({
@@ -40,27 +24,12 @@ export function ProofForm({
   defaults: { fullName: string; studentId: string; whatsapp: string };
 }) {
   const id = useId();
-  const cameraRef = useRef<HTMLInputElement>(null);
-  const pickerRef = useRef<HTMLInputElement>(null);
   const [fullName, setFullName] = useState(defaults.fullName);
   const [studentId, setStudentId] = useState(defaults.studentId);
   const [whatsapp, setWhatsapp] = useState(defaults.whatsapp);
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<string | null>(null);
-
-  useEffect(() => () => void (preview && URL.revokeObjectURL(preview)), [preview]);
-
-  function pick(f: File | undefined) {
-    if (!f) return;
-    if (!DOC_TYPES[f.type] && !f.type.startsWith("image/")) {
-      return setErrors((e) => ({ ...e, file: "Upload a photo or a PDF." }));
-    }
-    setErrors((e) => ({ ...e, file: undefined }));
-    setFile(f);
-    setPreview(f.type.startsWith("image/") ? URL.createObjectURL(f) : null);
-  }
 
   async function submit(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -78,29 +47,14 @@ export function ProofForm({
     if (Object.values(next).some(Boolean) || !file) return;
 
     try {
-      setStatus("Preparing your photo…");
-      const doc = await prepare(file);
-      if (doc.size > MAX_DOC_BYTES) {
-        setStatus(null);
-        return setErrors({ file: "That file is over 8 MB. Try a photo instead." });
-      }
-
-      setStatus("Uploading…");
-      const upload = await createProofUpload(doc.type);
-      if (!upload.ok) throw new Error(upload.error);
-      const { error } = await (
-        await browserClient()
-      ).storage
-        .from("verification-docs")
-        .uploadToSignedUrl(upload.data.path, upload.data.token, doc, { contentType: doc.type });
-      if (error) throw new Error("The upload failed. Check your connection and try again.");
+      const docPath = await uploadDoc(file, createProofUpload, setStatus);
 
       setStatus("Submitting…");
       const result = await submitProof({
         fullName,
         studentId,
         whatsapp,
-        docPath: upload.data.path,
+        docPath,
       });
       if (!result.ok) throw new Error(result.error);
       window.location.assign("/pending");
@@ -171,57 +125,16 @@ export function ProofForm({
           Any one of: admission letter, fee challan, student card, or a screenshot of the student
           portal showing your name and roll number.
         </p>
-        <input
-          ref={cameraRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          hidden
-          onChange={(e) => {
-            pick(e.target.files?.[0]);
-            e.target.value = "";
+        <DocPicker
+          file={file}
+          onFile={(f) => {
+            setErrors((e) => ({ ...e, file: undefined }));
+            setFile(f);
           }}
+          onError={(file) => setErrors((e) => ({ ...e, file }))}
+          error={errors.file}
+          alt="Your proof"
         />
-        <input
-          ref={pickerRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,application/pdf"
-          hidden
-          onChange={(e) => {
-            pick(e.target.files?.[0]);
-            e.target.value = "";
-          }}
-        />
-        {file ? (
-          <div className="flex items-center gap-3 rounded-field border border-sep bg-surface p-3">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
-              <img src={preview} alt="Your proof" className="size-16 rounded-track object-cover" />
-            ) : (
-              <span className="grid size-16 place-items-center rounded-track bg-raised">
-                <FileText className="size-6 text-sec" />
-              </span>
-            )}
-            <span className="min-w-0 flex-1 truncate text-sm">{file.name}</span>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setFile(null)}>
-              Change
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <Button type="button" variant="secondary" onClick={() => cameraRef.current?.click()}>
-              <Camera /> Take photo
-            </Button>
-            <Button type="button" variant="secondary" onClick={() => pickerRef.current?.click()}>
-              <Upload /> Choose file
-            </Button>
-          </div>
-        )}
-        {errors.file && (
-          <p role="alert" className="text-[13px] font-medium text-danger">
-            {errors.file}
-          </p>
-        )}
       </fieldset>
 
       <p className="flex gap-2 rounded-field bg-raised p-3 text-[13px] text-sec">

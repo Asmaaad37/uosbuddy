@@ -33,6 +33,7 @@ const ADMIN = [
   "/admin/flags",
   "/admin/campus",
   "/admin/verifications",
+  "/admin/studies",
 ];
 
 for (const scheme of ["light", "dark"] as const) {

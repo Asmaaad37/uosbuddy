@@ -12,8 +12,8 @@ select table_privs_are('public', 'profiles', 'anon', array[]::text[],
   'visitors cannot touch profiles');
 select table_privs_are('public', 'private_profile', 'anon', array[]::text[],
   'visitors cannot touch PII');
-select table_privs_are('public', 'profiles', 'authenticated', array['SELECT', 'UPDATE'],
-  'students read and edit profiles (RLS decides which)');
+select table_privs_are('public', 'profiles', 'authenticated', array['SELECT'],
+  'students read profiles (RLS decides which); edits go through functions');
 select table_privs_are('public', 'private_profile', 'authenticated', array['SELECT'],
   'PII is read-only for students; writes go through functions');
 select table_privs_are('public', 'verification_requests', 'authenticated', array['SELECT'],

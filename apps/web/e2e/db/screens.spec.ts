@@ -56,11 +56,11 @@ test("phase 3 screens", async ({ page, browser }) => {
     "Coding",
     "Gaming",
   ]);
-  await makeStudent("Fatima Noor", h("Fatima"), 4, { section: "A", hometown_city: "Lahore" }, [
+  await makeStudent("Fatima Noor", h("Fatima"), 4, { section: "SS1", hometown_city: "Lahore" }, [
     "Photography",
     "Books",
   ]);
-  await makeStudent("Hamza Ali", h("Hamza"), 4, { section: "A", shift: "evening" }, ["Cricket"]);
+  await makeStudent("Hamza Ali", h("Hamza"), 4, { section: "SS1", shift: "evening" }, ["Cricket"]);
   await makeStudent("Zainab Raza", h("Zainab"), 4, { batch_year: 2023 }, ["Debating", "Chai"]);
   const me = await makeStudent("Saad Mehmood", h("Saad"), 4, {}, ["Cricket", "Chai", "Coding"]);
 

@@ -33,7 +33,7 @@ update public.profiles p set
   full_name = 'Chat ' || u.name,
   handle = 'chat_' || lower(u.name),
   department_id = (select id from public.departments where short_code = case when u.name = 'O' then 'IT' else 'CS' end),
-  batch_year = 2024, section = 'B', shift = 'morning', onboarding_step = 4
+  batch_year = 2024, section = 'REG', shift = 'morning', onboarding_step = 4
 from tests.u u where p.id = u.id;
 
 -- ---------- the connections table is never read directly ----------

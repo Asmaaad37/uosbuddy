@@ -90,6 +90,16 @@ export async function setModerator(user: string, spaces: string[]): Promise<Acti
   return ok;
 }
 
+/** Let a student correct their department or session one more time. */
+export async function allowStudiesChange(user: string): Promise<ActionResult> {
+  if (!id.safeParse(user).success) return fail("Student not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("allow_studies_change", { p_user: user });
+  if (error) return fail(friendly(error, "Couldn't update. Try again."));
+  return ok;
+}
+
 export async function setFlag(key: string, enabled: boolean): Promise<ActionResult> {
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");

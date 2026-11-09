@@ -49,7 +49,7 @@ function Stat({ label, value, href }: { label: string; value: number | string; h
 export default async function AdminDashboard() {
   const { supabase, profile } = await getSession();
   if (profile?.role !== "admin") notFound();
-  const [{ data }, { data: audit }] = await Promise.all([
+  const [{ data }, { data: audit }, { count: studiesChanges }] = await Promise.all([
     supabase.rpc("admin_kpis"),
     supabase
       .from("audit_log")
@@ -58,6 +58,10 @@ export default async function AdminDashboard() {
       )
       .order("created_at", { ascending: false })
       .limit(15),
+    supabase
+      .from("studies_change_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
   ]);
   const k = data as unknown as Kpis;
   const max = Math.max(1, ...k.daily.map((d) => Math.max(d.signups, d.active)));
@@ -76,6 +80,7 @@ export default async function AdminDashboard() {
         <Stat label="Active this week" value={k.wau} />
         <Stat label="Open reports" value={k.open_reports} href="/admin/reports" />
         <Stat label="Waiting for verification" value={f.pending} href="/admin/verifications" />
+        <Stat label="Studies changes" value={studiesChanges ?? 0} href="/admin/studies" />
       </div>
 
       <section
