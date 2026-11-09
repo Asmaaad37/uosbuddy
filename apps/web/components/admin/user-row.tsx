@@ -3,7 +3,13 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { allowStudiesChange, setBanned, setModerator, warnUser } from "@/actions/trust";
+import {
+  allowStudiesChange,
+  revokeVerification,
+  setBanned,
+  setModerator,
+  warnUser,
+} from "@/actions/trust";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +44,7 @@ export function UserRow({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
-  const [mode, setMode] = useState<"warn" | "ban" | "mod" | null>(null);
+  const [mode, setMode] = useState<"warn" | "ban" | "revoke" | "mod" | null>(null);
   const [text, setText] = useState("");
   const [picked, setPicked] = useState<string[]>(scopes);
 
@@ -124,21 +130,45 @@ export function UserRow({
           >
             Allow studies change
           </Button>
+          {u.verification_status === "verified" && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setMode(mode === "revoke" ? null : "revoke")}
+            >
+              Revoke verification
+            </Button>
+          )}
         </div>
       )}
-      {(mode === "warn" || mode === "ban") && (
+      {(mode === "warn" || mode === "ban" || mode === "revoke") && (
         <form
           className="flex gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             run(
-              () => (mode === "warn" ? warnUser(u.id, text) : setBanned(u.id, true, text)),
-              mode === "warn" ? "Warning sent" : `${name} banned`,
+              () =>
+                mode === "warn"
+                  ? warnUser(u.id, text)
+                  : mode === "ban"
+                    ? setBanned(u.id, true, text)
+                    : revokeVerification(u.id, text),
+              mode === "warn"
+                ? "Warning sent"
+                : mode === "ban"
+                  ? `${name} banned`
+                  : `${name} is no longer verified`,
             );
           }}
         >
           <Input
-            aria-label={mode === "warn" ? "Warning message" : "Reason for the ban"}
+            aria-label={
+              mode === "warn"
+                ? "Warning message"
+                : mode === "ban"
+                  ? "Reason for the ban"
+                  : "Reason sent to the student"
+            }
             value={text}
             maxLength={500}
             onChange={(e) => setText(e.target.value)}
@@ -146,10 +176,10 @@ export function UserRow({
           <Button
             type="submit"
             size="sm"
-            variant={mode === "ban" ? "danger" : "primary"}
+            variant={mode === "warn" ? "primary" : "danger"}
             disabled={pending}
           >
-            {mode === "warn" ? "Send" : "Ban"}
+            {mode === "warn" ? "Send" : mode === "ban" ? "Ban" : "Revoke"}
           </Button>
         </form>
       )}
