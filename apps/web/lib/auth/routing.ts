@@ -11,6 +11,7 @@ export const ONBOARDING_STEPS = 4;
 const PUBLIC_ONLY = new Set([
   "/",
   "/login",
+  "/forgot-password",
   "/start",
   "/start/campus",
   "/start/email",

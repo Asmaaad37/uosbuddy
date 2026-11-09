@@ -33,12 +33,12 @@ export default async function LoginPage({
         </p>
       )}
       <Tabs defaultValue="uni">
-        <TabsList aria-label="How you joined" className="w-full">
+        <TabsList aria-label="How you log in" className="w-full">
           <TabsTrigger value="uni" className="flex-1">
-            UoS email
+            Email code
           </TabsTrigger>
           <TabsTrigger value="password" className="flex-1">
-            Personal email
+            Password
           </TabsTrigger>
         </TabsList>
         <TabsContent value="uni" className="grid gap-4 pt-5">

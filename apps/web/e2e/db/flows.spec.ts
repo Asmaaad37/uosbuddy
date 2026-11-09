@@ -203,9 +203,9 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   // The admin reviews it.
   const admin = await (await browser.newContext()).newPage();
   await admin.goto("/login");
-  await admin.getByRole("tab", { name: "Personal email" }).click();
-  // Scoped and exact: the tab panel itself is labelled "Personal email".
-  const passwordTab = admin.getByRole("tabpanel", { name: "Personal email" });
+  await admin.getByRole("tab", { name: "Password" }).click();
+  // Scoped and exact: the tab panel itself is labelled "Password".
+  const passwordTab = admin.getByRole("tabpanel", { name: "Password" });
   await passwordTab.getByLabel("Email", { exact: true }).fill(adminEmail);
   await passwordTab.getByLabel("Password", { exact: true }).fill(adminPassword);
   await passwordTab.getByRole("button", { name: "Log in" }).click();

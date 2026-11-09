@@ -18,10 +18,17 @@ export function authErrorMessage(error: AuthError | null | undefined) {
       return "An account with this email already exists. Log in instead.";
     case "weak_password":
       return "Choose a stronger password.";
+    case "same_password":
+      return "That's your current password. Choose a new one.";
+    case "captcha_failed":
+      return "The security check didn't go through. Refresh the page and try again.";
     case "otp_disabled":
     case "signup_disabled":
       return "New sign-ups are paused right now. Try again later.";
     default:
-      return "Something went wrong. Try again.";
+      // Sending the email is the usual failure at this level.
+      return (error.status ?? 0) >= 500
+        ? "We couldn't send that just now. Try again in a few minutes."
+        : "Something went wrong. Try again.";
   }
 }
