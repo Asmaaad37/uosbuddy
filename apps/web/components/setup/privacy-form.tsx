@@ -176,9 +176,14 @@ export function PrivacyForm({
             checked={settings.show_in_directory}
             onChange={(v) => set("show_in_directory", v)}
           />
+          <Toggle
+            label="Share my free time with connections"
+            hint="In Free together they see when you're busy, never your classes or rooms."
+            checked={settings.share_free_time}
+            onChange={(v) => set("share_free_time", v)}
+          />
           <p className="text-[13px] text-sec">
-            &ldquo;Connections&rdquo; are people you&apos;ve connected with. Connecting arrives in a
-            later update; until then that setting means only you.
+            &ldquo;Connections&rdquo; are people you&apos;ve connected with.
           </p>
         </div>
       )}

@@ -218,6 +218,7 @@ const privacySchema = z.object({
   allow_dms_from: visibility,
   show_hometown: z.boolean(),
   show_in_directory: z.boolean(),
+  share_free_time: z.boolean(),
 });
 
 export async function savePrivacy(input: z.input<typeof privacySchema>): Promise<ActionResult> {

@@ -17,7 +17,7 @@ export default async function PrivacySettingsPage() {
     supabase
       .from("privacy_settings")
       .select(
-        "profile_visibility, photo_visibility, allow_dms_from, show_hometown, show_in_directory",
+        "profile_visibility, photo_visibility, allow_dms_from, show_hometown, show_in_directory, share_free_time",
       )
       .eq("user_id", user.id)
       .maybeSingle(),
