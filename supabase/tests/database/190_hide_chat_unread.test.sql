@@ -68,7 +68,7 @@ select is(tests.as('B', 'select count(*)::text from public.my_conversations()'),
   'and brings it back, so it can open');
 select is(tests.as('B', 'select public.unread_chat_count()::text'), '0',
   'without counting old messages as unread');
-select tests.as('B', 'select ''ok'' from public.hide_conversation(%4$L)');
+select tests.as('B', 'select ''hidden'' from public.hide_conversation(%4$L)');
 
 -- Time passes (inside one transaction now() never moves), then A writes again.
 update public.conversation_members set hidden_at = hidden_at - interval '1 minute',
