@@ -3,12 +3,13 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, BellOff, LogOut, Trash2, Users } from "lucide-react";
+import { Bell, BellOff, LogOut, MoreHorizontal, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { hideConversation, leaveConversation, setMuted } from "@/actions/chat";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { cn } from "@/lib/utils";
 
 export type ChatRowData = {
@@ -28,7 +29,8 @@ const ACTION_W = 80;
 /**
  * A chat row (redesign §5.4 #5): avatar 52, name 17/600, one-line preview, time, and an
  * --accent dot when unread. Swipe left for Mute, and Leave (groups) or Delete (one-to-one
- * chats, from your list only); both confirm first.
+ * chats, from your list only); both confirm first. With a mouse or keyboard, the ⋯ menu
+ * does the same.
  */
 export function ChatRow({ chat }: { chat: ChatRowData }) {
   const router = useRouter();
@@ -157,7 +159,7 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
         )}
         <span
           data-row-text
-          className="flex min-h-[76px] min-w-0 flex-1 flex-col justify-center gap-0.5 py-3 pr-4 shadow-[inset_0_-1px_0_var(--sep)]"
+          className="flex min-h-[76px] min-w-0 flex-1 flex-col justify-center gap-0.5 py-3 pr-4 shadow-[inset_0_-1px_0_var(--sep)] pointer-fine:pr-14"
         >
           <span className="flex items-baseline gap-2">
             <span className="truncate text-headline">{chat.name}</span>
@@ -185,6 +187,26 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
           </span>
         </span>
       </Link>
+      <div className="absolute top-1/2 right-2 hidden -translate-y-1/2 pointer-fine:block">
+        <Menu>
+          <MenuTrigger
+            aria-label={`More for ${chat.name}`}
+            className="grid size-10 place-items-center rounded-pill text-sec outline-none hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <MoreHorizontal className="size-5" aria-hidden />
+          </MenuTrigger>
+          <MenuContent>
+            <MenuItem onSelect={toggleMute}>
+              {muted ? <Bell aria-hidden /> : <BellOff aria-hidden />}
+              {muted ? "Unmute" : "Mute"}
+            </MenuItem>
+            <MenuItem danger onSelect={() => setConfirm(true)}>
+              {chat.group ? <LogOut aria-hidden /> : <Trash2 aria-hidden />}
+              {chat.group ? "Leave" : "Delete"}
+            </MenuItem>
+          </MenuContent>
+        </Menu>
+      </div>
       <Dialog open={confirm} onOpenChange={setConfirm}>
         <DialogContent>
           <DialogTitle className="text-headline">
