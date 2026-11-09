@@ -2,7 +2,7 @@
 -- A, B and C are verified, connected CS 2024 students.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(17);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -62,6 +62,10 @@ select is(tests.as('A', 'select count(*)::text from public.my_conversations()'),
 select throws_ok($$ select tests.as('C', 'select ''ok'' from public.hide_conversation(%4$L)') $$,
   'P0002', null, 'C cannot touch a chat they are not in');
 
+select is(tests.as('B', 'select count(*)::text from public.my_conversations(%4$L)'), '1',
+  'B can still open the deleted chat directly');
+select is(tests.as('C', 'select count(*)::text from public.my_conversations(%4$L)'), '0',
+  'C, who is not in it, cannot');
 select is(tests.as('B', 'select public.start_dm(%1$L)::text'),
   (select id::text from tests.chat where name = 'AB'), 'messaging A again finds the same chat');
 select is(tests.as('B', 'select count(*)::text from public.my_conversations()'), '1',

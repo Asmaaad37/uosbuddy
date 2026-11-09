@@ -4019,7 +4019,7 @@ export type Database = {
       }
       my_conversation_ids: { Args: never; Returns: string[] }
       my_conversations: {
-        Args: never
+        Args: { p_only?: string }
         Returns: {
           emoji: string
           id: string

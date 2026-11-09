@@ -16,9 +16,10 @@ export default async function ConversationPage({ params }: Props) {
   const { supabase, user } = await getSession();
   if (!user) redirect(`/login?next=/chats/${id}`);
 
-  // my_conversations() also hides DMs across a block.
+  // my_conversations() also hides DMs across a block. Asking for this one chat opens it even
+  // if you deleted it from your list, as from an old notification or the back button.
   const [{ data: conversations }, { data: people }, { data: messages }] = await Promise.all([
-    supabase.rpc("my_conversations"),
+    supabase.rpc("my_conversations", { p_only: id }),
     supabase.rpc("conversation_people", { p_conversation: id }),
     supabase
       .from("messages")
@@ -28,7 +29,7 @@ export default async function ConversationPage({ params }: Props) {
       .order("id", { ascending: false })
       .limit(30),
   ]);
-  const conversation = conversations?.find((c) => c.id === id);
+  const conversation = conversations?.[0];
   if (!conversation) notFound();
 
   const paths = (messages ?? []).flatMap((m) => (m.attachment_path ? [m.attachment_path] : []));
