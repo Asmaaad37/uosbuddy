@@ -57,6 +57,22 @@ export async function moderateContent(input: {
   return ok;
 }
 
+/** An admin looks up who wrote an anonymous post or comment. Audited in the database. */
+export async function revealAuthor(
+  type: string,
+  target: string,
+): Promise<ActionResult<{ id: string; full_name: string | null; handle: string | null }>> {
+  if (!id.safeParse(target).success) return fail("Not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { data, error } = await s.supabase.rpc("reveal_anonymous_author", {
+    p_type: type,
+    p_id: target,
+  });
+  if (error || !data?.[0]) return fail(friendly(error, "Couldn't look that up. Try again."));
+  return { ok: true, data: data[0] };
+}
+
 export async function dismissReports(type: string, target: string): Promise<ActionResult> {
   if (!id.safeParse(target).success) return fail("Not found");
   const s = await session();

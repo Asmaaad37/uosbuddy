@@ -4153,6 +4153,14 @@ export type Database = {
         Args: { p_accept: boolean; p_request: string }
         Returns: string
       }
+      reveal_anonymous_author: {
+        Args: { p_id: string; p_type: string }
+        Returns: {
+          full_name: string
+          handle: string
+          id: string
+        }[]
+      }
       revoke_verification: {
         Args: { p_reason: string; p_user: string }
         Returns: undefined

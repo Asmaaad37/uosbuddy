@@ -282,7 +282,8 @@ export function Composer({
               <span className="grid gap-0.5">
                 <span className="text-body">Post anonymously</span>
                 <span className="text-footnote text-sec">
-                  Other students see an alias. Moderators can still see who wrote it.
+                  Other students and moderators see an alias. An admin can find out who wrote it if
+                  the rules are broken.
                 </span>
               </span>
               <input

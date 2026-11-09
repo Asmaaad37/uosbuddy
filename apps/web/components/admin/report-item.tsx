@@ -3,8 +3,14 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ban, Check, EyeOff, FileText, Loader2, RotateCcw, TriangleAlert } from "lucide-react";
-import { dismissReports, moderateContent, setBanned, warnUser } from "@/actions/trust";
+import { Ban, Check, Eye, EyeOff, FileText, Loader2, RotateCcw, TriangleAlert } from "lucide-react";
+import {
+  dismissReports,
+  moderateContent,
+  revealAuthor,
+  setBanned,
+  warnUser,
+} from "@/actions/trust";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +51,16 @@ export function ReportItem({
   const hidden = !LIVE.includes(r.status);
   // Whoever started a reported chat may not be who it's about, so warn or ban from People.
   const isChat = r.target_type === "conversation";
-  const canAct = !!r.author_id && !isChat;
+  // Nobody sees who wrote an anonymous item until an admin presses Reveal, which is audited.
+  const [revealed, setRevealed] = useState<{
+    id: string;
+    full_name: string | null;
+    handle: string | null;
+  } | null>(null);
+  const authorId = revealed?.id ?? r.author_id;
+  const authorHandle = revealed?.handle ?? r.author_handle;
+  const authorName = revealed?.full_name ?? r.author_name;
+  const canAct = !!authorId && !isChat;
   // Removing a message can't be undone, so it takes a second press.
   const [confirming, setConfirming] = useState(false);
 
@@ -114,17 +129,41 @@ export function ReportItem({
           ))}
         </ul>
       )}
-      <p className="text-xs text-sec">
-        {isChat ? "Started by" : "By"}{" "}
-        {r.author_handle ? (
-          <Link href={`/people/${r.author_handle}`} className="font-semibold">
-            {r.author_name}
-          </Link>
+      <div className="flex flex-wrap items-center gap-2 text-xs text-sec">
+        {r.is_anonymous && !revealed ? (
+          <>
+            <span>Posted anonymously</span>
+            {isAdmin && (
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={pending}
+                onClick={() =>
+                  start(async () => {
+                    const res = await revealAuthor(r.target_type, r.target_id);
+                    if (!res.ok) return void toast.error(res.error);
+                    setRevealed(res.data);
+                  })
+                }
+              >
+                <Eye /> Reveal author
+              </Button>
+            )}
+          </>
         ) : (
-          "a deleted account"
+          <p>
+            {isChat ? "Started by" : "By"}{" "}
+            {authorHandle ? (
+              <Link href={`/people/${authorHandle}`} className="font-semibold">
+                {authorName}
+              </Link>
+            ) : (
+              (authorName ?? "a deleted account")
+            )}
+            {revealed && " (posted anonymously; this look is on record)"}
+          </p>
         )}
-        {r.is_anonymous && " (posted anonymously; only staff see this)"}
-      </p>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {HIDEABLE.includes(r.target_type) &&
@@ -195,16 +234,13 @@ export function ReportItem({
           </Button>
         )}
       </div>
-      {mode && r.author_id && (
+      {mode && authorId && (
         <form
           className="flex gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             run(
-              () =>
-                mode === "warn"
-                  ? warnUser(r.author_id!, text)
-                  : setBanned(r.author_id!, true, text),
+              () => (mode === "warn" ? warnUser(authorId, text) : setBanned(authorId, true, text)),
               mode === "warn" ? "Warning sent" : "Account banned",
             );
           }}
