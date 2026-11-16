@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CheckCircle2, GraduationCap } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { OnboardingShell } from "@/components/onboarding/shell";
+import { TermsAgree } from "@/components/onboarding/terms-agree";
 import { WaitlistDialog } from "@/components/onboarding/waitlist-dialog";
 import { getUniversity } from "@/lib/supabase/public";
 
@@ -39,9 +38,7 @@ export default async function CampusPage() {
       <p className="text-sm text-sec">Sub-campuses are coming later.</p>
 
       <div className="mt-auto grid gap-3">
-        <Button asChild block>
-          <Link href="/start/email">Continue</Link>
-        </Button>
+        <TermsAgree next="/start/email" />
         <WaitlistDialog />
       </div>
     </OnboardingShell>

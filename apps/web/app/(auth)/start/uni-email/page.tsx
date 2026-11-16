@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { EmailCodeForm } from "@/components/auth/email-code-form";
 import { GoogleButton } from "@/components/auth/google-button";
 import { OnboardingShell } from "@/components/onboarding/shell";
 import { getUniversity } from "@/lib/supabase/public";
+import { agreedToTerms } from "@/lib/terms.server";
 
 export const metadata: Metadata = { title: "Sign in with your UoS email" };
 
@@ -13,7 +15,13 @@ export default async function UniEmailPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const [{ error }, uni] = await Promise.all([searchParams, getUniversity()]);
+  const [{ error }, uni, agreed] = await Promise.all([
+    searchParams,
+    getUniversity(),
+    agreedToTerms(),
+  ]);
+  // Sign-up starts by agreeing to the terms; Google sends wrong-domain accounts back here.
+  if (!agreed && error !== "not_uni") redirect("/start/campus");
   const domains = uni?.domains.length ? uni.domains : ["uos.edu.pk"];
 
   return (

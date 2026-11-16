@@ -2097,6 +2097,8 @@ export type Database = {
           semester: number | null
           shift: Database["public"]["Enums"]["shift_type"] | null
           studies_changed_at: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
           university_id: string | null
           verification_method:
             | Database["public"]["Enums"]["verification_method"]
@@ -2130,6 +2132,8 @@ export type Database = {
           semester?: number | null
           shift?: Database["public"]["Enums"]["shift_type"] | null
           studies_changed_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           university_id?: string | null
           verification_method?:
             | Database["public"]["Enums"]["verification_method"]
@@ -2163,6 +2167,8 @@ export type Database = {
           semester?: number | null
           shift?: Database["public"]["Enums"]["shift_type"] | null
           studies_changed_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           university_id?: string | null
           verification_method?:
             | Database["public"]["Enums"]["verification_method"]
@@ -3427,6 +3433,7 @@ export type Database = {
     }
     Functions: {
       accept_guidelines: { Args: never; Returns: undefined }
+      accept_terms: { Args: { p_version: string }; Returns: undefined }
       add_course: {
         Args: { p_code: string; p_department: string; p_title: string }
         Returns: string
