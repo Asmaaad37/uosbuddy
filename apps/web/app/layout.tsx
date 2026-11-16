@@ -15,7 +15,13 @@ export const metadata: Metadata = {
   applicationName: "UOSBuddy",
   appleWebApp: { capable: true, title: "UOSBuddy", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
-  icons: { icon: "/icons/192", apple: "/icons/192" },
+  icons: {
+    icon: [
+      { url: "/icons/favicon", sizes: "48x48", type: "image/png" },
+      { url: "/icons/192", sizes: "192x192", type: "image/png" },
+    ],
+    apple: { url: "/icons/apple", sizes: "180x180", type: "image/png" },
+  },
 };
 
 export const viewport: Viewport = {

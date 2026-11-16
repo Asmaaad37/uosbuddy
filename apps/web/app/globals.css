@@ -315,6 +315,43 @@
   }
 }
 
+/* Sign-in codes: each digit pops into its box; a wrong code shakes the row. */
+@keyframes code-pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.12);
+  }
+}
+@keyframes code-shake {
+  20% {
+    transform: translateX(-8px);
+  }
+  40% {
+    transform: translateX(7px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+.code-pop {
+  animation: code-pop 220ms var(--spring);
+}
+.code-shake {
+  animation: code-shake 360ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .code-pop,
+  .code-shake {
+    animation: none;
+  }
+}
+
 /* Sheets slide up and back down the same path; the overlay dims to 40%. */
 .sheet[data-state="open"] {
   animation: sheet-in var(--spring-sheet-ms) var(--spring-sheet);

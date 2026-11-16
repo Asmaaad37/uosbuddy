@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { CodeInput, ResendCode } from "@/components/auth/code-input";
 import { toast } from "@/components/ui/toast";
 import { useTurnstile } from "@/components/turnstile";
 import { cn } from "@/lib/utils";
@@ -93,42 +94,31 @@ export function FreshmanAccountForm() {
       await browserClient()
     ).auth.resend({ type: "signup", email, options: { captchaToken: captcha.token } });
     captcha.reset();
-    if (error) toast.error(authErrorMessage(error));
-    else toast.success("New code sent");
+    if (error) {
+      toast.error(authErrorMessage(error));
+      return false;
+    }
+    setCode("");
+    toast.success("New code sent");
+    return true;
   }
 
   const content =
     stage === "code" ? (
       <form onSubmit={confirm} className="grid gap-4" noValidate>
         <p className="text-sec">
-          Enter the code we sent to <strong className="text-label">{email}</strong> to confirm
-          it&apos;s yours. Check spam if it doesn&apos;t arrive in a minute.
+          Enter the 6-digit code we sent to <strong className="text-label">{email}</strong> to
+          confirm it&apos;s yours. Check spam if it doesn&apos;t arrive in a minute.
         </p>
         <Field id={`${id}-code`} label="Code" error={errors.code}>
           {(aria) => (
-            <Input
-              {...aria}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={10}
-              autoFocus
-              className="text-center font-mono text-xl tracking-[0.4em]"
-            />
+            <CodeInput {...aria} value={code} onChange={setCode} error={errors.code} autoFocus />
           )}
         </Field>
         <Button type="submit" block disabled={busy}>
           {busy ? "Checking…" : "Confirm email"}
         </Button>
-        <button
-          type="button"
-          onClick={resend}
-          disabled={!captcha.ready}
-          className="justify-self-start text-sm font-semibold text-accent"
-        >
-          Send a new code
-        </button>
+        <ResendCode onResend={resend} disabled={!captcha.ready} />
       </form>
     ) : (
       <form onSubmit={createAccount} className="grid gap-4" noValidate>

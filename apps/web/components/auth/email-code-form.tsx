@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { CodeInput, ResendCode } from "@/components/auth/code-input";
 import { useTurnstile } from "@/components/turnstile";
 import { browserClient } from "@/lib/supabase/lazy";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -32,17 +33,17 @@ export function EmailCodeForm({
   const [busy, setBusy] = useState(false);
   const captcha = useTurnstile();
 
-  async function sendCode(e?: { preventDefault(): void }) {
+  async function sendCode(e?: { preventDefault(): void }): Promise<boolean> {
     e?.preventDefault();
     setError(undefined);
     setWrongDomain(false);
     const parsed = emailSchema.safeParse(email);
-    if (!parsed.success) return setError(parsed.error.issues[0]?.message);
+    if (!parsed.success) return fail(parsed.error.issues[0]?.message);
     if (domains && !domains.includes(emailDomain(parsed.data))) {
       setWrongDomain(true);
-      return setError(`That's not a UoS email. It should end in @${domains[0]}.`);
+      return fail(`That's not a UoS email. It should end in @${domains[0]}.`);
     }
-    if (!captcha.ready) return setError("One moment: we're checking you're not a bot.");
+    if (!captcha.ready) return fail("One moment: we're checking you're not a bot.");
 
     setBusy(true);
     const { error } = await (
@@ -59,11 +60,18 @@ export function EmailCodeForm({
     captcha.reset(); // tokens are single-use
     // Sign-in mode: Supabase reports unknown emails; say it without confirming who has an account.
     if (error && error.code === "otp_disabled" && !domains) {
-      return setError("We couldn't send a code to that email. Check it, or sign up first.");
+      return fail("We couldn't send a code to that email. Check it, or sign up first.");
     }
-    if (error) return setError(authErrorMessage(error));
+    if (error) return fail(authErrorMessage(error));
     setEmail(parsed.data);
+    setCode("");
     setStage("code");
+    return true;
+  }
+
+  function fail(message?: string) {
+    setError(message);
+    return false;
   }
 
   async function verify(e: { preventDefault(): void }) {
@@ -92,21 +100,12 @@ export function EmailCodeForm({
     stage === "code" ? (
       <form onSubmit={verify} className="grid gap-4" noValidate>
         <p className="text-sec">
-          We sent a code to <strong className="text-label">{email}</strong>. It can take a minute,
-          and may land in spam.
+          We sent a 6-digit code to <strong className="text-label">{email}</strong>. It can take a
+          minute, and may land in spam.
         </p>
         <Field id={`${id}-code`} label="Code" error={error}>
           {(aria) => (
-            <Input
-              {...aria}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={10}
-              autoFocus
-              className="text-center font-mono text-xl tracking-[0.4em]"
-            />
+            <CodeInput {...aria} value={code} onChange={setCode} error={error} autoFocus />
           )}
         </Field>
         <Button type="submit" block disabled={busy}>
@@ -120,14 +119,7 @@ export function EmailCodeForm({
           >
             Change email
           </button>
-          <button
-            type="button"
-            className="font-semibold text-accent"
-            onClick={() => sendCode()}
-            disabled={busy || !captcha.ready}
-          >
-            Send a new code
-          </button>
+          <ResendCode onResend={() => sendCode()} disabled={busy || !captcha.ready} />
         </div>
       </form>
     ) : (

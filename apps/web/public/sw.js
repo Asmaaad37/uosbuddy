@@ -1,5 +1,5 @@
 // Service worker. Phase 5: Web Push. Phase 10: offline page and static asset caching.
-const VERSION = "v2";
+const VERSION = "v3"; // v3: the Buddy logo; drops icons cached before it
 const SHELL = `shell-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const OFFLINE = "/offline";
@@ -91,7 +91,7 @@ self.addEventListener("push", (event) => {
       // Sound is the device's choice; a buzz still gets noticed where sound is off (Android).
       vibrate: [120, 60, 120],
       icon: "/icons/192",
-      badge: "/icons/192",
+      badge: "/icons/badge",
       data: { url: data.url || "/notifications" },
     }),
   );
