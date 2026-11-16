@@ -11,6 +11,15 @@ export type Rendered = { subject: string; text: string; html: string };
 const FOOTER =
   "UOSBuddy is a student-run project and is not an official University of Sargodha service.";
 
+// The mark is the app's own PNG icon: most mail apps don't show SVG. Without a site URL
+// (tests, local) the header is just the name.
+const SITE = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+const HEADER = `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr>${
+  SITE
+    ? `<td style="padding-right:10px"><img src="${SITE}/icons/192" width="32" height="32" alt="" style="display:block;border-radius:8px"></td>`
+    : ""
+}<td style="font-size:17px;font-weight:bold;color:#0b1220">UOSBuddy</td></tr></table>`;
+
 export function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -84,17 +93,17 @@ export function renderLinkCodeEmail(code: string): Rendered {
     FOOTER,
   ].join("\n");
   const html = `<!doctype html>
-<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2ece1;font-family:Arial,Helvetica,sans-serif">
+<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
 <tr><td>
-<p style="margin:0 0 20px;font-size:13px;font-weight:bold;letter-spacing:2px;color:#0034d3">UOSBUDDY</p>
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b0838">Link your UoS email</h1>
-<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b0838">Enter this code in UOSBuddy. It expires in 10 minutes.</p>
-<p style="margin:0 0 16px;font-size:32px;font-weight:bold;letter-spacing:8px;color:#0b0838">${escapeHtml(code)}</p>
-<p style="margin:0;font-size:14px;line-height:1.5;color:#4a4766">If you didn't ask for it, ignore this email; nothing changes without the code.</p>
+${HEADER}
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">Link your UoS email</h1>
+<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">Enter this code in UOSBuddy. It expires in 10 minutes.</p>
+<p style="margin:0 0 16px;font-size:32px;font-weight:bold;letter-spacing:8px;color:#0b1220">${escapeHtml(code)}</p>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#5a6475">If you didn't ask for it, ignore this email; nothing changes without the code.</p>
 </td></tr></table>
-<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#4a4766">${FOOTER}</p>
+<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
 </td></tr></table>
 </body></html>`;
   return { subject, text, html };
@@ -123,26 +132,26 @@ export function renderStatusEmail(
   ].join("\n");
 
   const p = (s: string) =>
-    `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b0838">${s}</p>`;
+    `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">${s}</p>`;
   const html = `<!doctype html>
-<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2ece1;font-family:Arial,Helvetica,sans-serif">
+<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
 <tr><td>
-<p style="margin:0 0 20px;font-size:13px;font-weight:bold;letter-spacing:2px;color:#0034d3">UOSBUDDY</p>
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b0838">${escapeHtml(copy.heading)}</h1>
+${HEADER}
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(copy.heading)}</h1>
 ${p(escapeHtml(greeting))}
 ${copy.body.map((line) => p(escapeHtml(line))).join("\n")}
 ${
   copy.reason
-    ? `<div style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#fbf3e2;border:1px solid #ecd29b">
-<p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#0b0838">The reviewer said:</p>
-<p style="margin:0;font-size:15px;line-height:1.5;color:#0b0838">${escapeHtml(copy.reason)}</p></div>`
+    ? `<div style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#e8f0fe;border:1px solid #c7d7fb">
+<p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#0b1220">The reviewer said:</p>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#0b1220">${escapeHtml(copy.reason)}</p></div>`
     : ""
 }
-<p style="margin:20px 0 0"><a href="${escapeHtml(url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#0b0838;color:#f2ece1;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(copy.cta.label)}</a></p>
+<p style="margin:20px 0 0"><a href="${escapeHtml(url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(copy.cta.label)}</a></p>
 </td></tr></table>
-<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#4a4766">${FOOTER}</p>
+<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
 </td></tr></table>
 </body></html>`;
 
@@ -157,19 +166,19 @@ function card(
   small?: string,
 ) {
   const p = (s: string) =>
-    `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b0838">${s}</p>`;
+    `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">${s}</p>`;
   return `<!doctype html>
-<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2ece1;font-family:Arial,Helvetica,sans-serif">
+<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
 <tr><td>
-<p style="margin:0 0 20px;font-size:13px;font-weight:bold;letter-spacing:2px;color:#0034d3">UOSBUDDY</p>
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b0838">${escapeHtml(heading)}</h1>
+${HEADER}
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(heading)}</h1>
 ${lines.map((l) => p(escapeHtml(l))).join("\n")}
-<p style="margin:20px 0 0"><a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#0b0838;color:#f2ece1;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(cta.label)}</a></p>
-${small ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#4a4766">${small}</p>` : ""}
+<p style="margin:20px 0 0"><a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(cta.label)}</a></p>
+${small ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#5a6475">${small}</p>` : ""}
 </td></tr></table>
-<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#4a4766">${FOOTER}</p>
+<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
 </td></tr></table>
 </body></html>`;
 }
@@ -220,7 +229,7 @@ export function renderDigestEmail(
     "Your week at UoS",
     [greeting, ...lines],
     { label: "Open UOSBuddy", url },
-    `Weekly digest. <a href="${escapeHtml(unsubscribeUrl)}" style="color:#4a4766">Unsubscribe in one click</a>.`,
+    `Weekly digest. <a href="${escapeHtml(unsubscribeUrl)}" style="color:#5a6475">Unsubscribe in one click</a>.`,
   );
   return { subject: `This week: ${subject}`, text, html };
 }

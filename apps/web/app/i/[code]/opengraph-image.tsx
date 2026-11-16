@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { BRAND, BuddyMark } from "@/lib/brand";
 import { getInvitePreview } from "@/lib/invites.server";
 
 export const alt = "Find your batch on UOSBuddy";
@@ -19,23 +20,16 @@ export default async function Image({ params }: { params: Promise<{ code: string
         flexDirection: "column",
         justifyContent: "space-between",
         padding: 72,
-        background: "#f2ece1",
-        backgroundImage: "radial-gradient(#ddd5c6 2px, transparent 2px)",
-        backgroundSize: "28px 28px",
-        color: "#0b0838",
+        background: BRAND.night,
+        color: "#f3f5f9",
         fontFamily: "sans-serif",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          fontSize: 30,
-          fontWeight: 700,
-          letterSpacing: 6,
-          color: "#0034d3",
-        }}
-      >
-        UOSBUDDY
+      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+        <BuddyMark size={72} />
+        <div style={{ display: "flex", fontSize: 44, fontWeight: 700, letterSpacing: -1 }}>
+          UOSBuddy
+        </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
         {hasBatch ? (
@@ -46,7 +40,7 @@ export default async function Image({ params }: { params: Promise<{ code: string
                 fontSize: 200,
                 fontWeight: 800,
                 lineHeight: 1,
-                color: "#0034d3",
+                color: "#5b9bff",
               }}
             >
               {preview!.count}
@@ -57,11 +51,11 @@ export default async function Image({ params }: { params: Promise<{ code: string
           </div>
         ) : (
           <div style={{ display: "flex", fontSize: 110, fontWeight: 800, lineHeight: 1 }}>
-            FIND YOUR BATCH.
+            Find your batch.
           </div>
         )}
       </div>
-      <div style={{ display: "flex", fontSize: 32, color: "#4a4766" }}>
+      <div style={{ display: "flex", fontSize: 30, color: "#a1a9b8" }}>
         {preview
           ? `${preview.firstName} invited you · Verified University of Sargodha students`
           : "Verified University of Sargodha students"}
