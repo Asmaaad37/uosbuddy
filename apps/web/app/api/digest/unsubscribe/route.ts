@@ -8,9 +8,9 @@ export const dynamic = "force-dynamic";
 const page = (title: string, body: string, status = 200) =>
   new NextResponse(
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head>
-<body style="margin:0;padding:48px 16px;background:#f2ece1;color:#0b0838;font-family:Arial,Helvetica,sans-serif;text-align:center">
+<body style="margin:0;padding:48px 16px;background:#f2f4f7;color:#0b1220;font-family:Arial,Helvetica,sans-serif;text-align:center">
 <h1 style="font-size:24px">${title}</h1><div style="font-size:16px;line-height:1.5">${body}</div>
-<p><a href="/me/notifications" style="color:#0034d3;font-weight:bold">Notification settings</a></p></body></html>`,
+<p><a href="/me/notifications" style="color:#2563eb;font-weight:bold">Notification settings</a></p></body></html>`,
     {
       status,
       headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   const action = `/api/digest/unsubscribe${request.nextUrl.search}`.replaceAll("&", "&amp;");
   return page(
     "Stop the weekly email?",
-    `<form method="post" action="${action}"><button style="padding:12px 24px;border:0;border-radius:999px;background:#0b0838;color:#f2ece1;font-size:16px;font-weight:bold">Unsubscribe</button></form>`,
+    `<form method="post" action="${action}"><button style="padding:12px 24px;border:0;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold">Unsubscribe</button></form>`,
   );
 }
 

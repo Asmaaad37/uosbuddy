@@ -1,10 +1,12 @@
 import { ImageResponse } from "next/og";
+import { BRAND, BuddyFace } from "@/lib/brand";
 
-// Placeholder PWA icons until the UOSBuddy mark is designed (Section 6.6).
+// PWA and browser icons: the Buddy mark (lib/brand.tsx).
 const variants = {
   "192": { size: 192, safe: 1 },
   "512": { size: 512, safe: 1 },
-  // Maskable icons keep content inside the central 80% safe zone.
+  // Maskable icons fill the square; Android crops to its own shape, so the face keeps to
+  // the central 80% safe zone.
   maskable: { size: 512, safe: 0.8 },
 } as const;
 
@@ -22,8 +24,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ variant
   if (!spec) return new Response("Not found", { status: 404 });
 
   const { size, safe } = spec;
-  const fontSize = Math.round(size * 0.5 * safe);
-
   return new ImageResponse(
     <div
       style={{
@@ -32,21 +32,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ variant
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#0034D3",
-        borderRadius: safe < 1 ? 0 : size * 0.22,
+        background: BRAND.blue,
+        borderRadius: safe < 1 ? 0 : size * 0.23,
       }}
     >
-      <div
-        style={{
-          color: "#F2ECE1",
-          fontSize,
-          fontWeight: 800,
-          letterSpacing: -fontSize * 0.04,
-          display: "flex",
-        }}
-      >
-        U<span style={{ color: "#99CCFF" }}>B</span>
-      </div>
+      <BuddyFace size={Math.round(size * safe)} />
     </div>,
     { width: size, height: size },
   );
