@@ -20,10 +20,13 @@ export const whatsappSchema = z
   .transform((v) => v.replace(/[\s()-]/g, ""))
   .refine((v) => v === "" || /^\+?[0-9]{10,13}$/.test(v), "Enter a valid WhatsApp number");
 
+/** Sign-in and email codes are 6 digits (Supabase: Authentication → Email OTP length = 6). */
+export const CODE_LENGTH = 6;
+
 export const otpSchema = z
   .string()
   .trim()
-  .regex(/^[0-9]{6,10}$/, "Enter the code from the email");
+  .regex(/^[0-9]{6}$/, "Enter the 6-digit code from the email");
 
 export function normaliseStudentId(value: string) {
   return value.replace(/\s/g, "").toUpperCase();

@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { CodeInput, ResendCode } from "@/components/auth/code-input";
 import { confirmLinkEmail, startLinkEmail } from "@/actions/profile";
 
 /** Phase 2 task 8: send a code to the UoS address, then confirm it. */
@@ -15,17 +16,21 @@ export function LinkEmailForm({ domain }: { domain: string }) {
   const [notice, setNotice] = useState<string>();
   const [busy, setBusy] = useState(false);
 
-  async function sendCode(e?: { preventDefault(): void }) {
+  async function sendCode(e?: { preventDefault(): void }): Promise<boolean> {
     e?.preventDefault();
     setError(undefined);
     setNotice(undefined);
     setBusy(true);
     const result = await startLinkEmail(email);
     setBusy(false);
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) {
+      setError(result.error);
+      return false;
+    }
     if (stage === "code") setNotice("We sent a new code.");
     setCode("");
     setStage("code");
+    return true;
   }
 
   async function confirm(e: { preventDefault(): void }) {
@@ -49,16 +54,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
         </p>
         <Field id={`${id}-code`} label="Code" error={error}>
           {(aria) => (
-            <Input
-              {...aria}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              autoFocus
-              className="text-center font-mono text-xl tracking-[0.4em]"
-            />
+            <CodeInput {...aria} value={code} onChange={setCode} error={error} autoFocus />
           )}
         </Field>
         {notice && (
@@ -81,14 +77,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
           >
             Change email
           </button>
-          <button
-            type="button"
-            className="font-semibold text-accent"
-            onClick={() => sendCode()}
-            disabled={busy}
-          >
-            Send a new code
-          </button>
+          <ResendCode onResend={() => sendCode()} disabled={busy} />
         </div>
       </form>
     );

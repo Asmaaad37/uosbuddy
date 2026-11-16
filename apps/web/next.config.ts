@@ -39,6 +39,14 @@ const config: NextConfig = {
   images: { formats: ["image/avif", "image/webp"] },
   // Barrel packages: import only the primitives/icons actually used (first-load budget, §2.2).
   experimental: { optimizePackageImports: ["radix-ui", "lucide-react"] },
+  // Browsers, bookmarks and search engines ask for these fixed paths whatever the page says.
+  async rewrites() {
+    return [
+      { source: "/favicon.ico", destination: "/icons/favicon" },
+      { source: "/apple-touch-icon.png", destination: "/icons/apple" },
+      { source: "/apple-touch-icon-precomposed.png", destination: "/icons/apple" },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
