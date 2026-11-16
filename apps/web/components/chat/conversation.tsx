@@ -13,9 +13,11 @@ import {
   LogOut,
   Loader2,
   MoreHorizontal,
+  RotateCw,
   SendHorizontal,
   Trash2,
   Users,
+  X,
 } from "lucide-react";
 import {
   answerMessageRequest,
@@ -28,6 +30,7 @@ import {
   type Message,
 } from "@/actions/chat";
 import { ReportDialog, SafetyMenu } from "@/components/connect/safety-menu";
+import { primeSignedUrl, useSignedUrl } from "@/components/ui/private-image";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 import { useConfirm } from "@/components/ui/confirm";
@@ -68,32 +71,8 @@ async function prepare(file: File): Promise<File> {
   });
 }
 
-/** Private photos: short-lived signed links, fetched once per path. */
-const signed = new Map<string, Promise<string | null>>();
-function useAttachmentUrl(path: string | null, seed?: string) {
-  const [url, setUrl] = useState<string | null>(seed ?? null);
-  useEffect(() => {
-    if (!path || seed) return;
-    let live = true;
-    if (!signed.has(path)) {
-      signed.set(
-        path,
-        browserClient().then(async (s) => {
-          const { data } = await s.storage.from(BUCKET).createSignedUrl(path, 60 * 60);
-          return data?.signedUrl ?? null;
-        }),
-      );
-    }
-    void signed.get(path)!.then((u) => live && setUrl(u));
-    return () => {
-      live = false;
-    };
-  }, [path, seed]);
-  return url;
-}
-
 function Attachment({ path, seed }: { path: string | null; seed?: string }) {
-  const url = useAttachmentUrl(path, seed);
+  const { url, onError } = useSignedUrl(BUCKET, path, seed);
   if (!url) return <div className="aspect-[4/3] w-56 animate-pulse rounded-field bg-raised" />;
   return (
     <a href={url} target="_blank" rel="noreferrer" className="block">
@@ -103,6 +82,7 @@ function Attachment({ path, seed }: { path: string | null; seed?: string }) {
         alt="Photo"
         className="max-h-80 w-56 rounded-field object-cover"
         loading="lazy"
+        onError={onError}
       />
     </a>
   );
@@ -123,7 +103,7 @@ export function Conversation({
   signedUrls,
   isRequest,
   muted: initialMuted,
-  closed = false,
+  endsAt = null,
   isRide = false,
 }: {
   conversationId: string;
@@ -136,8 +116,8 @@ export function Conversation({
   signedUrls: Record<string, string>;
   isRequest: boolean;
   muted: boolean;
-  /** The chat has ended (a finished Backup or ride): still readable, nothing can be sent. */
-  closed?: boolean;
+  /** When the chat ends (a ping, a Backup, a ride): still readable after, nothing can be sent. */
+  endsAt?: string | null;
   /** A ride's chat: leaving it gives up your seat. */
   isRide?: boolean;
 }) {
@@ -159,6 +139,15 @@ export function Conversation({
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [live, setLive] = useState(false);
+  const [ended, setEnded] = useState(() => !!endsAt && new Date(endsAt).getTime() <= Date.now());
+  // A ping ends 2 hours in; a Backup or ride chat at its own time. Close the box when it does.
+  useEffect(() => {
+    if (!endsAt || ended) return;
+    const wait = new Date(endsAt).getTime() - Date.now();
+    if (wait > 2 ** 31 - 1) return; // over ~24 days away: setTimeout can't wait that long
+    const timer = setTimeout(() => setEnded(true), Math.max(wait, 0));
+    return () => clearTimeout(timer);
+  }, [endsAt, ended]);
   const scroller = useRef<HTMLDivElement>(null);
   const top = useRef<HTMLDivElement>(null);
   const channel = useRef<RealtimeChannel | null>(null);
@@ -312,9 +301,23 @@ export function Conversation({
     void channel.current?.send({ type: "broadcast", event: "typing", payload: { userId: me } });
   }
 
-  async function deliver(local: Local, body?: string, attachmentPath?: string) {
+  async function deliver(local: Local) {
     stick.current = true;
     setMessages((list) => [...list, local]);
+    await send(local);
+  }
+
+  /** A failed message goes again, in place, with the same text or photo. */
+  function retry(local: Local) {
+    setMessages((list) =>
+      list.map((m) => (m.id === local.id ? { ...m, pending: true, failed: false } : m)),
+    );
+    void send(local);
+  }
+
+  async function send(local: Local) {
+    const body = local.body ?? undefined;
+    const attachmentPath = local.attachment_path ?? undefined;
     // Straight to the database (no hop through our server): the function checks membership,
     // blocks and the rate limit itself.
     const supabase = await browserClient();
@@ -328,6 +331,7 @@ export function Conversation({
         ? { ok: false as const, error: sendErrorMessage(sendError) }
         : { ok: true as const, data: data as Message };
     if (!result.ok) {
+      if (sendError?.message === "This chat has ended") setEnded(true);
       setError(result.error);
       setMessages((list) =>
         list.map((m) => (m.id === local.id ? { ...m, pending: false, failed: true } : m)),
@@ -370,7 +374,7 @@ export function Conversation({
     const body = draft.trim();
     if (!body) return;
     setDraft("");
-    void deliver(optimistic(body, null), body);
+    void deliver(optimistic(body, null));
   }
 
   async function attach(file: File | undefined) {
@@ -386,8 +390,8 @@ export function Conversation({
         .upload(path, photo, { contentType: "image/jpeg" });
       if (uploadError) throw uploadError;
       const preview = URL.createObjectURL(photo);
-      signed.set(path, Promise.resolve(preview));
-      await deliver(optimistic(null, path, preview), undefined, path);
+      primeSignedUrl(BUCKET, path, preview);
+      await deliver(optimistic(null, path, preview));
     } catch {
       setError("Couldn't send the photo. Try again.");
     } finally {
@@ -565,6 +569,28 @@ export function Conversation({
                       {m.failed ? "Not sent" : m.pending ? "Sending…" : clockTime(m.created_at)}
                     </p>
                   </div>
+                  {m.failed && (
+                    <div className="flex shrink-0 gap-1">
+                      {!ended && (
+                        <Button
+                          size="sm"
+                          variant="plain"
+                          aria-label="Retry sending"
+                          onClick={() => retry(m)}
+                        >
+                          <RotateCw /> Retry
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="quiet"
+                        aria-label="Remove unsent message"
+                        onClick={() => setMessages((list) => list.filter((x) => x.id !== m.id))}
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  )}
                   {!m.pending && !m.failed && !m.deleted_at && (
                     <Menu>
                       <MenuTrigger asChild>
@@ -669,7 +695,7 @@ export function Conversation({
           {error}
         </p>
       )}
-      {closed ? (
+      {ended ? (
         <p className="gutter bg-surface pt-3 pb-[max(12px,env(safe-area-inset-bottom))] text-center text-subhead text-sec">
           This chat has ended. You can still read it.
         </p>

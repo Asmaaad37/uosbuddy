@@ -63,7 +63,7 @@ export default async function ConversationPage({ params }: Props) {
       )}
       isRequest={conversation.is_request}
       muted={conversation.muted}
-      closed={!!row?.expires_at && new Date(row.expires_at).getTime() < Date.now()}
+      endsAt={row?.expires_at ?? null}
       isRide={!!ride}
     />
   );
