@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { addResource, deleteResource, voteResource } from "@/actions/courses";
 import { ReportDialog } from "@/components/connect/safety-menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Button } from "@/components/ui/button";
 import { Pill } from "@/components/ui/badge";
 import { Field, Input } from "@/components/ui/input";
@@ -68,6 +69,7 @@ export function Resources({
   const [items, setItems] = useState(initial);
   const [filter, setFilter] = useState<ResourceKind | "all">("all");
   const [reporting, setReporting] = useState<string | null>(null);
+  const confirm = useConfirm();
   const [error, setError] = useState<string>();
 
   async function open(r: Resource) {
@@ -178,6 +180,12 @@ export function Resources({
                     <MenuItem
                       danger
                       onSelect={async () => {
+                        const ok = await confirm({
+                          title: `Delete "${r.title}"?`,
+                          body: "Classmates won't be able to open it any more.",
+                          action: "Delete file",
+                        });
+                        if (!ok) return;
                         const result = await deleteResource(r.id);
                         if (result.ok) setItems((list) => list.filter((x) => x.id !== r.id));
                         else setError(result.error);

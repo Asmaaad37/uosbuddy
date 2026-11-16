@@ -7,6 +7,7 @@ import { Check, Flag, MapPin, MessageCircle, MoreHorizontal, Trash2 } from "luci
 import { deleteListing, markListingDone } from "@/actions/campus";
 import { startDm } from "@/actions/chat";
 import { ReportDialog } from "@/components/connect/safety-menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
@@ -36,6 +37,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
   const router = useRouter();
   const [pending, start] = useTransition();
   const [reporting, setReporting] = useState(false);
+  const confirm = useConfirm();
   const kind = LISTING_KINDS[l.kind as ListingKind] ?? LISTING_KINDS.sell;
   const mine = l.user_id === me;
   const done = l.status === "done";
@@ -106,7 +108,15 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
           </MenuTrigger>
           <MenuContent align="end">
             {mine ? (
-              <MenuItem onSelect={() => run(() => deleteListing(l.id), "Listing deleted")}>
+              <MenuItem
+                onSelect={async () => {
+                  const ok = await confirm({
+                    title: "Delete this listing?",
+                    action: "Delete listing",
+                  });
+                  if (ok) run(() => deleteListing(l.id), "Listing deleted");
+                }}
+              >
                 <Trash2 /> Delete
               </MenuItem>
             ) : (

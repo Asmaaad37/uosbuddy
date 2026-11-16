@@ -11,6 +11,7 @@ import {
   leaveCourse,
 } from "@/actions/courses";
 import { Button } from "@/components/ui/button";
+import { useConfirm } from "@/components/ui/confirm";
 import { Field, Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import {
@@ -33,6 +34,7 @@ export function CourseControls({
   chatId: string | null;
 }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string>();
 
@@ -85,7 +87,14 @@ export function CourseControls({
         </Button>
         <Button
           variant="ghost"
-          onClick={() => run("leave", () => leaveCourse(course)).then((r) => r && router.refresh())}
+          onClick={async () => {
+            const ok = await confirm({
+              title: "Leave this course?",
+              body: "You'll be taken off its class list. You can join again any time.",
+              action: "Leave course",
+            });
+            if (ok) void run("leave", () => leaveCourse(course)).then((r) => r && router.refresh());
+          }}
           disabled={!!busy}
         >
           Leave

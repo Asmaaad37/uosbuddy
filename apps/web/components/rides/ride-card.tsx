@@ -13,6 +13,7 @@ import {
   type RideRequest,
 } from "@/actions/campus";
 import { ReportDialog } from "@/components/connect/safety-menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
   const [pending, start] = useTransition();
   const [requests, setRequests] = useState<RideRequest[] | null>(null);
   const [reporting, setReporting] = useState(false);
+  const confirm = useConfirm();
   const mine = ride.user_id === me;
   const offer = ride.kind === "offer";
   const left = Math.max(ride.seats - ride.seats_taken, 0);
@@ -171,7 +173,14 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
               size="sm"
               variant="ghost"
               disabled={pending}
-              onClick={() => run(() => cancelRide(ride.id), "Ride cancelled")}
+              onClick={async () => {
+                const ok = await confirm({
+                  title: "Cancel this ride?",
+                  body: "Anyone with a seat or a request will be told.",
+                  action: "Cancel ride",
+                });
+                if (ok) run(() => cancelRide(ride.id), "Ride cancelled");
+              }}
             >
               Cancel ride
             </Button>

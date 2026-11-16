@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { deletePost, setMute, setPostHidden, votePoll, votePost, type Post } from "@/actions/feed";
 import { ReportDialog } from "@/components/connect/safety-menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
@@ -42,6 +43,7 @@ export function PostCard({
   const [post, setPost] = useState(initial);
   const [removed, setRemoved] = useState(false);
   const [reporting, setReporting] = useState(false);
+  const confirm = useConfirm();
   const [error, setError] = useState<string>();
   const [bump, setBump] = useState<{ n: number; dir: number }>({ n: 0, dir: 1 });
   if (removed || !post.id) return null;
@@ -216,6 +218,12 @@ export function PostCard({
               <MenuItem
                 danger
                 onSelect={async () => {
+                  const ok = await confirm({
+                    title: "Delete this post?",
+                    body: "It disappears for everyone, along with its comments.",
+                    action: "Delete post",
+                  });
+                  if (!ok) return;
                   const r = await deletePost(id);
                   if (r.ok) setRemoved(true);
                   else setError(r.error);
