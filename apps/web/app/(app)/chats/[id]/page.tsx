@@ -18,7 +18,13 @@ export default async function ConversationPage({ params }: Props) {
 
   // my_conversations() also hides DMs across a block. Asking for this one chat opens it even
   // if you deleted it from your list, as from an old notification or the back button.
-  const [{ data: conversations }, { data: people }, { data: messages }] = await Promise.all([
+  const [
+    { data: conversations },
+    { data: people },
+    { data: messages },
+    { data: row },
+    { data: ride },
+  ] = await Promise.all([
     supabase.rpc("my_conversations", { p_only: id }),
     supabase.rpc("conversation_people", { p_conversation: id }),
     supabase
@@ -28,6 +34,8 @@ export default async function ConversationPage({ params }: Props) {
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .limit(30),
+    supabase.from("conversations").select("expires_at").eq("id", id).maybeSingle(),
+    supabase.from("rides").select("id").eq("conversation_id", id).maybeSingle(),
   ]);
   const conversation = conversations?.[0];
   if (!conversation) notFound();
@@ -55,6 +63,8 @@ export default async function ConversationPage({ params }: Props) {
       )}
       isRequest={conversation.is_request}
       muted={conversation.muted}
+      closed={!!row?.expires_at && new Date(row.expires_at).getTime() < Date.now()}
+      isRide={!!ride}
     />
   );
 }

@@ -162,7 +162,71 @@ export async function leaveConversation(conversationId: string): Promise<ActionR
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
   const { error } = await s.supabase.rpc("leave_conversation", { p_conversation: conversationId });
-  if (error) return fail("Couldn't leave. Try again.");
+  if (error) return fail(friendly(error, "Couldn't leave. Try again."));
+  return { ok: true, data: undefined };
+}
+
+const renameSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Give the group a name")
+    .max(60, "Keep the name under 60 characters"),
+  emoji: z.string().trim().max(8, "Pick one emoji").default(""),
+});
+
+/** C4: rename a group (its owner or admins). */
+export async function renameGroup(
+  conversationId: string,
+  input: z.input<typeof renameSchema>,
+): Promise<ActionResult> {
+  if (!id.safeParse(conversationId).success) return fail("Chat not found");
+  const parsed = renameSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the name");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("rename_group", {
+    p_conversation: conversationId,
+    p_title: parsed.data.title,
+    p_emoji: parsed.data.emoji,
+  });
+  if (error) return fail(friendly(error, "Couldn't rename the group. Try again."));
+  return { ok: true, data: undefined };
+}
+
+/** C4: add connections to a group (its owner or admins). */
+export async function addGroupMembers(
+  conversationId: string,
+  members: string[],
+): Promise<ActionResult> {
+  if (!id.safeParse(conversationId).success) return fail("Chat not found");
+  const parsed = z.array(id).min(1, "Pick at least one person").max(49).safeParse(members);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Pick who to add");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("add_group_members", {
+    p_conversation: conversationId,
+    p_members: parsed.data,
+  });
+  if (error) return fail(friendly(error, "Couldn't add them. Try again."));
+  return { ok: true, data: undefined };
+}
+
+/** C4: remove someone from a group (its owner, or an admin removing a member). */
+export async function removeGroupMember(
+  conversationId: string,
+  member: string,
+): Promise<ActionResult> {
+  if (!id.safeParse(conversationId).success || !id.safeParse(member).success) {
+    return fail("Member not found");
+  }
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("remove_group_member", {
+    p_conversation: conversationId,
+    p_user: member,
+  });
+  if (error) return fail(friendly(error, "Couldn't remove them. Try again."));
   return { ok: true, data: undefined };
 }
 

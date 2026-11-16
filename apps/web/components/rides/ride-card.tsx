@@ -18,7 +18,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { pkTime, recurringLabel } from "@/lib/campus";
+import { dayMonth, pkTime, recurringLabel } from "@/lib/campus";
 
 export type Ride = {
   id: string;
@@ -27,6 +27,7 @@ export type Ride = {
   to_area: string;
   depart_at: string;
   recurring_days: number[];
+  recurring_until: string | null;
   seats: number;
   seats_taken: number;
   women_only: boolean;
@@ -80,6 +81,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
             {repeats && (
               <span className="ml-1.5 inline-flex items-center gap-1">
                 <Repeat className="size-3.5" aria-hidden /> {repeats}
+                {ride.recurring_until && ` until ${dayMonth(ride.recurring_until)}`}
               </span>
             )}
           </p>

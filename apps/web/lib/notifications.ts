@@ -56,6 +56,14 @@ export function describe(n: NotificationLike): Described {
       };
     case "backup.cancelled":
       return { title: `${who} cancelled ${title}`, href: "/backup" };
+    case "backup.expired":
+      return {
+        title: `${title.charAt(0).toUpperCase()}${title.slice(1)} expired`,
+        body: p.mine
+          ? "Nobody marked it done in 3 days. Ask again if you still need help."
+          : "It wasn't marked done in 3 days, so it's closed now.",
+        href: "/backup",
+      };
     case "post.comment":
       return {
         title: `${who} commented on your post`,
