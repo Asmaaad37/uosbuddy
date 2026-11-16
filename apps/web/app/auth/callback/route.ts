@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { homePath } from "@/lib/auth/routing";
+import { recordTermsAcceptance } from "@/lib/terms.server";
 
 /**
  * Google OAuth return (§3.3 A). The `hd` hint is only a hint; the database trigger is the
@@ -35,5 +36,6 @@ export async function GET(request: NextRequest) {
     return to("/start/uni-email?error=not_uni");
   }
 
+  await recordTermsAcceptance(supabase);
   return to(homePath(profile));
 }

@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test, type APIRequestContext } from "@playwright/test";
+import { TERMS_VERSION } from "../../lib/terms";
+import { agreeToTerms } from "../terms";
 
 // Full sign-up flows against a local Supabase stack (the CI "e2e" job). Emails are caught by
 // Mailpit, so the codes can be read back. Skipped wherever that stack isn't running.
@@ -43,8 +45,13 @@ function serviceClient() {
   );
 }
 
-test("a UoS email is verified instantly and completes profile setup", async ({ page, request }) => {
+test("a UoS email is verified instantly and completes profile setup", async ({
+  page,
+  request,
+  baseURL,
+}) => {
   const email = `student-${run}@uos.edu.pk`;
+  await agreeToTerms(page, baseURL);
   await page.goto("/start/uni-email");
   await page.getByLabel("UoS email").fill(email);
   await page.getByRole("button", { name: "Email me a code" }).click();
@@ -71,6 +78,15 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
   await expect(page.getByText(/Your profile link/)).toBeVisible();
   await page.getByRole("radio", { name: "Hostelite" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
+
+  // Agreeing to the terms at the start of sign-up was saved on the new account.
+  const { data: agreed } = await serviceClient()
+    .from("profiles")
+    .select("terms_version, terms_accepted_at")
+    .eq("handle", `stu_${run}`.slice(0, 20))
+    .single();
+  expect(agreed?.terms_version).toBe(TERMS_VERSION);
+  expect(agreed?.terms_accepted_at).not.toBeNull();
 
   // Screen 8: interests.
   await expect(page).toHaveURL(/\/setup\/interests$/);
@@ -154,6 +170,7 @@ test("a UoS email is verified instantly and completes profile setup", async ({ p
 test("a fresher submits proof, an admin approves, and the student moves on live", async ({
   browser,
   request,
+  baseURL,
 }) => {
   // An admin, created directly (the app's own path is `pnpm admin:grant`).
   const adminEmail = `admin-${run}@example.com`;
@@ -179,6 +196,7 @@ test("a fresher submits proof, an admin approves, and the student moves on live"
   // The student signs up and confirms their email.
   const student = await (await browser.newContext()).newPage();
   const email = `fresher-${run}@example.com`;
+  await agreeToTerms(student, baseURL);
   await student.goto("/start/freshman");
   await student.getByLabel("Full name").fill("Bilal Ahmed");
   await student.getByLabel("Personal email").fill(email);

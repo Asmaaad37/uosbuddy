@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { agreeToTerms } from "./terms";
 
 // Sign-up screens up to the point where an email would be sent. Flows that need a real inbox
 // or a seeded session run against a local Supabase stack (Phase 1 part 3).
@@ -10,7 +11,11 @@ test("welcome → campus → email fork → UoS email", async ({ page }) => {
 
   await expect(page).toHaveURL(/\/start\/campus$/);
   await expect(page.getByRole("radio", { name: /University of Sargodha/ })).toBeVisible();
-  await page.getByRole("link", { name: "Continue" }).click();
+  // Sign-up starts by agreeing to the terms.
+  const next = page.getByRole("button", { name: "Continue" });
+  await expect(next).toBeDisabled();
+  await page.getByRole("checkbox", { name: /I agree to the Terms and Privacy Policy/ }).check();
+  await next.click();
 
   await expect(page).toHaveURL(/\/start\/email$/);
   await page.getByRole("link", { name: /Yes, I have it/ }).click();
@@ -18,7 +23,13 @@ test("welcome → campus → email fork → UoS email", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Sign in with your UoS email" })).toBeVisible();
 });
 
-test("a non-UoS address is caught before any email is sent", async ({ page }) => {
+test("skipping the first screen leads back to the terms", async ({ page }) => {
+  await page.goto("/start/freshman");
+  await expect(page).toHaveURL(/\/start\/campus$/);
+});
+
+test("a non-UoS address is caught before any email is sent", async ({ page, baseURL }) => {
+  await agreeToTerms(page, baseURL);
   await page.goto("/start/uni-email");
   await page.getByLabel("UoS email").fill("someone@gmail.com");
   await page.getByRole("button", { name: "Email me a code" }).click();
@@ -30,7 +41,8 @@ test("a non-UoS address is caught before any email is sent", async ({ page }) =>
   );
 });
 
-test("the fresher form validates before creating an account", async ({ page }) => {
+test("the fresher form validates before creating an account", async ({ page, baseURL }) => {
+  await agreeToTerms(page, baseURL);
   await page.goto("/start/freshman");
   await page.getByLabel("Password").fill("short");
   await page.getByRole("button", { name: "Continue" }).click();
@@ -60,7 +72,8 @@ for (const path of [
   "/start/freshman",
   "/login",
 ]) {
-  test(`${path} has no horizontal scroll`, async ({ page }) => {
+  test(`${path} has no horizontal scroll`, async ({ page, baseURL }) => {
+    await agreeToTerms(page, baseURL);
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
