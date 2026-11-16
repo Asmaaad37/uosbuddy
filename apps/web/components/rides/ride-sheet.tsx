@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { RIDE_AREAS, WEEKDAYS, fromPkLocal, pkLocalIn } from "@/lib/campus";
+import { RIDE_AREAS, WEEKDAYS, addDays, fromPkLocal, pkLocalIn } from "@/lib/campus";
 import { cn } from "@/lib/utils";
 
 /** Areas to pick from, or type your own. */
@@ -64,6 +64,10 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
   const [when, setWhen] = useState(() => pkLocalIn(120));
   const [seats, setSeats] = useState(3);
   const [days, setDays] = useState<number[]>([]);
+  // A recurring ride needs a last day; 8 weeks after the first ride unless changed.
+  const [until, setUntil] = useState("");
+  const firstDay = when.slice(0, 10);
+  const lastDay = until || addDays(firstDay, 56);
   const [womenOnly, setWomenOnly] = useState(false);
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
@@ -81,6 +85,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
       departAt,
       seats: kind === "offer" ? seats : 1,
       recurring: days,
+      until: days.length ? lastDay : undefined,
       womenOnly,
       notes: notes || undefined,
     });
@@ -91,6 +96,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
     setTo("");
     setNotes("");
     setDays([]);
+    setUntil("");
     setError(undefined);
     router.push("/rides?tab=mine");
     router.refresh();
@@ -184,6 +190,20 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
                 </button>
               ))}
             </div>
+            {days.length > 0 && (
+              <Field id={`${id}-until`} label="Until">
+                {(aria) => (
+                  <Input
+                    {...aria}
+                    type="date"
+                    value={lastDay}
+                    min={firstDay}
+                    max={addDays(firstDay, 120)}
+                    onChange={(e) => setUntil(e.target.value)}
+                  />
+                )}
+              </Field>
+            )}
           </fieldset>
           {womenEligible && (
             <label className="flex items-center gap-3 rounded-field border border-sep p-3">

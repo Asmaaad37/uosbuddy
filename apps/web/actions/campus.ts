@@ -32,6 +32,8 @@ const rideSchema = z.object({
   departAt: z.iso.datetime({ message: "Pick a day and time" }),
   seats: z.number().int().min(1).max(8).default(1),
   recurring: z.array(z.number().int().min(0).max(6)).max(7).default([]),
+  /** The last day a recurring ride runs (YYYY-MM-DD, Pakistan time). */
+  until: z.iso.date({ message: "Pick when the ride stops" }).optional(),
   womenOnly: z.boolean().default(false),
   notes: z.string().trim().max(300, "Keep notes under 300 characters").optional(),
 });
@@ -52,6 +54,7 @@ export async function createRide(input: z.input<typeof rideSchema>): Promise<Act
     p_recurring: v.recurring,
     p_women_only: v.womenOnly,
     p_notes: v.notes,
+    p_until: v.recurring.length ? v.until : undefined,
   });
   if (error || !data) return fail(friendly(error, "Couldn't post the ride. Try again."));
   return { ok: true, data };

@@ -93,6 +93,22 @@ export function pkTime(iso: string | Date) {
   }).format(new Date(iso));
 }
 
+/** A calendar day ("2026-12-24") as students read it: "24 Dec". */
+export function dayMonth(date: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "UTC",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(`${date}T00:00:00Z`));
+}
+
+/** A calendar day plus some days, both as "YYYY-MM-DD". */
+export function addDays(date: string, days: number) {
+  const d = new Date(`${date}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Date(d.getTime() + days * 86_400_000).toISOString().slice(0, 10);
+}
+
 /** A <input type="datetime-local"> value (Pakistan time) as an ISO instant. */
 export function fromPkLocal(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;

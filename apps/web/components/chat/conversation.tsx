@@ -123,6 +123,8 @@ export function Conversation({
   signedUrls,
   isRequest,
   muted: initialMuted,
+  closed = false,
+  isRide = false,
 }: {
   conversationId: string;
   me: string;
@@ -134,6 +136,10 @@ export function Conversation({
   signedUrls: Record<string, string>;
   isRequest: boolean;
   muted: boolean;
+  /** The chat has ended (a finished Backup or ride): still readable, nothing can be sent. */
+  closed?: boolean;
+  /** A ride's chat: leaving it gives up your seat. */
+  isRide?: boolean;
 }) {
   const router = useRouter();
   const confirm = useConfirm();
@@ -420,7 +426,11 @@ export function Conversation({
             <span className="truncate text-headline">{title}</span>
           </Link>
         ) : (
-          <span className="flex min-h-11 min-w-0 items-center gap-2.5 py-1.5">
+          <Link
+            href={`/chats/${conversationId}/info`}
+            aria-label={`${title}, ${people.length} members. Group info`}
+            className="flex min-h-11 min-w-0 items-center gap-2.5 py-1.5"
+          >
             <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-raised text-sec">
               <Users className="size-4" aria-hidden />
             </span>
@@ -428,7 +438,7 @@ export function Conversation({
               <span className="truncate text-headline">{title}</span>
               <span className="text-footnote text-sec">{people.length} members</span>
             </span>
-          </span>
+          </Link>
         )}
         <div className="ml-auto">
           <SafetyMenu
@@ -454,7 +464,9 @@ export function Conversation({
                     onSelect={async () => {
                       const ok = await confirm({
                         title: `Leave ${title}?`,
-                        body: "You'll stop getting its messages.",
+                        body: isRide
+                          ? "You'll give up your seat on this ride."
+                          : "You'll stop getting its messages.",
                         action: "Leave",
                       });
                       if (!ok) return;
@@ -657,56 +669,62 @@ export function Conversation({
           {error}
         </p>
       )}
-      <form
-        onSubmit={submit}
-        className="gutter relative flex items-end gap-2 pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
-      >
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          tabIndex={-1}
-          onChange={(e) => void attach(e.target.files?.[0])}
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%]"
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label="Send a photo"
-          disabled={uploading}
-          onClick={() => fileRef.current?.click()}
+      {closed ? (
+        <p className="gutter bg-surface pt-3 pb-[max(12px,env(safe-area-inset-bottom))] text-center text-subhead text-sec">
+          This chat has ended. You can still read it.
+        </p>
+      ) : (
+        <form
+          onSubmit={submit}
+          className="gutter relative flex items-end gap-2 pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
         >
-          {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />}
-        </Button>
-        <div className="flex-1">
-          <textarea
-            aria-label="Message"
-            value={draft}
-            rows={1}
-            maxLength={4000}
-            onChange={(e) => {
-              setDraft(e.target.value);
-              announceTyping();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-                e.preventDefault();
-                submit();
-              }
-            }}
-            placeholder="Message"
-            className="max-h-32 min-h-11 w-full resize-none rounded-[22px] border border-sep bg-surface px-4 py-2.5 text-[16px] focus-visible:border-accent focus-visible:outline-none"
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            tabIndex={-1}
+            onChange={(e) => void attach(e.target.files?.[0])}
           />
-        </div>
-        <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
-          <SendHorizontal />
-        </Button>
-      </form>
+          <span
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%]"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Send a photo"
+            disabled={uploading}
+            onClick={() => fileRef.current?.click()}
+          >
+            {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />}
+          </Button>
+          <div className="flex-1">
+            <textarea
+              aria-label="Message"
+              value={draft}
+              rows={1}
+              maxLength={4000}
+              onChange={(e) => {
+                setDraft(e.target.value);
+                announceTyping();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              placeholder="Message"
+              className="max-h-32 min-h-11 w-full resize-none rounded-[22px] border border-sep bg-surface px-4 py-2.5 text-[16px] focus-visible:border-accent focus-visible:outline-none"
+            />
+          </div>
+          <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
+            <SendHorizontal />
+          </Button>
+        </form>
+      )}
       <ReportDialog
         open={!!reporting}
         onOpenChange={(o) => !o && setReporting(null)}

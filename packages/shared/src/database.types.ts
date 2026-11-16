@@ -2568,6 +2568,7 @@ export type Database = {
           kind: string
           notes: string | null
           recurring_days: number[]
+          recurring_until: string | null
           seats: number
           status: string
           to_area: string
@@ -2584,6 +2585,7 @@ export type Database = {
           kind: string
           notes?: string | null
           recurring_days?: number[]
+          recurring_until?: string | null
           seats?: number
           status?: string
           to_area: string
@@ -2600,6 +2602,7 @@ export type Database = {
           kind?: string
           notes?: string | null
           recurring_days?: number[]
+          recurring_until?: string | null
           seats?: number
           status?: string
           to_area?: string
@@ -3683,6 +3686,7 @@ export type Database = {
           p_recurring?: number[]
           p_seats?: number
           p_to: string
+          p_until?: string
           p_women_only?: boolean
         }
         Returns: string
@@ -3904,6 +3908,7 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      is_custom_group: { Args: { p_conversation: string }; Returns: boolean }
       is_member: { Args: { p_conversation: string }; Returns: boolean }
       is_society_admin: { Args: { p_society: string }; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
@@ -4080,6 +4085,7 @@ export type Database = {
           type: string
         }[]
       }
+      my_role_in: { Args: { p_conversation: string }; Returns: string }
       my_university_id: { Args: never; Returns: string }
       notify: {
         Args: {
@@ -4093,6 +4099,7 @@ export type Database = {
         Returns: undefined
       }
       person_hidden: { Args: { p_user: string }; Returns: boolean }
+      pk_today: { Args: never; Returns: string }
       profile_badges: {
         Args: { p_user: string }
         Returns: {
@@ -4108,6 +4115,14 @@ export type Database = {
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
       refresh_admin_stats: { Args: never; Returns: undefined }
       remove_connection: { Args: { p_other: string }; Returns: undefined }
+      remove_group_member: {
+        Args: { p_conversation: string; p_user: string }
+        Returns: undefined
+      }
+      rename_group: {
+        Args: { p_conversation: string; p_emoji: string; p_title: string }
+        Returns: undefined
+      }
       report: {
         Args: {
           p_details?: string
@@ -4181,6 +4196,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      ride_running: {
+        Args: { p_ride: Database["public"]["Tables"]["rides"]["Row"] }
+        Returns: boolean
+      }
       rides_board: {
         Args: { p_kind?: string; p_mine?: boolean }
         Returns: {
@@ -4195,6 +4214,7 @@ export type Database = {
           my_request: string
           notes: string
           recurring_days: number[]
+          recurring_until: string
           seats: number
           seats_taken: number
           status: string
@@ -4203,6 +4223,7 @@ export type Database = {
           women_only: boolean
         }[]
       }
+      rides_housekeeping: { Args: never; Returns: undefined }
       rsvp_event: {
         Args: { p_event: string; p_status: string }
         Returns: undefined
