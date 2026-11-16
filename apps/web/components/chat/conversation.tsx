@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import {
-  ArrowLeft,
+  ChevronLeft,
   Bell,
   BellOff,
   Flag,
@@ -399,27 +399,34 @@ export function Conversation({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-bg">
-      <header className="gutter flex items-center gap-3 border-b border-sep bg-surface py-2">
+      <header className="gutter relative flex items-center gap-2 pt-[env(safe-area-inset-top)]">
+        <span
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%]"
+        />
         <Link
           href={request ? "/chats?tab=requests" : oneToOne ? "/chats" : "/chats?tab=groups"}
           aria-label="Back to chats"
-          className="-ml-2 grid size-11 place-items-center rounded-pill hover:bg-raised"
+          className="-ml-2 grid size-11 place-items-center rounded-pill text-accent active:scale-[0.97]"
         >
-          <ArrowLeft className="size-5" />
+          <ChevronLeft className="size-7" aria-hidden />
         </Link>
         {other ? (
-          <Link href={`/people/${other.handle}`} className="flex min-w-0 items-center gap-2">
+          <Link
+            href={`/people/${other.handle}`}
+            className="flex min-h-11 min-w-0 items-center gap-2.5 py-1.5"
+          >
             <Avatar name={title} src={other.avatar_url} size="sm" />
-            <span className="truncate font-semibold">{title}</span>
+            <span className="truncate text-headline">{title}</span>
           </Link>
         ) : (
-          <span className="flex min-w-0 items-center gap-2">
-            <span className="grid size-8 place-items-center rounded-pill bg-raised text-sec">
-              <Users className="size-4" />
+          <span className="flex min-h-11 min-w-0 items-center gap-2.5 py-1.5">
+            <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-raised text-sec">
+              <Users className="size-4" aria-hidden />
             </span>
             <span className="grid min-w-0">
-              <span className="truncate font-semibold">{title}</span>
-              <span className="text-xs text-sec">{people.length} members</span>
+              <span className="truncate text-headline">{title}</span>
+              <span className="text-footnote text-sec">{people.length} members</span>
             </span>
           </span>
         )}
@@ -481,10 +488,12 @@ export function Conversation({
           <div ref={top} aria-hidden className="h-1" />
           {loadingOlder && <Loader2 className="mx-auto size-5 animate-spin text-sec" />}
           {!hasMore && messages.length > 0 && (
-            <p className="pb-4 text-center text-xs text-sec">This is the start of your chat.</p>
+            <p className="pb-4 text-center text-footnote text-ter">
+              This is the start of your chat.
+            </p>
           )}
           {messages.length === 0 && (
-            <p className="py-10 text-center text-sec">No messages yet. Say hi! 👋</p>
+            <p className="py-10 text-center text-subhead text-sec">No messages yet. Say hi! 👋</p>
           )}
           {messages.map((m, i) => {
             const prev = messages[i - 1];
@@ -494,12 +503,14 @@ export function Conversation({
             return (
               <div key={m.id}>
                 {newDay && (
-                  <p className="py-3 text-center text-xs font-semibold text-sec">
+                  <p className="py-3 text-center text-footnote font-semibold text-ter">
                     {dayLabel(m.created_at)}
                   </p>
                 )}
                 {head && !mine && !oneToOne && (
-                  <p className="mt-2 px-3 text-xs font-semibold text-sec">{nameOf(m.sender_id)}</p>
+                  <p className="mt-2 px-3 text-footnote font-semibold text-sec">
+                    {nameOf(m.sender_id)}
+                  </p>
                 )}
                 <div
                   className={cn(
@@ -510,14 +521,14 @@ export function Conversation({
                 >
                   <div
                     className={cn(
-                      "grid max-w-[80%] gap-1 rounded-card px-3 py-2",
+                      "grid max-w-[80%] gap-1 rounded-[20px] px-3.5 py-2",
                       mine ? "bg-fill text-on-fill" : "bg-surface",
                       m.pending && "opacity-60",
                       m.failed && "border border-danger",
                     )}
                   >
                     {m.deleted_at ? (
-                      <p className="text-sm italic opacity-70">Message deleted</p>
+                      <p className="text-subhead italic opacity-70">Message deleted</p>
                     ) : (
                       <>
                         {m.attachment_path && (
@@ -527,11 +538,18 @@ export function Conversation({
                           />
                         )}
                         {m.body && (
-                          <p className="text-[15px] break-words whitespace-pre-wrap">{m.body}</p>
+                          <p className="text-[16px] leading-[22px] break-words whitespace-pre-wrap">
+                            {m.body}
+                          </p>
                         )}
                       </>
                     )}
-                    <p className={cn("text-right text-[10px]", mine ? "text-bg/60" : "text-sec")}>
+                    <p
+                      className={cn(
+                        "text-right text-[11px] tabular-nums",
+                        mine ? "text-on-fill/75" : "text-ter",
+                      )}
+                    >
                       {m.failed ? "Not sent" : m.pending ? "Sending…" : clockTime(m.created_at)}
                     </p>
                   </div>
@@ -541,7 +559,7 @@ export function Conversation({
                         <button
                           type="button"
                           aria-label="Message options"
-                          className="grid size-8 place-items-center rounded-pill text-sec opacity-40 group-hover:opacity-100 hover:bg-raised focus-visible:opacity-100"
+                          className="grid size-11 shrink-0 place-items-center rounded-pill text-ter hover:bg-raised focus-visible:opacity-100"
                         >
                           <MoreHorizontal className="size-4" />
                         </button>
@@ -585,7 +603,7 @@ export function Conversation({
                   )}
                 </div>
                 {m.id === myLast?.id && oneToOne && (
-                  <p className="pt-1 pr-1 text-right text-[11px] text-sec">
+                  <p className="pt-1 pr-1 text-right text-footnote text-ter">
                     {seen ? "Seen" : "Sent"}
                   </p>
                 )}
@@ -593,7 +611,7 @@ export function Conversation({
             );
           })}
           {typers.length > 0 && (
-            <p className="mt-2 px-3 text-sm text-sec italic" aria-live="polite">
+            <p className="mt-2 px-3 text-subhead text-sec italic" aria-live="polite">
               {typers.join(", ")} {typers.length === 1 ? "is" : "are"} typing…
             </p>
           )}
@@ -601,8 +619,8 @@ export function Conversation({
       </div>
 
       {request && other && (
-        <div className="gutter grid gap-2 border-t border-sep bg-surface py-3">
-          <p className="text-sm">
+        <div className="gutter grid gap-2 bg-surface py-3">
+          <p className="text-subhead">
             <strong>{title}</strong> isn&apos;t connected with you. Reply to accept, or decline to
             delete this chat.
           </p>
@@ -634,9 +652,14 @@ export function Conversation({
         </div>
       )}
 
+      {error && (
+        <p role="alert" className="gutter py-2 text-subhead text-danger">
+          {error}
+        </p>
+      )}
       <form
         onSubmit={submit}
-        className="gutter flex items-end gap-2 border-t border-sep bg-surface pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
+        className="gutter relative flex items-end gap-2 pt-2 pb-[max(8px,env(safe-area-inset-bottom))]"
       >
         <input
           ref={fileRef}
@@ -645,6 +668,10 @@ export function Conversation({
           className="sr-only"
           tabIndex={-1}
           onChange={(e) => void attach(e.target.files?.[0])}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%]"
         />
         <Button
           type="button"
@@ -673,7 +700,7 @@ export function Conversation({
               }
             }}
             placeholder="Message"
-            className="max-h-32 min-h-11 w-full resize-none rounded-field border border-sep bg-bg px-3 py-2.5 text-[15px] focus-visible:border-accent focus-visible:outline-none"
+            className="max-h-32 min-h-11 w-full resize-none rounded-[22px] border border-sep bg-surface px-4 py-2.5 text-[16px] focus-visible:border-accent focus-visible:outline-none"
           />
         </div>
         <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
@@ -687,11 +714,6 @@ export function Conversation({
         targetType="message"
         targetId={reporting ?? ""}
       />
-      {error && (
-        <p role="alert" className="gutter bg-surface pb-2 text-sm text-danger">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
