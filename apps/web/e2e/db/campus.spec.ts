@@ -93,6 +93,8 @@ test("a ride: offer, ask, accept into a chat, leave, cancel; women-only stays hi
   const again = driver.page.getByRole("listitem").filter({ hasText: to }).first();
   await expect(again.getByText("1 of 1 seats left")).toBeVisible();
   await again.getByRole("button", { name: "Cancel ride" }).click();
+  // U3: cancelling asks first.
+  await driver.page.getByRole("dialog").getByRole("button", { name: "Cancel ride" }).click();
   await expect(again.getByText("Cancelled")).toBeVisible();
   const { data: notes } = await db()
     .from("notifications")
