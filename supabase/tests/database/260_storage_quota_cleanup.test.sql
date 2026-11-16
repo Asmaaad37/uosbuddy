@@ -44,7 +44,6 @@ update storage.objects set created_at = now() - interval '25 hours' where owner_
 select is(tests.as('S', 'select public.under_upload_quota()::text'), 'true', 'and a day later there''s room again');
 select ok((select count(*) = 4 from pg_policies where schemaname = 'storage' and tablename = 'objects'
            and cmd = 'INSERT' and with_check like '%under_upload_quota%'), 'all four upload rules check it');
-delete from storage.objects where owner_id = tests.uid('S')::text;
 
 -- ---------- clean-up ----------
 create table tests.f (name text primary key, bucket text, path text);
