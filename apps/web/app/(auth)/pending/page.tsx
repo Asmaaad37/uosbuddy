@@ -80,6 +80,7 @@ export default async function PendingPage() {
                   {new Date(request.created_at).toLocaleString("en-PK", {
                     dateStyle: "medium",
                     timeStyle: "short",
+                    timeZone: "Asia/Karachi",
                   })}
                 </span>
               )}
