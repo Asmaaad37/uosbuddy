@@ -94,6 +94,12 @@ export function describe(n: NotificationLike): Described {
         body: "You're connected now. Say hi!",
         href: n.actor_handle ? `/people/${n.actor_handle}` : "/mentors",
       };
+    case "mentor.ended":
+      return {
+        title: `${who} ended your mentorship`,
+        body: "You're still connected, so you can message each other.",
+        href: "/mentors",
+      };
     case "ride.request":
       return {
         title:

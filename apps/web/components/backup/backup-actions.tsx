@@ -33,6 +33,14 @@ export function BackupAction({ kind, request }: { kind: Kind; request: string })
       });
       if (!ok) return;
     }
+    if (kind === "unclaim") {
+      const ok = await confirm({
+        title: "Step back from this request?",
+        body: "It opens again for others, and you won't be able to pick it up again.",
+        action: "Step back",
+      });
+      if (!ok) return;
+    }
     setBusy(true);
     setError(undefined);
     if (kind === "claim") {

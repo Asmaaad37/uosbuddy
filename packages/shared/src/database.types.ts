@@ -352,10 +352,12 @@ export type Database = {
           expires_at: string
           id: string
           notified_count: number
+          points_awarded: number
           requester_id: string
           resolved_at: string | null
           status: Database["public"]["Enums"]["backup_status"]
           title: string
+          unclaimed_by: string[]
           university_id: string
           urgency: number
         }
@@ -372,10 +374,12 @@ export type Database = {
           expires_at?: string
           id?: string
           notified_count?: number
+          points_awarded?: number
           requester_id: string
           resolved_at?: string | null
           status?: Database["public"]["Enums"]["backup_status"]
           title: string
+          unclaimed_by?: string[]
           university_id: string
           urgency?: number
         }
@@ -392,10 +396,12 @@ export type Database = {
           expires_at?: string
           id?: string
           notified_count?: number
+          points_awarded?: number
           requester_id?: string
           resolved_at?: string | null
           status?: Database["public"]["Enums"]["backup_status"]
           title?: string
+          unclaimed_by?: string[]
           university_id?: string
           urgency?: number
         }
@@ -3789,6 +3795,7 @@ export type Database = {
         Returns: undefined
       }
       dm_key: { Args: { p_a: string; p_b: string }; Returns: string }
+      end_mentorship: { Args: { p_other: string }; Returns: undefined }
       event_reminders: { Args: never; Returns: undefined }
       events_board: {
         Args: { p_mine?: boolean; p_society?: string }
@@ -3928,6 +3935,15 @@ export type Database = {
       join_course_chat: { Args: { p_course: string }; Returns: string }
       join_society: { Args: { p_society: string }; Returns: undefined }
       join_study_group: { Args: { p_group: string }; Returns: string }
+      last_term_courses: {
+        Args: never
+        Returns: {
+          code: string
+          id: string
+          term: string
+          title: string
+        }[]
+      }
       launch_status: { Args: never; Returns: Json }
       leave_conversation: {
         Args: { p_conversation: string }
@@ -4067,6 +4083,17 @@ export type Database = {
         }[]
       }
       my_invite_code: { Args: never; Returns: string }
+      my_mentorships: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          full_name: string
+          handle: string
+          i_am: string
+          other_id: string
+          since: string
+        }[]
+      }
       my_mutes: {
         Args: never
         Returns: {
@@ -4405,6 +4432,7 @@ export type Database = {
           score: number
         }[]
       }
+      term_rank: { Args: { p_term: string }; Returns: number }
       touch_activity: { Args: never; Returns: undefined }
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }

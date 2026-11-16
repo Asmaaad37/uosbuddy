@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { BookOpen, FileSearch } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AddCourse } from "@/components/courses/add-course";
+import { NewTermCourses } from "@/components/courses/new-term";
 import { termLabel } from "@/lib/academics";
 import { getSession } from "@/lib/auth/session";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -14,15 +15,22 @@ export const metadata: Metadata = { title: "My courses" };
 export default async function CoursesPage() {
   const { supabase, user, profile } = await getSession();
   if (!user || !profile) redirect("/login?next=/courses");
-  const [{ data: courses }, { data: departments }, { data: term }] = await Promise.all([
-    supabase.rpc("my_courses"),
-    supabase
-      .from("departments")
-      .select("id, short_code, name")
-      .eq("university_id", profile.university_id ?? "")
-      .order("short_code"),
-    supabase.rpc("current_term"),
-  ]);
+  const [{ data: courses }, { data: departments }, { data: term }, { data: lastTerm }] =
+    await Promise.all([
+      supabase.rpc("my_courses"),
+      supabase
+        .from("departments")
+        .select("id, short_code, name")
+        .eq("university_id", profile.university_id ?? "")
+        .order("short_code"),
+      supabase.rpc("current_term"),
+      supabase.rpc("last_term_courses"),
+    ]);
+  // Offer last term's courses until the student starts this term's list with something new.
+  const mine = new Set((courses ?? []).map((c) => c.id));
+  const last = new Set((lastTerm ?? []).map((c) => c.id));
+  const offer = (lastTerm ?? []).filter((c) => !mine.has(c.id));
+  const showNewTerm = offer.length > 0 && (courses ?? []).every((c) => last.has(c.id));
 
   return (
     <AppShell bell back="/explore">
@@ -32,6 +40,7 @@ export default async function CoursesPage() {
           {termLabel(term)}. Notes, past papers, study groups and a chat for each.
         </p>
       </div>
+      {showNewTerm && <NewTermCourses courses={offer} />}
       <AddCourse departments={departments ?? []} myDepartment={profile.department_id} />
       {courses?.length ? (
         <GroupedList header="This term">

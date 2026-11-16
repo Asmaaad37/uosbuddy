@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
-import { MentorList, MentorRequests, MentorSwitch } from "@/components/mentors/mentors";
+import {
+  MentorList,
+  MentorRequests,
+  MentorSwitch,
+  MyMentorships,
+} from "@/components/mentors/mentors";
 import { getSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Mentors" };
@@ -10,9 +15,10 @@ export const metadata: Metadata = { title: "Mentors" };
 export default async function MentorsPage() {
   const { supabase, user, profile } = await getSession();
   if (!user || !profile) redirect("/login?next=/mentors");
-  const [{ data: mentors }, { data: requests }] = await Promise.all([
+  const [{ data: mentors }, { data: requests }, { data: mentorships }] = await Promise.all([
     supabase.rpc("find_mentors"),
     profile.is_mentor ? supabase.rpc("mentor_requests") : Promise.resolve({ data: [] }),
+    supabase.rpc("my_mentorships"),
   ]);
 
   return (
@@ -23,6 +29,7 @@ export default async function MentorsPage() {
       </div>
       <MentorSwitch on={profile.is_mentor} eligible={(profile.semester ?? 0) >= 3} />
       <MentorRequests requests={requests ?? []} />
+      <MyMentorships mentorships={mentorships ?? []} />
       <MentorList mentors={mentors ?? []} />
     </AppShell>
   );
