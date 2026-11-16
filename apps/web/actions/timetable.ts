@@ -53,6 +53,7 @@ export async function saveSlot(input: z.input<typeof slotSchema>): Promise<Actio
   const { error } = v.id
     ? await s.supabase.from("timetable_slots").update(row).eq("id", v.id)
     : await s.supabase.from("timetable_slots").insert(row);
+  if (error?.code === "23505") return fail("You already have a class at that time.");
   if (error) return fail("Couldn't save the class. Try again.");
   return { ok: true, data: undefined };
 }
@@ -80,7 +81,8 @@ export async function saveSlots(input: z.input<typeof slotsSchema>): Promise<Act
   const s = await session();
   if (!s) return fail("Your session expired. Log in again.");
   const { data: term } = await s.supabase.rpc("current_term");
-  const { error } = await s.supabase.from("timetable_slots").insert(
+  // A re-import skips classes already saved for the same day and time (C8).
+  const { error } = await s.supabase.from("timetable_slots").upsert(
     parsed.data.map((v) => ({
       user_id: s.user.id,
       term: term ?? "",
@@ -91,6 +93,7 @@ export async function saveSlots(input: z.input<typeof slotsSchema>): Promise<Act
       room: v.room || null,
       course_id: v.course,
     })),
+    { onConflict: "user_id,term,day,start_min,end_min", ignoreDuplicates: true },
   );
   if (error) return fail("Couldn't save the classes. Try again.");
   return { ok: true, data: undefined };
@@ -175,6 +178,16 @@ export async function requestMentor(mentor: string, message?: string): Promise<A
     p_message: message?.trim() || undefined,
   });
   if (error) return fail(friendly(error, "Couldn't send the request. Try again."));
+  return { ok: true, data: undefined };
+}
+
+/** C7: end a mentorship (either person). You stay connected. */
+export async function endMentorship(other: string): Promise<ActionResult> {
+  if (!id.safeParse(other).success) return fail("Mentorship not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("end_mentorship", { p_other: other });
+  if (error) return fail(friendly(error, "Couldn't end it. Try again."));
   return { ok: true, data: undefined };
 }
 

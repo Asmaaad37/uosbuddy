@@ -90,7 +90,7 @@ export function CourseControls({
           onClick={async () => {
             const ok = await confirm({
               title: "Leave this course?",
-              body: "You'll be taken off its class list. You can join again any time.",
+              body: "You'll leave its class list, course chat and study groups. You can join again any time.",
               action: "Leave course",
             });
             if (ok) void run("leave", () => leaveCourse(course)).then((r) => r && router.refresh());

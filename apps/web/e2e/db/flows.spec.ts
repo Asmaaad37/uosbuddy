@@ -79,7 +79,10 @@ test("a UoS email is verified instantly and completes profile setup", async ({
   await page.getByRole("radio", { name: "Hostelite" }).click();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // Agreeing to the terms at the start of sign-up was saved on the new account.
+  // Screen 8: interests.
+  await expect(page).toHaveURL(/\/setup\/interests$/);
+
+  // The handle is saved now. Agreeing to the terms at the start of sign-up was saved too.
   const { data: agreed } = await serviceClient()
     .from("profiles")
     .select("terms_version, terms_accepted_at")
@@ -88,8 +91,6 @@ test("a UoS email is verified instantly and completes profile setup", async ({
   expect(agreed?.terms_version).toBe(TERMS_VERSION);
   expect(agreed?.terms_accepted_at).not.toBeNull();
 
-  // Screen 8: interests.
-  await expect(page).toHaveURL(/\/setup\/interests$/);
   await page.getByRole("button", { name: "Cricket" }).click();
   await page.getByRole("button", { name: "Coding" }).click();
   await expect(page.getByText("2/10 picked")).toBeVisible();

@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Check, GraduationCap, Loader2, X } from "lucide-react";
-import { requestMentor, respondMentorship, setMentor } from "@/actions/timetable";
+import { endMentorship, requestMentor, respondMentorship, setMentor } from "@/actions/timetable";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useConfirm } from "@/components/ui/confirm";
+import { toast } from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -222,6 +224,71 @@ export function MentorRequests({ requests }: { requests: Request[] }) {
           </div>
         );
       })}
+    </section>
+  );
+}
+
+type Mentorship = {
+  other_id: string;
+  handle: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  i_am: string;
+};
+
+/** C7: your mentors and mentees, and ending a mentorship. */
+export function MyMentorships({ mentorships }: { mentorships: Mentorship[] }) {
+  const router = useRouter();
+  const confirm = useConfirm();
+  const [busy, setBusy] = useState<string>();
+  if (!mentorships.length) return null;
+  return (
+    <section aria-labelledby="my-mentorships" className="grid gap-2">
+      <h2 id="my-mentorships" className="text-lg font-bold">
+        Your mentorships
+      </h2>
+      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        {mentorships.map((m) => {
+          const name = m.full_name ?? m.handle ?? "Student";
+          return (
+            <li key={m.other_id} className="flex items-center gap-3 px-3 py-2">
+              <Link
+                href={m.handle ? `/people/${m.handle}` : "#"}
+                className="flex min-h-11 min-w-0 flex-1 items-center gap-3"
+              >
+                <Avatar name={name} src={m.avatar_url} size="sm" />
+                <span className="grid min-w-0">
+                  <span className="truncate font-semibold">{name}</span>
+                  <span className="text-sm text-sec">
+                    {m.i_am === "mentor" ? "You mentor them" : "Your mentor"}
+                  </span>
+                </span>
+              </Link>
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={busy === m.other_id}
+                onClick={async () => {
+                  const ok = await confirm({
+                    title: `End your mentorship with ${name}?`,
+                    body: "They'll be told. You stay connected, so you can still message.",
+                    action: "End mentorship",
+                  });
+                  if (!ok) return;
+                  setBusy(m.other_id);
+                  const r = await endMentorship(m.other_id);
+                  setBusy(undefined);
+                  if (!r.ok) return void toast.error(r.error);
+                  toast.success("Mentorship ended");
+                  router.refresh();
+                }}
+              >
+                {busy === m.other_id && <Loader2 className="animate-spin" />} End
+              </Button>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }
