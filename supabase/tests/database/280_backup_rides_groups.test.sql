@@ -3,7 +3,7 @@
 -- C4: group owners and admins rename, add and remove; a group outlives its owner.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(24);
+select plan(25);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -96,6 +96,10 @@ select is((select count(*)::int from public.notifications where user_id = tests.
 
 -- ---------- C3: cancelling closes the chat ----------
 select tests.as('D', format('select public.cancel_ride(%L)', tests.id('lift')));
+select ok((select expires_at is not null from public.conversations where id = tests.id('lift_chat')),
+  'cancelling a ride closes its chat');
+-- Inside one transaction now() never moves; in real life the next message comes later.
+update public.conversations set expires_at = expires_at - interval '1 minute' where id = tests.id('lift_chat');
 select throws_ok(format('select tests.as(%L, %L)', 'D', format('select (public.send_message(%L, %L)).body', tests.id('lift_chat'), 'Anyone?')),
   '42501', 'This chat has ended', 'a cancelled ride''s chat takes no new messages');
 
