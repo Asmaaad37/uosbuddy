@@ -82,7 +82,8 @@ export function ReportItem({
         </Pill>
         {r.report_count > 0 && (
           <Pill tone="help" className="h-6 px-2 text-xs">
-            {r.report_count} {r.report_count === 1 ? "report" : "reports"}: {r.reasons.join(", ")}
+            {r.report_count} {r.report_count === 1 ? "report" : "reports"}:{" "}
+            {r.reasons.map((x) => (x === "self_harm" ? "may hurt themselves" : x)).join(", ")}
           </Pill>
         )}
         {r.status === "held" && (

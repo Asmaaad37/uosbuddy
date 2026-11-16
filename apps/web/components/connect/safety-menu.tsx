@@ -14,6 +14,7 @@ const REASONS = [
   { value: "harassment", label: "Harassment or bullying" },
   { value: "fake", label: "Fake profile or not a UoS student" },
   { value: "inappropriate", label: "Inappropriate content" },
+  { value: "self_harm", label: "Someone may hurt themselves" },
   { value: "other", label: "Something else" },
 ] as const;
 type Reason = (typeof REASONS)[number]["value"];
@@ -78,6 +79,8 @@ export function ReportDialog({
           <>
             <DialogDescription>
               A moderator will look at it.
+              {reason === "self_harm" &&
+                " If they're in danger right now, call 1122 or 15. Staying with them helps."}
               {onBlockInstead &&
                 " If you don't want to hear from them again, you can also block them."}
             </DialogDescription>

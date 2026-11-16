@@ -37,6 +37,23 @@ export default function SafetyPage() {
       </section>
 
       <section>
+        <h2>If you or a friend is struggling</h2>
+        <p>
+          You don&apos;t have to go through it alone. In Punjab, <strong>15</strong> also offers
+          mental-health counselling, and{" "}
+          <a
+            href="https://findahelpline.com/countries/pk"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            findahelpline.com
+          </a>{" "}
+          lists free helplines in Pakistan. If a post or message worries you, report it with
+          &ldquo;Someone may hurt themselves&rdquo;: those reports go to the top of the queue.
+        </p>
+      </section>
+
+      <section>
         <h2>Report anything that breaks the rules</h2>
         <p>
           Use <strong>Report</strong> in the ⋯ menu on any profile, message, post, comment, listing,

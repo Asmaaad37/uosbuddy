@@ -1631,6 +1631,7 @@ export type Database = {
           connections: boolean
           digest: boolean
           messages: boolean
+          previews: boolean
           push: boolean
           user_id: string
         }
@@ -1640,6 +1641,7 @@ export type Database = {
           connections?: boolean
           digest?: boolean
           messages?: boolean
+          previews?: boolean
           push?: boolean
           user_id: string
         }
@@ -1649,6 +1651,7 @@ export type Database = {
           connections?: boolean
           digest?: boolean
           messages?: boolean
+          previews?: boolean
           push?: boolean
           user_id?: string
         }

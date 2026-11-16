@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Flag, Loader2, MoreHorizontal, Trash2, VenetianMask } from "lucide-react";
 import { createComment, deleteComment, type Comment } from "@/actions/feed";
+import { SupportDialog } from "@/components/safety/support-dialog";
+import { mentionsSelfHarm } from "@/lib/support";
 import { toast } from "@/components/ui/toast";
 import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
 import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
@@ -36,6 +38,7 @@ export function Comments({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [reporting, setReporting] = useState<string | null>(null);
+  const [support, setSupport] = useState(false);
 
   const top = comments.filter((c) => !c.parent_id);
   const replies = (parent: string) => comments.filter((c) => c.parent_id === parent);
@@ -57,6 +60,7 @@ export function Comments({
     if (!result.ok) return setError(result.error);
     if (result.data.held)
       toast.success("Thanks. A moderator will check your comment before it shows up.");
+    if (mentionsSelfHarm(body)) setSupport(true);
     setBody("");
     setReplyTo(null);
     setError(undefined);
@@ -201,6 +205,7 @@ export function Comments({
         targetType="comment"
         targetId={reporting ?? ""}
       />
+      <SupportDialog open={support} onOpenChange={setSupport} />
     </section>
   );
 }
