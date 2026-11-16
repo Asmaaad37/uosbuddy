@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 // Keep this in step with what the app actually does; update it when a feature changes.
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy" updated="4 November 2026">
+    <LegalPage title="Privacy" updated="17 November 2026">
       <p>
         UOSBuddy helps University of Sargodha students find their batch and classmates. It&apos;s
         run by students and is not an official University of Sargodha service. This page explains
@@ -38,8 +38,10 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Technical data:</strong> a cookie that keeps you logged in, and which days you
-            used the app (to count active students). If we turn on error reporting or usage
-            analytics, they record errors and page visits, not what you type.
+            used the app (to count active students). Your IP address is checked to stop spam on a
+            few forms. If you turn on notifications, your browser gives us an address to send them
+            to. If we turn on error reporting or usage analytics, they record errors and page
+            visits, not what you type.
           </li>
         </ul>
       </section>
@@ -56,6 +58,15 @@ export default function PrivacyPage() {
             email address and verification document. They are never shown on your profile.
           </li>
           <li>
+            <strong>Anonymous posts</strong> don&apos;t show your name to students or student
+            moderators. An admin can see who wrote one when it&apos;s reported, and each time they
+            do it&apos;s recorded.
+          </li>
+          <li>
+            <strong>Reports:</strong> the person you report isn&apos;t told. Moderators see the
+            report; only admins can see who sent it.
+          </li>
+          <li>
             <strong>Nobody else.</strong> We don&apos;t sell your data, share it with advertisers or
             show ads.
           </li>
@@ -70,8 +81,9 @@ export default function PrivacyPage() {
             shared files to Anthropic (Claude) to write an answer.
           </li>
           <li>
-            <strong>Moderation:</strong> the text of posts, comments and listings is checked by
-            Claude before it&apos;s published. People, not AI, decide on removals and bans.
+            <strong>Moderation:</strong> when it&apos;s switched on, the text of posts, comments and
+            listings is checked by Claude before it&apos;s published. People, not AI, decide on
+            removals and bans.
           </li>
           <li>
             <strong>Verification:</strong> your proof document may be read by Claude to help a
@@ -95,11 +107,21 @@ export default function PrivacyPage() {
             Your verification document is deleted automatically 30 days after it&apos;s reviewed.
             Uploads that are never submitted are deleted after 30 days.
           </li>
+          <li>
+            Files from posts, messages, listings and course resources are deleted when what they
+            belonged to is deleted or removed. Uploads that are never used are deleted after a day.
+          </li>
+          <li>
+            Chats for a Backup request close when it&apos;s done and are deleted 72 hours later.
+            &ldquo;You free?&rdquo; pings are deleted a day after they end. A ride&apos;s chat
+            closes when the ride is cancelled or over, and stays readable.
+          </li>
           <li>Everything else stays while your account exists.</li>
           <li>
-            You can delete your account in <strong>Me → Data</strong>. It&apos;s hidden straight
-            away and permanently deleted after 14 days (log in before then to change your mind).
-            Messages you sent stay in other people&apos;s chats without your name.
+            You can delete your account in <strong>Me → Data</strong>. Your profile, posts and
+            comments are hidden straight away and permanently deleted after 14 days (log in before
+            then to change your mind). Messages you sent stay in other people&apos;s chats without
+            your name.
           </li>
           <li>Data exports are deleted after 7 days.</li>
         </ul>
@@ -108,11 +130,38 @@ export default function PrivacyPage() {
       <section>
         <h2>Where it&apos;s stored</h2>
         <p>
-          Your data is stored with Supabase (database and files, in Mumbai, India). The website is
-          hosted on Vercel. Account, status and weekly emails are sent through an email provider,
-          and AI features use Anthropic. These services process data for us and only as needed to
-          run UOSBuddy.
+          Your data is stored with Supabase (database and files, in Mumbai, India). These services
+          also process data for us, only as needed to run UOSBuddy:
         </p>
+        <ul>
+          <li>
+            <strong>Vercel</strong> hosts the website.
+          </li>
+          <li>
+            <strong>Cloudflare Turnstile</strong> checks that sign-up and login forms are used by a
+            person, not a bot.
+          </li>
+          <li>
+            <strong>Upstash</strong> holds short-lived counters (by account or IP address) that stop
+            spam, and caches some results for up to a day.
+          </li>
+          <li>
+            <strong>Your browser&apos;s push service</strong> (from Google, Apple, Mozilla or
+            Microsoft, depending on your browser) delivers notifications. Message notifications
+            include the text unless you turn off <strong>Show message text</strong> in Me →
+            Notifications.
+          </li>
+          <li>
+            <strong>An email provider</strong> sends account, status and weekly emails.
+          </li>
+          <li>
+            <strong>Anthropic</strong> runs the AI features above.
+          </li>
+          <li>
+            <strong>Sentry</strong> (error reports) and <strong>PostHog</strong> (page visits, with
+            on-screen text hidden), if we turn them on.
+          </li>
+        </ul>
       </section>
 
       <section>
