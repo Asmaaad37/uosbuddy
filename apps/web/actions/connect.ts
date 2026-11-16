@@ -95,7 +95,7 @@ const reportSchema = z.object({
     "event",
   ]),
   targetId: z.uuid(),
-  reason: z.enum(["spam", "harassment", "fake", "inappropriate", "other"]),
+  reason: z.enum(["spam", "harassment", "fake", "inappropriate", "self_harm", "other"]),
   details: z.string().trim().max(1000).optional(),
 });
 

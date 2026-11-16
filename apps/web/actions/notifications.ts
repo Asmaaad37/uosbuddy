@@ -61,6 +61,7 @@ const prefsSchema = z.object({
   comments: z.boolean(),
   messages: z.boolean(),
   push: z.boolean(),
+  previews: z.boolean(),
   digest: z.boolean(),
 });
 export type NotificationPrefs = z.infer<typeof prefsSchema>;

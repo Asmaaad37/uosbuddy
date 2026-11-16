@@ -26,6 +26,11 @@ const DELIVERY: PrefRow[] = [
     hint: "Alerts on your phones and computers. When off, you only see them inside the app.",
   },
   {
+    key: "previews",
+    label: "Show message text",
+    hint: "In alerts on your lock screen. When off, they just say who it's from.",
+  },
+  {
     key: "digest",
     label: "Weekly email",
     hint: "A short Sunday summary of what's new for you",
