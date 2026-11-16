@@ -30,6 +30,7 @@ import {
 import { ReportDialog, SafetyMenu } from "@/components/connect/safety-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Button } from "@/components/ui/button";
 import { clockTime, dayLabel, sameDay, startsGroup } from "@/lib/chat";
 import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
@@ -135,6 +136,7 @@ export function Conversation({
   muted: boolean;
 }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [messages, setMessages] = useState<Local[]>(() => [...initialMessages].reverse());
   const [reads, setReads] = useState<Record<string, string | null>>(() =>
     Object.fromEntries(people.map((p) => [p.id, p.last_read_at])),
@@ -443,6 +445,12 @@ export function Conversation({
                 {(kind === "group" || kind === "batch" || kind === "course") && (
                   <MenuItem
                     onSelect={async () => {
+                      const ok = await confirm({
+                        title: `Leave ${title}?`,
+                        body: "You'll stop getting its messages.",
+                        action: "Leave",
+                      });
+                      if (!ok) return;
                       const r = await leaveConversation(conversationId);
                       if (r.ok) router.replace("/chats?tab=groups");
                       else setError(r.error);
@@ -543,6 +551,12 @@ export function Conversation({
                           <MenuItem
                             danger
                             onSelect={async () => {
+                              const ok = await confirm({
+                                title: "Delete for everyone?",
+                                body: "It disappears for everyone in this chat.",
+                                action: "Delete",
+                              });
+                              if (!ok) return;
                               const r = await deleteMessage(m.id);
                               if (!r.ok) return setError(r.error);
                               setMessages((list) =>

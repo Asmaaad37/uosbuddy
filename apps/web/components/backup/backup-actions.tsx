@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Loader2 } from "lucide-react";
 import { cancelBackup, claimBackup, resolveBackup, unclaimBackup } from "@/actions/backup";
 import { Button } from "@/components/ui/button";
+import { useConfirm } from "@/components/ui/confirm";
 
 type Kind = "claim" | "resolve" | "cancel" | "unclaim";
 
@@ -18,11 +19,20 @@ const LABELS: Record<Kind, string> = {
 /** One lifecycle button for a Backup request. Claiming opens the temporary chat. */
 export function BackupAction({ kind, request }: { kind: Kind; request: string }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [claimed, setClaimed] = useState(false);
 
   async function run() {
+    if (kind === "cancel") {
+      const ok = await confirm({
+        title: "Cancel your request?",
+        body: "Anyone helping will be told.",
+        action: "Cancel request",
+      });
+      if (!ok) return;
+    }
     setBusy(true);
     setError(undefined);
     if (kind === "claim") {

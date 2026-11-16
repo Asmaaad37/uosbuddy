@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { CalendarPlus, Clock, Flag, Loader2, MapPin, Users } from "lucide-react";
 import { cancelEvent, rsvpEvent } from "@/actions/campus";
 import { ReportDialog } from "@/components/connect/safety-menu";
+import { useConfirm } from "@/components/ui/confirm";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
@@ -35,6 +36,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [reporting, setReporting] = useState(false);
+  const confirm = useConfirm();
   const cancelled = e.status === "cancelled";
   const full = e.capacity !== null && e.going >= e.capacity && e.my_rsvp !== "going";
 
@@ -120,14 +122,20 @@ export function EventCard({ event: e }: { event: EventItem }) {
               size="sm"
               variant="ghost"
               disabled={pending}
-              onClick={() =>
+              onClick={async () => {
+                const ok = await confirm({
+                  title: `Cancel ${e.title}?`,
+                  body: "Everyone who RSVP'd will be told. This can't be undone.",
+                  action: "Cancel event",
+                });
+                if (!ok) return;
                 start(async () => {
                   const r = await cancelEvent(e.id);
                   if (!r.ok) return void toast.error(r.error);
                   toast.success("Event cancelled. Everyone who RSVP'd was told.");
                   router.refresh();
-                })
-              }
+                });
+              }}
             >
               Cancel event
             </Button>
