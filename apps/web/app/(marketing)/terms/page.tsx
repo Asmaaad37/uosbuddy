@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPage title="Terms" updated="26 October 2026">
+    <LegalPage title="Terms" updated="17 November 2026">
       <p>
         By using UOSBuddy you agree to these terms. UOSBuddy is run by students and is not an
         official University of Sargodha service.
@@ -18,9 +18,9 @@ export default function TermsPage() {
       <section>
         <h2>Who can join</h2>
         <p>
-          UOSBuddy is for current and incoming University of Sargodha students. You need to verify
-          that you study at UoS, with your university email or a document, before you can see other
-          students.
+          UOSBuddy is for current and incoming University of Sargodha students aged 16 or over. You
+          need to verify that you study at UoS, with your university email or a document, before you
+          can see other students.
         </p>
       </section>
 
@@ -41,8 +41,9 @@ export default function TermsPage() {
           <li>No spam, scams or selling things that are illegal or against university rules.</li>
         </ul>
         <p>
-          We may remove content or suspend accounts that break these rules, and we review reports
-          from other students.
+          We review reports from other students. Student moderators can remove posts and comments in
+          the feeds they look after and send warnings; admins can also remove other content and ban
+          accounts.
         </p>
       </section>
 

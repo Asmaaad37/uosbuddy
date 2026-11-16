@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 /** Phase 9 task 5: reporting, privacy tools, women's safety and emergency numbers. */
 export default function SafetyPage() {
   return (
-    <LegalPage title="Safety centre" updated="4 November 2026">
+    <LegalPage title="Safety centre" updated="17 November 2026">
       <p>
         Everyone on UOSBuddy is a verified UoS student, but you should still look after yourself.
         Here&apos;s how.
@@ -57,9 +57,10 @@ export default function SafetyPage() {
         <h2>Report anything that breaks the rules</h2>
         <p>
           Use <strong>Report</strong> in the ⋯ menu on any profile, message, post, comment, listing,
-          ride or event. Reports are private: the person isn&apos;t told who reported them. Admins
-          and student moderators review reports and can remove content, warn or ban accounts. Read
-          the{" "}
+          ride or event. Reports are private: the person isn&apos;t told, and only admins can see
+          who sent a report. Student moderators review reports in the feeds they look after and can
+          remove posts and comments or send a warning. Admins handle everything else, including
+          bans. Read the{" "}
           <Link href="/guidelines" className="font-semibold text-accent">
             community guidelines
           </Link>

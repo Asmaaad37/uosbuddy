@@ -127,5 +127,5 @@ export const RIDE_SAFETY_TIPS = [
   "Share the ride details with a friend or family member before you leave.",
   "Agree on the fare split in the ride chat before the trip.",
   "Never share your CNIC or bank details. UOSBuddy never shows phone numbers.",
-  "Report anyone who makes you uncomfortable. It's anonymous.",
+  "Report anyone who makes you uncomfortable. They aren't told who reported them.",
 ];
