@@ -56,27 +56,25 @@ export async function purgeOldExports({ days = 7 } = {}) {
 }
 
 /**
- * Phase 9: when a deleted account is purged (in SQL, after its 14-day grace), its photos
- * stay in Storage, which SQL can't delete. This removes folders whose owner no longer exists.
+ * Files nothing live uses any more (rule in unused_storage_files): photos and files of deleted
+ * or removed posts, listings, resources and messages, uploads that were never posted, and
+ * whatever a purged account left. SQL picks them; only the Storage API can delete them.
  */
-export async function purgeOrphanFiles({ buckets = ["avatars", "data-exports"] } = {}) {
+export async function purgeOrphanFiles({ batch = 500, maxBatches = 20 } = {}) {
   const db = createAdminClient();
   let removed = 0;
-  for (const bucket of buckets) {
-    const { data: folders, error } = await db.storage.from(bucket).list("", { limit: 1000 });
+  for (let i = 0; i < maxBatches; i++) {
+    const { data: due, error } = await db.rpc("unused_storage_files", { p_limit: batch });
     if (error) throw error;
-    const ids = folders.map((f) => f.name).filter((n) => /^[0-9a-f-]{36}$/.test(n));
-    if (!ids.length) continue;
-    const { data: alive } = await db.from("profiles").select("id").in("id", ids);
-    const gone = ids.filter((id) => !alive?.some((p) => p.id === id));
-    for (const id of gone) {
-      const { data: files } = await db.storage.from(bucket).list(id, { limit: 100 });
-      const paths = (files ?? []).map((f) => `${id}/${f.name}`);
-      if (paths.length) {
-        await db.storage.from(bucket).remove(paths);
-        removed += paths.length;
-      }
+    if (!due.length) break;
+    const byBucket = new Map<string, string[]>();
+    for (const f of due) byBucket.set(f.bucket_id, [...(byBucket.get(f.bucket_id) ?? []), f.name]);
+    for (const [bucket, paths] of byBucket) {
+      const { error: removeError } = await db.storage.from(bucket).remove(paths);
+      if (removeError) throw removeError;
+      removed += paths.length;
     }
+    if (due.length < batch) break;
   }
   return { orphans: removed };
 }

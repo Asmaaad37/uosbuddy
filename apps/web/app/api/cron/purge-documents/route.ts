@@ -12,8 +12,8 @@ function authorized(request: NextRequest, secret: string) {
 }
 
 /**
- * Daily retention job: verification documents, old data exports, and files left by purged
- * accounts. Vercel Cron sends `Authorization: Bearer $CRON_SECRET`.
+ * Daily retention job: verification documents, old data exports, and files nothing uses any
+ * more. Vercel Cron sends `Authorization: Bearer $CRON_SECRET`.
  */
 export async function GET(request: NextRequest) {
   const secret = serverEnv.CRON_SECRET;

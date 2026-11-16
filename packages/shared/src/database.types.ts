@@ -4378,7 +4378,15 @@ export type Database = {
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
       unclaim_backup: { Args: { p_request: string }; Returns: undefined }
+      under_upload_quota: { Args: never; Returns: boolean }
       unread_chat_count: { Args: never; Returns: number }
+      unused_storage_files: {
+        Args: { p_limit?: number; p_older_than?: string }
+        Returns: {
+          bucket_id: string
+          name: string
+        }[]
+      }
       use_ai: { Args: { p_kind: string }; Returns: number }
       verification_duplicates: {
         Args: never
