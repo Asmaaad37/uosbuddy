@@ -181,7 +181,7 @@ export function ReviewQueue({
             {queue.length} waiting · {waitingOnStudents} waiting on students
           </p>
         </div>
-        <p className="hidden text-[13px] text-sec md:block">
+        <p className="hidden text-footnote text-sec md:block">
           <kbd>A</kbd> twice to approve · <kbd>R</kbd> reject · <kbd>N</kbd> needs info ·{" "}
           <kbd>J</kbd>/<kbd>K</kbd> next/previous
         </p>
@@ -205,10 +205,10 @@ export function ReviewQueue({
                 {ago(current.updatedAt)}
               </span>
               <div className="flex gap-1">
-                <Button size="icon" variant="ghost" aria-label="Previous" onClick={() => move(-1)}>
+                <Button size="icon" variant="quiet" aria-label="Previous" onClick={() => move(-1)}>
                   <ChevronLeft />
                 </Button>
-                <Button size="icon" variant="ghost" aria-label="Next" onClick={() => move(1)}>
+                <Button size="icon" variant="quiet" aria-label="Next" onClick={() => move(1)}>
                   <ChevronRight />
                 </Button>
               </div>
@@ -234,14 +234,14 @@ export function ReviewQueue({
 
             <dl className="grid gap-3 rounded-card border border-sep bg-surface p-4">
               <div>
-                <dt className="text-[13px] text-sec">Name on submission</dt>
+                <dt className="text-footnote text-sec">Name on submission</dt>
                 <dd className="font-semibold">{current.submittedName ?? "—"}</dd>
                 {namesDiffer && (
-                  <dd className="text-[13px] text-danger">Account name: {current.accountName}</dd>
+                  <dd className="text-footnote text-danger">Account name: {current.accountName}</dd>
                 )}
               </div>
               <div>
-                <dt className="text-[13px] text-sec">Roll / registration number</dt>
+                <dt className="text-footnote text-sec">Roll / registration number</dt>
                 <dd className="font-mono font-semibold tracking-wide">
                   {current.studentId ?? "—"}
                 </dd>
@@ -256,14 +256,14 @@ export function ReviewQueue({
                 )}
               </div>
               <div>
-                <dt className="text-[13px] text-sec">
+                <dt className="text-footnote text-sec">
                   {current.emailIsUni ? "UoS email" : "Personal email"}
                 </dt>
                 <dd className="break-all">{current.email ?? "—"}</dd>
               </div>
               {current.whatsapp && (
                 <div>
-                  <dt className="text-[13px] text-sec">WhatsApp</dt>
+                  <dt className="text-footnote text-sec">WhatsApp</dt>
                   <dd>{current.whatsapp}</dd>
                 </div>
               )}
@@ -287,7 +287,7 @@ export function ReviewQueue({
                       type="button"
                       onClick={() => setReason(t)}
                       className={cn(
-                        "rounded-field border px-3 py-2 text-left text-[13px]",
+                        "rounded-field border px-3 py-2 text-left text-footnote",
                         reason === t ? "border-accent bg-tint" : "border-sep hover:border-sec/50",
                       )}
                     >
@@ -304,13 +304,13 @@ export function ReviewQueue({
                   placeholder="The student sees this in the app and by email."
                 />
                 <div className="flex gap-2">
-                  <Button type="button" variant="ghost" size="md" onClick={() => setPicker(null)}>
+                  <Button type="button" variant="quiet" size="md" onClick={() => setPicker(null)}>
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     size="md"
-                    variant={picker === "rejected" ? "danger" : "primary"}
+                    variant={picker === "rejected" ? "destructive" : "primary"}
                     disabled={busy || !reason.trim()}
                     className="flex-1"
                   >
@@ -322,7 +322,7 @@ export function ReviewQueue({
               <div className="grid gap-2">
                 <Button
                   block
-                  variant={armed && risky ? "danger" : "primary"}
+                  variant={armed && risky ? "destructive" : "primary"}
                   onClick={() => approve(false)}
                   disabled={busy}
                 >
@@ -330,7 +330,7 @@ export function ReviewQueue({
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
-                    variant="secondary"
+                    variant="tinted"
                     size="md"
                     onClick={() => openPicker("needs_info")}
                     disabled={busy}
@@ -338,7 +338,7 @@ export function ReviewQueue({
                     <HelpCircle /> Needs info
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="tinted"
                     size="md"
                     onClick={() => openPicker("rejected")}
                     disabled={busy}
@@ -379,7 +379,7 @@ function PrecheckPanel({ p }: { p: Precheck }) {
           ))}
         </ul>
       )}
-      <p className="text-[13px] text-sec">
+      <p className="text-footnote text-sec">
         Read from the document: {x.name ?? "no name"} · {x.roll_no ?? "no roll number"} ·{" "}
         {x.university ?? "no university"}
         {x.session ? ` · ${x.session}` : ""}

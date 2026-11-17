@@ -70,7 +70,7 @@ export function EventSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block variant="brand">
+        <Button block variant="primary">
           <CalendarPlus /> Post an event
         </Button>
       </SheetTrigger>

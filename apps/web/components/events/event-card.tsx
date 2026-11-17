@@ -93,7 +93,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
           <div className="flex gap-1.5" role="group" aria-label="Your RSVP">
             <Button
               size="sm"
-              variant={e.my_rsvp === "going" ? "primary" : "secondary"}
+              variant={e.my_rsvp === "going" ? "primary" : "tinted"}
               aria-pressed={e.my_rsvp === "going"}
               disabled={pending || full}
               onClick={() => rsvp(e.my_rsvp === "going" ? null : "going")}
@@ -103,7 +103,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
             </Button>
             <Button
               size="sm"
-              variant={e.my_rsvp === "interested" ? "primary" : "secondary"}
+              variant={e.my_rsvp === "interested" ? "primary" : "tinted"}
               aria-pressed={e.my_rsvp === "interested"}
               disabled={pending}
               onClick={() => rsvp(e.my_rsvp === "interested" ? null : "interested")}
@@ -120,7 +120,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
           {e.can_manage && (
             <Button
               size="sm"
-              variant="ghost"
+              variant="quiet"
               disabled={pending}
               onClick={async () => {
                 const ok = await confirm({
@@ -141,7 +141,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
             </Button>
           )}
           {!e.can_manage && (
-            <Button size="sm" variant="ghost" onClick={() => setReporting(true)}>
+            <Button size="sm" variant="quiet" onClick={() => setReporting(true)}>
               <Flag /> Report
             </Button>
           )}

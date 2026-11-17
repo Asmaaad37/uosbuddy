@@ -28,7 +28,7 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
     <label className="flex cursor-pointer items-center justify-between gap-4 rounded-card border border-sep bg-surface px-4 py-3">
       <span className="grid gap-0.5">
         <span className="font-semibold">Mentor juniors</span>
-        <span className="text-[13px] text-sec">
+        <span className="text-footnote text-sec">
           Juniors in your department can ask you for advice. You add the MENTOR stamp.
         </span>
       </span>
@@ -133,7 +133,7 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
                   </p>
                 )}
                 <div className="flex gap-2">
-                  <Button size="sm" variant="ghost" onClick={() => setAsking(null)}>
+                  <Button size="sm" variant="quiet" onClick={() => setAsking(null)}>
                     Cancel
                   </Button>
                   <Button
@@ -208,7 +208,7 @@ export function MentorRequests({ requests }: { requests: Request[] }) {
                   <Button
                     key={String(accept)}
                     size="sm"
-                    variant={accept ? "primary" : "secondary"}
+                    variant={accept ? "primary" : "tinted"}
                     className="flex-1"
                     onClick={async () => {
                       const res = await respondMentorship(r.mentee_id, accept);

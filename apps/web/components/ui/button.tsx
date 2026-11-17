@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * Buttons (redesign §3). Primary: --fill with white text. Tinted: --tint with --tintText.
  * Plain: transparent with --accent. Destructive: --danger text on --surface. Quiet: neutral
  * text for overflow and dismiss actions (blue is only for what acts). Every button scales
- * to 0.97 on pointer-down. The older variant names map onto these.
+ * to 0.97 on pointer-down.
  */
 export const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-2 rounded-btn font-semibold whitespace-nowrap transition-[transform,background-color,opacity] duration-100 ease-out select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-[1.15em] [&_svg]:shrink-0",
@@ -19,11 +19,6 @@ export const buttonVariants = cva(
         plain: "bg-transparent text-accent hover:bg-tint",
         destructive: "bg-surface text-danger hover:bg-raised",
         quiet: "bg-transparent text-label hover:bg-raised",
-        // Older names, kept so existing screens restyle without edits.
-        brand: "bg-fill text-on-fill hover:brightness-110",
-        secondary: "bg-tint text-tint-text hover:brightness-110",
-        ghost: "bg-transparent text-label hover:bg-raised",
-        danger: "bg-surface text-danger hover:bg-raised",
       },
       size: {
         lg: "h-[52px] px-6 text-headline",

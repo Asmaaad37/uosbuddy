@@ -25,7 +25,7 @@ export default function BannedPage() {
         .
       </p>
       <form action={signOut}>
-        <Button type="submit" block variant="secondary">
+        <Button type="submit" block variant="tinted">
           Log out
         </Button>
       </form>

@@ -86,7 +86,7 @@ export function CourseControls({
           {busy === "chat" ? <Loader2 className="animate-spin" /> : <MessageCircle />} Course chat
         </Button>
         <Button
-          variant="ghost"
+          variant="quiet"
           onClick={async () => {
             const ok = await confirm({
               title: "Leave this course?",
@@ -161,7 +161,7 @@ export function StudyGroups({
       {enrolled && (
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="secondary" block>
+            <Button variant="tinted" block>
               <Plus /> Start a study group
             </Button>
           </SheetTrigger>
@@ -247,7 +247,7 @@ export function StudyGroups({
                 {(g.is_member || (enrolled && !full)) && (
                   <Button
                     size="sm"
-                    variant={g.is_member ? "secondary" : "primary"}
+                    variant={g.is_member ? "tinted" : "primary"}
                     onClick={() => join(g)}
                     disabled={!!busy}
                   >

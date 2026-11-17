@@ -28,12 +28,12 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
       <div className="grid h-80 place-items-center gap-3 rounded-card border border-sep bg-surface text-center">
         <div className="grid justify-items-center gap-3">
           <FileText className="size-10 text-sec" />
-          <Button asChild variant="secondary" size="md">
+          <Button asChild variant="tinted" size="md">
             <a href={url} target="_blank" rel="noopener noreferrer">
               Open PDF <ExternalLink />
             </a>
           </Button>
-          <p className="text-[13px] text-sec">The link expires in 15 minutes.</p>
+          <p className="text-footnote text-sec">The link expires in 15 minutes.</p>
         </div>
       </div>
     );
@@ -55,7 +55,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
       <div className="flex items-center gap-2">
         <Button
           size="icon"
-          variant="secondary"
+          variant="tinted"
           aria-label="Zoom out"
           onClick={() => setZoom((z) => Math.max(1, z - 0.5))}
         >
@@ -64,7 +64,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
         <span className="w-12 text-center text-sm tabular-nums">{Math.round(zoom * 100)}%</span>
         <Button
           size="icon"
-          variant="secondary"
+          variant="tinted"
           aria-label="Zoom in"
           onClick={() => setZoom((z) => Math.min(4, z + 0.5))}
         >
@@ -72,7 +72,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
         </Button>
         <Button
           size="icon"
-          variant="secondary"
+          variant="tinted"
           aria-label="Rotate"
           onClick={() => setRotation((r) => (r + 90) % 360)}
         >

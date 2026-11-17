@@ -199,7 +199,7 @@ export function GpaCalculator() {
       })}
 
       <Button
-        variant="secondary"
+        variant="tinted"
         block
         onClick={() => setSemesters((list) => [...list, newSemester()])}
       >

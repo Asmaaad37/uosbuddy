@@ -176,7 +176,7 @@ export function FreshmanAccountForm() {
                     />
                   ))}
                 </div>
-                <span className="w-24 text-right text-[13px] text-sec">
+                <span className="w-24 text-right text-footnote text-sec">
                   {password && STRENGTH[strength]}
                 </span>
               </div>

@@ -97,7 +97,7 @@ export function ReportItem({
           </Pill>
         )}
       </div>
-      <p className="text-[15px] whitespace-pre-wrap">
+      <p className="text-subhead whitespace-pre-wrap">
         {r.preview || (media.length ? "(no text, see below)" : "(no text)")}
       </p>
       {media.length > 0 && (
@@ -137,7 +137,7 @@ export function ReportItem({
             {isAdmin && (
               <Button
                 size="sm"
-                variant="ghost"
+                variant="quiet"
                 disabled={pending}
                 onClick={() =>
                   start(async () => {
@@ -172,7 +172,7 @@ export function ReportItem({
             r.target_type !== "message" && (
               <Button
                 size="sm"
-                variant="secondary"
+                variant="tinted"
                 disabled={pending}
                 onClick={() =>
                   run(
@@ -189,7 +189,7 @@ export function ReportItem({
             <Button
               size="sm"
               disabled={pending}
-              variant={confirming ? "danger" : "primary"}
+              variant={confirming ? "destructive" : "primary"}
               onClick={() => {
                 if (r.target_type === "message" && !confirming) return setConfirming(true);
                 run(
@@ -211,7 +211,7 @@ export function ReportItem({
         {r.report_count > 0 && (
           <Button
             size="sm"
-            variant="ghost"
+            variant="quiet"
             disabled={pending}
             onClick={() =>
               run(() => dismissReports(r.target_type, r.target_id), "Reports dismissed")
@@ -223,14 +223,14 @@ export function ReportItem({
         {canAct && (
           <Button
             size="sm"
-            variant="ghost"
+            variant="quiet"
             onClick={() => setMode(mode === "warn" ? null : "warn")}
           >
             <TriangleAlert /> Warn
           </Button>
         )}
         {canAct && isAdmin && (
-          <Button size="sm" variant="ghost" onClick={() => setMode(mode === "ban" ? null : "ban")}>
+          <Button size="sm" variant="quiet" onClick={() => setMode(mode === "ban" ? null : "ban")}>
             <Ban /> Ban
           </Button>
         )}
@@ -256,7 +256,7 @@ export function ReportItem({
           <Button
             type="submit"
             size="sm"
-            variant={mode === "ban" ? "danger" : "primary"}
+            variant={mode === "ban" ? "destructive" : "primary"}
             disabled={pending}
           >
             {mode === "warn" ? "Send" : "Ban"}

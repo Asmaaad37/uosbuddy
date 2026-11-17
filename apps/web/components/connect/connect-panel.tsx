@@ -91,7 +91,7 @@ export function ConnectPanel({
             </Button>
             <Button
               size="md"
-              variant="secondary"
+              variant="tinted"
               className="flex-1"
               disabled={!!busy}
               onClick={async () => {
@@ -112,7 +112,7 @@ export function ConnectPanel({
           </Button>
         )}
         {state === "outgoing" && (
-          <Button className="flex-1" variant="secondary" disabled>
+          <Button className="flex-1" variant="tinted" disabled>
             <Check /> Requested
           </Button>
         )}
@@ -126,7 +126,7 @@ export function ConnectPanel({
         )}
         {state !== "connected" && (
           <Button
-            variant={state === "none" ? "secondary" : "ghost"}
+            variant={state === "none" ? "tinted" : "quiet"}
             className={state === "none" ? "flex-1" : ""}
             onClick={message}
             disabled={!!busy}

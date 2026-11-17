@@ -24,7 +24,7 @@ export default function Welcome() {
           <Button asChild block>
             <Link href="/start/campus">Get started</Link>
           </Button>
-          <Button asChild block variant="ghost">
+          <Button asChild block variant="quiet">
             <Link href="/login">I already have an account</Link>
           </Button>
         </div>

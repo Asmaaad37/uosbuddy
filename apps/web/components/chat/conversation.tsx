@@ -563,7 +563,7 @@ export function Conversation({
                     )}
                     <p
                       className={cn(
-                        "text-right text-[11px] tabular-nums",
+                        "text-right text-caption tabular-nums",
                         mine ? "text-on-fill/75" : "text-ter",
                       )}
                     >
@@ -677,7 +677,7 @@ export function Conversation({
             </Button>
             <Button
               size="sm"
-              variant="secondary"
+              variant="tinted"
               className="flex-1"
               onClick={async () => {
                 const r = await answerMessageRequest(conversationId, false);
@@ -719,7 +719,7 @@ export function Conversation({
           />
           <Button
             type="button"
-            variant="ghost"
+            variant="quiet"
             size="icon"
             aria-label="Send a photo"
             disabled={uploading}

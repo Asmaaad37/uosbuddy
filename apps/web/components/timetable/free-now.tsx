@@ -26,7 +26,7 @@ export function PingButton({ target, label = "You free?" }: { target: string; la
     <span className="grid gap-1">
       <Button
         size="sm"
-        variant="secondary"
+        variant="tinted"
         disabled={busy}
         onClick={async () => {
           setBusy(true);
@@ -86,7 +86,7 @@ export function FreeNow({
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
             <span className="font-semibold">Show me here</span>
-            <span className="text-[13px] text-sec">
+            <span className="text-footnote text-sec">
               When you&apos;re on campus and not in class
             </span>
           </span>
@@ -101,7 +101,7 @@ export function FreeNow({
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
             <span className="font-semibold">I&apos;m on campus</span>
-            <span className="text-[13px] text-sec">
+            <span className="text-footnote text-sec">
               {until
                 ? `Until ${new Date(until).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" })}`
                 : "Turns itself off after 3 hours"}

@@ -121,7 +121,7 @@ export function ProofForm({
 
       <fieldset className="grid gap-3">
         <legend className="mb-1.5 text-sm font-semibold">Proof that you&apos;re at UoS</legend>
-        <p className="text-[13px] text-sec">
+        <p className="text-footnote text-sec">
           Any one of: admission letter, fee challan, student card, or a screenshot of the student
           portal showing your name and roll number.
         </p>
@@ -137,7 +137,7 @@ export function ProofForm({
         />
       </fieldset>
 
-      <p className="flex gap-2 rounded-field bg-raised p-3 text-[13px] text-sec">
+      <p className="flex gap-2 rounded-field bg-raised p-3 text-footnote text-sec">
         <ShieldCheck className="size-4 shrink-0 text-tint-text" />
         Only a verifier sees your document. It&apos;s deleted 30 days after review.
       </p>

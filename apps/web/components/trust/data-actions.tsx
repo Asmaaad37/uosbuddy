@@ -15,7 +15,7 @@ export function ExportData() {
   return (
     <div className="grid gap-3">
       <Button
-        variant="secondary"
+        variant="tinted"
         disabled={pending}
         onClick={() =>
           start(async () => {
@@ -108,7 +108,7 @@ export function DeleteAccount({ deletesAt }: { deletesAt: string | null }) {
       </Field>
       <Button
         type="submit"
-        variant="danger"
+        variant="destructive"
         disabled={pending || confirm.trim().toUpperCase() !== "DELETE"}
       >
         {pending ? <Loader2 className="animate-spin" /> : <Trash2 />} Delete my account

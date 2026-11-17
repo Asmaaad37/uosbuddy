@@ -39,7 +39,7 @@ export default async function AdminUsersPage({ searchParams }: Props) {
           defaultValue={q}
           aria-label="Search people"
           placeholder="Name, handle, email or roll number"
-          className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-[15px] focus-visible:border-accent focus-visible:outline-none"
+          className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-subhead focus-visible:border-accent focus-visible:outline-none"
         />
       </form>
       <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">

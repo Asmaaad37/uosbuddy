@@ -53,7 +53,7 @@ export function SocietySheet() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block variant="secondary">
+        <Button block variant="tinted">
           <Plus /> Start a society page
         </Button>
       </SheetTrigger>
@@ -145,7 +145,7 @@ export function SocietyButton({
   return (
     <Button
       size="sm"
-      variant={kind === "join" ? "primary" : "secondary"}
+      variant={kind === "join" ? "primary" : "tinted"}
       disabled={pending}
       onClick={() =>
         start(async () => {

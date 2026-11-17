@@ -54,7 +54,7 @@ export default async function CataloguePage({ searchParams }: Props) {
             defaultValue={q}
             aria-label="Find a course"
             placeholder="Find a course by code or title"
-            className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-[15px] focus-visible:border-accent focus-visible:outline-none"
+            className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-subhead focus-visible:border-accent focus-visible:outline-none"
           />
         </form>
         {q && (

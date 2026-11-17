@@ -67,17 +67,17 @@ export function UserRow({
           <span className="flex flex-wrap items-center gap-1.5 font-semibold">
             {u.handle ? <Link href={`/people/${u.handle}`}>{name}</Link> : name}
             {u.role !== "student" && (
-              <Pill tone="brand" className="h-5 px-2 text-[11px] capitalize">
+              <Pill tone="brand" className="h-5 px-2 text-caption capitalize">
                 {u.role}
               </Pill>
             )}
             {u.banned_at && (
-              <Pill tone="help" className="h-5 px-2 text-[11px]">
+              <Pill tone="help" className="h-5 px-2 text-caption">
                 Banned
               </Pill>
             )}
             {u.deleted_at && (
-              <Pill tone="outline" className="h-5 px-2 text-[11px]">
+              <Pill tone="outline" className="h-5 px-2 text-caption">
                 Deleting
               </Pill>
             )}
@@ -94,7 +94,7 @@ export function UserRow({
         <div className="flex flex-wrap gap-2">
           <Button
             size="sm"
-            variant="ghost"
+            variant="quiet"
             onClick={() => setMode(mode === "warn" ? null : "warn")}
           >
             Warn
@@ -102,7 +102,7 @@ export function UserRow({
           {u.banned_at ? (
             <Button
               size="sm"
-              variant="secondary"
+              variant="tinted"
               disabled={pending}
               onClick={() => run(() => setBanned(u.id, false), `${name} unbanned`)}
             >
@@ -111,18 +111,18 @@ export function UserRow({
           ) : (
             <Button
               size="sm"
-              variant="ghost"
+              variant="quiet"
               onClick={() => setMode(mode === "ban" ? null : "ban")}
             >
               Ban
             </Button>
           )}
-          <Button size="sm" variant="ghost" onClick={() => setMode(mode === "mod" ? null : "mod")}>
+          <Button size="sm" variant="quiet" onClick={() => setMode(mode === "mod" ? null : "mod")}>
             {u.role === "moderator" ? "Moderator feeds" : "Make moderator"}
           </Button>
           <Button
             size="sm"
-            variant="ghost"
+            variant="quiet"
             disabled={pending}
             onClick={() =>
               run(() => allowStudiesChange(u.id), `${name} can ask for one more studies change`)
@@ -133,7 +133,7 @@ export function UserRow({
           {u.verification_status === "verified" && (
             <Button
               size="sm"
-              variant="ghost"
+              variant="quiet"
               onClick={() => setMode(mode === "revoke" ? null : "revoke")}
             >
               Revoke verification
@@ -176,7 +176,7 @@ export function UserRow({
           <Button
             type="submit"
             size="sm"
-            variant={mode === "warn" ? "primary" : "danger"}
+            variant={mode === "warn" ? "primary" : "destructive"}
             disabled={pending}
           >
             {mode === "warn" ? "Send" : mode === "ban" ? "Ban" : "Revoke"}

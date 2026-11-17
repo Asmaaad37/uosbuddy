@@ -76,7 +76,7 @@ export default async function PendingPage() {
             <span className={cn("pt-0.5 font-semibold", !s.done && !s.current && "text-sec")}>
               {s.label}
               {i === 0 && request && (
-                <span className="block text-[13px] font-normal text-sec">
+                <span className="block text-footnote font-normal text-sec">
                   {new Date(request.created_at).toLocaleString("en-PK", {
                     dateStyle: "medium",
                     timeStyle: "short",
@@ -101,13 +101,13 @@ export default async function PendingPage() {
       </p>
 
       <div className="mt-auto grid gap-3">
-        <Button asChild block variant={status === "pending" ? "secondary" : "primary"}>
+        <Button asChild block variant={status === "pending" ? "tinted" : "primary"}>
           <Link href="/start/freshman/proof">
             {status === "pending" ? "Edit submission" : "Update submission"}
           </Link>
         </Button>
         <form action={signOut}>
-          <Button type="submit" block variant="ghost">
+          <Button type="submit" block variant="quiet">
             Log out
           </Button>
         </form>

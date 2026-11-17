@@ -71,7 +71,7 @@ export function useGuidelinesGate() {
           <Button block disabled={busy} onClick={() => void accept()}>
             {busy && <Loader2 className="animate-spin" />} I agree
           </Button>
-          <Button block variant="ghost" onClick={() => close(false)}>
+          <Button block variant="quiet" onClick={() => close(false)}>
             Not now
           </Button>
         </div>

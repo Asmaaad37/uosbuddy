@@ -79,7 +79,7 @@ export function ImportTimetable() {
           if (file) void read(file);
         }}
       />
-      <Button variant="secondary" block disabled={reading} onClick={() => input.current?.click()}>
+      <Button variant="tinted" block disabled={reading} onClick={() => input.current?.click()}>
         {reading ? <Loader2 className="animate-spin" /> : <ImageUp />}
         {reading ? "Reading your timetable…" : "Import from a screenshot"}
       </Button>
@@ -107,7 +107,7 @@ export function ImportTimetable() {
                   />
                   <Button
                     size="icon"
-                    variant="ghost"
+                    variant="quiet"
                     aria-label={`Remove ${r.label}`}
                     onClick={() => setRows((all) => all?.filter((x) => x.key !== r.key) ?? null)}
                   >

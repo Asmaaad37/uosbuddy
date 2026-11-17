@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { ReviewQueue, type QueueItem } from "@/components/admin/review-queue";
 import { homePath, safeNext } from "@/lib/auth/routing";
 import type { Precheck } from "@/lib/ai/precheck";
@@ -71,24 +71,8 @@ export default async function VerificationsPage({
   );
 
   return (
-    <div className="min-h-dvh">
-      <header className="gutter flex items-center justify-between border-b border-sep py-3">
-        <Link
-          href={
-            from ? `/admin/verifications?from=${encodeURIComponent(from)}` : "/admin/verifications"
-          }
-          className="text-headline"
-        >
-          UOSBUDDY ADMIN
-        </Link>
-        <nav className="flex gap-4 text-sm font-semibold text-accent">
-          <Link href="/admin">Dashboard</Link>
-          <Link href={back}>Back to app</Link>
-        </nav>
-      </header>
-      <main className="gutter mx-auto max-w-6xl py-6">
-        <ReviewQueue items={items} waitingOnStudents={waitingOnStudents ?? 0} />
-      </main>
-    </div>
+    <AdminShell current="/admin/verifications" isAdmin back={back} wide>
+      <ReviewQueue items={items} waitingOnStudents={waitingOnStudents ?? 0} />
+    </AdminShell>
   );
 }

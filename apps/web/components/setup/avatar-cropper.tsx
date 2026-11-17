@@ -98,7 +98,7 @@ export function AvatarCropper({
           className="w-full accent-[var(--accent)]"
         />
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="md" onClick={onCancel}>
+          <Button variant="quiet" size="md" onClick={onCancel}>
             Cancel
           </Button>
           <Button size="md" onClick={finish} disabled={busy || !area}>

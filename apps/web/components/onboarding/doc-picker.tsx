@@ -106,22 +106,22 @@ export function DocPicker({
             </span>
           )}
           <span className="min-w-0 flex-1 truncate text-sm">{file.name}</span>
-          <Button type="button" size="sm" variant="ghost" onClick={() => onFile(null)}>
+          <Button type="button" size="sm" variant="quiet" onClick={() => onFile(null)}>
             Change
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <Button type="button" variant="secondary" onClick={() => cameraRef.current?.click()}>
+          <Button type="button" variant="tinted" onClick={() => cameraRef.current?.click()}>
             <Camera /> Take photo
           </Button>
-          <Button type="button" variant="secondary" onClick={() => pickerRef.current?.click()}>
+          <Button type="button" variant="tinted" onClick={() => pickerRef.current?.click()}>
             <Upload /> Choose file
           </Button>
         </div>
       )}
       {error && (
-        <p role="alert" className="text-[13px] font-medium text-danger">
+        <p role="alert" className="text-footnote font-medium text-danger">
           {error}
         </p>
       )}

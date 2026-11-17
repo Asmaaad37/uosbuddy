@@ -21,7 +21,7 @@ export function WaitlistDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" block>
+        <Button variant="quiet" block>
           Not from UoS? Request your university
         </Button>
       </DialogTrigger>

@@ -143,7 +143,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
             <Pill tone="outline">Waiting for an answer</Pill>
             <Button
               size="sm"
-              variant="ghost"
+              variant="quiet"
               disabled={pending}
               onClick={() => run(() => cancelSeat(ride.id))}
             >
@@ -154,7 +154,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
         {!mine && ride.my_request === "accepted" && (
           <Button
             size="sm"
-            variant="ghost"
+            variant="quiet"
             disabled={pending}
             onClick={() => run(() => cancelSeat(ride.id), "You left the ride")}
           >
@@ -162,18 +162,18 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
           </Button>
         )}
         {!mine && (
-          <Button size="sm" variant="ghost" onClick={() => setReporting(true)}>
+          <Button size="sm" variant="quiet" onClick={() => setReporting(true)}>
             <Flag /> Report
           </Button>
         )}
         {mine && ride.status !== "cancelled" && (
           <>
-            <Button size="sm" variant="secondary" onClick={() => void loadRequests()}>
+            <Button size="sm" variant="tinted" onClick={() => void loadRequests()}>
               {offer ? "Seat requests" : "Lift offers"}
             </Button>
             <Button
               size="sm"
-              variant="ghost"
+              variant="quiet"
               disabled={pending}
               onClick={async () => {
                 const ok = await confirm({
@@ -230,7 +230,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
                   </Button>
                   <Button
                     size="sm"
-                    variant="ghost"
+                    variant="quiet"
                     disabled={pending}
                     onClick={() =>
                       run(async () => {
