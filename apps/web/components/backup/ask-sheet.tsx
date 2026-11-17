@@ -20,6 +20,7 @@ import { Field, Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import { CATEGORIES, URGENCY_LABELS } from "@/lib/backup";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 type Category = (typeof CATEGORIES)[number];
 
@@ -51,7 +52,12 @@ export function AskCard({
     <Card className="grid gap-4">
       <div className="grid gap-3">
         <Overline id="ask-what">What do you need?</Overline>
-        <div role="radiogroup" aria-labelledby="ask-what" className="flex flex-wrap gap-2">
+        <div
+          role="radiogroup"
+          onKeyDown={radioArrowKeys}
+          aria-labelledby="ask-what"
+          className="flex flex-wrap gap-2"
+        >
           {CATEGORIES.map((c) => (
             <Chip
               key={c}
@@ -130,7 +136,12 @@ function AskSheet({
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <div className="grid gap-2">
             <p className="text-subhead font-semibold">What do you need?</p>
-            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Category">
+            <div
+              className="flex flex-wrap gap-2"
+              role="radiogroup"
+              onKeyDown={radioArrowKeys}
+              aria-label="Category"
+            >
               {CATEGORIES.map((c) => (
                 <Chip
                   key={c}

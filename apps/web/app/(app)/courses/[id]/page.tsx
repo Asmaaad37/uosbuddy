@@ -6,9 +6,9 @@ import { CourseControls, StudyGroups } from "@/components/courses/course-control
 import { Resources } from "@/components/courses/resources";
 import { Avatar } from "@/components/ui/avatar";
 import { getSession } from "@/lib/auth/session";
-import { cn } from "@/lib/utils";
 import { BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export const metadata: Metadata = { title: "Course" };
 
@@ -72,23 +72,15 @@ export default async function CoursePage({ params, searchParams }: Props) {
       </div>
       <CourseControls course={id} enrolled={course.me_enrolled} chatId={course.chat_id} />
 
-      <nav aria-label="Course sections" className="flex gap-2">
-        {TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "files" ? `/courses/${id}` : `/courses/${id}?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={cn(
-              "flex h-10 items-center rounded-pill border px-4 text-sm font-semibold",
-              tab === t.key
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep text-label hover:bg-raised",
-            )}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <SegmentedControl
+        label="Course sections"
+        value={tab}
+        segments={TABS.map((t) => ({
+          value: t.key,
+          label: t.label,
+          href: t.key === "files" ? `/courses/${id}` : `/courses/${id}?tab=${t.key}`,
+        }))}
+      />
 
       {tab === "files" && (
         <Resources

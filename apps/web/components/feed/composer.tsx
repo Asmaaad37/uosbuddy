@@ -21,6 +21,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { browserClient } from "@/lib/supabase/lazy";
+import { Switch } from "@/components/ui/switch";
 
 type Space = { value: string; label: string };
 
@@ -293,13 +294,7 @@ export function Composer({
                     if the rules are broken.
                   </span>
                 </span>
-                <input
-                  type="checkbox"
-                  role="switch"
-                  checked={anonymous}
-                  onChange={(e) => setAnonymous(e.target.checked)}
-                  className="mt-1 size-5 accent-[var(--accent)]"
-                />
+                <Switch checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />
               </label>
             )}
 

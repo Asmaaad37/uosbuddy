@@ -7,9 +7,9 @@ import { EventSheet } from "@/components/events/event-sheet";
 import { SocietyButton, SocietySheet } from "@/components/events/society-sheet";
 import { Pill } from "@/components/ui/badge";
 import { getSession } from "@/lib/auth/session";
-import { cn } from "@/lib/utils";
 import { CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export const metadata: Metadata = { title: "Events" };
 
@@ -51,23 +51,15 @@ export default async function EventsPage({ searchParams }: Props) {
         />
       )}
 
-      <nav aria-label="Event lists" className="-mx-4 flex gap-2 overflow-x-auto px-4">
-        {TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "upcoming" ? "/events" : `/events?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={cn(
-              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
-              tab === t.key
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep text-label hover:bg-raised",
-            )}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <SegmentedControl
+        label="Event lists"
+        value={tab}
+        segments={TABS.map((t) => ({
+          value: t.key,
+          label: t.label,
+          href: t.key === "upcoming" ? "/events" : `/events?tab=${t.key}`,
+        }))}
+      />
 
       {tab === "societies" ? (
         <>

@@ -14,6 +14,7 @@ import { browserClient } from "@/lib/supabase/lazy";
 import { VISIBILITY_LABELS } from "@/lib/setup";
 import { handleProblem } from "@/lib/validation/handle";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 // The cropper is only downloaded when someone picks a photo.
 const AvatarCropper = dynamic(
@@ -315,7 +316,12 @@ export function AboutForm({
 
       <fieldset className="grid gap-1.5">
         <legend className="mb-1.5 text-sm font-semibold">Where do you stay?</legend>
-        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Where do you stay?">
+        <div
+          className="grid grid-cols-3 gap-2"
+          role="radiogroup"
+          onKeyDown={radioArrowKeys}
+          aria-label="Where do you stay?"
+        >
           {RESIDENCES.map((r) => (
             <button
               key={r.value}

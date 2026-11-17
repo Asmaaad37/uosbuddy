@@ -19,6 +19,7 @@ import { SCOPES, type Scope } from "@/lib/discovery";
 import { RESIDENCE_LABELS, SHIFT_LABELS } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { FilterChips } from "@/components/ui/filter-chips";
 
 type Filters = Pick<DirectoryQuery, "shift" | "residence" | "hometown" | "interest">;
 type Interest = { id: string; label: string; emoji: string };
@@ -93,32 +94,16 @@ export function Directory({
 
   return (
     <div className="grid gap-4">
-      <div
-        role="tablist"
-        aria-label="Who to show"
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
-      >
-        {SCOPES.filter((s) => s.key !== "section" || hasSection).map((s) => (
-          <button
-            key={s.key}
-            role="tab"
-            type="button"
-            aria-selected={scope === s.key}
-            onClick={() => setScope(s.key)}
-            className={cn(
-              "hit flex h-10 shrink-0 items-center gap-1.5 rounded-pill border px-4 text-sm font-semibold transition-colors",
-              scope === s.key
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep bg-surface text-label hover:border-sec/50",
-            )}
-          >
-            {s.label}
-            <span className={cn("text-xs", scope === s.key ? "text-bg/70" : "text-sec")}>
-              {counts[s.key]}
-            </span>
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        label="Who to show"
+        value={scope}
+        onChange={(v) => setScope(v as Scope)}
+        chips={SCOPES.filter((s) => s.key !== "section" || hasSection).map((s) => ({
+          value: s.key,
+          label: s.label,
+          count: counts[s.key],
+        }))}
+      />
 
       <div className="flex gap-2">
         <label className="relative flex-1">

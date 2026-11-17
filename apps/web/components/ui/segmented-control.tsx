@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 type Segment = { value: string; label: string; href?: string };
 
@@ -31,6 +32,7 @@ export function SegmentedControl({
     <div
       role={segments[0]?.href ? "navigation" : "radiogroup"}
       aria-label={label}
+      onKeyDown={segments[0]?.href ? undefined : radioArrowKeys}
       className={cn("relative flex h-9 rounded-track bg-track p-0.5", className)}
     >
       <span

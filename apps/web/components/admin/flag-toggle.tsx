@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setFlag } from "@/actions/trust";
 import { toast } from "@/components/ui/toast";
+import { Switch } from "@/components/ui/switch";
 
 /** Phase 9 task 1: switch a feature flag on or off (audited). */
 export function FlagToggle({
@@ -18,13 +19,10 @@ export function FlagToggle({
   const router = useRouter();
   const [pending, start] = useTransition();
   return (
-    <input
-      type="checkbox"
-      role="switch"
+    <Switch
       aria-label={label}
       checked={enabled}
       disabled={pending}
-      className="size-5 accent-[var(--accent)]"
       onChange={(e) => {
         const on = e.target.checked;
         start(async () => {

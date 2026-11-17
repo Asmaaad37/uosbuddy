@@ -11,6 +11,7 @@ import { useConfirm } from "@/components/ui/confirm";
 import { toast } from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Switch } from "@/components/ui/switch";
 
 /** Mentor switch (seniors from semester 3). */
 export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean }) {
@@ -32,9 +33,7 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
           Juniors in your department can ask you for advice. You add the MENTOR stamp.
         </span>
       </span>
-      <input
-        type="checkbox"
-        role="switch"
+      <Switch
         checked={value}
         onChange={async (e) => {
           const next = e.target.checked;
@@ -45,7 +44,6 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
             setError(r.error);
           } else router.refresh();
         }}
-        className="size-5 shrink-0 accent-[var(--accent)]"
       />
       {error && (
         <span role="alert" className="text-sm text-danger">

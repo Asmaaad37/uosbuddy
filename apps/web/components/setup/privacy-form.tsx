@@ -14,6 +14,8 @@ import {
   type PrivacySettings,
 } from "@/lib/setup";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
+import { Switch } from "@/components/ui/switch";
 
 type Visibility = PrivacySettings["profile_visibility"];
 const LEVELS = Object.keys(VISIBILITY_LABELS) as Visibility[];
@@ -35,13 +37,7 @@ function Toggle({
         <span className="text-sm font-semibold">{label}</span>
         <span className="text-footnote text-sec">{hint}</span>
       </span>
-      <input
-        type="checkbox"
-        role="switch"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 size-5 shrink-0 accent-[var(--accent)]"
-      />
+      <Switch checked={checked} onChange={(e) => onChange(e.target.checked)} />
     </label>
   );
 }
@@ -83,7 +79,12 @@ export function PrivacyForm({
 
   return (
     <form onSubmit={submit} className="grid gap-5" noValidate>
-      <div className="grid gap-3" role="radiogroup" aria-label="Privacy preset">
+      <div
+        className="grid gap-3"
+        role="radiogroup"
+        onKeyDown={radioArrowKeys}
+        aria-label="Privacy preset"
+      >
         {(
           Object.entries(PRIVACY_PRESETS) as [
             PrivacyPreset,
