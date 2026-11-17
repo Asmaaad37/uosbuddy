@@ -12,7 +12,9 @@ it, its history or its dependencies. Studied on **2026-11-17** at:
 | [Ta1al/timetable-parser](https://github.com/Ta1al/timetable-parser) | none | n/a (Python) | no mention | `null` | **No licence: all rights reserved** |
 | [Ta1al/cs-dept-website](https://github.com/Ta1al/cs-dept-website) | none | no `license` field | no mention | `null` | **No licence: all rights reserved** |
 
-**Consequences for us:**
+> **Update, 2026-11-17: permission given.** The project owner co-built the CS department site and the parser with Ta1al, and confirmed we may use the parser. The licence table above still describes the repos as published. Recommended: add a licence file to `timetable-parser` so the permission is written down. See §4 and `docs/DECISIONS.md`.
+
+**Consequences for us (as written before permission was given):**
 - We may **read** both to learn how they work.
 - We must **not copy code**, prompts, regexes, data files or text into UOSBuddy.
 - Reusing anything needs the author's **written permission**, recorded in `docs/DECISIONS.md`. Until then we write our own implementation.
@@ -178,3 +180,12 @@ None beyond the room label strings. There's no separate room list, capacity, bui
    If they offer a licence, we can revisit (a) or (b).
 
 An optional fallback for messy pages: Claude Haiku 5.5 with structured output, reading a PDF page into the same schema. Its results would go through the same diff and human approval. It's off by default and cheap, but not needed if the deterministic parser handles the layout.
+
+## 4. Decision after permission (2026-11-17)
+With permission, option (a) is open, but it would mean running Python: we removed the FastAPI service in #54, and Vercel's Next.js project has no Python runtime set up. So:
+
+- **Port `timetable-parser` to TypeScript** inside the admin import route, using `pdfjs-dist` for positioned text. It keeps the same approach: day-header detection, room bands, time-range-terminated cells, lab-row threshold, program-line resolution and semester inference.
+- **Golden tests** run both: the stored sample PDFs (`week2`–`week4`, `newweek1`) must give the same classes, rooms and times as the Python original.
+- **We add what it lacks:** canonical room, teacher and course mapping, the diff, and human review (plan §4.2–4.3).
+- **Credit** Ta1al and the project owner in the ported module's header and in `docs/DECISIONS.md`.
+- **If a port proves hard** for a layout edge case, the fallback is to run the Python parser as a one-off script the editor uses locally, then upload its JSON. The import flow accepts that JSON shape too.

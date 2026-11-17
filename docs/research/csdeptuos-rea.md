@@ -78,4 +78,4 @@
 6. **Free rooms that know the full room list**, including rooms with no classes that week, with building and floor, and Pakistan time.
 7. **Hide the week-file plumbing.** Students should see "this week" and "next week", not `week4.json`.
 
-**Collaboration option:** the author already runs a parser and a weekly process for exactly this department. Asking to collaborate, reuse with permission, or share data is worth doing; see the draft message in `docs/plans/academic-features.md`. Without permission we treat the site and repos as **all rights reserved** (neither repo has a licence) and build our own.
+**Collaboration:** the author already runs a parser and a weekly process for exactly this department. **Update, 2026-11-17:** the project owner co-built this site and the parser with Ta1al, and permission to use the parser is given; we port it to TypeScript (see `ta1al-repos-analysis.md` §4 and `docs/DECISIONS.md`). The site's data is still not treated as official, and we still don't scrape it.

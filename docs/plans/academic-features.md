@@ -1,6 +1,6 @@
 # Plan: official academic data (timetable, free rooms, calendar, department hub)
 
-**Status: proposal for approval.** Nothing here is built or applied.
+**Status: proposal for approval, updated with the project owner's answers (2026-11-17, §6).** Nothing here is built or applied.
 
 - **Research:** `docs/research/vtable-rea.md`, `docs/research/csdeptuos-rea.md` and `docs/research/ta1al-repos-analysis.md`.
 - **Design:** follows `docs/design/UOSBuddy_REDESIGN_SPEC.md`.
@@ -159,7 +159,7 @@ create table public.timetable_imports (
   created_at timestamptz not null default now(),
   department_id uuid not null references public.departments,
   term text not null references public.academic_terms,
-  week_of date,                               -- Monday of the week; null = applies all term
+  week_of date,                               -- null = the term timetable (the usual case); a date = a one-week amendment
   file_path text,                             -- private bucket "timetable-imports"
   source_kind text not null check (source_kind in ('pdf', 'csv', 'xlsx', 'manual')),
   parser_version text not null,
@@ -282,7 +282,7 @@ create table public.room_occupied_reports (
 | `teacher_name` (may end in "…")                           | `teacher_name`, `teacher_id`       | Normalise spacing, title prefixes (Dr. / Mr. / Ms.) and case. Match `teachers.name` or `aliases`; a truncated name matches on its prefix plus the department. Unmatched names wait for the editor.                                                                                                                                                              |
 | `degree` + `program` ("BS" + "Computer Science")          | `class_groups.program_id`          | Map to `programs` by department, level and name (with an alias list: "Computer Science - Specialization in Artificial Intelligence" → BS AI).                                                                                                                                                                                                                   |
 | `session` ("2024-2028")                                   | `class_groups.intake_year`         | The first year.                                                                                                                                                                                                                                                                                                                                                 |
-| `section` ("Regular 1", "Self Support 2")                 | `class_groups.section`             | "Regular N" → `REG`; "Self Support 1" → `SS1`; "Self Support 2" → `SS2` (profile codes). Unknown values (for example "Regular 0") are flagged.                                                                                                                                                                                                                  |
+| `section` ("Regular 0", "Regular 1", "Self Support 2")    | `class_groups.section`             | "Regular N" (any N, including 0) → `REG`; "Self Support 1" → `SS1`; "Self Support 2" → `SS2` (profile codes). Other values are flagged for the editor. No shift is derived: CS has no morning/evening shifts, and Self Support is an admission category (DECISIONS, 2026-10-23).                                                                                |
 | `semester`                                                | stored on the entry's `raw`        | Only for display; the class group comes from intake year.                                                                                                                                                                                                                                                                                                       |
 | `start_time` / `end_time`                                 | `start_min` / `end_min`            | "HH:MM" to minutes; the end must be after the start.                                                                                                                                                                                                                                                                                                            |
 | `practical`                                               | `practical`                        | —                                                                                                                                                                                                                                                                                                                                                               |
@@ -293,11 +293,11 @@ create table public.room_occupied_reports (
 ### 4.3 Import flow
 
 1. **Upload.** On `/admin/timetable` the editor picks department, term and week, and uploads the PDF, or CSV/Excel if the department provides an export.
-2. **Parse.** Our parser (TypeScript, `pdfjs-dist` for positioned text; see the repo analysis option (c)) produces rows and a **diagnostics report**: pages, rooms, sessions, truncated values and warnings.
+2. **Parse.** A TypeScript port of **timetable-parser** (used with permission; see §6 and DECISIONS) running in the admin import route, with `pdfjs-dist` for positioned text. It produces rows and a **diagnostics report**: pages, rooms, sessions, truncated values and warnings. The port is checked against the Python original on the stored sample PDFs (golden tests: same classes, rooms and times).
 3. **Normalise and match.** Rooms, teachers, courses and class groups are matched through the alias tables. Anything unmatched is listed for the editor to map; mappings are saved as aliases.
 4. **Diff.** Compare the staged rows with the currently live data for the same department, term and week, keyed by `stable_key`, and summarise. For example: "**12 classes changed** (5 moved room, 4 retimed, 3 new teacher), **3 removed**, **2 added**, **3 rooms renamed**, 4 truncated titles filled in from the catalogue".
 5. **Review.** The editor sees the diff with links to each changed row, can fix or exclude rows, and must clear blocking warnings (unknown class group, end before start).
-6. **Publish.** One click. The import becomes live (`timetable_live`), the change rows are written, and it goes in the audit log. A second editor's approval can be required for the first import of a term (an option for you).
+6. **Publish.** One click. The import becomes live (`timetable_live`), the change rows are written, and it goes in the audit log. No second approval for now: the project owner is the only editor. It can be added when more editors join.
 7. **Alerts.** For each change, notify the students whose class group matches, or who follow that group or course: "Database Systems moved to MAB CR-163 on Tue 11:00". There's a new notification category, **Timetable changes**, respecting preferences and push previews. Changes are batched into one push per student per publish.
 8. **Undo.** "Revert to previous" republishes the earlier import, with its own diff and alerts.
 
@@ -324,20 +324,25 @@ create table public.room_occupied_reports (
 | Scale: free-room and lookup queries on every Explore load                                                                     | Low                  | Indexed queries per class group and per room; the Now / Next card reads only the student's group                                                                             |
 | Realtime connection cap (about 200 on Supabase Free)                                                                          | Known                | Alerts use push, not live sockets; the Supabase Pro move is already planned                                                                                                  |
 
-## 6. Questions for you
+## 6. Questions, answered by the project owner (2026-11-17)
 
 1. **Official files.**
-   - Where do we get the official UoS **timetable**: the weekly PDF from the CS office, or can the department export **CSV/Excel** from its timetabling system? The PDF is a print of that system.
-   - Where do we get the **room list** (all rooms by building, ideally with floor and capacity)?
-   - Where do we get the **academic calendar** (PDF or web page)?
-2. **Departments.** Start with **CS** only, as agreed. Which department after that?
-3. **Data editors.** Who are the CS data editors (2–3 people, for example CRs or society members)? Should the first import of each term need a second editor's approval?
-4. **Sections.** Do CS timetables ever use sections other than Regular 1 and Self Support 1/2? The live csdeptuos site showed a **"Regular 0"**. And do "Self Support" classes mean the evening shift for our `shift` field, or is that separate?
-5. **Weekly or term-wide.** Does the timetable really change every week, or is there a term timetable with weekly amendments? This decides whether "week" is required on every import.
-6. **Department hub.** Which links should be official (faculty profiles, study plans), and should notices be editor-written or only link to official notices?
-7. **Ta1al.** Should we contact the author of csdeptuos.netlify.app and timetable-parser? A draft is below.
+   - **Timetable:** the department's timetable PDFs are available for UoS departments.
+   - **Rooms:** the room list comes from the timetable itself, so rooms are seeded from the room labels in each import. A room that never appears in any timetable won't be listed; editors can add one by hand.
+   - **Academic calendar:** the project owner will share the file.
+2. **Departments.** **CS first**, then more departments one at a time. The model is per department from the start.
+3. **Data editors.** The **project owner is the only editor** at first, already an admin, so no second approval for now. The `data_editors` role is still built so others can be added later.
+4. **Sections and shifts.**
+   - **"Regular 0" is Regular**, and particular to CS, so any "Regular N" maps to `REG`.
+   - **CS has no morning or evening shifts**, so no shift is derived from the timetable.
+   - Self Support remains an admission category (`SS1` / `SS2`), as already decided on 2026-10-23.
+5. **Weekly or termly.** **The timetable mostly doesn't change.** Imports default to the **term timetable** (`week_of` null). A week-specific amendment is possible but rare, and change alerts fire only when something actually changes.
+6. **Department hub.** Not decided yet. It's P2, so it can be settled when that work starts.
+7. **Parser.** **We may use Ta1al's timetable-parser.** Ta1al is a friend of the project owner, and they built the CS department site and the parser together. The plan therefore switches from "write our own" to **"port their parser to TypeScript"** (see `ta1al-repos-analysis.md` §4).
+   - Credit Ta1al and the project owner in the code and in `DECISIONS.md`.
+   - Recommended: add a licence file (for example MIT) to `timetable-parser` so the permission is on record for future contributors.
 
-### Draft message to Ta1al (for you to send)
+### Draft message to Ta1al (no longer needed for permission; kept in case it's useful for collaboration)
 
 > Hi there 👋
 >
