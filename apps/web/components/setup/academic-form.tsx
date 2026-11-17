@@ -10,6 +10,7 @@ import { DocPicker, uploadDoc } from "@/components/onboarding/doc-picker";
 import { createStudiesProofUpload, requestStudiesChange, saveAcademic } from "@/actions/setup";
 import { SECTIONS, batchYears, departmentShortName } from "@/lib/setup";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 type Department = { id: string; name: string; faculty: string | null; aliases: string[] };
 type Program = { id: string; department_id: string; name: string; duration_semesters: number };
@@ -233,7 +234,12 @@ export function AcademicForm({
 
       <fieldset className="grid gap-1.5">
         <legend className="mb-1.5 text-sm font-semibold">Shift</legend>
-        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Shift">
+        <div
+          className="grid grid-cols-3 gap-2"
+          role="radiogroup"
+          onKeyDown={radioArrowKeys}
+          aria-label="Shift"
+        >
           {SHIFTS.map((s) => (
             <button
               key={s.value}

@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { minToTime } from "@/lib/academics";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Switch } from "@/components/ui/switch";
 
 type Person = {
   id: string;
@@ -90,13 +91,7 @@ export function FreeNow({
               When you&apos;re on campus and not in class
             </span>
           </span>
-          <input
-            type="checkbox"
-            role="switch"
-            checked={visible}
-            onChange={(e) => void toggleVisible(e.target.checked)}
-            className="size-5 accent-[var(--accent)]"
-          />
+          <Switch checked={visible} onChange={(e) => void toggleVisible(e.target.checked)} />
         </label>
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
@@ -107,13 +102,7 @@ export function FreeNow({
                 : "Turns itself off after 3 hours"}
             </span>
           </span>
-          <input
-            type="checkbox"
-            role="switch"
-            checked={!!until}
-            onChange={(e) => void toggleCampus(e.target.checked)}
-            className="size-5 accent-[var(--accent)]"
-          />
+          <Switch checked={!!until} onChange={(e) => void toggleCampus(e.target.checked)} />
         </label>
       </div>
       {error && (

@@ -3,6 +3,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useAppearance, type Appearance } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 const options: { value: Appearance; label: string; Icon: typeof Sun }[] = [
   { value: "system", label: "System theme", Icon: Monitor },
@@ -17,6 +18,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       role="radiogroup"
+      onKeyDown={radioArrowKeys}
       aria-label="Theme"
       className={cn("inline-flex gap-1 rounded-track bg-track p-0.5", className)}
     >

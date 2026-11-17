@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Field, Textarea } from "@/components/ui/input";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 const REASONS = [
   { value: "spam", label: "Spam or scam" },
@@ -108,7 +109,12 @@ export function ReportDialog({
               Only moderators and admins see reports. Only admins can see who sent it.
               {targetType === "conversation" && " Admins can read this chat's recent messages."}
             </DialogDescription>
-            <div className="grid gap-2" role="radiogroup" aria-label="Reason">
+            <div
+              className="grid gap-2"
+              role="radiogroup"
+              onKeyDown={radioArrowKeys}
+              aria-label="Reason"
+            >
               {REASONS.map((r) => (
                 <label
                   key={r.value}

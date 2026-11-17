@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/sheet";
 import { RIDE_AREAS, WEEKDAYS, addDays, fromPkLocal, pkLocalIn } from "@/lib/campus";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
+import { Switch } from "@/components/ui/switch";
 
 /** Areas to pick from, or type your own. */
 export function AreaInput({
@@ -116,7 +118,12 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
           chat once you accept someone.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
-          <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Offer or ask">
+          <div
+            className="grid grid-cols-2 gap-2"
+            role="radiogroup"
+            onKeyDown={radioArrowKeys}
+            aria-label="Offer or ask"
+          >
             {(
               [
                 ["offer", "I'm driving", "Offer seats"],
@@ -206,19 +213,14 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
             )}
           </fieldset>
           {womenEligible && (
-            <label className="flex items-center gap-3 rounded-field border border-sep p-3">
-              <input
-                type="checkbox"
-                checked={womenOnly}
-                onChange={(e) => setWomenOnly(e.target.checked)}
-                className="size-5 accent-[var(--accent)]"
-              />
+            <label className="flex items-center justify-between gap-3 rounded-field border border-sep p-3">
               <span className="grid">
                 <span className="font-semibold">Women only</span>
-                <span className="text-xs text-sec">
+                <span className="text-footnote text-sec">
                   Only students confirmed for women-only spaces can see and join it.
                 </span>
               </span>
+              <Switch checked={womenOnly} onChange={(e) => setWomenOnly(e.target.checked)} />
             </label>
           )}
           <Field id={`${id}-notes`} label="Notes (optional)">

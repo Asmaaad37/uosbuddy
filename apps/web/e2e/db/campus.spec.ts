@@ -49,7 +49,7 @@ test("a ride: offer, ask, accept into a chat, leave, cancel; women-only stays hi
   await woman.page.getByRole("button", { name: "Offer or ask for a ride" }).click();
   await woman.page.getByLabel("From", { exact: true }).fill("UoS hostels");
   await woman.page.getByLabel("To", { exact: true }).fill(`Shahpur ${run}`);
-  await woman.page.getByRole("checkbox", { name: /Women only/ }).check();
+  await woman.page.getByRole("switch", { name: /Women only/ }).check();
   await woman.page.getByRole("button", { name: "Post ride" }).click();
   await expect(
     woman.page

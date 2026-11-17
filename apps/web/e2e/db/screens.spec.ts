@@ -80,7 +80,7 @@ test("phase 3 screens", async ({ page, browser }) => {
 
   // Search and filters, at phone width.
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.getByRole("tab", { name: /All UoS/ }).click();
+  await page.getByRole("button", { name: /All UoS/ }).click();
   await page.getByPlaceholder("Search by name or @handle").fill("zain");
   await expect(card("Zainab")).toBeVisible();
   await expect(card("Ayesha")).toHaveCount(0);
