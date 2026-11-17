@@ -2,25 +2,12 @@
 
 import { z } from "zod";
 import { moderate } from "@/lib/ai/moderate.server";
-import { getSession } from "@/lib/auth/session";
 import { LISTING_KIND_KEYS } from "@/lib/campus";
 import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import type { ActionResult } from "./onboarding";
+import { fail, friendly, session } from "@/lib/action-helpers.server";
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const id = z.uuid();
-
-function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? "")) {
-    return error.message;
-  }
-  return fallback;
-}
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user, profile: s.profile } : null;
-}
 
 // ---------------------------------------------------------------------------
 // Rides (Phase 8 task 1)

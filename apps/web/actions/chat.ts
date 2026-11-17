@@ -2,24 +2,13 @@
 
 import { z } from "zod";
 import type { Database } from "@uosbuddy/shared";
-import { getSession } from "@/lib/auth/session";
 import type { ActionResult } from "./onboarding";
+import { fail, friendly, session } from "@/lib/action-helpers.server";
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const id = z.uuid();
 const PAGE = 30;
-
-function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002"].includes(error.code ?? "")) return error.message;
-  return fallback;
-}
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user } : null;
-}
 
 /** Opens (or finds) a DM and returns its id. */
 export async function startDm(target: string): Promise<ActionResult<string>> {

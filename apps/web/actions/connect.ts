@@ -2,25 +2,12 @@
 
 import { z } from "zod";
 import { withinLimit } from "@/lib/abuse.server";
-import { getSession } from "@/lib/auth/session";
 import type { ActionResult } from "./onboarding";
+import { fail, friendly, session } from "@/lib/action-helpers.server";
 
 export type ConnectionState = "none" | "outgoing" | "incoming" | "connected";
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const id = z.uuid();
-
-/** The database explains refusals in plain words (42501/22023/P0002); pass those through. */
-function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? ""))
-    return error.message;
-  return fallback;
-}
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user } : null;
-}
 
 /** Phase 4 task 2: ask to connect, optionally answering their Opening Move. */
 export async function requestConnection(

@@ -3,28 +3,16 @@
 import { z } from "zod";
 import type { Database } from "@uosbuddy/shared";
 import { moderate } from "@/lib/ai/moderate.server";
-import { getSession } from "@/lib/auth/session";
 import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import type { ActionResult } from "./onboarding";
+import { fail, friendly, session } from "@/lib/action-helpers.server";
 
 export type Post = Database["public"]["Views"]["posts_public"]["Row"];
 export type Comment = Database["public"]["Views"]["comments_public"]["Row"];
 export type Sort = "hot" | "new";
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const id = z.uuid();
 const PAGE = 20;
-
-function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? ""))
-    return error.message;
-  return fallback;
-}
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user, profile: s.profile } : null;
-}
 
 const feedSchema = z.object({
   space: z.string().regex(/^(campus|department:[0-9a-f-]{36})$/),

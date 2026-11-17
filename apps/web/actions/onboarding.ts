@@ -16,10 +16,10 @@ import {
   normaliseStudentId,
   whatsappSchema,
 } from "@/lib/validation/onboarding";
+import { fail } from "@/lib/action-helpers.server";
 
 export type ActionResult<T = undefined> = { ok: true; data: T } | { ok: false; error: string };
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const TOO_MANY = "Too many attempts. Wait a while and try again.";
 
 /** "Not from UoS? Request your university" (Section 7, screen 2). */

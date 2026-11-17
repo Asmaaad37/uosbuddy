@@ -2,27 +2,14 @@
 
 import { after } from "next/server";
 import { z } from "zod";
-import { getSession } from "@/lib/auth/session";
 import { sendEmail, sendStatusEmail } from "@/lib/email/send.server";
 import { renderExportEmail } from "@/lib/email/templates";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "./onboarding";
+import { fail, friendly, session } from "@/lib/action-helpers.server";
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const id = z.uuid();
 const ok = { ok: true, data: undefined } as const;
-
-function friendly(error: { code?: string; message: string } | null, fallback: string) {
-  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? "")) {
-    return error.message;
-  }
-  return fallback;
-}
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user, profile: s.profile } : null;
-}
 
 // ---------------------------------------------------------------------------
 // Moderation (admins everywhere; moderators in their spaces). Audited in the database.

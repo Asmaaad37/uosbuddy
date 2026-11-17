@@ -39,6 +39,7 @@ import { Button } from "@/components/ui/button";
 import { clockTime, dayLabel, sameDay, startsGroup } from "@/lib/chat";
 import { browserClient, realtimeClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
+import { uploadPhoto } from "@/lib/photos";
 
 export type Person = {
   id: string;
@@ -58,18 +59,6 @@ function sendErrorMessage(error: { code?: string; message: string } | null) {
     return error.message;
   }
   return "Couldn't send. Check your connection and try again.";
-}
-
-/** Re-encode photos as JPEG: smaller uploads, and EXIF (GPS, device) is dropped. */
-async function prepare(file: File): Promise<File> {
-  const { default: compress } = await import("browser-image-compression");
-  return compress(file, {
-    maxSizeMB: 1.5,
-    maxWidthOrHeight: 1600,
-    fileType: "image/jpeg",
-    preserveExif: false,
-    useWebWorker: false,
-  });
 }
 
 function Attachment({ path, seed }: { path: string | null; seed?: string }) {
@@ -383,14 +372,7 @@ export function Conversation({
     if (!file.type.startsWith("image/")) return setError("Send a photo (JPG, PNG or WebP).");
     setUploading(true);
     try {
-      const photo = await prepare(file);
-      const path = `${conversationId}/${crypto.randomUUID()}.jpg`;
-      const supabase = await browserClient();
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(path, photo, { contentType: "image/jpeg" });
-      if (uploadError) throw uploadError;
-      const preview = URL.createObjectURL(photo);
+      const { path, preview } = await uploadPhoto(BUCKET, conversationId, file);
       primeSignedUrl(BUCKET, path, preview);
       await deliver(optimistic(null, path, preview));
     } catch {

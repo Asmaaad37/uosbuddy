@@ -20,8 +20,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { browserClient } from "@/lib/supabase/lazy";
 import { Switch } from "@/components/ui/switch";
+import { uploadPhoto } from "@/lib/photos";
 
 type Space = { value: string; label: string };
 
@@ -42,17 +42,6 @@ export function ComposeButton() {
 
 /** Opens the composer from anywhere on the page (an empty state's action, say). */
 export const openComposer = () => window.dispatchEvent(new Event(OPEN_EVENT));
-
-async function prepare(file: File): Promise<File> {
-  const { default: compress } = await import("browser-image-compression");
-  return compress(file, {
-    maxSizeMB: 1.5,
-    maxWidthOrHeight: 1600,
-    fileType: "image/jpeg",
-    preserveExif: false,
-    useWebWorker: false,
-  });
-}
 
 /** Phase 5 task 2: write a post — text, up to 4 photos, an optional poll. */
 export function Composer({
@@ -106,16 +95,9 @@ export function Composer({
     setBusy("upload");
     setError(undefined);
     try {
-      const supabase = await browserClient();
       for (const file of picked) {
-        const photo = await prepare(file);
-        // A random name: a photo's path must never reveal who posted it.
-        const path = `posts/${crypto.randomUUID()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from("post-media")
-          .upload(path, photo, { contentType: "image/jpeg" });
-        if (uploadError) throw uploadError;
-        setPhotos((p) => [...p, { path, preview: URL.createObjectURL(photo) }]);
+        const uploaded = await uploadPhoto("post-media", "posts", file);
+        setPhotos((p) => [...p, uploaded]);
       }
     } catch {
       setError("Couldn't upload the photo. Try again.");

@@ -11,8 +11,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { DOC_TYPES } from "@/lib/validation/onboarding";
 import { handleSchema } from "@/lib/validation/handle";
 import type { ActionResult } from "./onboarding";
+import { fail } from "@/lib/action-helpers.server";
 
-const fail = (error: string) => ({ ok: false, error }) as const;
 const done = { ok: true, data: undefined } as const;
 const firstIssue = (e: z.ZodError) => e.issues[0]?.message ?? "Check the form";
 
