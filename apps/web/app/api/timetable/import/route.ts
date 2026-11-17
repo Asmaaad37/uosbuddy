@@ -9,6 +9,7 @@ import {
   type ReadTimetable,
 } from "@/lib/ai/timetable";
 import { getSession } from "@/lib/auth/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -18,6 +19,10 @@ const TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_BYTES = 4 * 1024 * 1024;
 
 const json = (status: number, error: string) => NextResponse.json({ error }, { status });
+
+/** A read that fails or finds nothing doesn't count toward the 10 a day. */
+const refund = (userId: string) =>
+  createAdminClient().rpc("refund_ai", { p_user: userId, p_kind: "timetable" });
 
 /**
  * Phase 7 task 6: read a timetable screenshot into classes for the student to check.
@@ -86,11 +91,15 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("[timetable] read failed", error instanceof Error ? error.message : error);
+    await refund(user.id);
     return json(502, "Couldn't read that timetable. Try a clearer screenshot.");
   }
 
   const { data: courses } = await supabase.rpc("my_courses");
   const classes: Draft[] = toDrafts(read, courses ?? []);
-  if (!classes.length) return json(422, "We couldn't find any classes in that image.");
+  if (!classes.length) {
+    await refund(user.id);
+    return json(422, "We couldn't find any classes in that image.");
+  }
   return NextResponse.json({ classes });
 }

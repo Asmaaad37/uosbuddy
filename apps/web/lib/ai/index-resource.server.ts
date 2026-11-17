@@ -13,15 +13,22 @@ Separate pages with a line "=== Page N ===". Output only the transcription.`;
 /** Pages of text via Claude (photos of notes, scanned PDFs). */
 async function transcribe(data: Buffer, mime: string): Promise<string[]> {
   const source = fileBlock(data, mime);
-  const message = await claude().messages.create({
-    model: MODEL,
-    max_tokens: 16000,
-    output_config: { effort: "low" },
-    system: TRANSCRIBE,
-    messages: [
-      { role: "user", content: [source, { type: "text", text: "Transcribe this file." }] },
-    ],
-  });
+  // Streamed so a long scan has room to finish (a non-streamed request this large can time
+  // out); the final message is all we need.
+  const message = await claude()
+    .messages.stream({
+      model: MODEL,
+      max_tokens: 64000,
+      output_config: { effort: "low" },
+      system: TRANSCRIBE,
+      messages: [
+        { role: "user", content: [source, { type: "text", text: "Transcribe this file." }] },
+      ],
+    })
+    .finalMessage();
+  if (message.stop_reason === "max_tokens") {
+    console.warn("[index] transcription cut short; indexing what was read");
+  }
   const text = textOf(message);
   const pages = text.split(/^=== Page \d+ ===$/m).map((p) => p.trim());
   return pages.filter((p, i) => p || i > 0).length ? pages.filter(Boolean) : [text];

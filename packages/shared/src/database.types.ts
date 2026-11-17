@@ -4201,6 +4201,10 @@ export type Database = {
       purge_deleted_accounts: { Args: never; Returns: number }
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
       refresh_admin_stats: { Args: never; Returns: undefined }
+      refund_ai: {
+        Args: { p_kind: string; p_user: string }
+        Returns: undefined
+      }
       remove_connection: { Args: { p_other: string }; Returns: undefined }
       remove_group_member: {
         Args: { p_conversation: string; p_user: string }

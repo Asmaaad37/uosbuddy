@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   BUDDY_SYSTEM,
   FALLBACK,
+  historyMessages,
   parseSource,
   questionContent,
   type Excerpt,
@@ -12,6 +13,7 @@ import {
 import { MODEL, aiEnabled, aiFake, claude } from "@/lib/ai/claude.server";
 import { embed, toVector } from "@/lib/ai/embed.server";
 import { getSession } from "@/lib/auth/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -47,6 +49,18 @@ export async function POST(request: NextRequest) {
   const { data: enrolled } = await supabase.rpc("my_courses");
   if (!enrolled?.some((c) => c.id === courseId)) return json(403, "Add this course first.");
 
+  // An existing thread must be the student's own (RLS) and about this course: a thread can't
+  // carry one course's conversation into another course's files.
+  let threadId = parsed.data.threadId;
+  if (threadId) {
+    const { data: t } = await supabase
+      .from("ai_threads")
+      .select("id, course_id")
+      .eq("id", threadId)
+      .maybeSingle();
+    if (!t || t.course_id !== courseId) return json(404, "Chat not found.");
+  }
+
   const { data: remaining, error: quotaError } = await supabase.rpc("use_ai", { p_kind: "buddy" });
   if (quotaError) {
     return json(
@@ -54,23 +68,25 @@ export async function POST(request: NextRequest) {
       quotaError.code === "54000" ? quotaError.message : "Couldn't start. Try again.",
     );
   }
+  // A question that fails, or never reaches the model, gives the student their go back.
+  let refunded = false;
+  const refund = async () => {
+    if (refunded) return;
+    refunded = true;
+    await createAdminClient().rpc("refund_ai", { p_user: user.id, p_kind: "buddy" });
+  };
 
   // The thread (new or the student's own) and their message.
-  let threadId = parsed.data.threadId;
-  if (threadId) {
-    const { data: t } = await supabase
-      .from("ai_threads")
-      .select("id")
-      .eq("id", threadId)
-      .maybeSingle();
-    if (!t) return json(404, "Chat not found.");
-  } else {
+  if (!threadId) {
     const { data: t, error } = await supabase
       .from("ai_threads")
       .insert({ user_id: user.id, course_id: courseId, title: message.slice(0, 80) })
       .select("id")
       .single();
-    if (error || !t) return json(500, "Couldn't start a chat. Try again.");
+    if (error || !t) {
+      await refund();
+      return json(500, "Couldn't start a chat. Try again.");
+    }
     threadId = t.id;
   }
   const { data: history } = await supabase
@@ -116,9 +132,11 @@ export async function POST(request: NextRequest) {
 
       try {
         if (!excerpts.length) {
-          // Nothing in the course's files matches: say so without spending a model call.
+          // Nothing in the course's files matches: say so without spending a model call,
+          // or the student's daily allowance.
           answer = FALLBACK;
           send({ type: "text", text: answer });
+          await refund();
         } else if (aiFake()) {
           const top = excerpts[0]!;
           answer = `From your course files: ${top.content.slice(0, 200)}`;
@@ -130,9 +148,7 @@ export async function POST(request: NextRequest) {
           );
         } else {
           const messages: Anthropic.MessageParam[] = [
-            ...(history ?? [])
-              .reverse()
-              .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            ...historyMessages(history ?? []),
             { role: "user", content: questionContent(message, excerpts) },
           ];
           const response = claude().messages.stream({
@@ -140,7 +156,8 @@ export async function POST(request: NextRequest) {
             // A cost cap for a study answer; Haiku 5.5's thinking shares this budget.
             max_tokens: 8000,
             output_config: { effort: "medium" },
-            cache_control: { type: "ephemeral" },
+            // No prompt caching: each question carries different excerpts, so a cache entry
+            // would be written at 1.25x the input price and never read back.
             system: BUDDY_SYSTEM,
             messages,
           });
@@ -174,12 +191,13 @@ export async function POST(request: NextRequest) {
           .from("ai_threads")
           .update({ updated_at: new Date().toISOString() })
           .eq("id", threadId!);
-        send({ type: "done", remaining: remaining ?? 0 });
+        send({ type: "done", remaining: (remaining ?? 0) + (refunded ? 1 : 0) });
       } catch (error) {
         console.error(
           "[buddy] answer failed",
           error instanceof Anthropic.APIError ? error.status : error,
         );
+        await refund().catch(() => {});
         send({
           type: "error",
           error:
