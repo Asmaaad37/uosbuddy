@@ -86,7 +86,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
             )}
           </p>
           <div className="flex flex-wrap gap-1.5 pt-0.5">
-            <Pill tone={offer ? "campus" : "neutral"} className="h-6 px-2 text-xs">
+            <Pill tone={offer ? "neutral" : "neutral"} className="h-6 px-2 text-xs">
               {offer ? "Offering seats" : "Needs a lift"}
             </Pill>
             {offer && (
@@ -96,7 +96,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
               </Pill>
             )}
             {ride.women_only && (
-              <Pill tone="people" className="h-6 px-2 text-xs">
+              <Pill tone="neutral" className="h-6 px-2 text-xs">
                 Women only
               </Pill>
             )}
@@ -244,7 +244,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
                   </Button>
                 </div>
               ) : (
-                <Pill tone="learn" className="h-6 px-2 text-xs">
+                <Pill tone="neutral" className="h-6 px-2 text-xs">
                   In the ride
                 </Pill>
               )}

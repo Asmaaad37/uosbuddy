@@ -1953,7 +1953,6 @@ export type Database = {
           show_hometown: boolean
           show_in_directory: boolean
           user_id: string
-          women_only_spaces: boolean
         }
         Insert: {
           allow_dms_from?: Database["public"]["Enums"]["visibility_level"]
@@ -1964,7 +1963,6 @@ export type Database = {
           show_hometown?: boolean
           show_in_directory?: boolean
           user_id: string
-          women_only_spaces?: boolean
         }
         Update: {
           allow_dms_from?: Database["public"]["Enums"]["visibility_level"]
@@ -1975,7 +1973,6 @@ export type Database = {
           show_hometown?: boolean
           show_in_directory?: boolean
           user_id?: string
-          women_only_spaces?: boolean
         }
         Relationships: [
           {

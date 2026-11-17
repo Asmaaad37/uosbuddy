@@ -97,7 +97,7 @@ export function ProfileCard({
           <ul className="flex flex-wrap gap-2">
             {profile.interests.map((i) => (
               <li key={i.id}>
-                <Pill tone="people">
+                <Pill tone="neutral">
                   {i.emoji && <span aria-hidden>{i.emoji}</span>}
                   {i.label}
                 </Pill>

@@ -21,8 +21,6 @@ importers:
         specifier: 2.122.0
         version: 2.122.0
 
-  apps/ai: {}
-
   apps/web:
     dependencies:
       '@anthropic-ai/sdk':

@@ -11,8 +11,7 @@ environment settings or the Supabase dashboard, never into the repository or a c
 | Preview / staging | The development project (or a second free project) | Vercel preview deployments (every PR) | Testers     |
 | Production        | A **new** Supabase project, Pro plan               | Vercel production (your domain)       | Students    |
 
-The AI runs inside the web app (Claude), so there's no separate AI server to host; `apps/ai`
-stays as a placeholder.
+The AI runs inside the web app (Claude), so there's no separate AI server to host.
 
 ## MVP launch (no domain, AI off)
 
