@@ -96,7 +96,7 @@ export default async function BuddyPage({ searchParams }: Props) {
           <h2 id="past-chats" className="text-lg font-bold">
             Past chats
           </h2>
-          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
             {threads!.map((t) => (
               <li key={t.id}>
                 <Link

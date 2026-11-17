@@ -53,7 +53,7 @@ export default async function PendingPage() {
     <OnboardingShell title={copy.title} subtitle={copy.subtitle}>
       <PendingLive userId={user.id} />
 
-      <ol className="grid gap-0 rounded-card border border-sep bg-surface p-5 shadow-card">
+      <ol className="grid gap-0 rounded-card bg-surface p-5 shadow-card contrast-more:border contrast-more:border-label">
         {steps.map((s, i) => (
           <li key={s.label} className="flex gap-3">
             <div className="flex flex-col items-center">

@@ -83,7 +83,7 @@ export function FreeNow({
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-3 rounded-card border border-sep bg-surface p-4">
+      <div className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
         <label className="flex cursor-pointer items-center justify-between gap-4">
           <span className="grid gap-0.5">
             <span className="font-semibold">Show me here</span>
@@ -117,7 +117,7 @@ export function FreeNow({
             return (
               <li
                 key={p.id}
-                className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
+                className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
               >
                 <Avatar name={name} src={p.avatar_url} size="md" />
                 <span className="grid min-w-0 flex-1">

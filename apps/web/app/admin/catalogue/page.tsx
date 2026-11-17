@@ -58,7 +58,7 @@ export default async function CataloguePage({ searchParams }: Props) {
           />
         </form>
         {q && (
-          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
             {(courses ?? []).map((c) => (
               <CourseRow
                 key={c.id}
@@ -82,7 +82,7 @@ export default async function CataloguePage({ searchParams }: Props) {
           </h2>
           <DepartmentForm />
         </div>
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {(departments ?? []).map((d) => (
             <li key={d.id} className="grid gap-2 p-3">
               <details>

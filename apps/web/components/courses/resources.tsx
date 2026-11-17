@@ -115,7 +115,7 @@ export function Resources({
             <li
               key={r.id}
               id={`r-${r.id}`}
-              className="flex scroll-mt-20 items-center gap-3 rounded-card border border-sep bg-surface p-3 target:border-accent"
+              className="flex scroll-mt-20 items-center gap-3 rounded-card bg-surface p-3 shadow-card target:ring-2 target:ring-accent contrast-more:border contrast-more:border-label"
             >
               <button
                 type="button"

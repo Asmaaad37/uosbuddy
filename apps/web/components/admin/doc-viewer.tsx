@@ -25,7 +25,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
 
   if (path?.endsWith(".pdf")) {
     return (
-      <div className="grid h-80 place-items-center gap-3 rounded-card border border-sep bg-surface text-center">
+      <div className="grid h-80 place-items-center gap-3 rounded-card bg-surface text-center shadow-card contrast-more:border contrast-more:border-label">
         <div className="grid justify-items-center gap-3">
           <FileText className="size-10 text-sec" />
           <Button asChild variant="tinted" size="md">
@@ -41,7 +41,7 @@ export function DocViewer({ url, path }: { url: string | null; path: string | nu
 
   return (
     <div className="grid gap-2">
-      <div className="relative h-[min(70vh,640px)] overflow-auto rounded-card border border-sep bg-raised">
+      <div className="relative h-[min(70vh,640px)] overflow-auto rounded-card bg-raised">
         <div className="grid min-h-full min-w-full place-items-center p-4">
           {/* eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL */}
           <img

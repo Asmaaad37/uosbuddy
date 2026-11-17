@@ -76,7 +76,7 @@ export function GpaCalculator() {
           <section
             key={s.id}
             aria-label={`Semester ${i + 1}`}
-            className="grid gap-3 rounded-card border border-sep bg-surface p-4"
+            className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
           >
             <div className="flex items-baseline justify-between">
               <h2 className="font-bold">Semester {i + 1}</h2>

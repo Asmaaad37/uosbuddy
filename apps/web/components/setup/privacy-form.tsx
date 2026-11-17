@@ -101,7 +101,7 @@ export function PrivacyForm({
               onClick={() => setSettings(p.settings)}
               className={cn(
                 "flex items-start gap-3 rounded-card border-2 bg-surface p-4 text-left transition-colors",
-                on ? "border-accent" : "border-sep hover:border-sec/50",
+                on ? "border-accent" : "border-sep hover:shadow-lift",
               )}
             >
               <span
@@ -141,7 +141,7 @@ export function PrivacyForm({
       </button>
 
       {customise && (
-        <div className="grid gap-4 rounded-card border border-sep bg-surface p-4">
+        <div className="grid gap-4 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
           {(
             [
               ["profile_visibility", "Who can see your profile"],

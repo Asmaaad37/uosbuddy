@@ -13,7 +13,7 @@ const PREVIEW = [
 export function BuddyComingSoon({ waiting = false }: { waiting?: boolean }) {
   return (
     <div className="grid gap-5">
-      <section className="grid justify-items-center gap-3 rounded-card border border-sep bg-surface px-5 py-8 text-center">
+      <section className="grid justify-items-center gap-3 rounded-card bg-surface px-5 py-8 text-center shadow-card contrast-more:border contrast-more:border-label">
         <AIBuddyMascot mood="wink" size={168} title="AIBuddy, winking" />
         <span className="rounded-pill bg-tint px-3 py-1 text-footnote font-semibold text-tint-text">
           COMING SOON
@@ -29,7 +29,7 @@ export function BuddyComingSoon({ waiting = false }: { waiting?: boolean }) {
         {PREVIEW.map(({ icon: Icon, text }) => (
           <li
             key={text}
-            className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
+            className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
           >
             <span className="grid size-9 shrink-0 place-items-center rounded-field bg-raised text-sec">
               <Icon className="size-4" />

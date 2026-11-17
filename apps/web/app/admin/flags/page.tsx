@@ -25,7 +25,7 @@ export default async function FlagsPage() {
         <h1 className="text-[28px] font-bold">Feature flags</h1>
         <p className="text-sec">Changes apply immediately and are recorded in the audit log.</p>
       </div>
-      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
         {(flags ?? []).map((f) => (
           <li key={f.key} className="flex items-center gap-4 p-4">
             <div className="grid min-w-0 flex-1">
