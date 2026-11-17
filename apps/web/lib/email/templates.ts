@@ -92,21 +92,30 @@ export function renderLinkCodeEmail(code: string): Rendered {
     "",
     FOOTER,
   ].join("\n");
-  const html = `<!doctype html>
+  const html =
+    layout(`<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">Link your UoS email</h1>
+<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">Enter this code in UOSBuddy. It expires in 10 minutes.</p>
+<p style="margin:0 0 16px;font-size:32px;font-weight:bold;letter-spacing:8px;color:#0b1220">${escapeHtml(code)}</p>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#5a6475">If you didn't ask for it, ignore this email; nothing changes without the code.</p>`);
+  return { subject, text, html };
+}
+
+/**
+ * The page every email shares: grey background, a white 480px card with the header, then the
+ * footer under it. `inner` is the card's content.
+ */
+function layout(inner: string) {
+  return `<!doctype html>
 <html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
 <tr><td>
 ${HEADER}
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">Link your UoS email</h1>
-<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">Enter this code in UOSBuddy. It expires in 10 minutes.</p>
-<p style="margin:0 0 16px;font-size:32px;font-weight:bold;letter-spacing:8px;color:#0b1220">${escapeHtml(code)}</p>
-<p style="margin:0;font-size:14px;line-height:1.5;color:#5a6475">If you didn't ask for it, ignore this email; nothing changes without the code.</p>
+${inner}
 </td></tr></table>
 <p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
 </td></tr></table>
 </body></html>`;
-  return { subject, text, html };
 }
 
 export function renderStatusEmail(
@@ -133,13 +142,8 @@ export function renderStatusEmail(
 
   const p = (s: string) =>
     `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">${s}</p>`;
-  const html = `<!doctype html>
-<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
-<tr><td>
-${HEADER}
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(copy.heading)}</h1>
+  const html =
+    layout(`<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(copy.heading)}</h1>
 ${p(escapeHtml(greeting))}
 ${copy.body.map((line) => p(escapeHtml(line))).join("\n")}
 ${
@@ -149,11 +153,7 @@ ${
 <p style="margin:0;font-size:15px;line-height:1.5;color:#0b1220">${escapeHtml(copy.reason)}</p></div>`
     : ""
 }
-<p style="margin:20px 0 0"><a href="${escapeHtml(url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(copy.cta.label)}</a></p>
-</td></tr></table>
-<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
-</td></tr></table>
-</body></html>`;
+<p style="margin:20px 0 0"><a href="${escapeHtml(url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(copy.cta.label)}</a></p>`);
 
   return { subject: copy.subject, text, html };
 }
@@ -167,20 +167,10 @@ function card(
 ) {
   const p = (s: string) =>
     `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#0b1220">${s}</p>`;
-  return `<!doctype html>
-<html lang="en"><body style="margin:0;padding:24px 12px;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:28px">
-<tr><td>
-${HEADER}
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(heading)}</h1>
+  return layout(`<h1 style="margin:0 0 16px;font-size:24px;line-height:1.25;color:#0b1220">${escapeHtml(heading)}</h1>
 ${lines.map((l) => p(escapeHtml(l))).join("\n")}
 <p style="margin:20px 0 0"><a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:14px 24px;border-radius:999px;background:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(cta.label)}</a></p>
-${small ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#5a6475">${small}</p>` : ""}
-</td></tr></table>
-<p style="max-width:480px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#5a6475">${FOOTER}</p>
-</td></tr></table>
-</body></html>`;
+${small ? `<p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#5a6475">${small}</p>` : ""}`);
 }
 
 export type DigestNumbers = {

@@ -1,19 +1,13 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { digestToken } from "@/lib/digest";
 import { emailEnabled, sendEmail } from "@/lib/email/send.server";
 import { renderDigestEmail } from "@/lib/email/templates";
 import { serverEnv } from "@/lib/env.server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { bearerMatches } from "@/lib/bearer.server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
-
-function authorized(request: NextRequest, secret: string) {
-  const given = Buffer.from(request.headers.get("authorization") ?? "");
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return given.length === expected.length && timingSafeEqual(given, expected);
-}
 
 /**
  * Phase 9 task 4: the weekly digest, Sundays at 7 pm Pakistan time (Vercel Cron). Only
@@ -23,7 +17,7 @@ function authorized(request: NextRequest, secret: string) {
 export async function GET(request: NextRequest) {
   const secret = serverEnv.CRON_SECRET;
   if (!secret) return NextResponse.json({ error: "CRON_SECRET is not set" }, { status: 503 });
-  if (!authorized(request, secret)) {
+  if (!bearerMatches(request, secret)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   if (!emailEnabled()) return NextResponse.json({ sent: 0, skipped: "email is off" });

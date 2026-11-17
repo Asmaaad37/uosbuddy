@@ -1,4 +1,3 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { serverEnv } from "@/lib/env.server";
@@ -6,16 +5,11 @@ import { describe } from "@/lib/notifications";
 import { messagePushText } from "@/lib/push-text";
 import { pushEnabled, pushTo } from "@/lib/push.server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { bearerMatches } from "@/lib/bearer.server";
 
 export const dynamic = "force-dynamic";
 
 const bodySchema = z.object({ kind: z.enum(["notification", "message"]), id: z.uuid() });
-
-function authorized(request: NextRequest, secret: string) {
-  const given = Buffer.from(request.headers.get("authorization") ?? "");
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return given.length === expected.length && timingSafeEqual(given, expected);
-}
 
 /**
  * Phase 5 task 6: called by the database (pg_net) for each new notification or chat
@@ -25,7 +19,7 @@ export async function POST(request: NextRequest) {
   const secret = serverEnv.PUSH_WEBHOOK_SECRET;
   if (!secret)
     return NextResponse.json({ error: "PUSH_WEBHOOK_SECRET is not set" }, { status: 503 });
-  if (!authorized(request, secret))
+  if (!bearerMatches(request, secret))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Bad request" }, { status: 400 });

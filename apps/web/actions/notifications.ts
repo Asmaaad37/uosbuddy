@@ -4,13 +4,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "./onboarding";
-
-const fail = (error: string) => ({ ok: false, error }) as const;
-
-async function session() {
-  const s = await getSession();
-  return s.user ? { supabase: s.supabase, user: s.user } : null;
-}
+import { fail, session } from "@/lib/action-helpers.server";
 
 /** Everything read (or one notification). */
 export async function markNotificationsRead(id?: string): Promise<void> {

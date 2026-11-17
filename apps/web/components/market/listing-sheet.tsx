@@ -17,20 +17,9 @@ import { toast } from "@/components/ui/toast";
 import { useGuidelinesGate } from "@/components/trust/guidelines-gate";
 import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
-import { browserClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
 import { radioArrowKeys } from "@/lib/radio-keys";
-
-async function prepare(file: File): Promise<File> {
-  const { default: compress } = await import("browser-image-compression");
-  return compress(file, {
-    maxSizeMB: 1.5,
-    maxWidthOrHeight: 1600,
-    fileType: "image/jpeg",
-    preserveExif: false,
-    useWebWorker: false,
-  });
-}
+import { uploadPhoto } from "@/lib/photos";
 
 /** Phase 8 task 2: sell, ask, give away, or report something lost or found. */
 export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKind }) {
@@ -58,15 +47,9 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
     setBusy("upload");
     setError(undefined);
     try {
-      const supabase = await browserClient();
       for (const file of picked) {
-        const photo = await prepare(file);
-        const path = `listings/${crypto.randomUUID()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from("listing-media")
-          .upload(path, photo, { contentType: "image/jpeg" });
-        if (uploadError) throw uploadError;
-        setPhotos((p) => [...p, { path, preview: URL.createObjectURL(photo) }]);
+        const uploaded = await uploadPhoto("listing-media", "listings", file);
+        setPhotos((p) => [...p, uploaded]);
       }
     } catch {
       setError("Couldn't upload the photo. Try again.");

@@ -8,8 +8,7 @@ import { sendEmail } from "@/lib/email/send.server";
 import { renderLinkCodeEmail } from "@/lib/email/templates";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionResult } from "./onboarding";
-
-const fail = (error: string) => ({ ok: false, error }) as const;
+import { fail } from "@/lib/action-helpers.server";
 
 /** Only the hash reaches the database, salted with the user id so codes aren't reusable. */
 const hashCode = (userId: string, code: string) =>

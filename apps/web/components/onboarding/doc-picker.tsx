@@ -6,19 +6,12 @@ import { Button } from "@/components/ui/button";
 import { browserClient } from "@/lib/supabase/lazy";
 import { DOC_TYPES, MAX_DOC_BYTES } from "@/lib/validation/onboarding";
 import type { ActionResult } from "@/actions/onboarding";
+import { preparePhoto } from "@/lib/photos";
 
-/** Re-encode photos as JPEG: smaller uploads, and EXIF (GPS, device) is dropped. */
+/** PDFs go as they are; photos are re-encoded as JPEG (larger than chat photos: text must read). */
 async function prepare(file: File): Promise<File> {
   if (file.type === "application/pdf") return file;
-  const { default: compress } = await import("browser-image-compression");
-  return compress(file, {
-    maxSizeMB: 2,
-    maxWidthOrHeight: 2400,
-    fileType: "image/jpeg",
-    preserveExif: false,
-    // The worker build loads from a CDN, which our CSP blocks; a one-off photo is fine inline.
-    useWebWorker: false,
-  });
+  return preparePhoto(file, { maxSizeMB: 2, maxSide: 2400 });
 }
 
 /** Prepares and uploads a proof document, returning its path. Throws a message to show. */
