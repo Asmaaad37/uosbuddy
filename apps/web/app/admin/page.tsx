@@ -36,12 +36,14 @@ function Stat({ label, value, href }: { label: string; value: number | string; h
   return href ? (
     <Link
       href={href}
-      className="grid gap-1 rounded-card border border-sep bg-surface p-4 hover:border-sec/50"
+      className="grid gap-1 rounded-card bg-surface p-4 shadow-card hover:shadow-lift contrast-more:border contrast-more:border-label"
     >
       {body}
     </Link>
   ) : (
-    <div className="grid gap-1 rounded-card border border-sep bg-surface p-4">{body}</div>
+    <div className="grid gap-1 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
+      {body}
+    </div>
   );
 }
 
@@ -85,7 +87,7 @@ export default async function AdminDashboard() {
 
       <section
         aria-labelledby="daily"
-        className="grid gap-2 rounded-card border border-sep bg-surface p-4"
+        className="grid gap-2 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
       >
         <h2 id="daily" className="font-bold">
           Last 30 days
@@ -126,7 +128,7 @@ export default async function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <section
           aria-labelledby="funnel"
-          className="grid gap-2 rounded-card border border-sep bg-surface p-4"
+          className="grid gap-2 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
         >
           <h2 id="funnel" className="font-bold">
             Verification funnel
@@ -152,7 +154,7 @@ export default async function AdminDashboard() {
 
         <section
           aria-labelledby="depts"
-          className="grid gap-2 rounded-card border border-sep bg-surface p-4"
+          className="grid gap-2 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
         >
           <h2 id="depts" className="font-bold">
             Top departments
@@ -171,7 +173,7 @@ export default async function AdminDashboard() {
 
       <section
         aria-labelledby="retention"
-        className="grid gap-2 rounded-card border border-sep bg-surface p-4"
+        className="grid gap-2 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
       >
         <h2 id="retention" className="font-bold">
           Retention by week verified
@@ -207,7 +209,7 @@ export default async function AdminDashboard() {
         <h2 id="audit" className="font-bold">
           Recent admin and moderator actions
         </h2>
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface text-sm">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface text-sm shadow-card contrast-more:border contrast-more:border-label">
           {(audit ?? []).map((a) => (
             <li key={a.id} className="flex gap-3 px-3 py-2">
               <span className="w-16 shrink-0 text-sec">{shortTime(a.created_at)}</span>

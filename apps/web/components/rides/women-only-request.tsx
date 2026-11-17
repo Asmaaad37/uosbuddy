@@ -22,7 +22,7 @@ export function WomenOnlyRequest({ status }: { status: string | null }) {
     <section
       id="women-only"
       aria-labelledby={`${id}-h`}
-      className="grid gap-3 rounded-card border border-sep bg-surface p-4"
+      className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
     >
       <h2 id={`${id}-h`} className="text-lg font-bold">
         Women-only spaces

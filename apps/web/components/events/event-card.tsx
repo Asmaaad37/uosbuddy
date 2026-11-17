@@ -52,7 +52,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
     <article
       aria-label={e.title}
       className={cn(
-        "grid gap-3 rounded-card border border-sep bg-surface p-4",
+        "grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label",
         cancelled && "opacity-70",
       )}
     >

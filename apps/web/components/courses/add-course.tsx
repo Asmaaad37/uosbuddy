@@ -99,7 +99,7 @@ export function AddCourse({
             </label>
             {searching && <Loader2 className="mx-auto size-5 animate-spin text-sec" />}
             {hits.length > 0 && (
-              <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep">
+              <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
                 {hits.map((c) => (
                   <li key={c.id} className="flex items-center gap-3 px-3 py-2.5">
                     <span className="grid min-w-0 flex-1">

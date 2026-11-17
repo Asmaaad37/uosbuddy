@@ -73,7 +73,7 @@ export default async function SocietyPage({ params }: Props) {
         <h2 id="members" className="text-lg font-bold">
           Members
         </h2>
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {(people ?? []).map((p) => (
             <li key={p.user_id} className="flex items-center gap-3 px-3 py-2.5">
               <Avatar name={p.full_name} src={p.avatar_url} size="sm" />

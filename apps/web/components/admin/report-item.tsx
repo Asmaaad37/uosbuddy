@@ -75,7 +75,7 @@ export function ReportItem({
     });
 
   return (
-    <li className="grid gap-3 rounded-card border border-sep bg-surface p-4">
+    <li className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
       <div className="flex flex-wrap items-center gap-1.5">
         <Pill tone="neutral" className="h-6 px-2 text-xs capitalize">
           {r.target_type}

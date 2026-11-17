@@ -90,7 +90,7 @@ export function InterestsForm({
                       "inline-flex h-11 items-center gap-1.5 rounded-pill border px-3.5 text-sm font-medium transition-colors",
                       on
                         ? "border-accent bg-tint text-tint-text"
-                        : "border-sep bg-surface hover:border-sec/50 disabled:opacity-40",
+                        : "border-sep bg-surface hover:shadow-lift disabled:opacity-40",
                     )}
                   >
                     <span aria-hidden>{i.emoji}</span>
@@ -103,7 +103,7 @@ export function InterestsForm({
         ))}
       </div>
 
-      <div className="grid gap-3 rounded-card border border-sep bg-surface p-4">
+      <div className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
         <div>
           <p className="font-bold">Your Opening Move (optional)</p>
           <p className="text-sm text-sec">

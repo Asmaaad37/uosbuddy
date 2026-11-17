@@ -232,7 +232,7 @@ export function StudyGroups({
             return (
               <li
                 key={g.id}
-                className="flex items-center gap-3 rounded-card border border-sep bg-surface p-3"
+                className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
               >
                 <span className="grid size-10 shrink-0 place-items-center rounded-pill bg-raised text-sec">
                   <Users className="size-5" />

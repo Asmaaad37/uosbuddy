@@ -68,7 +68,7 @@ export function RideCard({ ride, me }: { ride: Ride; me: string }) {
   }
 
   return (
-    <li className="grid gap-3 rounded-card border border-sep bg-surface p-3">
+    <li className="grid gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label">
       <div className="flex items-start gap-3">
         <Avatar name={ride.full_name} src={ride.avatar_url} size="md" />
         <div className="grid min-w-0 flex-1 gap-1">

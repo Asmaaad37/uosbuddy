@@ -127,7 +127,7 @@ export function GroupInfo({
           </h2>
           {manage && <AddPeople conversationId={conversationId} addable={addable} />}
         </div>
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {members.map((m) => (
             <li key={m.id} className="flex items-center gap-3 px-3 py-2">
               <Link
@@ -295,7 +295,7 @@ function AddPeople({ conversationId, addable }: { conversationId: string; addabl
                 className="pl-10"
               />
             </label>
-            <ul className="max-h-[50dvh] divide-y divide-sep overflow-y-auto rounded-card border border-sep bg-surface">
+            <ul className="max-h-[50dvh] divide-y divide-sep overflow-y-auto rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
               {shown.map((c) => {
                 const on = picked.includes(c.id);
                 return (
