@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { PrefsForm } from "@/components/notifications/prefs-form";
 import { getSession } from "@/lib/auth/session";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Notification settings" };
 
@@ -20,11 +21,12 @@ export default async function NotificationSettingsPage() {
   ]);
 
   return (
-    <AppShell back="/me">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Notifications</h1>
-        <p className="text-sec">Choose what pings you. Blocked students never notify you.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Notifications"
+        back="/me"
+        subtitle={<>Choose what pings you. Blocked students never notify you.</>}
+      />
       <PrefsForm
         endpoints={(devices ?? []).map((d) => d.endpoint)}
         initial={

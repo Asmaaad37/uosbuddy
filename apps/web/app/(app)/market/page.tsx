@@ -8,6 +8,8 @@ import { getSession } from "@/lib/auth/session";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilterChips } from "@/components/ui/filter-chips";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "Market" };
 
@@ -43,11 +45,17 @@ export default async function MarketPage({ searchParams }: Props) {
   };
 
   return (
-    <AppShell bell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Market</h1>
-        <p className="text-sec">Buy, sell, give away, and find lost things around campus.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Market"
+        back="/explore"
+        subtitle={<>Buy, sell, give away, and find lost things around campus.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       <ListingSheet initialKind={kind ?? "sell"} />
 
       <form action="/market" className="relative">

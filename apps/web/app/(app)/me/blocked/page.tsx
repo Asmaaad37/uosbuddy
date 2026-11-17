@@ -5,6 +5,7 @@ import { UnblockButton } from "@/components/connect/unblock-button";
 import { getSession } from "@/lib/auth/session";
 import { Ban } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Blocked" };
 
@@ -15,14 +16,17 @@ export default async function BlockedPage() {
   const { data: blocked } = await supabase.rpc("my_blocked");
 
   return (
-    <AppShell back="/me">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Blocked</h1>
-        <p className="text-sec">
-          You and these students can&apos;t see or message each other. Unblocking doesn&apos;t
-          reconnect you.
-        </p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Blocked"
+        back="/me"
+        subtitle={
+          <>
+            You and these students can&apos;t see or message each other. Unblocking doesn&apos;t
+            reconnect you.
+          </>
+        }
+      />
       {blocked?.length ? (
         <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {blocked.map((b) => (

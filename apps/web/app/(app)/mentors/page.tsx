@@ -8,6 +8,8 @@ import {
   MyMentorships,
 } from "@/components/mentors/mentors";
 import { getSession } from "@/lib/auth/session";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "Mentors" };
 
@@ -22,11 +24,17 @@ export default async function MentorsPage() {
   ]);
 
   return (
-    <AppShell bell back="/me">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Mentors</h1>
-        <p className="text-sec">Seniors in your department who are happy to help.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Mentors"
+        back="/me"
+        subtitle={<>Seniors in your department who are happy to help.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       <MentorSwitch on={profile.is_mentor} eligible={(profile.semester ?? 0) >= 3} />
       <MentorRequests requests={requests ?? []} />
       <MyMentorships mentorships={mentorships ?? []} />

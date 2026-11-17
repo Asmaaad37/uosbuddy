@@ -5,6 +5,7 @@ import { WomenOnlyRequest } from "@/components/rides/women-only-request";
 import { PrivacyForm } from "@/components/setup/privacy-form";
 import { getSession } from "@/lib/auth/session";
 import { PRIVACY_PRESETS } from "@/lib/setup";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Privacy" };
 
@@ -25,13 +26,14 @@ export default async function PrivacySettingsPage() {
   ]);
 
   return (
-    <AppShell back="/me">
-      <div className="grid gap-2">
-        <h1 className="text-large-title">Privacy</h1>
-        <p className="text-sec">
-          Only verified UoS students can ever see you. Your roll number and email stay private.
-        </p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Privacy"
+        back="/me"
+        subtitle={
+          <>Only verified UoS students can ever see you. Your roll number and email stay private.</>
+        }
+      />
       <PrivacyForm
         initial={privacy ?? PRIVACY_PRESETS.open.settings}
         submitLabel="Save"
