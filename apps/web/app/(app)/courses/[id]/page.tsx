@@ -96,7 +96,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
       )}
       {tab === "classmates" &&
         (people?.length ? (
-          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
             {people.map((p) => {
               const name = p.full_name ?? p.handle ?? "Student";
               return (

@@ -42,7 +42,7 @@ export default async function AdminUsersPage({ searchParams }: Props) {
           className="h-11 w-full rounded-pill border border-sep bg-surface px-4 text-subhead focus-visible:border-accent focus-visible:outline-none"
         />
       </form>
-      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
         {(users ?? []).map((u) => (
           <UserRow
             key={u.id}

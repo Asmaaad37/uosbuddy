@@ -95,7 +95,7 @@ export function ImportTimetable() {
             {rows?.map((r, n) => (
               <li
                 key={r.key}
-                className="grid gap-2 rounded-card border border-sep bg-surface p-3"
+                className="grid gap-2 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
                 aria-label={`Class ${n + 1}`}
               >
                 <div className="flex gap-2">

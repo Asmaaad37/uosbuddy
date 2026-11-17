@@ -82,7 +82,7 @@ export function FreeTogether({ connections }: { connections: Person[] }) {
           {result.map((d) => (
             <div
               key={d.day}
-              className="flex items-start gap-3 rounded-card border border-sep bg-surface p-3"
+              className="flex items-start gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
             >
               <span className="w-10 shrink-0 font-bold">{d.day}</span>
               {d.windows.length ? (

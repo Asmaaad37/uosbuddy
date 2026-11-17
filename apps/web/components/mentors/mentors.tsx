@@ -20,13 +20,13 @@ export function MentorSwitch({ on, eligible }: { on: boolean; eligible: boolean 
   const [error, setError] = useState<string>();
   if (!eligible) {
     return (
-      <p className="rounded-card border border-sep px-4 py-3 text-sm text-sec">
+      <p className="rounded-card bg-raised px-4 py-3 text-sm text-sec">
         From your third semester you can mentor juniors in your department.
       </p>
     );
   }
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-card border border-sep bg-surface px-4 py-3">
+    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-card bg-surface px-4 py-3 shadow-card contrast-more:border contrast-more:border-label">
       <span className="grid gap-0.5">
         <span className="font-semibold">Mentor juniors</span>
         <span className="text-footnote text-sec">
@@ -88,7 +88,10 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
       {mentors.map((m) => {
         const name = m.full_name ?? m.handle ?? "Senior";
         return (
-          <li key={m.id} className="grid gap-3 rounded-card border border-sep bg-surface p-3">
+          <li
+            key={m.id}
+            className="grid gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
+          >
             <div className="flex items-center gap-3">
               <Link href={`/people/${m.handle}`}>
                 <Avatar name={name} src={m.avatar_url} size="md" />
@@ -245,7 +248,7 @@ export function MyMentorships({ mentorships }: { mentorships: Mentorship[] }) {
       <h2 id="my-mentorships" className="text-lg font-bold">
         Your mentorships
       </h2>
-      <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+      <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
         {mentorships.map((m) => {
           const name = m.full_name ?? m.handle ?? "Student";
           return (

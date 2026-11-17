@@ -33,7 +33,7 @@ export default async function CampusAdminPage() {
           </p>
         </div>
         {women?.length ? (
-          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
             {women.map((w) => (
               <li key={w.user_id} className="flex flex-wrap items-center gap-3 p-3">
                 <Avatar name={w.full_name} src={w.avatar_url} size="md" />
@@ -67,7 +67,7 @@ export default async function CampusAdminPage() {
           </p>
         </div>
         {waiting.length ? (
-          <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+          <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
             {waiting.map((s) => (
               <li key={s.id} className="flex flex-wrap items-center gap-3 p-3">
                 <div className="grid min-w-0 flex-1">

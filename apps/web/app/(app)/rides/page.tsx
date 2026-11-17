@@ -45,7 +45,7 @@ export default async function RidesPage({ searchParams }: Props) {
       </div>
       <RideSheet womenEligible={eligible} />
 
-      <details className="group rounded-card border border-sep bg-surface p-3 text-sm">
+      <details className="group rounded-card bg-surface p-3 text-sm shadow-card contrast-more:border contrast-more:border-label">
         <summary className="flex cursor-pointer list-none items-center gap-2 font-semibold">
           <ShieldCheck className="size-4 text-accent" aria-hidden /> Ride safely
         </summary>

@@ -23,7 +23,7 @@ export default async function DataPage() {
       {!deletesAt && (
         <section
           aria-labelledby="export"
-          className="grid gap-3 rounded-card border border-sep bg-surface p-4"
+          className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
         >
           <h2 id="export" className="text-lg font-bold">
             Download your data
@@ -37,7 +37,7 @@ export default async function DataPage() {
       )}
       <section
         aria-labelledby="delete"
-        className="grid gap-3 rounded-card border border-sep bg-surface p-4"
+        className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
       >
         <h2 id="delete" className="text-lg font-bold">
           {deletesAt ? "Your account is being deleted" : "Delete your account"}

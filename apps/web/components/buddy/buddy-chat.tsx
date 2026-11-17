@@ -157,7 +157,7 @@ export function BuddyChat({
 
       <div className="grid gap-4" role="log" aria-live="polite" aria-label="AI Buddy chat">
         {turns.length === 0 && (
-          <div className="grid gap-2 rounded-card border border-sep bg-surface p-4">
+          <div className="grid gap-2 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
             <p className="flex items-center gap-2 font-semibold">
               <Sparkles className="size-4 text-accent" /> Ask about your course
             </p>
@@ -184,7 +184,7 @@ export function BuddyChat({
                   <li key={n}>
                     <Link
                       href={`/courses/${courseId}#r-${s.resourceId}`}
-                      className="flex gap-2 rounded-field border border-sep bg-bg px-3 py-2 text-sm hover:border-sec/50"
+                      className="flex gap-2 rounded-field border border-sep bg-bg px-3 py-2 text-sm hover:shadow-lift"
                     >
                       <span className="font-semibold text-accent">[{n + 1}]</span>
                       <span className="grid min-w-0">

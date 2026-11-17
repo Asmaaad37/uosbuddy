@@ -101,7 +101,7 @@ export function NewGroupForm({ connections }: { connections: Connection[] }) {
             className="pl-10"
           />
         </label>
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {shown.map((c) => {
             const name = c.full_name ?? c.handle ?? "Student";
             const on = picked.includes(c.id);

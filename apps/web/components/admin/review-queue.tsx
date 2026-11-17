@@ -232,7 +232,7 @@ export function ReviewQueue({
 
             {current.precheck && <PrecheckPanel p={current.precheck} />}
 
-            <dl className="grid gap-3 rounded-card border border-sep bg-surface p-4">
+            <dl className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label">
               <div>
                 <dt className="text-footnote text-sec">Name on submission</dt>
                 <dd className="font-semibold">{current.submittedName ?? "—"}</dd>
@@ -271,7 +271,7 @@ export function ReviewQueue({
 
             {picker ? (
               <form
-                className="grid gap-3 rounded-card border border-sep bg-surface p-4"
+                className="grid gap-3 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
                 onSubmit={(e) => {
                   e.preventDefault();
                   void decide(picker, reason);
@@ -288,7 +288,7 @@ export function ReviewQueue({
                       onClick={() => setReason(t)}
                       className={cn(
                         "rounded-field border px-3 py-2 text-left text-footnote",
-                        reason === t ? "border-accent bg-tint" : "border-sep hover:border-sec/50",
+                        reason === t ? "border-accent bg-tint" : "border-sep hover:shadow-lift",
                       )}
                     >
                       {t}
@@ -362,7 +362,7 @@ function PrecheckPanel({ p }: { p: Precheck }) {
   return (
     <section
       aria-label="AI pre-check"
-      className="grid gap-2 rounded-card border border-sep bg-surface p-4 text-sm"
+      className="grid gap-2 rounded-card bg-surface p-4 text-sm shadow-card contrast-more:border contrast-more:border-label"
     >
       <div className="flex items-center justify-between">
         <span className="font-semibold">AI pre-check</span>

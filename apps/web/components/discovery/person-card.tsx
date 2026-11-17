@@ -23,7 +23,7 @@ export function PersonCard({
     <Link
       href={`/people/${person.handle}`}
       className={cn(
-        "flex gap-3 rounded-card border border-sep bg-surface p-3 transition-colors [contain-intrinsic-size:auto_96px] [content-visibility:auto] hover:border-sec/40",
+        "flex gap-3 rounded-card bg-surface p-3 shadow-card transition-colors [contain-intrinsic-size:auto_96px] [content-visibility:auto] hover:shadow-lift contrast-more:border contrast-more:border-label",
         className,
       )}
     >

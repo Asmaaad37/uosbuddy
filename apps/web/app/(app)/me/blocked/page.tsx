@@ -24,7 +24,7 @@ export default async function BlockedPage() {
         </p>
       </div>
       {blocked?.length ? (
-        <ul className="divide-y divide-sep overflow-hidden rounded-card border border-sep bg-surface">
+        <ul className="divide-y divide-sep overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {blocked.map((b) => (
             <li key={b.id} className="flex items-center gap-3 px-4 py-3">
               <span className="grid min-w-0 flex-1">

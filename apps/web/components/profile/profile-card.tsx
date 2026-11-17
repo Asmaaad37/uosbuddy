@@ -82,7 +82,7 @@ export function ProfileCard({
       {profile.opening_move_prompt && profile.opening_move && (
         <section
           aria-label="Opening Move"
-          className="grid gap-1 rounded-card border border-sep bg-surface p-4 shadow-card"
+          className="grid gap-1 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label"
         >
           <p className="flex items-center gap-1.5 text-sm font-semibold text-accent">
             <MessageCircleQuestion className="size-4" /> {profile.opening_move_prompt}

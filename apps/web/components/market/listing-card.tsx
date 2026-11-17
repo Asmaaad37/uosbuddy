@@ -63,7 +63,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
     <article
       aria-label={l.title}
       className={cn(
-        "grid gap-3 rounded-card border border-sep bg-surface p-3",
+        "grid gap-3 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label",
         done && "opacity-70",
       )}
     >

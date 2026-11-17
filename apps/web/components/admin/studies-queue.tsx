@@ -56,7 +56,7 @@ function Request({ item }: { item: StudiesItem }) {
   return (
     <section
       aria-label={item.name}
-      className="grid gap-5 rounded-card border border-sep bg-surface p-4 lg:grid-cols-[minmax(0,1fr)_340px]"
+      className="grid gap-5 rounded-card bg-surface p-4 shadow-card contrast-more:border contrast-more:border-label lg:grid-cols-[minmax(0,1fr)_340px]"
     >
       <DocViewer url={item.docUrl} path={item.docPath} />
       <div className="grid content-start gap-4">

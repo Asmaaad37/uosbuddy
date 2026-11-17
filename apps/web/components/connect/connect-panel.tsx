@@ -171,7 +171,7 @@ export function ConnectPanel({
           </SheetDescription>
           <form onSubmit={send} className="grid gap-4">
             {openingMove && (
-              <div className="grid gap-1 rounded-card border border-sep bg-bg p-3">
+              <div className="grid gap-1 rounded-card bg-raised p-3">
                 <p className="text-sm font-semibold text-accent">{openingMove.prompt}</p>
                 <p className="font-semibold">{openingMove.answer}</p>
               </div>

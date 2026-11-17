@@ -35,7 +35,7 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
           <section
             key={day}
             aria-label={day}
-            className="grid gap-2 rounded-card border border-sep bg-surface p-3"
+            className="grid gap-2 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold">{day}</h3>
