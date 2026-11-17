@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { NewGroupForm } from "@/components/chat/new-group-form";
 import { getSession } from "@/lib/auth/session";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "New group" };
 
@@ -13,11 +14,12 @@ export default async function NewGroupPage() {
   const { data: connections } = await supabase.rpc("my_connections");
 
   return (
-    <AppShell back="/chats?tab=groups">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">New group</h1>
-        <p className="text-sec">Up to 50 people, chosen from your connections.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="New group"
+        back="/chats?tab=groups"
+        subtitle={<>Up to 50 people, chosen from your connections.</>}
+      />
       <NewGroupForm connections={connections ?? []} />
     </AppShell>
   );

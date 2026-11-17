@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { Directory } from "@/components/discovery/directory";
 import { getSession } from "@/lib/auth/session";
 import { SCOPES, type Scope } from "@/lib/discovery";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Your batch" };
 
@@ -37,11 +38,12 @@ export default async function BatchPage({ searchParams }: Props) {
   ]);
 
   return (
-    <AppShell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Your batch</h1>
-        <p className="text-sec">Start with your section, then widen out to all of UoS.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Your batch"
+        back="/explore"
+        subtitle={<>Start with your section, then widen out to all of UoS.</>}
+      />
       <Directory
         initialScope={scope}
         initialPage={page.ok ? page.data : { people: [], next: null }}

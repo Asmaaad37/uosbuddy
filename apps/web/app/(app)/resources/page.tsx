@@ -6,6 +6,7 @@ import { ResourceResults, ResourceSearch } from "@/components/resources/resource
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSession } from "@/lib/auth/session";
 import { RESOURCE_KINDS, type ResourceKind } from "@/lib/academics";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Resources" };
 
@@ -92,13 +93,13 @@ export default async function ResourcesPage({ searchParams }: Props) {
   const filtered = !!(q || kind || year);
 
   return (
-    <AppShell back="/courses" backLabel="Courses">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Resources</h1>
-        <p className="text-body text-sec">
-          Notes, past papers and outlines shared for every course at UoS.
-        </p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Resources"
+        back="/courses"
+        backLabel="Courses"
+        subtitle={<>Notes, past papers and outlines shared for every course at UoS.</>}
+      />
       <ResourceSearch q={params.q ?? ""} kind={kind} year={year} years={yearOptions} />
       {error ? (
         <p role="alert" className="rounded-card bg-surface p-4 text-subhead text-danger">

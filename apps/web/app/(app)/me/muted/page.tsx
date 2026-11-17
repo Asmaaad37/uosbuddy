@@ -6,6 +6,7 @@ import { UnmuteButton } from "@/components/feed/unmute-button";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSession } from "@/lib/auth/session";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Muted" };
 
@@ -16,14 +17,17 @@ export default async function MutedPage() {
   const { data: muted } = await supabase.rpc("my_mutes");
 
   return (
-    <AppShell back="/me">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Muted</h1>
-        <p className="text-body text-sec">
-          Their posts don&apos;t show in your feeds. They aren&apos;t told, and you can still chat
-          or visit their profile.
-        </p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Muted"
+        back="/me"
+        subtitle={
+          <>
+            Their posts don&apos;t show in your feeds. They aren&apos;t told, and you can still chat
+            or visit their profile.
+          </>
+        }
+      />
       {muted?.length ? (
         <ul className="overflow-hidden rounded-card bg-surface shadow-card [&>li:last-child>div]:shadow-none">
           {muted.map((m) => {

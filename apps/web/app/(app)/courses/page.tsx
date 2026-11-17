@@ -8,6 +8,8 @@ import { termLabel } from "@/lib/academics";
 import { getSession } from "@/lib/auth/session";
 import { EmptyState } from "@/components/ui/empty-state";
 import { GroupedList, Row } from "@/components/ui/grouped-list";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "My courses" };
 
@@ -33,13 +35,17 @@ export default async function CoursesPage() {
   const showNewTerm = offer.length > 0 && (courses ?? []).every((c) => last.has(c.id));
 
   return (
-    <AppShell bell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">My courses</h1>
-        <p className="text-sec">
-          {termLabel(term)}. Notes, past papers, study groups and a chat for each.
-        </p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="My courses"
+        back="/explore"
+        subtitle={<>{termLabel(term)}. Notes, past papers, study groups and a chat for each.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       {showNewTerm && <NewTermCourses courses={offer} />}
       <AddCourse departments={departments ?? []} myDepartment={profile.department_id} />
       {courses?.length ? (

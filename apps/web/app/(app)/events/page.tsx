@@ -10,6 +10,8 @@ import { getSession } from "@/lib/auth/session";
 import { CalendarDays } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "Events" };
 
@@ -39,11 +41,17 @@ export default async function EventsPage({ searchParams }: Props) {
   const running = (societies ?? []).filter((s) => s.my_role === "admin" && s.verified);
 
   return (
-    <AppShell bell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Events</h1>
-        <p className="text-sec">What&apos;s on at UoS, from societies you trust.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Events"
+        back="/explore"
+        subtitle={<>What&apos;s on at UoS, from societies you trust.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       {(running.length > 0 || isAdmin) && (
         <EventSheet
           societies={running.map((s) => ({ id: s.id, name: s.name }))}
