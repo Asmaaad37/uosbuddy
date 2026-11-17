@@ -18,11 +18,14 @@ export function AdminShell({
   current,
   isAdmin,
   back,
+  wide = false,
   children,
 }: {
   current: string;
   isAdmin: boolean;
   back: string;
+  /** Wider page for side-by-side review (Verifications). */
+  wide?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -50,7 +53,9 @@ export function AdminShell({
           ))}
         </nav>
       </header>
-      <main className="gutter mx-auto grid max-w-5xl gap-6 py-6">{children}</main>
+      <main className={cn("gutter mx-auto grid gap-6 py-6", wide ? "max-w-6xl" : "max-w-5xl")}>
+        {children}
+      </main>
     </div>
   );
 }

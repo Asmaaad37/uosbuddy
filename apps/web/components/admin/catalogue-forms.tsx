@@ -55,7 +55,7 @@ export function DepartmentForm({ dept }: { dept?: Dept }) {
   const [aliases, setAliases] = useState(dept?.aliases.join(", ") ?? "");
   if (!open) {
     return (
-      <Button size="sm" variant={dept ? "ghost" : "secondary"} onClick={() => setOpen(true)}>
+      <Button size="sm" variant={dept ? "quiet" : "tinted"} onClick={() => setOpen(true)}>
         {dept ? <Pencil /> : <Plus />} {dept ? "Edit" : "Add a department"}
       </Button>
     );
@@ -110,7 +110,7 @@ export function DepartmentForm({ dept }: { dept?: Dept }) {
         <Button type="submit" size="sm" disabled={pending}>
           Save
         </Button>
-        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+        <Button type="button" size="sm" variant="quiet" onClick={() => setOpen(false)}>
           Cancel
         </Button>
       </div>
@@ -221,7 +221,7 @@ export function CourseRow({
       )}
       <Button
         size="icon"
-        variant="ghost"
+        variant="quiet"
         aria-label={`Delete ${course.code}`}
         disabled={pending}
         onClick={() => {

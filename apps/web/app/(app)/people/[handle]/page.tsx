@@ -50,8 +50,8 @@ export default async function PersonPage({ params }: Props) {
       back={own ? "/me" : "/explore"}
       action={
         own ? (
-          <Button asChild size="sm" variant="secondary">
-            <Link href="/me">
+          <Button asChild size="sm" variant="tinted">
+            <Link href="/setup/about?edit=1">
               <Pencil /> Edit
             </Link>
           </Button>

@@ -188,12 +188,12 @@ export function PostCard({
               </>
             )}
             {post.is_anonymous && (
-              <Pill tone="neutral" className="h-5 px-2 text-[11px]">
+              <Pill tone="neutral" className="h-5 px-2 text-caption">
                 Anonymous
               </Pill>
             )}
             {post.status === "held" && (
-              <Pill tone="outline" className="h-5 px-2 text-[11px]">
+              <Pill tone="outline" className="h-5 px-2 text-caption">
                 Under review
               </Pill>
             )}

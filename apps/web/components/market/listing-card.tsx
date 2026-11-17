@@ -97,12 +97,12 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
               </Pill>
             )}
           </div>
-          <h3 className="text-[17px] leading-snug font-bold">{l.title}</h3>
+          <h3 className="text-body leading-snug font-bold">{l.title}</h3>
           {price && <p className="text-lg font-bold text-accent">{price}</p>}
         </div>
         <Menu>
           <MenuTrigger asChild>
-            <Button size="icon" variant="ghost" aria-label="More">
+            <Button size="icon" variant="quiet" aria-label="More">
               <MoreHorizontal />
             </Button>
           </MenuTrigger>
@@ -143,7 +143,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
             l.status === "active" && (
               <Button
                 size="sm"
-                variant="secondary"
+                variant="tinted"
                 disabled={pending}
                 onClick={() => run(() => markListingDone(l.id), "Marked done")}
               >

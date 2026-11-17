@@ -136,14 +136,14 @@ export function Directory({
         <Sheet>
           <SheetTrigger asChild>
             <Button
-              variant="secondary"
+              variant="tinted"
               size="icon"
               className="relative h-12 w-12"
               aria-label={active ? `Filters (${active} on)` : "Filters"}
             >
               <SlidersHorizontal />
               {active > 0 && (
-                <span className="absolute -top-1 -right-1 grid size-5 place-items-center rounded-pill bg-fill text-[11px] text-on-fill">
+                <span className="absolute -top-1 -right-1 grid size-5 place-items-center rounded-pill bg-fill text-caption text-on-fill">
                   {active}
                 </span>
               )}
@@ -216,7 +216,7 @@ export function Directory({
               </Field>
               <div className="flex gap-2 pt-2">
                 <Button
-                  variant="ghost"
+                  variant="quiet"
                   className="flex-1"
                   onClick={() => setFilters({})}
                   disabled={!active}
@@ -269,7 +269,7 @@ export function Directory({
       </div>
 
       {page.next && (
-        <Button variant="secondary" block onClick={loadMore} disabled={loadingMore}>
+        <Button variant="tinted" block onClick={loadMore} disabled={loadingMore}>
           {loadingMore ? <Loader2 className="animate-spin" /> : null}
           {loadingMore ? "Loading…" : "Load more"}
         </Button>

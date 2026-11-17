@@ -172,7 +172,7 @@ export function BuddyChat({
           <div key={i} className={cn("grid gap-2", t.role === "user" && "justify-items-end")}>
             <div
               className={cn(
-                "max-w-[90%] rounded-card px-4 py-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap",
+                "max-w-[90%] rounded-card px-4 py-3 text-subhead leading-relaxed break-words whitespace-pre-wrap",
                 t.role === "user" ? "bg-fill text-on-fill" : "bg-surface",
               )}
             >
@@ -222,7 +222,7 @@ export function BuddyChat({
             }
           }}
           placeholder="Explain how merge sort works"
-          className="min-h-12 flex-1 resize-none rounded-field border border-sep bg-surface px-3 py-2.5 text-[15px] focus-visible:border-accent focus-visible:outline-none"
+          className="min-h-12 flex-1 resize-none rounded-field border border-sep bg-surface px-3 py-2.5 text-subhead focus-visible:border-accent focus-visible:outline-none"
         />
         <Button
           type="submit"

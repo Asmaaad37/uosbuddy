@@ -11,7 +11,7 @@ export function UnblockButton({ target }: { target: string }) {
   return (
     <Button
       size="sm"
-      variant="secondary"
+      variant="tinted"
       disabled={busy}
       onClick={async () => {
         setBusy(true);

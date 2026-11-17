@@ -73,7 +73,7 @@ export default async function BuddyPage({ searchParams }: Props) {
           <p className="text-sec">Answers from your course files, with sources.</p>
         </div>
         {open && (
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="tinted">
             <Link href="/buddy">
               <Plus /> New chat
             </Link>

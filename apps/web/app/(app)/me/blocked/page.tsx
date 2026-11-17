@@ -31,7 +31,7 @@ export default async function BlockedPage() {
                 <span className="truncate font-semibold">
                   {b.full_name ?? b.handle ?? "Student"}
                 </span>
-                {b.handle && <span className="text-[13px] text-sec">@{b.handle}</span>}
+                {b.handle && <span className="text-footnote text-sec">@{b.handle}</span>}
               </span>
               <UnblockButton target={b.id} />
             </li>

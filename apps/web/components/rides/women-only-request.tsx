@@ -64,7 +64,7 @@ export function WomenOnlyRequest({ status }: { status: string | null }) {
               />
             )}
           </Field>
-          <Button type="submit" variant="secondary" disabled={pending}>
+          <Button type="submit" variant="tinted" disabled={pending}>
             {pending && <Loader2 className="animate-spin" />} Ask for access
           </Button>
         </form>

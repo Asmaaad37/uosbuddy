@@ -152,6 +152,8 @@
   --text-overline--line-height: 1.125rem;
   --text-overline--font-weight: 600;
   --text-overline--letter-spacing: 0.02em;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 0.8125rem;
   --text-tab-label: 0.6875rem;
   --text-tab-label--line-height: 0.8125rem;
   --text-tab-label--font-weight: 600;

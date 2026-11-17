@@ -41,7 +41,7 @@ export function CampusDecision({
       </Button>
       <Button
         size="sm"
-        variant="ghost"
+        variant="quiet"
         disabled={pending}
         onClick={() => decide(false)}
         aria-label={`Decline ${name}`}

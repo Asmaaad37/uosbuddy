@@ -85,12 +85,12 @@ export function ReportDialog({
                 " If you don't want to hear from them again, you can also block them."}
             </DialogDescription>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="md" onClick={() => close()}>
+              <Button variant="quiet" size="md" onClick={() => close()}>
                 Done
               </Button>
               {onBlockInstead && (
                 <Button
-                  variant="danger"
+                  variant="destructive"
                   size="md"
                   onClick={() => {
                     close();
@@ -142,7 +142,7 @@ export function ReportDialog({
               </p>
             )}
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="md" onClick={() => close()}>
+              <Button variant="quiet" size="md" onClick={() => close()}>
                 Cancel
               </Button>
               <Button size="md" onClick={send} disabled={busy}>
@@ -198,10 +198,10 @@ export function BlockDialog({
           </p>
         )}
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="md" onClick={() => onOpenChange(false)}>
+          <Button variant="quiet" size="md" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="danger" size="md" onClick={confirm} disabled={busy}>
+          <Button variant="destructive" size="md" onClick={confirm} disabled={busy}>
             Block
           </Button>
         </div>
@@ -235,7 +235,7 @@ export function SafetyMenu({
     <>
       <Menu>
         <MenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="More">
+          <Button variant="quiet" size="icon" aria-label="More">
             <MoreHorizontal />
           </Button>
         </MenuTrigger>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="gutter mx-auto grid max-w-3xl gap-2 py-8 text-center text-[13px] text-sec">
+    <footer className="gutter mx-auto grid max-w-3xl gap-2 py-8 text-center text-footnote text-sec">
       <p>
         UOSBuddy is a student-run project and is not an official University of Sargodha service.
       </p>

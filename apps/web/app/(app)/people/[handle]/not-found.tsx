@@ -11,7 +11,7 @@ export default function ProfileNotFound() {
           The handle may be wrong, or this student has chosen who can see their profile.
         </p>
       </div>
-      <Button asChild block variant="secondary">
+      <Button asChild block variant="tinted">
         <Link href="/explore">Back to explore</Link>
       </Button>
     </AppShell>

@@ -144,7 +144,7 @@ export function Resources({
                 <span className="grid min-w-0 gap-0.5">
                   <span className="truncate font-semibold">{r.title}</span>
                   <span className="flex flex-wrap items-center gap-1.5 text-xs text-sec">
-                    <Pill tone="neutral" className="h-5 px-1.5 text-[11px]">
+                    <Pill tone="neutral" className="h-5 px-1.5 text-caption">
                       {RESOURCE_KINDS[r.kind as ResourceKind] ?? r.kind}
                     </Pill>
                     {r.year && <span>{r.year}</span>}
@@ -278,7 +278,7 @@ function UploadSheet({ course, onDone }: { course: string; onDone: () => void })
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="secondary" block>
+        <Button variant="tinted" block>
           <Upload /> Share a file
         </Button>
       </SheetTrigger>
@@ -296,7 +296,7 @@ function UploadSheet({ course, onDone }: { course: string; onDone: () => void })
             tabIndex={-1}
             onChange={(e) => pick(e.target.files?.[0])}
           />
-          <Button type="button" variant="secondary" onClick={() => fileRef.current?.click()}>
+          <Button type="button" variant="tinted" onClick={() => fileRef.current?.click()}>
             <Upload /> {file ? `${file.name} (${fileSize(file.size)})` : "Choose a file"}
           </Button>
           <Field id={`${id}-kind`} label="What is it?">

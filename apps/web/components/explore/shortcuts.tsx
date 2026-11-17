@@ -37,7 +37,7 @@ export function Shortcuts() {
                 <span className="grid size-[52px] place-items-center rounded-well bg-raised">
                   <Icon className="size-6 text-label" strokeWidth={1.75} aria-hidden />
                 </span>
-                <span className="text-[12px] leading-4 text-sec">{label}</span>
+                <span className="text-footnote leading-4 text-sec">{label}</span>
               </Link>
             </li>
           ))}

@@ -150,7 +150,7 @@ export function EmailCodeForm({
         <Button
           type="submit"
           block
-          variant={secondary ? "secondary" : "primary"}
+          variant={secondary ? "tinted" : "primary"}
           disabled={busy || !captcha.ready}
         >
           {busy ? "Sending…" : "Email me a code"}

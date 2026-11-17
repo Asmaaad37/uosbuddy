@@ -108,7 +108,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block variant="brand">
+        <Button block variant="primary">
           <Plus /> Post a listing
         </Button>
       </SheetTrigger>

@@ -81,7 +81,7 @@ export function UnreadBadge({ count, className }: { count: number; className?: s
     <span
       aria-hidden
       className={
-        "grid h-[18px] min-w-[18px] place-items-center rounded-pill bg-fill px-1 text-[11px] leading-none font-semibold text-on-fill tabular-nums " +
+        "grid h-[18px] min-w-[18px] place-items-center rounded-pill bg-fill px-1 text-caption leading-none font-semibold text-on-fill tabular-nums " +
         (className ?? "")
       }
     >

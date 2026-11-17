@@ -64,7 +64,7 @@ function Request({ item }: { item: StudiesItem }) {
         <dl className="grid gap-3">
           {item.changes.map((c) => (
             <div key={c.label}>
-              <dt className="text-[13px] text-sec">{c.label}</dt>
+              <dt className="text-footnote text-sec">{c.label}</dt>
               {c.from === c.to ? (
                 <dd>{c.to}</dd>
               ) : (
@@ -91,13 +91,13 @@ function Request({ item }: { item: StudiesItem }) {
               placeholder="The student sees this in the app."
             />
             <div className="flex gap-2">
-              <Button type="button" variant="ghost" size="md" onClick={() => setRejecting(false)}>
+              <Button type="button" variant="quiet" size="md" onClick={() => setRejecting(false)}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 size="md"
-                variant="danger"
+                variant="destructive"
                 disabled={pending || !reason.trim()}
                 className="flex-1"
               >
@@ -111,7 +111,7 @@ function Request({ item }: { item: StudiesItem }) {
               <Check /> Approve
             </Button>
             <Button
-              variant="secondary"
+              variant="tinted"
               size="md"
               disabled={pending}
               onClick={() => setRejecting(true)}

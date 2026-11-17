@@ -197,7 +197,7 @@ export function AboutForm({
           />
           <Button
             type="button"
-            variant="secondary"
+            variant="tinted"
             size="md"
             onClick={() => fileRef.current?.click()}
             disabled={uploading}

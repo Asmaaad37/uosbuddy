@@ -18,7 +18,7 @@ export function Toaster() {
       toastOptions={{
         classNames: {
           toast:
-            "!rounded-[16px] !border !border-bar-border !bg-bar !text-label !shadow-lift !backdrop-blur-[24px] !backdrop-saturate-[180%] !font-sans !text-[15px] [@media(prefers-reduced-transparency:reduce)]:!bg-surface",
+            "!rounded-[16px] !border !border-bar-border !bg-bar !text-label !shadow-lift !backdrop-blur-[24px] !backdrop-saturate-[180%] !font-sans !text-subhead [@media(prefers-reduced-transparency:reduce)]:!bg-surface",
           description: "!text-sec",
           actionButton: "!rounded-field !bg-transparent !text-accent !font-semibold",
           success: "[&_[data-icon]]:!text-accent",

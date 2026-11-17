@@ -33,7 +33,7 @@ function Toggle({
     <label className="flex cursor-pointer items-start justify-between gap-4">
       <span className="grid gap-0.5">
         <span className="text-sm font-semibold">{label}</span>
-        <span className="text-[13px] text-sec">{hint}</span>
+        <span className="text-footnote text-sec">{hint}</span>
       </span>
       <input
         type="checkbox"
@@ -182,7 +182,7 @@ export function PrivacyForm({
             checked={settings.share_free_time}
             onChange={(v) => set("share_free_time", v)}
           />
-          <p className="text-[13px] text-sec">
+          <p className="text-footnote text-sec">
             &ldquo;Connections&rdquo; are people you&apos;ve connected with.
           </p>
         </div>

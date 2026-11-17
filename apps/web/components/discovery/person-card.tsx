@@ -37,7 +37,7 @@ export function PersonCard({
             </Stamp>
           )}
         </div>
-        {line && <p className="truncate text-[13px] text-sec">{line}</p>}
+        {line && <p className="truncate text-footnote text-sec">{line}</p>}
         {(reason || (person.interests?.length ?? 0) > 0) && (
           <div className="flex flex-wrap gap-1.5 pt-0.5">
             {reason && (

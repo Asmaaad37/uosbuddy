@@ -55,7 +55,7 @@ export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
                     <button
                       type="button"
                       onClick={() => setEditing(s)}
-                      className="flex w-full items-center gap-3 rounded-field bg-raised/15 px-3 py-2 text-left hover:bg-raised/25"
+                      className="flex w-full items-center gap-3 rounded-field bg-raised px-3 py-2 text-left hover:bg-sep/40"
                     >
                       <span className="w-24 shrink-0 text-sm font-semibold tabular-nums">
                         {minToTime(s.start_min)}–{minToTime(s.end_min)}
@@ -218,7 +218,7 @@ function SlotSheet({
             {slot.id && (
               <Button
                 type="button"
-                variant="ghost"
+                variant="quiet"
                 onClick={remove}
                 disabled={busy}
                 aria-label="Delete class"

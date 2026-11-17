@@ -178,7 +178,7 @@ export function AddCourse({
             <div className="flex gap-2">
               <Button
                 type="button"
-                variant="ghost"
+                variant="quiet"
                 className="flex-1"
                 onClick={() => setAdding(false)}
               >

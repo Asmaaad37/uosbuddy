@@ -40,7 +40,7 @@ export function ErrorScreen({
         <Button onClick={reset}>
           <RotateCw /> Try again
         </Button>
-        <Button asChild variant="secondary">
+        <Button asChild variant="tinted">
           <Link href={home}>Go home</Link>
         </Button>
       </div>

@@ -55,7 +55,7 @@ export default async function InvitePage({ params }: Props) {
             {/* A plain link: the route sets the invite cookie, then starts sign-up. */}
             <a href={`/i/${preview?.code ?? "x"}/join`}>Join your batch</a>
           </Button>
-          <Button asChild block variant="ghost">
+          <Button asChild block variant="quiet">
             <Link href="/login">I already have an account</Link>
           </Button>
         </div>

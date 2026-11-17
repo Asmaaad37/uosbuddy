@@ -119,7 +119,7 @@ export function Comments({
               </MenuContent>
             </Menu>
           </div>
-          <p className="text-[15px] break-words whitespace-pre-wrap">{c.body}</p>
+          <p className="text-subhead break-words whitespace-pre-wrap">{c.body}</p>
           <button
             type="button"
             className="hit justify-self-start text-xs font-semibold text-sec hover:text-label"

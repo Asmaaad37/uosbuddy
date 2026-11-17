@@ -258,7 +258,7 @@ export function AcademicForm({
       {mode === "proof" && (
         <fieldset className="grid gap-3">
           <legend className="mb-1.5 text-sm font-semibold">Your proof</legend>
-          <p className="text-[13px] text-sec">
+          <p className="text-footnote text-sec">
             Any one of: student card, fee challan, admission or transfer letter, or a screenshot of
             the student portal. It must show your name and these new details.
           </p>
@@ -272,7 +272,7 @@ export function AcademicForm({
             error={fileError}
             alt="Your proof"
           />
-          <p className="flex gap-2 rounded-field bg-raised p-3 text-[13px] text-sec">
+          <p className="flex gap-2 rounded-field bg-raised p-3 text-footnote text-sec">
             <ShieldCheck className="size-4 shrink-0 text-tint-text" />
             Only a verifier sees your document. It&apos;s deleted 30 days after review.
           </p>
