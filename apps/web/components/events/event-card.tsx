@@ -113,7 +113,7 @@ export function EventCard({ event: e }: { event: EventItem }) {
           </div>
           <a
             href={`/events/${e.id}/ics`}
-            className="flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-accent"
+            className="hit flex h-9 items-center gap-1.5 rounded-pill px-3 text-sm font-semibold text-accent"
           >
             <CalendarPlus className="size-4" /> Add to calendar
           </a>

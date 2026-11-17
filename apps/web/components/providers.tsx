@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { useBackTrail } from "@/components/ui/back-link";
 import { ConfirmProvider } from "@/components/ui/confirm";
 import { Toaster } from "@/components/ui/toast";
 
@@ -43,6 +44,7 @@ function useServiceWorker() {
 export function Providers({ children }: { children: React.ReactNode }) {
   useAnalytics();
   useServiceWorker();
+  useBackTrail();
   return (
     <ThemeProvider>
       {/* With reduced motion, Framer Motion drops transforms and keeps opacity fades. */}

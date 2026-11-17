@@ -95,7 +95,7 @@ export function Resources({
     <div className="grid gap-3">
       {enrolled && <UploadSheet course={course} onDone={() => router.refresh()} />}
       <div
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
+        className="-mx-4 flex gap-2 overflow-x-auto px-4 py-1"
         role="group"
         aria-label="Filter files"
       >
@@ -106,7 +106,7 @@ export function Resources({
             aria-pressed={filter === k}
             onClick={() => setFilter(k as ResourceKind | "all")}
             className={cn(
-              "h-9 shrink-0 rounded-pill border px-3 text-sm font-semibold",
+              "hit h-9 shrink-0 rounded-pill border px-3 text-sm font-semibold",
               filter === k
                 ? "border-accent bg-tint text-tint-text"
                 : "border-sep text-label hover:bg-raised",
@@ -159,7 +159,7 @@ export function Resources({
                 aria-label={`Upvote, ${r.upvotes}`}
                 onClick={() => vote(r)}
                 className={cn(
-                  "flex h-9 items-center gap-1 rounded-pill px-2.5 text-sm font-semibold",
+                  "hit flex h-9 items-center gap-1 rounded-pill px-2.5 text-sm font-semibold",
                   r.voted ? "bg-tint text-accent" : "bg-raised text-sec",
                 )}
               >
@@ -170,7 +170,7 @@ export function Resources({
                   <button
                     type="button"
                     aria-label="File options"
-                    className="grid size-9 place-items-center rounded-pill text-sec hover:bg-raised"
+                    className="hit grid size-9 place-items-center rounded-pill text-sec hover:bg-raised"
                   >
                     <MoreHorizontal className="size-4" />
                   </button>

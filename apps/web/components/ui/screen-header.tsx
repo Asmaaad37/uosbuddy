@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { BackLink } from "@/components/ui/back-link";
 import { cn } from "@/lib/utils";
 
 /**
@@ -72,13 +72,13 @@ export function ScreenHeader({
         <div className="flex h-11 w-full items-center gap-2">
           <div className="flex min-w-11 flex-1">
             {back && (
-              <Link
+              <BackLink
                 href={back}
-                aria-label={backLabel}
+                label={backLabel}
                 className="-ml-2 grid size-11 place-items-center rounded-pill text-accent active:scale-[0.97]"
               >
                 <ChevronLeft className="size-7" aria-hidden />
-              </Link>
+              </BackLink>
             )}
           </div>
           <p aria-hidden style={{ opacity: "var(--collapse)" }} className="text-headline">

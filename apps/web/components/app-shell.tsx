@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { BellSlot } from "@/components/notifications/bell-slot";
+import { BackLink } from "@/components/ui/back-link";
 import { cn } from "@/lib/utils";
 
 /**
@@ -30,13 +30,13 @@ export function AppShell({
       {toolbar && (
         <header className="mx-auto flex h-11 w-full max-w-[560px] items-center justify-between gap-2 px-4 lg:max-w-[600px]">
           {back ? (
-            <Link
+            <BackLink
               href={back}
-              aria-label={backLabel}
+              label={backLabel}
               className="-ml-2 grid size-11 place-items-center rounded-pill text-accent transition-transform duration-100 ease-out active:scale-[0.97]"
             >
               <ChevronLeft className="size-7" aria-hidden />
-            </Link>
+            </BackLink>
           ) : (
             <span className="size-11" />
           )}

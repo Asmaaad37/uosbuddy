@@ -87,7 +87,7 @@ export function InterestsForm({
                     disabled={!on && full}
                     onClick={() => toggle(i.id)}
                     className={cn(
-                      "inline-flex h-10 items-center gap-1.5 rounded-pill border px-3.5 text-sm font-medium transition-colors",
+                      "inline-flex h-11 items-center gap-1.5 rounded-pill border px-3.5 text-sm font-medium transition-colors",
                       on
                         ? "border-accent bg-tint text-tint-text"
                         : "border-sep bg-surface hover:border-sec/50 disabled:opacity-40",

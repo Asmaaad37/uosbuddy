@@ -94,7 +94,7 @@ export function Comments({
                 <button
                   type="button"
                   aria-label="Comment options"
-                  className="ml-auto grid size-7 place-items-center rounded-pill text-sec hover:bg-raised"
+                  className="hit ml-auto grid size-7 place-items-center rounded-pill text-sec hover:bg-raised"
                 >
                   <MoreHorizontal className="size-4" />
                 </button>
@@ -122,7 +122,7 @@ export function Comments({
           <p className="text-[15px] break-words whitespace-pre-wrap">{c.body}</p>
           <button
             type="button"
-            className="justify-self-start text-xs font-semibold text-sec hover:text-label"
+            className="hit justify-self-start text-xs font-semibold text-sec hover:text-label"
             onClick={() => setReplyTo(c)}
           >
             Reply
@@ -146,7 +146,7 @@ export function Comments({
             </span>
             <button
               type="button"
-              className="font-semibold text-sec"
+              className="hit font-semibold text-sec"
               onClick={() => setReplyTo(null)}
             >
               Cancel

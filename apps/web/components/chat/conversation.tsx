@@ -33,6 +33,7 @@ import { ReportDialog, SafetyMenu } from "@/components/connect/safety-menu";
 import { primeSignedUrl, useSignedUrl } from "@/components/ui/private-image";
 import { Avatar } from "@/components/ui/avatar";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
+import { BackLink } from "@/components/ui/back-link";
 import { useConfirm } from "@/components/ui/confirm";
 import { Button } from "@/components/ui/button";
 import { clockTime, dayLabel, sameDay, startsGroup } from "@/lib/chat";
@@ -414,13 +415,13 @@ export function Conversation({
           aria-hidden
           className="absolute inset-0 -z-10 bg-bar backdrop-blur-[24px] backdrop-saturate-[180%]"
         />
-        <Link
+        <BackLink
           href={request ? "/chats?tab=requests" : oneToOne ? "/chats" : "/chats?tab=groups"}
-          aria-label="Back to chats"
+          label="Back"
           className="-ml-2 grid size-11 place-items-center rounded-pill text-accent active:scale-[0.97]"
         >
           <ChevronLeft className="size-7" aria-hidden />
-        </Link>
+        </BackLink>
         {other ? (
           <Link
             href={`/people/${other.handle}`}
