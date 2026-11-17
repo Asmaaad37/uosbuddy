@@ -1,6 +1,7 @@
 name: Load test
 
-# Phase 10: 500 students on the feed and chat with k6 (BUILD_PLAN §4.12). Runs on demand,
+# Phase 10: 500 students on the feed and chat with k6 (BUILD_PLAN §4.12), and since C18
+# 500 students listening on their realtime inboxes. Runs on demand,
 # and when the load test itself changes. A CI runner shares 4 cores between Postgres and
 # k6, so treat results as a regression check; the real run is against staging.
 on:
@@ -46,3 +47,6 @@ jobs:
         run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=100 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js
       - name: 500 students, feed and chat
         run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=500 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/feed-chat.js
+      - name: 500 students listening on realtime while 10 post in a 500-member chat
+        if: ${{ !cancelled() }}
+        run: k6 run --summary-trend-stats "avg,med,p(95),p(99),max" -e VUS=500 -e API=${{ steps.sb.outputs.api }} -e ANON=${{ steps.sb.outputs.anon }} load/realtime.js

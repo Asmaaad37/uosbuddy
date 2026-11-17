@@ -26,18 +26,21 @@ const TABS = [
 ] as const;
 type Tab = (typeof TABS)[number]["key"];
 
-type Props = { searchParams: Promise<{ tab?: string }> };
+type Props = { searchParams: Promise<{ tab?: string; all?: string }> };
+
+/** Most students have far fewer; past this, the list offers the rest on request. */
+const LIST_LIMIT = 200;
 
 /** Phase 4 task 3: Primary · Requests · Groups. */
 export default async function ChatsPage({ searchParams }: Props) {
   const { supabase, user, profile } = await getSession();
   if (!user) redirect("/login?next=/chats");
-  const tabParam = (await searchParams).tab;
+  const { tab: tabParam, all: showAll } = await searchParams;
   const tab: Tab = TABS.some((t) => t.key === tabParam) ? (tabParam as Tab) : "primary";
 
   const [{ data: conversations }, { data: requests }, { data: joined }, { data: dept }] =
     await Promise.all([
-      supabase.rpc("my_conversations"),
+      supabase.rpc("my_conversations", { p_limit: showAll ? 1000 : LIST_LIMIT }),
       supabase.rpc("incoming_requests"),
       supabase.from("conversations").select("batch_key").not("batch_key", "is", null),
       profile?.department_id
@@ -171,7 +174,7 @@ export default async function ChatsPage({ searchParams }: Props) {
 
   return (
     <AppShell>
-      <ChatsLive userId={user.id} />
+      <ChatsLive />
       <ScreenHeader
         title="Chats"
         actions={
@@ -203,6 +206,14 @@ export default async function ChatsPage({ searchParams }: Props) {
           />
         }
       />
+      {!showAll && (conversations?.length ?? 0) >= LIST_LIMIT && (
+        <Link
+          href={tab === "primary" ? "/chats?all=1" : `/chats?tab=${tab}&all=1`}
+          className="justify-self-center text-subhead font-semibold text-accent"
+        >
+          Show older chats
+        </Link>
+      )}
     </AppShell>
   );
 }

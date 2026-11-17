@@ -966,6 +966,36 @@ export type Database = {
           },
         ]
       }
+      digest_log: {
+        Row: {
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          sent_at: string
+          user_id: string
+        }
+        Update: {
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digest_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "digest_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       enrollments: {
         Row: {
           course_id: string
@@ -3556,6 +3586,7 @@ export type Database = {
         Args: { p_space: string; p_university: string }
         Returns: boolean
       }
+      can_read_topic: { Args: { p_topic: string }; Returns: boolean }
       can_see_ride: {
         Args: { p_ride: Database["public"]["Tables"]["rides"]["Row"] }
         Returns: boolean
@@ -3587,6 +3618,26 @@ export type Database = {
           id: string
           last_read_at: string
           role: string
+        }[]
+      }
+      conversation_rows: {
+        Args: { p_ids: string[]; p_single: boolean }
+        Returns: {
+          emoji: string
+          id: string
+          is_request: boolean
+          kind: Database["public"]["Enums"]["conversation_kind"]
+          last_at: string
+          last_body: string
+          last_sender_id: string
+          member_count: number
+          muted: boolean
+          other_avatar: string
+          other_handle: string
+          other_id: string
+          other_name: string
+          title: string
+          unread: number
         }[]
       }
       course_overview: {
@@ -3948,6 +3999,10 @@ export type Database = {
       }
       leave_course: { Args: { p_course: string }; Returns: undefined }
       leave_society: { Args: { p_society: string }; Returns: undefined }
+      mark_digest_considered: {
+        Args: { p_users: string[] }
+        Returns: undefined
+      }
       mark_listing_done: { Args: { p_listing: string }; Returns: undefined }
       mark_notifications_read: { Args: { p_id?: string }; Returns: undefined }
       mark_read: { Args: { p_conversation: string }; Returns: undefined }
@@ -4049,7 +4104,7 @@ export type Database = {
       }
       my_conversation_ids: { Args: never; Returns: string[] }
       my_conversations: {
-        Args: { p_only?: string }
+        Args: { p_limit?: number; p_only?: string }
         Returns: {
           emoji: string
           id: string
@@ -4102,7 +4157,7 @@ export type Database = {
         }[]
       }
       my_notifications: {
-        Args: { p_limit?: number }
+        Args: { p_before?: string; p_limit?: number }
         Returns: {
           actor_avatar: string
           actor_handle: string
@@ -4118,6 +4173,7 @@ export type Database = {
       }
       my_role_in: { Args: { p_conversation: string }; Returns: string }
       my_university_id: { Args: never; Returns: string }
+      notifications_housekeeping: { Args: never; Returns: undefined }
       notify: {
         Args: {
           p_actor: string
