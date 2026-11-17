@@ -19,6 +19,7 @@ import { GUIDELINES_REQUIRED } from "@/lib/guidelines";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
 import { browserClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
+import { radioArrowKeys } from "@/lib/radio-keys";
 
 async function prepare(file: File): Promise<File> {
   const { default: compress } = await import("browser-image-compression");
@@ -119,7 +120,12 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
           advance.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
-          <div className="grid grid-cols-5 gap-1.5" role="radiogroup" aria-label="Kind">
+          <div
+            className="grid grid-cols-5 gap-1.5"
+            role="radiogroup"
+            onKeyDown={radioArrowKeys}
+            aria-label="Kind"
+          >
             {LISTING_KIND_KEYS.map((k) => (
               <button
                 key={k}

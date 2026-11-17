@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { FreeNow } from "@/components/timetable/free-now";
@@ -9,7 +8,7 @@ import { Week } from "@/components/timetable/week";
 import { termLabel } from "@/lib/academics";
 import { aiEnabled } from "@/lib/ai/claude.server";
 import { getSession } from "@/lib/auth/session";
-import { cn } from "@/lib/utils";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export const metadata: Metadata = { title: "Timetable" };
 
@@ -66,23 +65,15 @@ export default async function TimetablePage({ searchParams }: Props) {
         <h1 className="text-large-title">Timetable</h1>
         <p className="text-sec">{termLabel(term)}. Only you see your classes.</p>
       </div>
-      <nav aria-label="Timetable sections" className="-mx-4 flex gap-2 overflow-x-auto px-4">
-        {TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "week" ? "/timetable" : `/timetable?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={cn(
-              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
-              tab === t.key
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep text-label hover:bg-raised",
-            )}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <SegmentedControl
+        label="Timetable sections"
+        value={tab}
+        segments={TABS.map((t) => ({
+          value: t.key,
+          label: t.label,
+          href: t.key === "week" ? "/timetable" : `/timetable?tab=${t.key}`,
+        }))}
+      />
       {tab === "week" && aiEnabled() && <ImportTimetable />}
       {tab === "week" && <Week slots={slots ?? []} courses={courses ?? []} />}
       {tab === "together" && <FreeTogether connections={connections ?? []} />}

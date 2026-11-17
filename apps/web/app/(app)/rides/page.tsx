@@ -7,8 +7,8 @@ import { RideCard, type Ride } from "@/components/rides/ride-card";
 import { RideSheet } from "@/components/rides/ride-sheet";
 import { getSession } from "@/lib/auth/session";
 import { RIDE_SAFETY_TIPS } from "@/lib/campus";
-import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export const metadata: Metadata = { title: "Rides" };
 
@@ -68,23 +68,15 @@ export default async function RidesPage({ searchParams }: Props) {
         )}
       </details>
 
-      <nav aria-label="Ride lists" className="-mx-4 flex gap-2 overflow-x-auto px-4">
-        {TABS.map((t) => (
-          <Link
-            key={t.key}
-            href={t.key === "offers" ? "/rides" : `/rides?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={cn(
-              "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
-              tab === t.key
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep text-label hover:bg-raised",
-            )}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <SegmentedControl
+        label="Ride lists"
+        value={tab}
+        segments={TABS.map((t) => ({
+          value: t.key,
+          label: t.label,
+          href: t.key === "offers" ? "/rides" : `/rides?tab=${t.key}`,
+        }))}
+      />
 
       {rides?.length ? (
         <ul className="grid gap-2">

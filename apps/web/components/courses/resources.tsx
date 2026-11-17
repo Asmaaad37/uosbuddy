@@ -32,6 +32,7 @@ import { RESOURCE_KINDS, fileSize, type ResourceKind } from "@/lib/academics";
 import { browserClient } from "@/lib/supabase/lazy";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { FilterChips } from "@/components/ui/filter-chips";
 
 export type Resource = {
   id: string;
@@ -94,28 +95,15 @@ export function Resources({
   return (
     <div className="grid gap-3">
       {enrolled && <UploadSheet course={course} onDone={() => router.refresh()} />}
-      <div
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 py-1"
-        role="group"
-        aria-label="Filter files"
-      >
-        {(["all", ...Object.keys(RESOURCE_KINDS)] as const).map((k) => (
-          <button
-            key={k}
-            type="button"
-            aria-pressed={filter === k}
-            onClick={() => setFilter(k as ResourceKind | "all")}
-            className={cn(
-              "hit h-9 shrink-0 rounded-pill border px-3 text-sm font-semibold",
-              filter === k
-                ? "border-accent bg-tint text-tint-text"
-                : "border-sep text-label hover:bg-raised",
-            )}
-          >
-            {k === "all" ? "All" : RESOURCE_KINDS[k as ResourceKind]}
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        label="Filter files"
+        value={filter}
+        onChange={(v) => setFilter(v as ResourceKind | "all")}
+        chips={(["all", ...Object.keys(RESOURCE_KINDS)] as const).map((k) => ({
+          value: k,
+          label: k === "all" ? "All" : RESOURCE_KINDS[k as ResourceKind],
+        }))}
+      />
       {error && (
         <p role="alert" className="text-sm text-danger">
           {error}

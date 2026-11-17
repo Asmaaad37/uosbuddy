@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Search, ShoppingBag } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
@@ -7,8 +6,8 @@ import { ListingCard, type Listing } from "@/components/market/listing-card";
 import { ListingSheet } from "@/components/market/listing-sheet";
 import { getSession } from "@/lib/auth/session";
 import { LISTING_KINDS, LISTING_KIND_KEYS, type ListingKind } from "@/lib/campus";
-import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { FilterChips } from "@/components/ui/filter-chips";
 
 export const metadata: Metadata = { title: "Market" };
 
@@ -67,26 +66,11 @@ export default async function MarketPage({ searchParams }: Props) {
         />
       </form>
 
-      <nav aria-label="Listing kinds" className="-mx-4 flex gap-2 overflow-x-auto px-4">
-        {tabs.map((t) => {
-          const active = mine ? t.key === "mine" : t.key === kind;
-          return (
-            <Link
-              key={t.label}
-              href={href(t.key)}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "hit flex h-10 shrink-0 items-center rounded-pill border px-4 text-sm font-semibold",
-                active
-                  ? "border-accent bg-tint text-tint-text"
-                  : "border-sep text-label hover:bg-raised",
-              )}
-            >
-              {t.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <FilterChips
+        label="Listing kinds"
+        value={mine ? "mine" : (kind ?? "all")}
+        chips={tabs.map((t) => ({ value: t.key ?? "all", label: t.label, href: href(t.key) }))}
+      />
 
       {listings?.length ? (
         <div className="grid gap-3">
