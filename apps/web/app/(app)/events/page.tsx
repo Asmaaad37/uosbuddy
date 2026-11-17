@@ -96,7 +96,7 @@ export default async function EventsPage({ searchParams }: Props) {
                       Awaiting check
                     </Pill>
                   ) : s.my_role ? (
-                    <Pill tone="learn" className="h-6 px-2 text-xs">
+                    <Pill tone="neutral" className="h-6 px-2 text-xs">
                       {s.my_role === "admin" ? "Admin" : "Member"}
                     </Pill>
                   ) : (

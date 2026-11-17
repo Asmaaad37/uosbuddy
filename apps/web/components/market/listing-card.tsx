@@ -83,7 +83,7 @@ export function ListingCard({ listing: l, me }: { listing: Listing; me: string }
       <div className="flex items-start justify-between gap-2">
         <div className="grid min-w-0 gap-1">
           <div className="flex flex-wrap items-center gap-1.5">
-            <Pill tone="campus" className="h-6 px-2 text-xs">
+            <Pill tone="neutral" className="h-6 px-2 text-xs">
               <span aria-hidden>{kind.emoji}</span> {kind.label}
             </Pill>
             {done && (

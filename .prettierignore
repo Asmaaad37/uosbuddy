@@ -1,7 +1,6 @@
 node_modules
 .next
 pnpm-lock.yaml
-apps/ai
 supabase/.temp
 packages/shared/src/database.types.ts
 docs/BUILD_PLAN.md

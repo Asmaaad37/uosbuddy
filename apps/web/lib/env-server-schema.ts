@@ -28,8 +28,6 @@ export const serverSchema = publicSchema.extend({
   AI_FAKE: optional,
   // Signs moderation decisions; also stored as moderation_secret in app_private.config.
   MODERATION_SECRET: optional,
-  AI_SERVICE_URL: optional,
-  AI_SERVICE_HMAC_SECRET: optional,
   SENTRY_DSN: optional,
 });
 

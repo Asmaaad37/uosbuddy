@@ -12,11 +12,6 @@ const pillVariants = cva(
         neutral: "bg-raised text-sec",
         outline: "border border-sep text-sec",
         brand: "bg-tint text-tint-text",
-        // Older lane tones: no rainbow any more.
-        people: "bg-raised text-sec",
-        learn: "bg-raised text-sec",
-        help: "bg-tint text-tint-text",
-        campus: "bg-raised text-sec",
       },
     },
     defaultVariants: { tone: "neutral" },

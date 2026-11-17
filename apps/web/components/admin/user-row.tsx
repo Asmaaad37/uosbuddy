@@ -72,7 +72,7 @@ export function UserRow({
               </Pill>
             )}
             {u.banned_at && (
-              <Pill tone="help" className="h-5 px-2 text-caption">
+              <Pill tone="brand" className="h-5 px-2 text-caption">
                 Banned
               </Pill>
             )}

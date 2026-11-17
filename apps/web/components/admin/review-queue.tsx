@@ -366,7 +366,7 @@ function PrecheckPanel({ p }: { p: Precheck }) {
     >
       <div className="flex items-center justify-between">
         <span className="font-semibold">AI pre-check</span>
-        <Pill tone={pct >= 80 ? "learn" : pct >= 50 ? "neutral" : "help"}>{pct}% match</Pill>
+        <Pill tone={pct >= 80 ? "neutral" : pct >= 50 ? "neutral" : "brand"}>{pct}% match</Pill>
       </div>
       {p.flags.length > 0 && (
         <ul className="flex flex-wrap gap-1.5" aria-label="Flags">

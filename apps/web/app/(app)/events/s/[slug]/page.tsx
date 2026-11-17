@@ -81,7 +81,7 @@ export default async function SocietyPage({ params }: Props) {
                 {p.full_name}
               </Link>
               {p.role === "admin" ? (
-                <Pill tone="learn" className="h-6 px-2 text-xs">
+                <Pill tone="neutral" className="h-6 px-2 text-xs">
                   Admin
                 </Pill>
               ) : (
