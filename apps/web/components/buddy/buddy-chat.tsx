@@ -10,6 +10,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import type { Source } from "@/lib/ai/buddy";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
+import { AnswerText } from "@/components/buddy/answer-text";
 
 type Course = { id: string; code: string; title: string };
 type Turn = { role: "user" | "assistant"; content: string; sources: Source[]; pending?: boolean };
@@ -172,11 +173,20 @@ export function BuddyChat({
           <div key={i} className={cn("grid gap-2", t.role === "user" && "justify-items-end")}>
             <div
               className={cn(
-                "max-w-[90%] rounded-card px-4 py-3 text-subhead leading-relaxed break-words whitespace-pre-wrap",
+                "max-w-[90%] rounded-card px-4 py-3 text-subhead leading-relaxed break-words",
+                t.role === "user" && "whitespace-pre-wrap",
                 t.role === "user" ? "bg-fill text-on-fill" : "bg-surface",
               )}
             >
-              {t.content || (t.pending && <Loader2 className="size-4 animate-spin text-sec" />)}
+              {t.content ? (
+                t.role === "assistant" ? (
+                  <AnswerText text={t.content} />
+                ) : (
+                  t.content
+                )
+              ) : (
+                t.pending && <Loader2 className="size-4 animate-spin text-sec" />
+              )}
             </div>
             {t.role === "assistant" && t.sources.length > 0 && (
               <ol className="grid gap-1.5" aria-label="Sources">

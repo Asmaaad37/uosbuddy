@@ -28,7 +28,7 @@ test("AI Buddy answers from the course's files, with a source", async ({ browser
 
   const courseUrl = page.url();
 
-  // No files yet: an honest "I don't know", with no model call and no sources.
+  // No files yet: an honest "I don't know", with no model call, no sources and no quota used.
   await page.goto("/buddy");
   await expect(page.getByText("30 of 30 questions left today")).toBeVisible();
   await page.getByLabel("Ask AI Buddy").fill("What is a binary heap?");
@@ -68,14 +68,15 @@ test("AI Buddy answers from the course's files, with a source", async ({ browser
     )
     .toBe("indexed");
 
+  // The "I don't know" above never reached the model, so it didn't use a question.
   await page.goto("/buddy");
-  await expect(page.getByText("29 of 30 questions left today")).toBeVisible();
+  await expect(page.getByText("30 of 30 questions left today")).toBeVisible();
   await page.getByLabel("Ask AI Buddy").fill("How much memory does merge sort need?");
   await page.getByRole("button", { name: "Ask" }).click();
   await expect(chat.getByText(/From your course files: [\s\S]*Merge sort/)).toBeVisible();
   const source = chat.getByRole("list", { name: "Sources" }).getByRole("link");
   await expect(source).toContainText("sorting-notes");
-  await expect(page.getByText("28 of 30 questions left today")).toBeVisible();
+  await expect(page.getByText("29 of 30 questions left today")).toBeVisible();
   await expect(page).toHaveURL(/\/buddy\?thread=[0-9a-f-]{36}$/);
   await page.screenshot({ path: "test-results/screens/phase-7/01-buddy.png", fullPage: true });
 

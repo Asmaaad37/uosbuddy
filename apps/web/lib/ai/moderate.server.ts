@@ -22,7 +22,6 @@ async function classify(body: string, anonymous: boolean, kind: Kind): Promise<M
     model: MODEL,
     max_tokens: 2000,
     output_config: { effort: "low", format: zodOutputFormat(moderationSchema) },
-    cache_control: { type: "ephemeral" },
     system: MODERATION_SYSTEM,
     messages: [{ role: "user", content: moderationPrompt(body, anonymous, kind) }],
   });
