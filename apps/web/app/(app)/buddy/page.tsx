@@ -11,6 +11,8 @@ import { aiEnabled } from "@/lib/ai/claude.server";
 import { getSession } from "@/lib/auth/session";
 import { shortTime } from "@/lib/chat";
 import { cn } from "@/lib/utils";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "AI Buddy" };
 
@@ -28,8 +30,16 @@ export default async function BuddyPage({ searchParams }: Props) {
       .eq("feature", "aibuddy")
       .maybeSingle();
     return (
-      <AppShell bell back="/explore">
-        <h1 className="text-large-title">AIBuddy</h1>
+      <AppShell>
+        <ScreenHeader
+          title="AIBuddy"
+          back="/explore"
+          actions={
+            <span className="lg:hidden">
+              <BellSlot />
+            </span>
+          }
+        />
         <BuddyComingSoon waiting={!!waitlisted} />
       </AppShell>
     );
@@ -66,20 +76,26 @@ export default async function BuddyPage({ searchParams }: Props) {
   }));
 
   return (
-    <AppShell bell back="/explore">
-      <div className="flex items-start justify-between gap-3">
-        <div className="grid gap-1">
-          <h1 className="text-large-title">AI Buddy</h1>
-          <p className="text-sec">Answers from your course files, with sources.</p>
-        </div>
-        {open && (
-          <Button asChild size="sm" variant="tinted">
-            <Link href="/buddy">
-              <Plus /> New chat
-            </Link>
-          </Button>
-        )}
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="AI Buddy"
+        back="/explore"
+        subtitle="Answers from your course files, with sources."
+        actions={
+          <>
+            {open && (
+              <Button asChild size="sm" variant="tinted">
+                <Link href="/buddy">
+                  <Plus /> New chat
+                </Link>
+              </Button>
+            )}
+            <span className="lg:hidden">
+              <BellSlot />
+            </span>
+          </>
+        }
+      />
 
       <BuddyChat
         key={open?.id ?? "new"}

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { DeleteAccount, ExportData } from "@/components/trust/data-actions";
 import { getSession } from "@/lib/auth/session";
+import { ScreenHeader } from "@/components/ui/screen-header";
 
 export const metadata: Metadata = { title: "Your data" };
 
@@ -15,11 +16,12 @@ export default async function DataPage() {
     : null;
 
   return (
-    <AppShell back={deletesAt ? undefined : "/me"}>
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Your data</h1>
-        <p className="text-sec">It&apos;s yours. Take it with you, or delete it.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Your data"
+        back={deletesAt ? undefined : "/me"}
+        subtitle={<>It&apos;s yours. Take it with you, or delete it.</>}
+      />
       {!deletesAt && (
         <section
           aria-labelledby="export"

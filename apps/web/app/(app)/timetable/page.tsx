@@ -9,6 +9,8 @@ import { termLabel } from "@/lib/academics";
 import { aiEnabled } from "@/lib/ai/claude.server";
 import { getSession } from "@/lib/auth/session";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "Timetable" };
 
@@ -60,11 +62,17 @@ export default async function TimetablePage({ searchParams }: Props) {
   ]);
 
   return (
-    <AppShell bell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Timetable</h1>
-        <p className="text-sec">{termLabel(term)}. Only you see your classes.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Timetable"
+        back="/explore"
+        subtitle={<>{termLabel(term)}. Only you see your classes.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       <SegmentedControl
         label="Timetable sections"
         value={tab}

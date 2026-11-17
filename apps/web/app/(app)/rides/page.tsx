@@ -9,6 +9,8 @@ import { getSession } from "@/lib/auth/session";
 import { RIDE_SAFETY_TIPS } from "@/lib/campus";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { ScreenHeader } from "@/components/ui/screen-header";
+import { BellSlot } from "@/components/notifications/bell-slot";
 
 export const metadata: Metadata = { title: "Rides" };
 
@@ -38,11 +40,17 @@ export default async function RidesPage({ searchParams }: Props) {
   const eligible = access?.status === "approved";
 
   return (
-    <AppShell bell back="/explore">
-      <div className="grid gap-1">
-        <h1 className="text-large-title">Rides</h1>
-        <p className="text-sec">Share a ride with UoS students. Split the fare, not your number.</p>
-      </div>
+    <AppShell>
+      <ScreenHeader
+        title="Rides"
+        back="/explore"
+        subtitle={<>Share a ride with UoS students. Split the fare, not your number.</>}
+        actions={
+          <span className="lg:hidden">
+            <BellSlot />
+          </span>
+        }
+      />
       <RideSheet womenEligible={eligible} />
 
       <details className="group rounded-card bg-surface p-3 text-sm shadow-card contrast-more:border contrast-more:border-label">
