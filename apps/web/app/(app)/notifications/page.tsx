@@ -52,10 +52,23 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 /** The notification centre (redesign §3: large title, grouped list). */
-export default async function NotificationsPage() {
+const PAGE = 60;
+
+export default async function NotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ before?: string }>;
+}) {
   const { supabase, user } = await getSession();
   if (!user) redirect("/login?next=/notifications");
-  const { data: items } = await supabase.rpc("my_notifications", { p_limit: 60 });
+  // Older pages: ?before=<time of the last one shown>. Anything unparseable starts over.
+  const raw = (await searchParams).before;
+  const before = raw && !Number.isNaN(Date.parse(raw)) ? new Date(raw).toISOString() : undefined;
+  const { data: items } = await supabase.rpc("my_notifications", {
+    p_limit: PAGE,
+    p_before: before,
+  });
+  const last = items?.at(-1);
 
   return (
     <AppShell>
@@ -138,10 +151,27 @@ export default async function NotificationsPage() {
             );
           })}
         </ul>
+      ) : before ? (
+        <EmptyState icon={Bell} title="That's everything">
+          Notifications are kept for 90 days.
+        </EmptyState>
       ) : (
         <EmptyState icon={Bell} title="Nothing yet">
           Connect requests, Backup pings and comments show up here.
         </EmptyState>
+      )}
+      {(items?.length ?? 0) === PAGE && last && (
+        <Link
+          href={`/notifications?before=${encodeURIComponent(last.created_at)}`}
+          className="justify-self-center text-subhead font-semibold text-accent"
+        >
+          Show older
+        </Link>
+      )}
+      {before && (
+        <Link href="/notifications" className="justify-self-center text-subhead text-sec">
+          Back to the newest
+        </Link>
       )}
     </AppShell>
   );
