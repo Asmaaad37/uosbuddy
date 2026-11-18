@@ -22,7 +22,7 @@ test("an editor imports, reviews and publishes the CS timetable", async ({ brows
   await page
     .getByLabel("Department")
     .selectOption({ label: "CS · Department of Computer Science" });
-  await page.getByLabel("Term").selectOption({ label: "Fall 2026" });
+  // The term defaults to the current one, which is the term students see.
   await page.getByLabel("Timetable file").setInputFiles(week4);
   await page.getByRole("button", { name: "Upload and review" }).click();
 
@@ -54,4 +54,27 @@ test("an editor imports, reviews and publishes the CS timetable", async ({ brows
     .eq("target_id", importId)
     .eq("action", "timetable.publish");
   expect(audit).toHaveLength(1);
+
+  // Phase 11.2: a BS CS student who joined in Fall 2024 sees their section's week, not the
+  // Spring 2024 batch's. In a Fall term they're in semester 5; in a Spring term, semester 6.
+  const month = Number(
+    new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Karachi", month: "numeric" }).format(
+      new Date(),
+    ),
+  );
+  const season = month === 1 || month >= 9 ? "fall" : month <= 6 ? "spring" : "summer";
+  test.skip(season === "summer", "no Fall or Spring batch rule in a summer term");
+  const student = await makeStudent("Week Student", `week11_${run}`.slice(0, 20), 4, {
+    semester: season === "fall" ? 5 : 6,
+  });
+  const studentPage = await (await browser.newContext()).newPage();
+  await logIn(studentPage, student.email, student.password);
+  await studentPage.goto("/timetable");
+  await expect(studentPage.getByText("BS in Computer Science · Fall 2024 · Regular")).toBeVisible();
+  await expect(studentPage.getByText("From your profile")).toBeVisible();
+  await studentPage.getByRole("radio", { name: "Mon" }).click();
+  const monday = studentPage.getByRole("region", { name: "Classes on Mon" });
+  await expect(monday.getByText("Web Technologies")).toBeVisible();
+  await expect(monday.getByText("HCI & Computer Graphics")).toBeVisible();
+  await expect(monday.getByText("Computer Architecture")).toHaveCount(0);
 });
