@@ -1282,6 +1282,49 @@ Details and evidence are in `docs/research/unipal-rea.md`. #76's schema change i
 
 **Acceptance:** Production URL live. Lighthouse targets met. Runbook written. The human signs off.
 
+### Phase 11: Official academic data (P1), CS first
+
+Plan: `docs/plans/academic-features.md`. Research: `docs/research/vtable-rea.md`, `docs/research/csdeptuos-rea.md`, `docs/research/ta1al-repos-analysis.md`. Extends Phase 6: the personal timetable stays, as the fallback and for extra classes.
+
+**Tasks**
+1. **11.1 Data foundation and import (P0):**
+   - migrations: `academic_terms`, `buildings`, `rooms`, `teachers`, `class_groups`, `timetable_imports`, `timetable_entries`, `timetable_live` (view), `timetable_changes`, `timetable_follows`, `calendar_events`, `data_editors`
+   - RLS in the §4.4 style; writes only through audited `security definer` functions
+   - per-department **data editors**, granted by admins (the project owner is the only editor at first; no second approval)
+   - a TypeScript port of Ta1al's `timetable-parser` (used with permission, credited; `pdfjs-dist`), plus the parser's JSON and CSV/Excel import
+   - term-wide timetable by default (`week_of` null), rare one-week amendments
+   - rooms seeded from the timetable's room labels; "Regular N" (including "Regular 0") → `REG`; no shift for CS
+   - normalisation through room, teacher and course alias tables
+   - a **preview diff** against live data, human approval, publish, and revert
+   - no other third-party code copied
+2. **11.2 My week (P0):**
+   - the official week for the student's class group (department, program, intake, section from the profile), with a manual override and followed groups or courses for repeats
+   - a **Now / Next class** card on Explore
+3. **11.3 Views and alerts (P1):**
+   - Lookup (any class group), teacher view, room view
+   - **free room finder** (now or a chosen time, free until, freeing soon, building and floor, Pakistan time)
+   - **change alerts**: one batched push per publish, a new "Timetable changes" preference
+4. **11.4 Calendar (P1):**
+   - academic calendar entered or imported by editors (the project owner supplies the UoS file)
+   - list and month views, "Coming up" (next 3) on Explore, .ics export, reminder pushes
+   - Free together and Free now switched to official data
+5. **11.5 Department hub (P2):**
+   - faculty (links to su.edu.pk), programs and study plans (links), societies (existing), notices
+   - moderated "room actually in use" reports
+
+**Tests:**
+- Parser golden tests: the port matches the Python original on the stored sample PDFs (counts, truncation, combined classes, labs over several slots).
+- Normalisation unit tests (rooms, teachers, course codes, sections).
+- Diff tests (moved, retimed, removed, added).
+- pgTAP tests: RLS (students read published data only; editors only for their department) and publish and revert.
+- Free-room tests: edge minutes, back-to-back classes, rooms with no classes.
+- e2e: editor imports, reviews, publishes; a student sees their week and gets an alert.
+
+**Acceptance:**
+- A CS data editor imports a real timetable PDF, reviews the diff and publishes in under 10 minutes.
+- A CS student sees their week with no setup, gets a push when their class moves, and finds a free room in MAB in under 30 seconds.
+- Every screen has a designed empty state for a term with no data.
+
 ---
 
 ## 9. Future backlog (P2/P3 ideas)

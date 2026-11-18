@@ -1,6 +1,6 @@
 # Plan: official academic data (timetable, free rooms, calendar, department hub)
 
-**Status: proposal for approval, updated with the project owner's answers (2026-11-17, §6).** Nothing here is built or applied.
+**Status: approved by the project owner on 2026-11-18** (answers in §6). Phase 11 is in `docs/BUILD_PLAN.md`; work starts with 11.1 on dev.
 
 - **Research:** `docs/research/vtable-rea.md`, `docs/research/csdeptuos-rea.md` and `docs/research/ta1al-repos-analysis.md`.
 - **Design:** follows `docs/design/UOSBuddy_REDESIGN_SPEC.md`.
@@ -329,7 +329,7 @@ create table public.room_occupied_reports (
 1. **Official files.**
    - **Timetable:** the department's timetable PDFs are available for UoS departments.
    - **Rooms:** the room list comes from the timetable itself, so rooms are seeded from the room labels in each import. A room that never appears in any timetable won't be listed; editors can add one by hand.
-   - **Academic calendar:** the project owner will share the file.
+   - **Academic calendar:** shared on 2026-11-18: the signed circular _Academic Calendar 2026-27_ (Office of the Director Academics, Ref. SU/DIRACAD/751, 3 Aug 2026), a scanned PDF. It is entered by hand, not parsed. The circular is the source of truth: the university website's copy leaves out the Fall "Declaration of Result" (18 Jan 2027). The PDF itself is not committed.
 2. **Departments.** **CS first**, then more departments one at a time. The model is per department from the start.
 3. **Data editors.** The **project owner is the only editor** at first, already an admin, so no second approval for now. The `data_editors` role is still built so others can be added later.
 4. **Sections and shifts.**
