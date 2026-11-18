@@ -54,6 +54,7 @@ const prefsSchema = z.object({
   backup: z.boolean(),
   comments: z.boolean(),
   messages: z.boolean(),
+  timetable: z.boolean(),
   push: z.boolean(),
   previews: z.boolean(),
   digest: z.boolean(),

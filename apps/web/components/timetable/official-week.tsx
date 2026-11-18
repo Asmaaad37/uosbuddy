@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarClock, MapPin, Plus, UserRound, X } from "lucide-react";
 import {
@@ -136,11 +137,31 @@ export function OfficialWeek({
                       <span className="font-medium">{c.course_title}</span>
                       <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-sec">
                         <span className="flex items-center gap-1">
-                          <MapPin className="size-3" aria-hidden /> {c.room_label}
+                          <MapPin className="size-3" aria-hidden />{" "}
+                          {c.room_id ? (
+                            <Link
+                              className="underline-offset-2 hover:underline"
+                              href={`/timetable/room/${c.room_id}`}
+                            >
+                              {c.room_label}
+                            </Link>
+                          ) : (
+                            c.room_label
+                          )}
                         </span>
                         {c.teacher_name && (
                           <span className="flex items-center gap-1">
-                            <UserRound className="size-3" aria-hidden /> {c.teacher_name}
+                            <UserRound className="size-3" aria-hidden />{" "}
+                            {c.teacher_id ? (
+                              <Link
+                                className="underline-offset-2 hover:underline"
+                                href={`/timetable/teacher/${c.teacher_id}`}
+                              >
+                                {c.teacher_name}
+                              </Link>
+                            ) : (
+                              c.teacher_name
+                            )}
                           </span>
                         )}
                       </span>

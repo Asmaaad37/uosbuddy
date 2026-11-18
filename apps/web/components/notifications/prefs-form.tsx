@@ -17,6 +17,11 @@ const ALERTS: PrefRow[] = [
   { key: "backup", label: "Backup pings", hint: "Classmates nearby need backup (5 a day at most)" },
   { key: "comments", label: "Comments and replies", hint: "On your posts and comments" },
   { key: "messages", label: "Chat messages", hint: "As pushes; muted chats never ping" },
+  {
+    key: "timetable",
+    label: "Timetable changes",
+    hint: "When your class moves room, time or teacher, or your timetable is published",
+  },
 ];
 
 const DELIVERY: PrefRow[] = [

@@ -74,3 +74,29 @@ export function changeLine(kind: string, before: Slot | null, after: Slot | null
     `${DAY_NAMES[s.day]?.slice(0, 3) ?? "?"} ${hhmm(s.start_min)}–${hhmm(s.end_min)}`;
   return `${title}: ${when(before)} → ${when(after)}`;
 }
+
+/**
+ * A change in a student's words, for alerts: "Databases moved to MAB CR-165 on Mon 08:00",
+ * "Networks is now Thu 08:00–09:30", "New class: Databases, Mon 08:00".
+ */
+export function alertLine(change: { kind?: unknown; before?: unknown; after?: unknown }): string {
+  const before = (change.before ?? null) as Slot | null;
+  const after = (change.after ?? null) as Slot | null;
+  const at = (s: Slot) => `${DAY_NAMES[s.day]?.slice(0, 3) ?? "?"} ${hhmm(s.start_min)}`;
+  switch (change.kind) {
+    case "moved":
+      return after ? `${after.course_title} moved to ${after.room_label} on ${at(after)}` : "";
+    case "retimed":
+      return after ? `${after.course_title} is now ${at(after)}–${hhmm(after.end_min)}` : "";
+    case "teacher":
+      return after
+        ? `${after.course_title}: new teacher${after.teacher_name ? `, ${after.teacher_name}` : ""}`
+        : "";
+    case "added":
+      return after ? `New class: ${after.course_title}, ${at(after)}` : "";
+    case "removed":
+      return before ? `${before.course_title} on ${at(before)} was removed` : "";
+    default:
+      return "";
+  }
+}
