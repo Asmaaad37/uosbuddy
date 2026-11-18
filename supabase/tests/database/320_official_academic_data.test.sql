@@ -73,7 +73,7 @@ select is((select count(*)::int from public.audit_log where action = 'data_edito
 select throws_ok($$select tests.as('Student', format(
   'select public.stage_import(%L, %L, null, %L, null, %L, null, %L)::text',
   (select id from public.departments where short_code = 'CS'), '2026-fall', 'json', 'test',
-  jsonb_build_array(tests.row('CSCC-2201', 'Database Systems', 'CR-160', 'Dr. Ayesha Kausar', 0, 480, 570)))))$$,
+  jsonb_build_array(tests.row('CSCC-2201', 'Database Systems', 'CR-160', 'Dr. Ayesha Kausar', 0, 480, 570))))$$,
   '42501', null, 'students can''t import timetables');
 select throws_ok($$select tests.as('Editor', format(
   'select public.save_calendar_event(null, %L, %L, %L, null, %L, null, false, null, %L)::text',
@@ -103,7 +103,7 @@ select is((select label from public.class_groups g join public.timetable_entries
   'class groups are labelled from program, intake and section');
 select is(tests.as('Editor', format('select count(*)::text from public.import_diff(%L) where kind = %L',
   tests.id('imp1'), 'added')), '4', 'a first import adds every class');
-select lives_ok(format($$select tests.as('Editor', 'select public.publish_import(%L)::text')$$, tests.id('imp1')),
+select lives_ok($$select tests.as('Editor', format('select public.publish_import(%L)::text', tests.id('imp1')))$$,
   'the editor publishes');
 select is(tests.as('Student', $$select count(*)::text from public.timetable_live$$), '4',
   'students see the published week');
@@ -130,11 +130,11 @@ select is(tests.as('Student', $$select string_agg(course_title, ',' order by cou
   'only the newest import is live');
 select is(tests.as('Student', format('select count(*)::text from public.timetable_changes where import_id = %L',
   tests.id('imp2'))), '5', 'students can read what changed');
-select throws_ok(format($$select tests.as('Editor', 'select public.publish_import(%L)::text')$$, tests.id('imp2')),
+select throws_ok($$select tests.as('Editor', format('select public.publish_import(%L)::text', tests.id('imp2')))$$,
   '22023', null, 'an import publishes once');
 
 -- Revert to the first import.
-select lives_ok(format($$select tests.as('Editor', 'select public.revert_import(%L)::text')$$, tests.id('imp1')),
+select lives_ok($$select tests.as('Editor', format('select public.revert_import(%L)::text', tests.id('imp1')))$$,
   'the editor restores the earlier timetable');
 select is(tests.as('Student', $$select string_agg(room_label, ',' order by room_label) from public.timetable_live$$),
   'MAB CR-160,MAB CR-161,MAB CR-162,MAB CR-163', 'the restored timetable is live');
