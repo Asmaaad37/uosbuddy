@@ -94,3 +94,61 @@ group("describe", () => {
     );
   });
 });
+
+group("timetable alerts", () => {
+  const slot = (room: string, day: number, start: number) => ({
+    course_title: "Databases",
+    course_code: "CMPC-5203",
+    room_label: room,
+    teacher_name: "Iqra Waheed",
+    day,
+    start_min: start,
+    end_min: start + 90,
+  });
+  it("leads with the most important change and counts the rest", () => {
+    const text = describe({
+      type: "timetable.changed",
+      entity_id: null,
+      payload: {
+        count: 3,
+        first: {
+          kind: "moved",
+          before: slot("MAB CR-160", 1, 660),
+          after: slot("MAB CR-163", 1, 660),
+        },
+      },
+      actor_name: null,
+      actor_handle: null,
+    });
+    expect(text).toEqual({
+      title: "3 changes to your timetable",
+      body: "Databases moved to MAB CR-163 on Tue 11:00 (+2 more)",
+      href: "/timetable",
+    });
+  });
+  it("says a single change plainly", () => {
+    expect(
+      describe({
+        type: "timetable.changed",
+        entity_id: null,
+        payload: {
+          count: 1,
+          first: { kind: "retimed", before: slot("X", 0, 480), after: slot("X", 3, 600) },
+        },
+        actor_name: null,
+        actor_handle: null,
+      }),
+    ).toMatchObject({ title: "Your timetable changed", body: "Databases is now Thu 10:00–11:30" });
+  });
+  it("announces a newly published term", () => {
+    expect(
+      describe({
+        type: "timetable.published",
+        entity_id: null,
+        payload: { count: 12, term: "2026-fall" },
+        actor_name: null,
+        actor_handle: null,
+      }).title,
+    ).toBe("Your Fall 2026 timetable is up");
+  });
+});

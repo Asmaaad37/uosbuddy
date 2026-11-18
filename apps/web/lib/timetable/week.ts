@@ -7,6 +7,7 @@ export type OfficialClass = {
   room_label: string;
   room_id: string | null;
   teacher_name: string | null;
+  teacher_id?: string | null;
   day: number;
   start_min: number;
   end_min: number;

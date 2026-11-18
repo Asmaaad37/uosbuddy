@@ -1922,6 +1922,7 @@ export type Database = {
           messages: boolean
           previews: boolean
           push: boolean
+          timetable: boolean
           user_id: string
         }
         Insert: {
@@ -1932,6 +1933,7 @@ export type Database = {
           messages?: boolean
           previews?: boolean
           push?: boolean
+          timetable?: boolean
           user_id: string
         }
         Update: {
@@ -1942,6 +1944,7 @@ export type Database = {
           messages?: boolean
           previews?: boolean
           push?: boolean
+          timetable?: boolean
           user_id?: string
         }
         Relationships: [
@@ -4444,6 +4447,7 @@ export type Database = {
       cancel_ride: { Args: { p_ride: string }; Returns: undefined }
       cancel_seat: { Args: { p_ride: string }; Returns: undefined }
       claim_backup: { Args: { p_request: string }; Returns: string }
+      class_group_students: { Args: { p_group: string }; Returns: string[] }
       confirm_uni_email_claim: {
         Args: { p_code_hash: string; p_user: string }
         Returns: string
@@ -4866,6 +4870,39 @@ export type Database = {
       }
       leave_course: { Args: { p_course: string }; Returns: undefined }
       leave_society: { Args: { p_society: string }; Returns: undefined }
+      live_entries: {
+        Args: never
+        Returns: {
+          class_group_id: string
+          combined_key: string | null
+          course_code: string | null
+          course_id: string | null
+          course_key: string
+          course_title: string
+          day: number
+          department_id: string
+          end_min: number
+          excluded: boolean
+          id: string
+          import_id: string
+          live: boolean
+          practical: boolean
+          raw: Json | null
+          room_id: string | null
+          room_label: string
+          start_min: number
+          teacher_id: string | null
+          teacher_name: string | null
+          term: string
+          week_of: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "timetable_entries"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       mark_digest_considered: {
         Args: { p_users: string[] }
         Returns: undefined
@@ -5054,6 +5091,10 @@ export type Database = {
           p_user: string
         }
         Returns: undefined
+      }
+      notify_timetable_publish: {
+        Args: { p_first: boolean; p_import: string }
+        Returns: number
       }
       person_hidden: { Args: { p_user: string }; Returns: boolean }
       pk_today: { Args: never; Returns: string }
@@ -5412,6 +5453,25 @@ export type Database = {
           section: string
         }[]
       }
+      timetable_rooms: {
+        Args: never
+        Returns: {
+          building: string
+          floor: number
+          id: string
+          kind: Database["public"]["Enums"]["room_kind"]
+          label: string
+        }[]
+      }
+      timetable_teachers: {
+        Args: never
+        Returns: {
+          department: string
+          id: string
+          name: string
+        }[]
+      }
+      timetable_view: { Args: { p_id: string; p_kind: string }; Returns: Json }
       touch_activity: { Args: never; Returns: undefined }
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }

@@ -1,3 +1,6 @@
+import { termLabel } from "@/lib/academics";
+import { alertLine } from "@/lib/timetable/format";
+
 /** What a notification says and where it leads, for the centre and for push (Phase 5). */
 export type NotificationLike = {
   type: string;
@@ -176,6 +179,21 @@ export function describe(n: NotificationLike): Described {
             href: "/buddy",
           }
         : { title: "Something new is live on UOSBuddy", href: "/explore" };
+    case "timetable.changed": {
+      const count = typeof p.count === "number" ? p.count : 1;
+      const line = alertLine((p.first ?? {}) as Record<string, unknown>);
+      return {
+        title: count === 1 ? "Your timetable changed" : `${count} changes to your timetable`,
+        body: line ? `${line}${count > 1 ? ` (+${count - 1} more)` : ""}` : undefined,
+        href: "/timetable",
+      };
+    }
+    case "timetable.published":
+      return {
+        title: `Your ${termLabel(typeof p.term === "string" ? p.term : null) || "term"} timetable is up`,
+        body: "See your week, with rooms and teachers.",
+        href: "/timetable",
+      };
     case "system.test":
       return {
         title: "Test notification",

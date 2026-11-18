@@ -77,4 +77,20 @@ test("an editor imports, reviews and publishes the CS timetable", async ({ brows
   await expect(monday.getByText("Web Technologies")).toBeVisible();
   await expect(monday.getByText("HCI & Computer Graphics")).toBeVisible();
   await expect(monday.getByText("Computer Architecture")).toHaveCount(0);
+
+  // Phase 11.3: look up a room's week, then follow a teacher's name to theirs.
+  await studentPage.goto("/timetable?tab=lookup");
+  await studentPage.getByRole("radio", { name: "Room" }).click();
+  await studentPage.getByLabel("Choose a room").selectOption({ label: "MAB CR-160" });
+  await studentPage.getByRole("button", { name: "Show their week" }).click();
+  await expect(studentPage).toHaveURL(/\/timetable\/room\/[0-9a-f-]{36}$/);
+  await expect(studentPage.getByRole("heading", { name: "MAB CR-160" })).toBeVisible();
+  const teacher = studentPage.locator('a[href^="/timetable/teacher/"]').first();
+  const teacherName = (await teacher.textContent())!.trim();
+  await teacher.click();
+  await expect(studentPage.getByRole("heading", { name: teacherName })).toBeVisible();
+
+  // The free-room finder lists rooms, with or without classes.
+  await studentPage.goto("/timetable?tab=rooms");
+  await expect(studentPage.getByRole("button", { name: "Now" })).toBeVisible();
 });
