@@ -39,6 +39,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_terms: {
+        Row: {
+          code: string
+          ends_on: string | null
+          name: string
+          starts_on: string | null
+          university_id: string
+        }
+        Insert: {
+          code: string
+          ends_on?: string | null
+          name: string
+          starts_on?: string | null
+          university_id: string
+        }
+        Update: {
+          code?: string
+          ends_on?: string | null
+          name?: string
+          starts_on?: string | null
+          university_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_terms_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_days: {
         Row: {
           day: string
@@ -535,6 +567,122 @@ export type Database = {
           },
         ]
       }
+      buildings: {
+        Row: {
+          campus_id: string | null
+          code: string
+          id: string
+          name: string | null
+          university_id: string
+        }
+        Insert: {
+          campus_id?: string | null
+          code: string
+          id?: string
+          name?: string | null
+          university_id: string
+        }
+        Update: {
+          campus_id?: string | null
+          code?: string
+          id?: string
+          name?: string | null
+          university_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buildings_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "buildings_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_events: {
+        Row: {
+          created_by: string | null
+          ends_on: string | null
+          id: string
+          kind: Database["public"]["Enums"]["calendar_kind"]
+          notes: string | null
+          source: string | null
+          starts_on: string
+          status: string
+          tentative: boolean
+          term: string | null
+          title: string
+          university_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_by?: string | null
+          ends_on?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["calendar_kind"]
+          notes?: string | null
+          source?: string | null
+          starts_on: string
+          status?: string
+          tentative?: boolean
+          term?: string | null
+          title: string
+          university_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_by?: string | null
+          ends_on?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["calendar_kind"]
+          notes?: string | null
+          source?: string | null
+          starts_on?: string
+          status?: string
+          tentative?: boolean
+          term?: string | null
+          title?: string
+          university_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_term_fkey"
+            columns: ["term"]
+            isOneToOne: false
+            referencedRelation: "academic_terms"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "calendar_events_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campuses: {
         Row: {
           created_at: string
@@ -563,6 +711,48 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_groups: {
+        Row: {
+          department_id: string
+          id: string
+          intake_year: number
+          label: string
+          program_id: string
+          section: string
+        }
+        Insert: {
+          department_id: string
+          id?: string
+          intake_year: number
+          label: string
+          program_id: string
+          section: string
+        }
+        Update: {
+          department_id?: string
+          id?: string
+          intake_year?: number
+          label?: string
+          program_id?: string
+          section?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_groups_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_groups_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
             referencedColumns: ["id"]
           },
         ]
@@ -878,6 +1068,66 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_editors: {
+        Row: {
+          department_id: string
+          granted_at: string
+          granted_by: string | null
+          scopes: string[]
+          user_id: string
+        }
+        Insert: {
+          department_id: string
+          granted_at?: string
+          granted_by?: string | null
+          scopes?: string[]
+          user_id: string
+        }
+        Update: {
+          department_id?: string
+          granted_at?: string
+          granted_by?: string | null
+          scopes?: string[]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_editors_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_editors_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_editors_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_editors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_editors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -2680,6 +2930,67 @@ export type Database = {
           },
         ]
       }
+      rooms: {
+        Row: {
+          aliases: string[]
+          building_id: string | null
+          capacity: number | null
+          code: string
+          department_id: string | null
+          floor: number | null
+          id: string
+          kind: Database["public"]["Enums"]["room_kind"]
+          name: string | null
+          university_id: string
+        }
+        Insert: {
+          aliases?: string[]
+          building_id?: string | null
+          capacity?: number | null
+          code: string
+          department_id?: string | null
+          floor?: number | null
+          id?: string
+          kind?: Database["public"]["Enums"]["room_kind"]
+          name?: string | null
+          university_id: string
+        }
+        Update: {
+          aliases?: string[]
+          building_id?: string | null
+          capacity?: number | null
+          code?: string
+          department_id?: string | null
+          floor?: number | null
+          id?: string
+          kind?: Database["public"]["Enums"]["room_kind"]
+          name?: string | null
+          university_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_building_id_fkey"
+            columns: ["building_id"]
+            isOneToOne: false
+            referencedRelation: "buildings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rooms_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rooms_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       societies: {
         Row: {
           created_at: string
@@ -2937,6 +3248,378 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles_public"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      teachers: {
+        Row: {
+          aliases: string[]
+          department_id: string | null
+          id: string
+          name: string
+          name_norm: string | null
+          profile_url: string | null
+          title: string | null
+          university_id: string
+        }
+        Insert: {
+          aliases?: string[]
+          department_id?: string | null
+          id?: string
+          name: string
+          name_norm?: string | null
+          profile_url?: string | null
+          title?: string | null
+          university_id: string
+        }
+        Update: {
+          aliases?: string[]
+          department_id?: string | null
+          id?: string
+          name?: string
+          name_norm?: string | null
+          profile_url?: string | null
+          title?: string | null
+          university_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teachers_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teachers_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timetable_changes: {
+        Row: {
+          after: Json | null
+          before: Json | null
+          class_group_id: string | null
+          department_id: string
+          id: number
+          import_id: string
+          kind: string
+        }
+        Insert: {
+          after?: Json | null
+          before?: Json | null
+          class_group_id?: string | null
+          department_id: string
+          id?: never
+          import_id: string
+          kind: string
+        }
+        Update: {
+          after?: Json | null
+          before?: Json | null
+          class_group_id?: string | null
+          department_id?: string
+          id?: never
+          import_id?: string
+          kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_changes_class_group_id_fkey"
+            columns: ["class_group_id"]
+            isOneToOne: false
+            referencedRelation: "class_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_changes_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_changes_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "timetable_imports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timetable_entries: {
+        Row: {
+          class_group_id: string
+          combined_key: string | null
+          course_code: string | null
+          course_id: string | null
+          course_key: string
+          course_title: string
+          day: number
+          department_id: string
+          end_min: number
+          excluded: boolean
+          id: string
+          import_id: string
+          live: boolean
+          practical: boolean
+          raw: Json | null
+          room_id: string | null
+          room_label: string
+          start_min: number
+          teacher_id: string | null
+          teacher_name: string | null
+          term: string
+          week_of: string | null
+        }
+        Insert: {
+          class_group_id: string
+          combined_key?: string | null
+          course_code?: string | null
+          course_id?: string | null
+          course_key?: string
+          course_title: string
+          day: number
+          department_id: string
+          end_min: number
+          excluded?: boolean
+          id?: string
+          import_id: string
+          live?: boolean
+          practical?: boolean
+          raw?: Json | null
+          room_id?: string | null
+          room_label: string
+          start_min: number
+          teacher_id?: string | null
+          teacher_name?: string | null
+          term: string
+          week_of?: string | null
+        }
+        Update: {
+          class_group_id?: string
+          combined_key?: string | null
+          course_code?: string | null
+          course_id?: string | null
+          course_key?: string
+          course_title?: string
+          day?: number
+          department_id?: string
+          end_min?: number
+          excluded?: boolean
+          id?: string
+          import_id?: string
+          live?: boolean
+          practical?: boolean
+          raw?: Json | null
+          room_id?: string | null
+          room_label?: string
+          start_min?: number
+          teacher_id?: string | null
+          teacher_name?: string | null
+          term?: string
+          week_of?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_entries_class_group_id_fkey"
+            columns: ["class_group_id"]
+            isOneToOne: false
+            referencedRelation: "class_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "timetable_imports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_term_fkey"
+            columns: ["term"]
+            isOneToOne: false
+            referencedRelation: "academic_terms"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      timetable_follows: {
+        Row: {
+          class_group_id: string | null
+          course_id: string | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          class_group_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          class_group_id?: string | null
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_follows_class_group_id_fkey"
+            columns: ["class_group_id"]
+            isOneToOne: false
+            referencedRelation: "class_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_follows_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_follows_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_follows_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timetable_imports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department_id: string
+          diff_summary: Json | null
+          id: string
+          parser_version: string
+          published_at: string | null
+          published_by: string | null
+          report: Json | null
+          source_kind: string
+          source_name: string | null
+          status: Database["public"]["Enums"]["import_status"]
+          term: string
+          week_of: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department_id: string
+          diff_summary?: Json | null
+          id?: string
+          parser_version: string
+          published_at?: string | null
+          published_by?: string | null
+          report?: Json | null
+          source_kind: string
+          source_name?: string | null
+          status?: Database["public"]["Enums"]["import_status"]
+          term: string
+          week_of?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department_id?: string
+          diff_summary?: Json | null
+          id?: string
+          parser_version?: string
+          published_at?: string | null
+          published_by?: string | null
+          report?: Json | null
+          source_kind?: string
+          source_name?: string | null
+          status?: Database["public"]["Enums"]["import_status"]
+          term?: string
+          week_of?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_imports_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_imports_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_imports_published_by_fkey"
+            columns: ["published_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_imports_term_fkey"
+            columns: ["term"]
+            isOneToOne: false
+            referencedRelation: "academic_terms"
+            referencedColumns: ["code"]
           },
         ]
       }
@@ -3463,6 +4146,119 @@ export type Database = {
           },
         ]
       }
+      timetable_live: {
+        Row: {
+          class_group_id: string | null
+          combined_key: string | null
+          course_code: string | null
+          course_id: string | null
+          course_title: string | null
+          day: number | null
+          department_id: string | null
+          end_min: number | null
+          id: string | null
+          import_id: string | null
+          practical: boolean | null
+          room_id: string | null
+          room_label: string | null
+          start_min: number | null
+          teacher_id: string | null
+          teacher_name: string | null
+          term: string | null
+          week_of: string | null
+        }
+        Insert: {
+          class_group_id?: string | null
+          combined_key?: string | null
+          course_code?: string | null
+          course_id?: string | null
+          course_title?: string | null
+          day?: number | null
+          department_id?: string | null
+          end_min?: number | null
+          id?: string | null
+          import_id?: string | null
+          practical?: boolean | null
+          room_id?: string | null
+          room_label?: string | null
+          start_min?: number | null
+          teacher_id?: string | null
+          teacher_name?: string | null
+          term?: string | null
+          week_of?: string | null
+        }
+        Update: {
+          class_group_id?: string | null
+          combined_key?: string | null
+          course_code?: string | null
+          course_id?: string | null
+          course_title?: string | null
+          day?: number | null
+          department_id?: string | null
+          end_min?: number | null
+          id?: string | null
+          import_id?: string | null
+          practical?: boolean | null
+          room_id?: string | null
+          room_label?: string | null
+          start_min?: number | null
+          teacher_id?: string | null
+          teacher_name?: string | null
+          term?: string | null
+          week_of?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_entries_class_group_id_fkey"
+            columns: ["class_group_id"]
+            isOneToOne: false
+            referencedRelation: "class_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "timetable_imports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_entries_term_fkey"
+            columns: ["term"]
+            isOneToOne: false
+            referencedRelation: "academic_terms"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_guidelines: { Args: never; Returns: undefined }
@@ -3582,6 +4378,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      can_edit_calendar: { Args: { p_university: string }; Returns: boolean }
       can_moderate: {
         Args: { p_space: string; p_university: string }
         Returns: boolean
@@ -3787,6 +4584,7 @@ export type Database = {
         Args: { p_approve: boolean; p_user: string }
         Returns: undefined
       }
+      delete_calendar_event: { Args: { p_id: string }; Returns: undefined }
       delete_comment: { Args: { p_comment: string }; Returns: undefined }
       delete_course: { Args: { p_id: string }; Returns: undefined }
       delete_listing: { Args: { p_listing: string }; Returns: undefined }
@@ -3834,6 +4632,7 @@ export type Database = {
           university_count: number
         }[]
       }
+      discard_import: { Args: { p_import: string }; Returns: undefined }
       dismiss_reports: {
         Args: { p_id: string; p_type: string }
         Returns: undefined
@@ -3865,6 +4664,10 @@ export type Database = {
           title: string
           venue: string
         }[]
+      }
+      exclude_entry: {
+        Args: { p_entry: string; p_excluded: boolean }
+        Returns: undefined
       }
       expired_verification_documents: {
         Args: { p_days?: number; p_limit?: number }
@@ -3939,6 +4742,10 @@ export type Database = {
           section: string
         }[]
       }
+      grant_data_editor: {
+        Args: { p_department: string; p_scopes?: string[]; p_user: string }
+        Returns: undefined
+      }
       handle_allowed: { Args: { p_handle: string }; Returns: boolean }
       handle_available: { Args: { p_handle: string }; Returns: boolean }
       hide_conversation: {
@@ -3948,6 +4755,15 @@ export type Database = {
       hot_score: {
         Args: { p_created: string; p_down: number; p_up: number }
         Returns: number
+      }
+      import_diff: {
+        Args: { p_import: string }
+        Returns: {
+          after: Json
+          before: Json
+          class_group_id: string
+          kind: string
+        }[]
       }
       incoming_requests: {
         Args: never
@@ -3971,6 +4787,10 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_custom_group: { Args: { p_conversation: string }; Returns: boolean }
+      is_data_editor: {
+        Args: { p_department: string; p_scope: string }
+        Returns: boolean
+      }
       is_member: { Args: { p_conversation: string }; Returns: boolean }
       is_society_admin: { Args: { p_society: string }; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
@@ -4173,6 +4993,7 @@ export type Database = {
       }
       my_role_in: { Args: { p_conversation: string }; Returns: string }
       my_university_id: { Args: never; Returns: string }
+      norm_person: { Args: { p_name: string }; Returns: string }
       notifications_housekeeping: { Args: never; Returns: undefined }
       notify: {
         Args: {
@@ -4198,6 +5019,7 @@ export type Database = {
         }[]
       }
       public_stats: { Args: never; Returns: Json }
+      publish_import: { Args: { p_import: string }; Returns: Json }
       purge_deleted_accounts: { Args: never; Returns: number }
       redeem_invite: { Args: { p_code: string }; Returns: boolean }
       refresh_admin_stats: { Args: never; Returns: undefined }
@@ -4270,6 +5092,11 @@ export type Database = {
           id: string
         }[]
       }
+      revert_import: { Args: { p_import: string }; Returns: string }
+      revoke_data_editor: {
+        Args: { p_department: string; p_user: string }
+        Returns: undefined
+      }
       revoke_verification: {
         Args: { p_reason: string; p_user: string }
         Returns: undefined
@@ -4318,6 +5145,21 @@ export type Database = {
       rsvp_event: {
         Args: { p_event: string; p_status: string }
         Returns: undefined
+      }
+      save_calendar_event: {
+        Args: {
+          p_ends_on: string
+          p_id: string
+          p_kind: Database["public"]["Enums"]["calendar_kind"]
+          p_notes: string
+          p_source: string
+          p_starts_on: string
+          p_status: string
+          p_tentative: boolean
+          p_term: string
+          p_title: string
+        }
+        Returns: string
       }
       save_course: {
         Args: { p_code: string; p_id: string; p_title: string }
@@ -4467,6 +5309,19 @@ export type Database = {
           user_id: string
         }[]
       }
+      stage_import: {
+        Args: {
+          p_department: string
+          p_parser_version: string
+          p_report: Json
+          p_rows: Json
+          p_source_kind: string
+          p_source_name: string
+          p_term: string
+          p_week_of: string
+        }
+        Returns: string
+      }
       start_dm: { Args: { p_target: string }; Returns: string }
       start_uni_email_claim: {
         Args: { p_code_hash: string; p_email: string; p_user: string }
@@ -4559,6 +5414,18 @@ export type Database = {
     }
     Enums: {
       backup_status: "open" | "claimed" | "resolved" | "expired" | "cancelled"
+      calendar_kind:
+        | "term"
+        | "registration"
+        | "add_drop"
+        | "withdraw"
+        | "midterm"
+        | "final"
+        | "result"
+        | "holiday"
+        | "break"
+        | "deadline"
+        | "other"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
       conversation_kind:
         | "dm"
@@ -4567,6 +5434,7 @@ export type Database = {
         | "course"
         | "backup_temp"
         | "ping"
+      import_status: "review" | "published" | "discarded"
       listing_kind: "sell" | "buy" | "free" | "lost" | "found"
       program_level:
         | "associate"
@@ -4578,6 +5446,7 @@ export type Database = {
       report_status: "open" | "actioned" | "dismissed"
       residence_type: "day_scholar" | "hostelite" | "other"
       ride_role: "driver" | "passenger"
+      room_kind: "lecture" | "lab" | "hall" | "online" | "office" | "other"
       shift_type: "morning" | "evening" | "weekend"
       user_role: "student" | "moderator" | "admin"
       verification_method: "uni_email" | "document" | "admin_manual"
@@ -4738,6 +5607,19 @@ export const Constants = {
   public: {
     Enums: {
       backup_status: ["open", "claimed", "resolved", "expired", "cancelled"],
+      calendar_kind: [
+        "term",
+        "registration",
+        "add_drop",
+        "withdraw",
+        "midterm",
+        "final",
+        "result",
+        "holiday",
+        "break",
+        "deadline",
+        "other",
+      ],
       connection_status: ["pending", "accepted", "declined", "blocked"],
       conversation_kind: [
         "dm",
@@ -4747,6 +5629,7 @@ export const Constants = {
         "backup_temp",
         "ping",
       ],
+      import_status: ["review", "published", "discarded"],
       listing_kind: ["sell", "buy", "free", "lost", "found"],
       program_level: [
         "associate",
@@ -4759,6 +5642,7 @@ export const Constants = {
       report_status: ["open", "actioned", "dismissed"],
       residence_type: ["day_scholar", "hostelite", "other"],
       ride_role: ["driver", "passenger"],
+      room_kind: ["lecture", "lab", "hall", "online", "office", "other"],
       shift_type: ["morning", "evening", "weekend"],
       user_role: ["student", "moderator", "admin"],
       verification_method: ["uni_email", "document", "admin_manual"],
