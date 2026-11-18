@@ -19,8 +19,8 @@ const ALERTS: PrefRow[] = [
   { key: "messages", label: "Chat messages", hint: "As pushes; muted chats never ping" },
   {
     key: "timetable",
-    label: "Timetable changes",
-    hint: "When your class moves room, time or teacher, or your timetable is published",
+    label: "Timetable and calendar",
+    hint: "When your class moves room, time or teacher, and reminders you set for calendar dates",
   },
 ];
 

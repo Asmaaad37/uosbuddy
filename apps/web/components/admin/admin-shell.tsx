@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/campus", label: "Campus", admin: true },
   { href: "/admin/catalogue", label: "Catalogue", admin: true },
   { href: "/admin/timetable", label: "Timetables", admin: true },
+  { href: "/admin/calendar", label: "Calendar", admin: true },
   { href: "/admin/flags", label: "Flags", admin: true },
   { href: "/admin/launch", label: "Launch check", admin: true },
 ];

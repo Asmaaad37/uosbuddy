@@ -8,6 +8,7 @@ import { BatchReveal } from "@/components/discovery/batch-reveal";
 import { ShareButton } from "@/components/discovery/share-button";
 import { AIBuddyCard } from "@/components/explore/aibuddy-card";
 import { BatchCard } from "@/components/explore/batch-card";
+import { ComingUp } from "@/components/explore/coming-up";
 import { NextClass } from "@/components/explore/next-class";
 import { Shortcuts } from "@/components/explore/shortcuts";
 import { SuggestedPerson } from "@/components/explore/suggested-person";
@@ -23,6 +24,7 @@ import { getSession } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
 import { inviteMessage, whatsappLink } from "@/lib/invite-text";
 import { toWeekItems, type MyTimetable } from "@/lib/timetable/week";
+import { pakistanToday, upcoming, type CalendarEvent } from "@/lib/calendar";
 
 export const metadata: Metadata = { title: "Explore" };
 
@@ -47,6 +49,7 @@ export default async function ExplorePage({ searchParams }: Props) {
     { data: waitlisted },
     { data: official },
     ownSlots,
+    { data: calendar },
   ] = await Promise.all([
     getDirectoryCounts(),
     getSuggestions(8),
@@ -79,7 +82,15 @@ export default async function ExplorePage({ searchParams }: Props) {
         .eq("user_id", user.id)
         .eq("term", term ?? ""),
     ),
+    supabase
+      .from("calendar_events")
+      .select("id, term, kind, title, notes, starts_on, ends_on, tentative")
+      .eq("status", "published")
+      .gte("starts_on", new Date(Date.now() - 31 * 86_400_000).toISOString().slice(0, 10))
+      .order("starts_on")
+      .limit(20),
   ]);
+  const today = pakistanToday();
   const week = toWeekItems(
     (official as unknown as MyTimetable | null)?.classes ?? [],
     ownSlots.data ?? [],
@@ -142,6 +153,7 @@ export default async function ExplorePage({ searchParams }: Props) {
       )}
 
       <NextClass items={week} />
+      <ComingUp events={upcoming((calendar ?? []) as CalendarEvent[], today)} today={today} />
       <InstallPrompt />
       <Shortcuts />
       <AIBuddyCard ready={aiEnabled()} waiting={!!waitlisted} />

@@ -683,6 +683,49 @@ export type Database = {
           },
         ]
       }
+      calendar_reminders: {
+        Row: {
+          created_at: string
+          event_id: string
+          sent_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          sent_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          sent_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_reminders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "calendar_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campuses: {
         Row: {
           created_at: string
@@ -4424,6 +4467,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      calendar_reminders_due: { Args: never; Returns: number }
       can_edit_calendar: { Args: { p_university: string }; Returns: boolean }
       can_moderate: {
         Args: { p_space: string; p_university: string }
@@ -4447,6 +4491,7 @@ export type Database = {
       cancel_ride: { Args: { p_ride: string }; Returns: undefined }
       cancel_seat: { Args: { p_ride: string }; Returns: undefined }
       claim_backup: { Args: { p_request: string }; Returns: string }
+      class_group_for: { Args: { p_user: string }; Returns: string }
       class_group_students: { Args: { p_group: string }; Returns: string[] }
       confirm_uni_email_claim: {
         Args: { p_code_hash: string; p_user: string }
@@ -5117,6 +5162,7 @@ export type Database = {
         Args: { p_kind: string; p_user: string }
         Returns: undefined
       }
+      remind_all_deadlines: { Args: never; Returns: number }
       remove_connection: { Args: { p_other: string }; Returns: undefined }
       remove_group_member: {
         Args: { p_conversation: string; p_user: string }
@@ -5486,6 +5532,14 @@ export type Database = {
         }[]
       }
       use_ai: { Args: { p_kind: string }; Returns: number }
+      user_busy: {
+        Args: { p_user: string }
+        Returns: {
+          day: number
+          end_min: number
+          start_min: number
+        }[]
+      }
       verification_duplicates: {
         Args: never
         Returns: {

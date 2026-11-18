@@ -66,3 +66,45 @@ export function toIcs(e: IcsEvent, now = new Date()) {
   ];
   return lines.map(fold).join("\r\n") + "\r\n";
 }
+
+/** All-day dates (the academic calendar) as one iCalendar file. End dates are inclusive. */
+export type IcsDay = {
+  id: string;
+  title: string;
+  description: string;
+  startsOn: string; // YYYY-MM-DD
+  endsOn: string | null;
+};
+
+const ymd = (iso: string) => iso.replaceAll("-", "");
+const nextDay = (iso: string) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+
+export function toIcsCalendar(name: string, days: IcsDay[], url: string, now = new Date()) {
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//UOSBuddy//Academic calendar//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `X-WR-CALNAME:${text(name)}`,
+    "X-WR-TIMEZONE:Asia/Karachi",
+  ];
+  for (const d of days) {
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${d.id}@uosbuddy`,
+      `DTSTAMP:${stamp(now.toISOString())}`,
+      `DTSTART;VALUE=DATE:${ymd(d.startsOn)}`,
+      // DTEND is exclusive for all-day events: the day after the last day.
+      `DTEND;VALUE=DATE:${ymd(nextDay(d.endsOn ?? d.startsOn))}`,
+      `SUMMARY:${text(d.title)}`,
+      `DESCRIPTION:${text(d.description)}`,
+      `URL:${url}`,
+      "TRANSP:TRANSPARENT",
+      "END:VEVENT",
+    );
+  }
+  lines.push("END:VCALENDAR");
+  return lines.map(fold).join("\r\n") + "\r\n";
+}
