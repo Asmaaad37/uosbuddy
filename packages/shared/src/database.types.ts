@@ -719,6 +719,7 @@ export type Database = {
         Row: {
           department_id: string
           id: string
+          intake_term: string | null
           intake_year: number
           label: string
           program_id: string
@@ -727,6 +728,7 @@ export type Database = {
         Insert: {
           department_id: string
           id?: string
+          intake_term?: string | null
           intake_year: number
           label: string
           program_id: string
@@ -735,6 +737,7 @@ export type Database = {
         Update: {
           department_id?: string
           id?: string
+          intake_term?: string | null
           intake_year?: number
           label?: string
           program_id?: string
@@ -5226,6 +5229,10 @@ export type Database = {
           resource_title: string
           score: number
         }[]
+      }
+      seed_rooms: {
+        Args: { p_department: string; p_rooms: Json }
+        Returns: number
       }
       send_message: {
         Args: {

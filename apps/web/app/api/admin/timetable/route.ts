@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/session";
 import { extractWords } from "@/lib/timetable/extract";
-import { timetableFromJson, toStageRows } from "@/lib/timetable/normalise";
+import { roomsFromLabels, timetableFromJson, toStageRows } from "@/lib/timetable/normalise";
 import { PARSER_VERSION, parseTimetable, type Timetable } from "@/lib/timetable/parser";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
 
   let timetable: Timetable | null = null;
   let parseReport: Record<string, unknown> = {};
+  let roomLabels: string[] = [];
   if (isPdf) {
     try {
       const { timetable: parsed, report } = parseTimetable(
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest) {
         return json(422, "No classes found. Is this the department's weekly timetable PDF?");
       }
       timetable = parsed;
+      roomLabels = report.rooms.map((r) => r.room);
       parseReport = {
         status: report.status,
         summary: report.summary,
@@ -116,6 +118,13 @@ export async function POST(request: NextRequest) {
       known ? 400 : 500,
       known ? error!.message : "Couldn't stage the import. Try again.",
     );
+  }
+  // The timetable's room list includes rooms with no classes; save those too (free rooms).
+  if (roomLabels.length) {
+    await supabase.rpc("seed_rooms", {
+      p_department: department,
+      p_rooms: roomsFromLabels(roomLabels) as unknown as Json,
+    });
   }
   return NextResponse.json({ importId, rows: rows.length, skipped: skipped.length });
 }

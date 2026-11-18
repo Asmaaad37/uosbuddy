@@ -3,7 +3,7 @@
 -- the diff names moved, retimed, teacher, added and removed classes.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(27);
+select plan(31);
 
 create schema tests;
 create table tests.u (name text primary key, id uuid not null default gen_random_uuid());
@@ -138,6 +138,32 @@ select lives_ok($$select tests.as('Editor', format('select public.revert_import(
   'the editor restores the earlier timetable');
 select is(tests.as('Student', $$select string_agg(room_label, ',' order by room_label) from public.timetable_live$$),
   'MAB CR-160,MAB CR-161,MAB CR-162,MAB CR-163', 'the restored timetable is live');
+
+-- Fall and Spring batches of the same years are different class groups; rooms with no
+-- classes are saved from the room list.
+insert into tests.ids select 'imp3', tests.as('Editor', format(
+  'select public.stage_import(%L, %L, null, %L, null, %L, null, %L)::text',
+  (select id from public.departments where short_code = 'CS'), '2026-fall', 'json', 'test',
+  jsonb_build_array(
+    tests.row('CSCC-2201', 'Database Systems', 'CR-160', 'Dr. Ayesha Kausar', 0, 480, 570)
+      || '{"intake_term": "fall"}',
+    tests.row('CSCC-2201', 'Database Systems', 'CR-161', 'Dr. Ayesha Kausar', 1, 480, 570)
+      || '{"intake_term": "spring"}')))::uuid;
+select is((select count(distinct class_group_id)::int from public.timetable_entries
+  where import_id = tests.id('imp3')), 2, 'a Fall and a Spring batch are two groups');
+select is((select string_agg(g.label, ' | ' order by g.label) from public.class_groups g
+  where g.id in (select class_group_id from public.timetable_entries where import_id = tests.id('imp3'))),
+  'BS in Computer Science · Fall 2024 · Regular | BS in Computer Science · Spring 2024 · Regular',
+  'group labels name the intake season');
+select is(tests.as('Editor', format('select public.seed_rooms(%L, %L)::text',
+  (select id from public.departments where short_code = 'CS'),
+  '[{"building_code": "OKM", "room_code": "CR-90", "room_label": "OKM CR-90"},
+    {"building_code": "MAB", "room_code": "CR-160", "room_label": "MAB CR-160"},
+    {"building_code": null, "room_code": "Online Hall 1", "room_label": "Online Hall 1"}]')),
+  '2', 'rooms with no classes are added once; known rooms are left alone');
+select throws_ok($$select tests.as('Student', format('select public.seed_rooms(%L, %L)::text',
+  (select id from public.departments where short_code = 'CS'), '[]'))$$,
+  '42501', null, 'students can''t add rooms');
 
 -- Follows are private.
 select lives_ok($$select tests.as('Student', format(
