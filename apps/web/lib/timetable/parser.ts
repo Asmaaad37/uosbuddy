@@ -5,6 +5,11 @@
  * room bands down the left edge, cells that end at a time range, the lab-row threshold,
  * program-line resolution for truncated text, and semester inference.
  *
+ * Our additions, for the department's Fall 2026 timetable (narrower cells, longer tables):
+ * cells whose program, course, teacher or time wrap over several lines (parseWrapped), rows
+ * that continue on the next page, and empty-room labels that sit close together. On the
+ * original's sample PDFs the output is still identical (golden tests).
+ *
  * This module is pure: it takes positioned words (see extract.server.ts) and returns the same
  * shape as the Python original, so the golden tests can compare the two directly.
  */
@@ -33,7 +38,14 @@ export type ParsedSession = {
   raw_lines: string[];
 };
 
-export type RoomLabel = { page: number; region: number; room: string; top: number };
+export type RoomLabel = {
+  page: number;
+  region: number;
+  room: string;
+  top: number;
+  /** Top of the label's first line. */
+  first_top: number;
+};
 export type ParseWarning = { type: string; [key: string]: unknown };
 export type ParseReport = {
   status: "clean" | "partial" | "failed";
@@ -61,6 +73,10 @@ const PROGRAM_NAMES: Record<string, string> = {
 };
 const ROOM_RE = /\b(?:smart room|smart lab|committee room|online|room|hall|lab|cr|l)\b/i;
 const ROW_GAP_THRESHOLD = 80;
+// A course line ("Data Structures #CMPC-5205"); "Semester#1" is not one.
+const COURSE_CODE_RE = /#\s*[A-Z]/;
+const OPEN_TIME_RE = /\(\d{2}:\d{2}\s*-?\s*$/;
+const CLOSE_TIME_RE = /^-?\s*\d{2}:\d{2}\s*\)/;
 // The PDF's delete-button icon (a private-use glyph) shows up as its own line.
 const DELETE_ICON = "";
 
@@ -73,6 +89,8 @@ type Candidate = {
   top: number;
   bottom: number;
   lines: string[];
+  /** Set when the class continues a row from the previous page (see extractCandidates). */
+  room?: string;
 };
 
 const mid = (w: Word) => (w.x0 + w.x1) / 2;
@@ -93,7 +111,7 @@ export function parseTimetable(
   const timetable: Timetable = {};
 
   for (const candidate of candidates) {
-    const room = candidateRoom(candidate, report.rooms);
+    const room = candidate.room ?? candidateRoom(candidate, report.rooms);
     if (!room) {
       report.warnings.push({
         type: "unassigned_session",
@@ -151,10 +169,17 @@ function extractCandidates(pages: PageWords[]): { candidates: Candidate[]; repor
     summary: { pages: 0, regions: 0, rooms: 0, sessions: 0, warnings: 0 },
   };
   const candidates: Candidate[] = [];
+  // A table row can run onto the next page (the Online row of a long timetable does). Carry
+  // the last room of each page, and any class cut off at the bottom of a day column, over to
+  // the top of the next page. This is our addition; the Python original drops those classes.
+  let lastRoom: string | null = null;
+  let carry = new Map<string, string[]>();
   pages.forEach((page, index) => {
     const pageNumber = index + 1;
     const lines = makeLines(page.words);
     const headers = findDayHeaders(lines);
+    const carried = carry;
+    carry = new Map();
     headers.forEach((header, i) => {
       const region = i + 1;
       const nextTop = headers[i + 1]?.top ?? page.height;
@@ -168,15 +193,48 @@ function extractCandidates(pages: PageWords[]): { candidates: Candidate[]; repor
       const regionLines = lines.filter((l) => l.top > header.top + 1 && l.top < nextTop - 1);
       const rooms = findRooms(regionLines, bounds, pageNumber, region);
       report.rooms.push(...rooms);
-      if (!rooms.length) {
+      // The page's first table with no room label at all continues the previous page's row.
+      const continues = i === 0 && !rooms.length && lastRoom !== null;
+      if (!rooms.length && !continues) {
         report.warnings.push({ type: "missing_room_label", page: pageNumber, region });
       }
+      const firstLabelTop = rooms.length ? Math.min(...rooms.map((r) => r.first_top)) : Infinity;
+      const isLast = i === headers.length - 1;
       for (const [day, [left, right]] of Object.entries(bounds)) {
-        candidates.push(
-          ...makeCandidates(pageNumber, region, day, cropLines(regionLines, left, right)),
+        const { result, pending } = makeCandidates(
+          pageNumber,
+          region,
+          day,
+          cropLines(regionLines, left, right),
         );
+        if (i === 0 && lastRoom !== null) {
+          const head = carried.get(day);
+          const first = result[0];
+          if (continues) {
+            // No room label on this table: every class is still the previous page's row.
+            for (const c of result) c.room = lastRoom;
+            if (first && head) first.lines = [...head, ...first.lines];
+          } else if (
+            first &&
+            head &&
+            first.top < firstLabelTop &&
+            !first.lines.some((l) => COURSE_CODE_RE.test(l))
+          ) {
+            // A class cut at the bottom of the last page: its tail is the first text here.
+            first.room = lastRoom;
+            first.lines = [...head, ...first.lines];
+          }
+        }
+        candidates.push(...result);
+        if (isLast && pending.length) carry.set(day, pending);
+      }
+      if (isLast) {
+        const bottom = [...rooms].sort((a, b) => a.top - b.top).pop();
+        if (bottom) lastRoom = bottom.room;
+        else if (!continues) lastRoom = null;
       }
     });
+    if (!headers.length) lastRoom = null;
   });
   return { candidates, report };
 }
@@ -253,7 +311,7 @@ function makeCandidates(
   region: number,
   day: string,
   lines: [number, string][],
-): Candidate[] {
+): { result: Candidate[]; pending: string[] } {
   const result: Candidate[] = [];
   let pending: string[] = [];
   let pendingBottom = 0;
@@ -264,6 +322,20 @@ function makeCandidates(
     if (!text) continue;
     if (previousTop !== null && lineTop - previousTop > ROW_GAP_THRESHOLD) pending = [];
     if (!pending.length) top = lineTop;
+    const last = pending[pending.length - 1];
+    if (last !== undefined && OPEN_TIME_RE.test(last) && CLOSE_TIME_RE.test(text)) {
+      // A time range that wraps ("(12:00 -" then "15:00)") is one line.
+      pending[pending.length - 1] = `${last} ${text}`;
+      pendingBottom = lineTop;
+      previousTop = lineTop;
+      if (TIME_RE.test(pending[pending.length - 1]!)) {
+        result.push({ page, region, day, top, bottom: pendingBottom, lines: pending });
+        pending = [];
+        pendingBottom = 0;
+        previousTop = null;
+      }
+      continue;
+    }
     pending.push(text);
     pendingBottom = lineTop;
     previousTop = lineTop;
@@ -274,7 +346,7 @@ function makeCandidates(
       previousTop = null;
     }
   }
-  return result;
+  return { result, pending };
 }
 
 function findRooms(
@@ -292,8 +364,15 @@ function findRooms(
   const blocks: [number, string][][] = [];
   for (const item of leftLines) {
     const last = blocks[blocks.length - 1];
-    if (last && item[0] - last[last.length - 1]![0] <= 14) last.push(item);
-    else blocks.push([item]);
+    // Rows with no classes sit close together; split where one label ends and another starts.
+    const joined = last && normalizeSpacing(last.map(([, v]) => v).join(" "));
+    if (
+      last &&
+      item[0] - last[last.length - 1]![0] <= 14 &&
+      !(endsRoom(joined!) && startsRoom(item[1]))
+    ) {
+      last.push(item);
+    } else blocks.push([item]);
   }
   const rooms: RoomLabel[] = [];
   for (const block of blocks) {
@@ -304,10 +383,26 @@ function findRooms(
         region,
         room: normalizeRoomLabel(text),
         top: block.reduce((n, [t]) => n + t, 0) / block.length,
+        first_top: block[0]![0],
       });
     }
   }
   return rooms;
+}
+
+/** "OKM CR- 90", "JB-CR-No-17", "Jinnah Block Hall", "UMDC Room 1", "(Staff Room)". */
+function endsRoom(value: string): boolean {
+  return /(\b(?:CR|L)\s*-\s*\d+|\bNo-\d+|\b(?:Hall|Room|Office|Lab)(?:\s*\d+)?|\))$/.test(
+    value.trim(),
+  );
+}
+
+/**
+ * A line that starts a new label rather than continuing one: not "Department of …",
+ * "College of …", "(…", a lower-case word, a number or a dash.
+ */
+function startsRoom(value: string): boolean {
+  return !/^(?:\(|Department of\b|College of\b|of\b|and\b|[a-z]|\d|-)/.test(value.trim());
 }
 
 function looksLikeRoom(value: string): boolean {
@@ -395,6 +490,19 @@ function parseSession(
   resolveTruncated: boolean,
   keepTruncated: boolean,
 ): ParsedSession {
+  const session = parseSessionLines(rawLines, references, resolveTruncated, keepTruncated);
+  // Narrow cells wrap the program, course and teacher over several lines, and the Python
+  // original then finds no program at all. Only in that case, read the cell as one text.
+  if (session.program_line && session.teacher_name) return session;
+  return parseWrapped(rawLines, session) ?? session;
+}
+
+function parseSessionLines(
+  rawLines: string[],
+  references: string[],
+  resolveTruncated: boolean,
+  keepTruncated: boolean,
+): ParsedSession {
   let lines = rawLines.map((l) => l.trim()).filter(Boolean);
   let teacherIndex: number | null = null;
   for (let i = lines.length - 1; i >= 0; i--) {
@@ -442,6 +550,64 @@ function parseSession(
     end_time: match ? match[2]! : null,
     practical,
     raw_lines: rawLines,
+  };
+}
+
+// "BS in Computer Science Self Support 1 ( Fall 2026-2030 ) Semester#1", wherever it wraps.
+const WRAPPED_PROGRAM_RE =
+  /\b(?:BS|MS|PhD)\s+(?:in\s+)?.*?\(\s*(?:[A-Za-z]+\s+)?\d{4}\s*-\s*\d{4}\s*\)(?:\s*Semester#\s*\d+)?/;
+
+/** Joins a cell's lines into one text: "#CMPC-" + "5201" and "2026-" + "2030" lose the space. */
+function joinLines(lines: string[]): string {
+  return lines.reduce(
+    (text, line) =>
+      !text ? line : /-$/.test(text) && /^\d/.test(line) ? text + line : `${text} ${line}`,
+    "",
+  );
+}
+
+/**
+ * Reads a cell whose fields wrap over several lines (our addition; see parseSession).
+ * Returns null when even the joined text has no program, so the line-by-line result stands.
+ */
+function parseWrapped(rawLines: string[], base: ParsedSession): ParsedSession | null {
+  let lines = rawLines.map((l) => normalizeSpacing(l)).filter(Boolean);
+  const practical = lines.some((l) => /\bpractical\b/i.test(l));
+  lines = lines.map((l) => normalizeSpacing(l.replace(/\bpractical\b/gi, ""))).filter(Boolean);
+  const combinedAt = lines.findIndex((l) => isCombinedHeader(l));
+  const combined = combinedAt >= 0 ? lines.splice(combinedAt, 1)[0]! : null;
+  const text = joinLines(lines);
+  const program = WRAPPED_PROGRAM_RE.exec(text);
+  const time = [...text.matchAll(new RegExp(TIME_RE.source, "g"))].pop();
+  if (!program || !time) return null;
+  const programLine = normalizeSpacing(program[0]);
+  const [degree, parsedProgram, section, session, semester] = parseProgramFields(programLine);
+  if (!degree) return null;
+  let name = parsedProgram;
+  const programCode = getProgramCode(degree, name);
+  if (programCode && name) name = PROGRAM_NAMES[normalizeSpacing(name).toLowerCase()] ?? name;
+  const [courseTitle, courseCode] = splitCourseLine(text.slice(0, program.index).trim() || null);
+  const teacherName =
+    normalizeSpacing(text.slice(program.index + program[0].length, time.index)) || null;
+  return {
+    ...base,
+    combined_class: combined,
+    course_title: courseTitle,
+    course_code: courseCode ? courseCode.replace(/\s+/g, "") : null,
+    course_truncated: hasEllipsis(courseTitle),
+    program_line: programLine,
+    program_truncated: hasEllipsis(programLine),
+    degree,
+    program: name,
+    program_code: programCode,
+    section,
+    session,
+    semester,
+    teacher_name: teacherName,
+    teacher_truncated: hasEllipsis(teacherName),
+    start_time: time[1]!,
+    end_time: time[2]!,
+    practical,
   };
 }
 

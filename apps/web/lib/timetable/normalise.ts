@@ -5,6 +5,8 @@ import type { ParsedSession, Timetable } from "./parser";
 export type StageRow = {
   program_id: string;
   intake_year: number;
+  /** UoS admits in Fall and Spring; a "2024-2028" Fall and Spring batch are different classes. */
+  intake_term: "fall" | "spring" | "summer" | null;
   section: "REG" | "SS1" | "SS2";
   course_code: string | null;
   course_title: string;
@@ -47,6 +49,12 @@ export function sectionCode(section: string | null): "REG" | "SS1" | "SS2" | nul
 export function intakeYear(session: string | null): number | null {
   const m = /^(\d{4})\s*-\s*\d{4}$/.exec(session?.trim() ?? "");
   return m ? Number(m[1]) : null;
+}
+
+/** "BS in Computer Science Regular 1 ( Spring 2024-2028 ) Semester#6" → "spring". */
+export function intakeTerm(programLine: string | null): "fall" | "spring" | "summer" | null {
+  const m = /\(\s*(Fall|Spring|Summer)\s+\d{4}/i.exec(programLine ?? "");
+  return m ? (m[1]!.toLowerCase() as "fall" | "spring" | "summer") : null;
 }
 
 /** "08:30" → 510. */
@@ -95,17 +103,23 @@ export function splitRoom(label: string): {
     building = prefixed[1]!;
     text = text.slice(prefixed[0].length);
   }
-  const tokens = text.split(" ");
-  if (!building) {
-    const found = tokens.find((t) => BUILDING.test(t) && !NOT_BUILDING.has(t));
-    if (found) building = found;
-  }
-
   let code: string | null = null;
   const room =
     /\b(CR|L)\s*-\s*(?:No-)?\s*(\d+)\b/i.exec(text) ??
     /\b(CR|L)-\s*[A-Za-z]+\s+(\d+)\b/i.exec(text);
-  if (room) code = `${room[1]!.toUpperCase()}-${room[2]}`;
+  if (!building) {
+    // The building is the code nearest before the room: "UMDC Al-Kindi Block IAH CR-181" is IAH.
+    const isBuilding = (t: string) => BUILDING.test(t) && !NOT_BUILDING.has(t);
+    const before = (room ? text.slice(0, room.index) : text).split(" ").filter(isBuilding);
+    building = before.pop() ?? text.split(" ").find(isBuilding) ?? null;
+  }
+  if (room) {
+    code = `${room[1]!.toUpperCase()}-${room[2]}`;
+    // No building code, but a named hall or block: "Maryam Hall CR-1".
+    const place =
+      !building && /((?:[A-Z][a-z]+\s)?(?:Hall|Block))\s*$/.exec(text.slice(0, room.index));
+    if (place) code = `${place[1]} ${code}`;
+  }
   const hall = !code && /\bHall\s*-\s*(\d+)/i.exec(text);
   if (hall) code = `Hall-${hall[1]}`;
   if (!code) {
@@ -128,6 +142,18 @@ export function splitRoom(label: string): {
 function combinedKey(value: string | null) {
   if (!value) return null;
   return /\((\d+)\)/.exec(value)?.[1] ?? spaces(value).slice(0, 80);
+}
+
+/** "Understading of Holy Quran (1) URCG-5129" with code URCG-5129 → the title alone. */
+function courseTitle(title: string, code: string | null) {
+  const t = spaces(title);
+  if (!code) return t;
+  const key = code.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+  const words = t.split(" ");
+  const last = words[words.length - 1] ?? "";
+  return words.length > 1 && last.replace(/[^A-Za-z0-9]/g, "").toUpperCase() === key
+    ? words.slice(0, -1).join(" ")
+    : t;
 }
 
 const teacher = (name: string | null) =>
@@ -160,9 +186,10 @@ export function toStageRows(timetable: Timetable, programs: Program[]) {
           rows.push({
             program_id: program.id,
             intake_year: intake,
+            intake_term: intakeTerm(s.program_line),
             section,
             course_code: s.course_code ? spaces(s.course_code).slice(0, 20) : null,
-            course_title: spaces(s.course_title).slice(0, 160),
+            course_title: courseTitle(s.course_title, s.course_code).slice(0, 160),
             teacher_name: teacher(s.teacher_name),
             building_code: room.building,
             room_code: room.code,
@@ -179,6 +206,26 @@ export function toStageRows(timetable: Timetable, programs: Program[]) {
     }
   }
   return { rows, skipped };
+}
+
+/** Every room the timetable lists, including rooms with no classes (for the free-room finder). */
+export function roomsFromLabels(labels: string[]) {
+  const seen = new Map<
+    string,
+    { building_code: string | null; room_code: string; room_label: string }
+  >();
+  for (const label of labels) {
+    const r = splitRoom(label);
+    const key = `${r.building ?? ""}|${r.code}`;
+    if (!seen.has(key)) {
+      seen.set(key, {
+        building_code: r.building,
+        room_code: r.code,
+        room_label: r.display.slice(0, 120),
+      });
+    }
+  }
+  return [...seen.values()];
 }
 
 function rawOf(s: ParsedSession): Record<string, unknown> {
