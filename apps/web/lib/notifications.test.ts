@@ -152,3 +152,22 @@ group("timetable alerts", () => {
     ).toBe("Your Fall 2026 timetable is up");
   });
 });
+
+group("calendar reminders", () => {
+  it("names the date and when it is", () => {
+    const text = describe({
+      type: "calendar.reminder",
+      entity_id: null,
+      payload: {
+        title: "Last day to withdraw from a course",
+        starts_on: "2099-01-05",
+        ends_on: null,
+      },
+      actor_name: null,
+      actor_handle: null,
+    });
+    expect(text.title).toMatch(/^Last day to withdraw from a course: in \d+ days$/);
+    expect(text.body).toBe("Mon 5 Jan");
+    expect(text.href).toBe("/calendar");
+  });
+});

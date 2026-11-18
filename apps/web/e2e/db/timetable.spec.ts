@@ -93,4 +93,21 @@ test("an editor imports, reviews and publishes the CS timetable", async ({ brows
   // The free-room finder lists rooms, with or without classes.
   await studentPage.goto("/timetable?tab=rooms");
   await expect(studentPage.getByRole("button", { name: "Now" })).toBeVisible();
+
+  // Phase 11.4: the academic calendar, with reminders for every coming deadline.
+  await studentPage.goto("/calendar");
+  await expect(studentPage.getByRole("heading", { name: "Academic calendar" })).toBeVisible();
+  await studentPage.getByRole("button", { name: "Remind me of every deadline" }).click();
+  await expect(studentPage.getByText(/reminders? added|You're already set/)).toBeVisible();
+  const { count: reminders } = await supabase
+    .from("calendar_reminders")
+    .select("event_id", { count: "exact", head: true })
+    .eq("user_id", student.id);
+  const { count: coming } = await supabase
+    .from("calendar_events")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "published")
+    .in("kind", ["registration", "add_drop", "withdraw", "midterm", "final", "result", "deadline"])
+    .gt("starts_on", new Date(Date.now() + 5 * 3_600_000).toISOString().slice(0, 10));
+  expect(reminders).toBe(coming);
 });

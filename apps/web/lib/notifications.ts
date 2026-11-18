@@ -1,5 +1,6 @@
 import { termLabel } from "@/lib/academics";
 import { alertLine } from "@/lib/timetable/format";
+import { dateRange, pakistanToday, whenLabel } from "@/lib/calendar";
 
 /** What a notification says and where it leads, for the centre and for push (Phase 5). */
 export type NotificationLike = {
@@ -186,6 +187,19 @@ export function describe(n: NotificationLike): Described {
         title: count === 1 ? "Your timetable changed" : `${count} changes to your timetable`,
         body: line ? `${line}${count > 1 ? ` (+${count - 1} more)` : ""}` : undefined,
         href: "/timetable",
+      };
+    }
+    case "calendar.reminder": {
+      const title = typeof p.title === "string" ? p.title : "A date on the academic calendar";
+      const starts = typeof p.starts_on === "string" ? p.starts_on : null;
+      return {
+        title: starts
+          ? `${title}: ${whenLabel({ starts_on: starts, ends_on: null }, pakistanToday()).toLowerCase()}`
+          : title,
+        body: starts
+          ? `${dateRange({ starts_on: starts, ends_on: typeof p.ends_on === "string" ? p.ends_on : null })}${p.tentative ? " (tentative)" : ""}`
+          : undefined,
+        href: "/calendar",
       };
     }
     case "timetable.published":
