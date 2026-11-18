@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { db, logIn, makeStudent, run } from "./helpers";
 
@@ -6,7 +6,8 @@ import { db, logIn, makeStudent, run } from "./helpers";
 // reviews what publishing changes, and publishes; the classes go live.
 test.skip(!process.env.E2E_DB, "needs a local Supabase stack (E2E_DB=1)");
 
-const week4 = fileURLToPath(new URL("../../lib/timetable/__fixtures__/week4.pdf", import.meta.url));
+// Playwright loads specs as CommonJS, so no import.meta here.
+const week4 = path.join(__dirname, "../../lib/timetable/__fixtures__/week4.pdf");
 
 test("an editor imports, reviews and publishes the CS timetable", async ({ browser }) => {
   test.setTimeout(120_000);
