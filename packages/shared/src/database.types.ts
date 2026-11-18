@@ -3626,6 +3626,46 @@ export type Database = {
           },
         ]
       }
+      timetable_settings: {
+        Row: {
+          class_group_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          class_group_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          class_group_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_settings_class_group_id_fkey"
+            columns: ["class_group_id"]
+            isOneToOne: false
+            referencedRelation: "class_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       timetable_slots: {
         Row: {
           course_id: string | null
@@ -4779,6 +4819,10 @@ export type Database = {
           requester_id: string
         }[]
       }
+      intake_season: {
+        Args: { p_semester: number; p_term: string }
+        Returns: string
+      }
       invite_preview: {
         Args: { p_code: string }
         Returns: {
@@ -4916,6 +4960,7 @@ export type Database = {
           id: string
         }[]
       }
+      my_class_group: { Args: never; Returns: string }
       my_connections: {
         Args: never
         Returns: {
@@ -4995,6 +5040,7 @@ export type Database = {
         }[]
       }
       my_role_in: { Args: { p_conversation: string }; Returns: string }
+      my_timetable: { Args: never; Returns: Json }
       my_university_id: { Args: never; Returns: string }
       norm_person: { Args: { p_name: string }; Returns: string }
       notifications_housekeeping: { Args: never; Returns: undefined }
@@ -5275,6 +5321,7 @@ export type Database = {
         Returns: undefined
       }
       set_mute: { Args: { p_on: boolean; p_target: string }; Returns: boolean }
+      set_my_class_group: { Args: { p_group: string }; Returns: undefined }
       set_my_interests: {
         Args: { p_interest_ids: string[] }
         Returns: undefined
@@ -5352,6 +5399,19 @@ export type Database = {
         }[]
       }
       term_rank: { Args: { p_term: string }; Returns: number }
+      this_week: { Args: never; Returns: string }
+      timetable_groups: {
+        Args: never
+        Returns: {
+          department_id: string
+          id: string
+          intake_term: string
+          intake_year: number
+          label: string
+          program_id: string
+          section: string
+        }[]
+      }
       touch_activity: { Args: never; Returns: undefined }
       unban_user: { Args: { p_user: string }; Returns: undefined }
       unblock_user: { Args: { p_target: string }; Returns: undefined }
