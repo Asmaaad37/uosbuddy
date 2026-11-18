@@ -4,3 +4,9 @@ packages:
 # Phase 10 dependency audit: Next.js pins an older postcss with known advisories.
 overrides:
   postcss: 8.5.31
+# 2026-11-17: picomatch <=4.0.7 ReDoS (GHSA-fc5q-39xc-vjpf) has no patched release yet.
+# Only reached via @sentry/nextjs build plugins (rollup, vite), matching build-config globs, never user input.
+# Remove once a fix ships.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
