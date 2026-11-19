@@ -5,8 +5,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 
 /**
  * A thin bar at the top that starts the instant a link is tapped and finishes when the
- * next page arrives, so every tap gets immediate feedback. Pages still arrive whole (no
- * streamed skeleton), so nothing can be typed into before it's ready.
+ * next page arrives, so every tap gets immediate feedback. Signed-in screens also show a
+ * skeleton while they load ((app)/loading.tsx).
  */
 export function NavProgress() {
   const pathname = usePathname();
