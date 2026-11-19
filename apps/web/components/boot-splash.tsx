@@ -15,8 +15,8 @@ html[data-theme=dark]{background:#0b0f17}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) #boot-splash{background:#0b0f17;color:#f2f4f7}}
 :root[data-theme=dark] #boot-splash{background:#0b0f17;color:#f2f4f7}
 #boot-splash .bs-mark{width:76px;height:76px;border-radius:18px;background:#2563eb;display:grid;place-items:center;box-shadow:0 10px 30px rgba(37,99,235,.35);animation:bs-pop .5s .12s cubic-bezier(.2,.9,.3,1.2) both}
-#boot-splash h1{margin:6px 0 0;font-size:22px;font-weight:700;letter-spacing:-.01em;animation:bs-rise .45s .2s ease both}
-#boot-splash p{margin:0;font-size:15px;color:color-mix(in srgb,currentColor 65%,transparent);animation:bs-rise .45s .28s ease both}
+#boot-splash .bs-title{margin:6px 0 0;font-size:22px;font-weight:700;letter-spacing:-.01em;animation:bs-rise .45s .2s ease both}
+#boot-splash .bs-tag{margin:0;font-size:15px;color:color-mix(in srgb,currentColor 65%,transparent);animation:bs-rise .45s .28s ease both}
 #boot-splash .bs-bar{animation:bs-rise .45s .35s ease both;margin-top:18px;width:120px;height:3px;border-radius:3px;background:rgba(127,127,127,.2);overflow:hidden}
 #boot-splash .bs-bar span{display:block;width:40%;height:100%;border-radius:3px;background:#2563eb;animation:bs-slide 1.1s ease-in-out infinite}
 html.booted #boot-splash{opacity:0;visibility:hidden;pointer-events:none}
@@ -51,8 +51,9 @@ export function BootSplash() {
             />
           </svg>
         </div>
-        <h1>Welcome to UOSBuddy</h1>
-        <p>Find your batch. Find your people.</p>
+        {/* Not a heading: the page's own heading is the first one that counts. */}
+        <p className="bs-title">Welcome to UOSBuddy</p>
+        <p className="bs-tag">Find your batch. Find your people.</p>
         <div className="bs-bar">
           <span />
         </div>
