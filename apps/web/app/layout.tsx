@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { BOOT_SCRIPT, BootSplash } from "@/components/boot-splash";
 import { Providers } from "@/components/providers";
 import { THEME_SCRIPT } from "@/components/theme-provider";
 import "./globals.css";
@@ -41,8 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Apply the saved appearance before first paint, so there's no flash. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* Hides the opening screen once the first screen is in (see BootSplash). */}
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
       </head>
       <body className="min-h-dvh">
+        <BootSplash />
         <Providers>{children}</Providers>
       </body>
     </html>

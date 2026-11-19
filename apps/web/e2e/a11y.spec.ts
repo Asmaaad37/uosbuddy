@@ -22,6 +22,7 @@ for (const scheme of ["light", "dark"] as const) {
         await page.goto(path);
         // Not "networkidle": the login page's captcha keeps a connection open.
         await page.getByRole("heading").first().waitFor();
+        await page.locator("#boot-splash").waitFor({ state: "hidden" });
         const { violations } = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
           .analyze();

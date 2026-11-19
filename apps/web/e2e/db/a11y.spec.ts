@@ -51,6 +51,8 @@ for (const scheme of ["light", "dark"] as const) {
     for (const path of [...STUDENT, ...(process.env.AI_FAKE ? ["/buddy"] : []), ...ADMIN]) {
       await page.goto(path);
       await page.getByRole("heading").first().waitFor();
+      // The opening screen fades out once the page is in; scan the page, not the fade.
+      await page.locator("#boot-splash").waitFor({ state: "hidden" });
       const { violations } = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
         .analyze();
