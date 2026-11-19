@@ -6,7 +6,10 @@ import { db, logIn, makeStudent, run } from "./helpers";
 test.skip(!process.env.E2E_DB, "needs a local Supabase stack (E2E_DB=1)");
 
 async function student(browser: Browser, name: string, first: string) {
-  const s = await makeStudent(name, `${first}6_${run}`.slice(0, 20), 4);
+  // A batch with no published timetable: since 11.4 Free together also counts official
+  // classes, and the timetable test publishes one for BS CS 2024 (semester 5). Without this,
+  // the free times below depend on which test runs first.
+  const s = await makeStudent(name, `${first}6_${run}`.slice(0, 20), 4, { batch_year: 2019 });
   const page = await (await browser.newContext()).newPage();
   await logIn(page, s.email, s.password);
   return { page, ...s };
