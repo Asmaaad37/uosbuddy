@@ -4,7 +4,8 @@
 -- useful; this closes the door anyway. Signed-in students keep access.
 -- Left callable by anon on purpose: the access-rule helpers that table, storage and realtime
 -- policies call (is_verified, is_admin, my_university_id, is_member, can_use_topic,
--- can_use_conversation_path) and public_stats (the landing page's numbers).
+-- can_use_conversation_path), public_stats (the landing page's numbers), invite_preview (the
+-- invite link page, before sign-up) and flag (feature switches).
 -- Test 360 keeps it this way for new functions.
 
 revoke execute on function
