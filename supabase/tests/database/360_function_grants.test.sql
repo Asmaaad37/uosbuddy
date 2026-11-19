@@ -1,7 +1,8 @@
 -- Hardening guard: no function that runs with the owner's rights (security definer) may be
 -- callable by a logged-out visitor (anon), except the access-rule helpers that policies call,
--- the landing page's stats, invite link previews (seen before signing up) and feature flags. Trigger functions can't be called directly, so they're left
--- out. A new definer function must revoke EXECUTE from public and anon.
+-- the landing page's stats, invite link previews (seen before signing up) and feature flags.
+-- Trigger functions can't be called directly, so they're left out. A new definer function
+-- must revoke EXECUTE from public and anon.
 begin;
 create extension if not exists pgtap with schema extensions;
 select plan(1);
