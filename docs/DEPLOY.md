@@ -31,6 +31,9 @@ The AI runs inside the web app (Claude), so there's no separate AI server to hos
 
 1. Create a project in **Mumbai (ap-south-1)**, Pro plan (daily backups, no pausing). Save the
    database password in a password manager.
+   Keep Vercel's functions in the same region (`regions` in `apps/web/vercel.json`): `bom1` for
+   Mumbai. The current production project is in Tokyo, so the functions run in `hnd1` (DECISIONS,
+   2026-11-20).
 2. Apply the schema from your PC:
    ```sh
    npx supabase link --project-ref <prod-ref>
