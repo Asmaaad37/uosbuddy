@@ -32,7 +32,7 @@ export function JoinBatchChat({
 
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <span className="grid size-[52px] shrink-0 place-items-center rounded-pill bg-raised text-sec">
+      <span className="grid size-[52px] shrink-0 place-items-center rounded-pill bg-tint text-accent">
         <Users className="size-6" aria-hidden />
       </span>
       <span className="grid min-w-0 flex-1">

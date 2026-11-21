@@ -58,7 +58,7 @@ export default async function ChatsPage({ searchParams }: Props) {
     ? [
         !keys.has(`batch:${profile!.department_id}:${profile!.batch_year}`) && {
           scope: "batch" as const,
-          title: `${dept!.short_code} · Class of ${profile!.batch_year}`,
+          title: `${dept!.short_code} · Batch ${profile!.batch_year}`,
           hint: "Your batch chat",
         },
         profile!.section &&
@@ -111,12 +111,12 @@ export default async function ChatsPage({ searchParams }: Props) {
           </Button>
         }
       >
-        Say hi to someone in your batch. Chats you start show up here.
+        Say hi to someone in your batch.
       </EmptyState>
     ),
     requests: (requests?.length ?? 0) === 0 && (
       <EmptyState icon={Inbox} title="No message requests">
-        When someone you&apos;re not connected with messages you, it waits here until you accept.
+        Messages from people you&apos;re not connected with wait here.
       </EmptyState>
     ),
     groups: offers.length === 0 && (
@@ -182,7 +182,7 @@ export default async function ChatsPage({ searchParams }: Props) {
             <span className="lg:hidden">
               <BellSlot />
             </span>
-            <IconButton asChild>
+            <IconButton asChild cta>
               <Link href="/chats/new" aria-label="New group chat">
                 <SquarePen aria-hidden />
               </Link>
