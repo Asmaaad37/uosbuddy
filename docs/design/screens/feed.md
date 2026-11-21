@@ -15,7 +15,7 @@ Reference: `docs/design/UOSBuddy_Redesign-png/Feed.png` (layout) and the 60 · 3
 
 1. **Compose (header) is the screen's one orange action** (Kinnow with dark icon). Plain icon
    buttons get the same soft lift as the bell.
-2. **Empty state:** "No posts yet" / "Be the first to post here." with a tertiary (Sky) "Write a post".
+2. **Empty state:** "No posts yet" / "Be the first to post here." with a tertiary (Sky) "Start the first post".
 3. **Post card:** name 16/700, meta 13/600 in Muted. Votes already use Blue on Sky for the active vote.
 4. **Composer row:** Blue photo icon.
 

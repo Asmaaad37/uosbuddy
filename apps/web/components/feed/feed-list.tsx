@@ -59,7 +59,7 @@ export function FeedList({
         title="No posts yet"
         action={
           <Button variant="tinted" size="sm" onClick={openComposer}>
-            Write a post
+            Start the first post
           </Button>
         }
       >
