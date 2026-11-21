@@ -249,10 +249,10 @@ export function AcademicForm({
               disabled={locked && !!initial.shift}
               onClick={() => setShift(s.value)}
               className={cn(
-                "h-12 rounded-pill border text-sm font-semibold transition-colors disabled:opacity-60",
+                "h-12 rounded-pill text-sm transition-colors disabled:opacity-60",
                 shift === s.value
-                  ? "border-accent bg-tint text-tint-text"
-                  : "border-sep text-label hover:bg-raised",
+                  ? "bg-midnight font-semibold text-on-fill"
+                  : "bg-surface font-medium text-label shadow-card hover:bg-raised",
               )}
             >
               {s.label}
@@ -290,7 +290,7 @@ export function AcademicForm({
           {error}
         </p>
       )}
-      <Button type="submit" block disabled={status !== null}>
+      <Button variant="cta" type="submit" block disabled={status !== null}>
         {status ?? submitLabel}
       </Button>
     </form>

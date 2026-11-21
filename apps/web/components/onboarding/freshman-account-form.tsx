@@ -107,15 +107,14 @@ export function FreshmanAccountForm() {
     stage === "code" ? (
       <form onSubmit={confirm} className="grid gap-4" noValidate>
         <p className="text-sec">
-          Enter the 6-digit code we sent to <strong className="text-label">{email}</strong> to
-          confirm it&apos;s yours. Check spam if it doesn&apos;t arrive in a minute.
+          We sent a 6-digit code to <strong className="text-label">{email}</strong>. Check spam too.
         </p>
         <Field id={`${id}-code`} label="Code" error={errors.code}>
           {(aria) => (
             <CodeInput {...aria} value={code} onChange={setCode} error={errors.code} autoFocus />
           )}
         </Field>
-        <Button type="submit" block disabled={busy}>
+        <Button type="submit" variant="cta" block disabled={busy}>
           {busy ? "Checking…" : "Confirm email"}
         </Button>
         <ResendCode onResend={resend} disabled={!captcha.ready} />
@@ -183,7 +182,7 @@ export function FreshmanAccountForm() {
             </div>
           )}
         </Field>
-        <Button type="submit" block disabled={busy || !captcha.ready}>
+        <Button type="submit" variant="cta" block disabled={busy || !captcha.ready}>
           {busy ? "Creating account…" : "Continue"}
         </Button>
         <p className="text-center text-sm text-sec">

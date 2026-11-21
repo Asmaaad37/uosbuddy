@@ -147,7 +147,7 @@ export function ProofForm({
           {errors.form}
         </p>
       )}
-      <Button type="submit" block disabled={busy}>
+      <Button variant="cta" type="submit" block disabled={busy}>
         {status ?? "Submit for review"}
       </Button>
     </form>
