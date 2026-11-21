@@ -1,5 +1,14 @@
 import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+const chipClass = (selected: boolean) =>
+  cn(
+    "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-pill px-4 text-subhead whitespace-nowrap shadow-card transition-[transform,background-color,color] duration-100 ease-out active:scale-[0.97] contrast-more:border contrast-more:border-label",
+    selected
+      ? "bg-midnight font-semibold text-on-fill"
+      : "bg-surface font-medium text-label hover:bg-raised",
+  );
 
 /**
  * Selectable chip (60·30·10): a 44px pill on Card with a soft lift and a Blue icon. Selected:
@@ -18,17 +27,31 @@ export function Chip({
       type="button"
       // A chip inside a radiogroup reports aria-checked instead.
       aria-pressed={props.role === "radio" ? undefined : selected}
-      className={cn(
-        "inline-flex h-11 shrink-0 items-center gap-1.5 rounded-pill px-4 text-subhead whitespace-nowrap shadow-card transition-[transform,background-color,color] duration-100 ease-out active:scale-[0.97] contrast-more:border contrast-more:border-label",
-        selected
-          ? "bg-midnight font-semibold text-on-fill"
-          : "bg-surface font-medium text-label hover:bg-raised",
-        className,
-      )}
+      className={cn(chipClass(selected), className)}
       {...props}
     >
       {Icon && <Icon className={cn("size-4", !selected && "text-accent")} aria-hidden />}
       {children}
     </button>
+  );
+}
+
+/** A chip that goes somewhere (a shortcut into a filtered list), styled like Chip. */
+export function ChipLink({
+  href,
+  icon: Icon,
+  className,
+  children,
+}: {
+  href: string;
+  icon?: React.ElementType;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link href={href} className={cn(chipClass(false), className)}>
+      {Icon && <Icon className="size-[18px] text-accent" aria-hidden />}
+      {children}
+    </Link>
   );
 }
