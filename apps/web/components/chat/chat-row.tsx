@@ -216,7 +216,7 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
           <DialogDescription className="text-subhead text-sec">
             {chat.group
               ? "You'll stop getting its messages. You can join a batch chat again any time."
-              : `It leaves your list only; ${chat.name.split(" ")[0]} keeps it. It comes back if either of you sends a new message.`}
+              : `${chat.name.split(" ")[0]} keeps it. It comes back with any new message.`}
           </DialogDescription>
           <div className="mt-4 grid gap-2">
             <Button variant="destructive" block onClick={leave}>

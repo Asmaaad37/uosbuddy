@@ -213,7 +213,7 @@ export function StudyGroups({
                   {error}
                 </p>
               )}
-              <Button type="submit" block disabled={busy === "create"}>
+              <Button variant="cta" type="submit" block disabled={busy === "create"}>
                 {busy === "create" && <Loader2 className="animate-spin" />} Create
               </Button>
             </form>

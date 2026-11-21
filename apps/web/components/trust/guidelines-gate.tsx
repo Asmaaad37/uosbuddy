@@ -68,7 +68,7 @@ export function useGuidelinesGate() {
           </p>
         )}
         <div className="mt-2 flex gap-2">
-          <Button block disabled={busy} onClick={() => void accept()}>
+          <Button variant="cta" block disabled={busy} onClick={() => void accept()}>
             {busy && <Loader2 className="animate-spin" />} I agree
           </Button>
           <Button block variant="quiet" onClick={() => close(false)}>

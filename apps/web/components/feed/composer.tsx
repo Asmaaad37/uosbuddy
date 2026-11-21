@@ -289,7 +289,7 @@ export function Composer({
                 {error}
               </p>
             )}
-            <Button type="submit" block disabled={!!busy || !body.trim()}>
+            <Button variant="cta" type="submit" block disabled={!!busy || !body.trim()}>
               {busy === "post" && <Loader2 className="animate-spin" />} Post
             </Button>
           </form>

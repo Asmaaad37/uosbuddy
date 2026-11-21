@@ -28,8 +28,7 @@ export function WaitlistDialog() {
       <DialogContent>
         <DialogTitle>Request your university</DialogTitle>
         <DialogDescription>
-          Tell us which university you&apos;re at. We&apos;ll email you once when it&apos;s live,
-          and never otherwise.
+          Tell us your university. We&apos;ll email you once when it&apos;s live.
         </DialogDescription>
         <WaitlistForm onDone={() => setOpen(false)} />
       </DialogContent>
@@ -86,7 +85,7 @@ function WaitlistForm({ onDone }: { onDone: () => void }) {
         )}
       </Field>
       {captcha.widget}
-      <Button type="submit" block disabled={busy || !captcha.ready}>
+      <Button variant="cta" type="submit" block disabled={busy || !captcha.ready}>
         {busy ? "Saving…" : "Notify me"}
       </Button>
     </form>

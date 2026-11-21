@@ -259,7 +259,7 @@ function ChooseSection({
               </option>
             ))}
           </NativeSelect>
-          <Button block disabled={pending} onClick={() => onSave(value || null)}>
+          <Button variant="cta" block disabled={pending} onClick={() => onSave(value || null)}>
             Save
           </Button>
         </div>

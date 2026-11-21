@@ -175,7 +175,7 @@ export function Comments({
           ) : (
             <span />
           )}
-          <Button type="submit" size="sm" disabled={busy || !body.trim()}>
+          <Button type="submit" variant="cta" size="sm" disabled={busy || !body.trim()}>
             {busy && <Loader2 className="animate-spin" />} Comment
           </Button>
         </div>

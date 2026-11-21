@@ -226,7 +226,7 @@ function SlotSheet({
                 <Trash2 />
               </Button>
             )}
-            <Button type="submit" className="flex-1" disabled={busy}>
+            <Button variant="cta" type="submit" className="flex-1" disabled={busy}>
               {busy && <Loader2 className="animate-spin" />} Save
             </Button>
           </div>

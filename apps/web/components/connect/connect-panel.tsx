@@ -107,7 +107,7 @@ export function ConnectPanel({
 
       <div className="flex gap-2">
         {state === "none" && (
-          <Button className="flex-1" onClick={() => setOpen(true)} disabled={!!busy}>
+          <Button variant="cta" className="flex-1" onClick={() => setOpen(true)} disabled={!!busy}>
             <UserPlus /> Connect
           </Button>
         )}
@@ -118,7 +118,7 @@ export function ConnectPanel({
         )}
         {state === "connected" && (
           <>
-            <Button className="flex-1" onClick={message} disabled={!!busy}>
+            <Button variant="cta" className="flex-1" onClick={message} disabled={!!busy}>
               {spin("message") ?? <MessageCircle />} Message
             </Button>
             <PingButton target={target} />
@@ -166,7 +166,7 @@ export function ConnectPanel({
           <SheetTitle className="text-xl font-bold">Connect with {firstName}</SheetTitle>
           <SheetDescription className="mb-4 text-sm text-sec">
             {openingMove
-              ? "Reply to their Opening Move. It makes saying hi much easier."
+              ? "Reply to their Opening Move to break the ice."
               : "Add a short note so they know who you are."}
           </SheetDescription>
           <form onSubmit={send} className="grid gap-4">
@@ -198,7 +198,7 @@ export function ConnectPanel({
                 {error}
               </p>
             )}
-            <Button type="submit" block disabled={!!busy}>
+            <Button variant="cta" type="submit" block disabled={!!busy}>
               {spin("send")} Send request
             </Button>
           </form>

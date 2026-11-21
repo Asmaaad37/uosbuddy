@@ -729,7 +729,13 @@ export function Conversation({
               className="max-h-32 min-h-11 w-full resize-none rounded-[22px] border border-sep bg-surface px-4 py-2.5 text-[16px] focus-visible:border-accent focus-visible:outline-none"
             />
           </div>
-          <Button type="submit" size="icon" aria-label="Send" disabled={!draft.trim()}>
+          <Button
+            type="submit"
+            variant="cta"
+            size="icon"
+            aria-label="Send"
+            disabled={!draft.trim()}
+          >
             <SendHorizontal />
           </Button>
         </form>

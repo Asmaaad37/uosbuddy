@@ -60,8 +60,7 @@ export function SocietySheet() {
       <SheetContent>
         <SheetTitle className="text-xl font-bold">Start a society page</SheetTitle>
         <SheetDescription className="mb-4 text-sm text-sec">
-          For registered UoS societies. An admin checks it before it&apos;s listed; then you can
-          post events.
+          For registered UoS societies. An admin checks it first.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <div className="grid grid-cols-[4.5rem_1fr] gap-3">
@@ -119,7 +118,7 @@ export function SocietySheet() {
               {error}
             </p>
           )}
-          <Button type="submit" block disabled={busy}>
+          <Button variant="cta" type="submit" block disabled={busy}>
             {busy && <Loader2 className="animate-spin" />} Send for verification
           </Button>
         </form>

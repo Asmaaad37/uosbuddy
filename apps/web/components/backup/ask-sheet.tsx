@@ -234,7 +234,7 @@ function AskSheet({
               {error}
             </p>
           )}
-          <Button type="submit" block disabled={busy}>
+          <Button variant="cta" type="submit" block disabled={busy}>
             {busy && <Loader2 className="animate-spin" />} Send to my classmates
           </Button>
         </form>
