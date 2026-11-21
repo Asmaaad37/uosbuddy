@@ -20,7 +20,7 @@ export function AppearanceRow() {
   const { appearance, setAppearance } = useAppearance();
   return (
     <li className="flex items-center gap-4 pl-4">
-      <SunMoon className="size-[22px] shrink-0 text-sec" strokeWidth={1.75} aria-hidden />
+      <SunMoon className="size-[22px] shrink-0 text-accent" strokeWidth={1.75} aria-hidden />
       <span
         data-row-text
         className="flex min-h-[60px] min-w-0 flex-1 items-center justify-between gap-3 py-3 pr-4 shadow-[inset_0_-1px_0_var(--sep)]"

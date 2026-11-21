@@ -42,7 +42,7 @@ type RowProps = {
   leading?: React.ReactNode;
 };
 
-/** A row: 52px (60 with a subtitle), 22px --sec icon, 17px title, 13px --ter subtitle. */
+/** A row: 52px (60 with a subtitle), 22px Blue (--accent) icon, 17px title, 13px --ter subtitle. */
 export function Row({
   icon: Icon,
   title,
@@ -58,7 +58,9 @@ export function Row({
   const inner = (
     <>
       {leading ??
-        (Icon && <Icon className="size-[22px] shrink-0 text-sec" strokeWidth={1.75} aria-hidden />)}
+        (Icon && (
+          <Icon className="size-[22px] shrink-0 text-accent" strokeWidth={1.75} aria-hidden />
+        ))}
       <span
         data-row-text
         className={cn(

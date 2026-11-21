@@ -24,6 +24,7 @@ import { AppearanceRow, LogOutRow } from "@/components/me/me-controls";
 import { BellSlot } from "@/components/notifications/bell-slot";
 import { Avatar } from "@/components/ui/avatar";
 import { GroupedList, Row } from "@/components/ui/grouped-list";
+import { HeroCard } from "@/components/ui/hero-card";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { getSession } from "@/lib/auth/session";
@@ -33,7 +34,7 @@ export const metadata: Metadata = { title: "Me" };
 
 function SmallPill({ children }: { children: React.ReactNode }) {
   return (
-    <li className="inline-flex h-7 items-center gap-1 rounded-pill bg-raised px-2.5 text-footnote font-semibold text-label">
+    <li className="inline-flex h-7 items-center gap-1 rounded-pill bg-on-fill/15 px-2.5 text-footnote font-semibold text-on-fill">
       {children}
     </li>
   );
@@ -82,20 +83,20 @@ export default async function MePage() {
   const name = profile.full_name ?? profile.handle ?? "You";
   const studies =
     dept?.short_code && profile.batch_year
-      ? `${dept.short_code} · Class of ${profile.batch_year}`
+      ? `${dept.short_code} · Batch ${profile.batch_year}`
       : null;
 
   const profileBody = (
     <>
-      <Avatar name={name} src={profile.avatar_url} size={64} />
+      <Avatar name={name} src={profile.avatar_url} size={64} onMidnight />
       <span className="grid min-w-0 flex-1 gap-1">
         <span className="flex min-w-0 items-center gap-1.5">
           <span className="truncate text-[20px] leading-6 font-bold tracking-[-0.01em]">
             {name}
           </span>
-          <VerifiedBadge className="size-[18px] shrink-0" />
+          <VerifiedBadge className="size-[18px] shrink-0 text-on-fill" />
         </span>
-        {studies && <span className="text-subhead text-sec">{studies}</span>}
+        {studies && <span className="text-subhead text-on-fill/75">{studies}</span>}
         {((badges?.length ?? 0) > 0 || hasUniEmail || profile.is_mentor) && (
           <ul aria-label="Badges" className="flex flex-wrap gap-1.5 pt-0.5">
             {hasUniEmail && <SmallPill>UoS email</SmallPill>}
@@ -123,20 +124,21 @@ export default async function MePage() {
         }
       />
 
-      {profile.handle ? (
-        <Link
-          href={`/people/${profile.handle}`}
-          className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card transition-transform duration-100 ease-out active:scale-[0.99]"
-        >
-          {profileBody}
-          <span className="sr-only">View my profile</span>
-          <ChevronRight className="size-[18px] shrink-0 text-ter" aria-hidden />
-        </Link>
-      ) : (
-        <div className="flex items-center gap-4 rounded-card bg-surface p-4 shadow-card">
-          {profileBody}
-        </div>
-      )}
+      {/* The screen's focal card (60·30·10): you, on Midnight. */}
+      <HeroCard aria-label="Your profile" className="p-0 sm:p-0">
+        {profile.handle ? (
+          <Link
+            href={`/people/${profile.handle}`}
+            className="flex items-center gap-4 p-4 transition-transform duration-100 ease-out active:scale-[0.99]"
+          >
+            {profileBody}
+            <span className="sr-only">View my profile</span>
+            <ChevronRight className="size-[18px] shrink-0 text-on-fill/75" aria-hidden />
+          </Link>
+        ) : (
+          <div className="flex items-center gap-4 p-4">{profileBody}</div>
+        )}
+      </HeroCard>
 
       {nudges.length > 0 && (
         <section
@@ -204,7 +206,7 @@ export default async function MePage() {
           href="/resources"
           icon={FileSearch}
           title="Resources"
-          subtitle="Notes and past papers from every course"
+          subtitle="Notes and past papers"
         />
         <Row
           href="/timetable"
@@ -231,7 +233,7 @@ export default async function MePage() {
           href="/me/privacy"
           icon={Lock}
           title="Privacy"
-          subtitle="Who sees your profile and can message you"
+          subtitle="Who sees you and can message you"
         />
         <Row href="/me/notifications" icon={Bell} title="Notifications" />
         <Row href="/me/blocked" icon={Ban} title="Blocked people" />
@@ -240,12 +242,7 @@ export default async function MePage() {
       </GroupedList>
 
       <GroupedList header="Help">
-        <Row
-          href="/safety"
-          icon={LifeBuoy}
-          title="Safety centre"
-          subtitle="Reporting, privacy, help"
-        />
+        <Row href="/safety" icon={LifeBuoy} title="Safety centre" />
         <Row
           href="/me/data"
           icon={Download}
@@ -261,7 +258,7 @@ export default async function MePage() {
               href="/admin"
               icon={ShieldCheck}
               title="Admin"
-              subtitle="Verification queue, reports, people"
+              subtitle="Verification, reports, people"
               trailing={
                 waiting ? (
                   <span className="rounded-pill bg-tint px-2.5 py-0.5 text-footnote font-semibold text-tint-text">
