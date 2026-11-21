@@ -38,24 +38,32 @@ export function Avatar({
   name,
   src,
   size = 40,
+  onMidnight = false,
   className,
 }: {
   name: string;
   src?: string | null;
   size?: keyof typeof sizes;
+  /** On a Midnight hero: a solid white circle with Midnight initials (Sky is translucent in
+   * dark mode, which loses contrast over Midnight). */
+  onMidnight?: boolean;
   className?: string;
 }) {
   return (
     <AvatarPrimitive.Root
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-pill bg-raised align-middle",
+        "relative inline-flex shrink-0 overflow-hidden rounded-pill align-middle",
+        onMidnight ? "bg-on-fill" : "bg-sky",
         sizes[size],
         className,
       )}
     >
       {src && <AvatarPrimitive.Image src={src} alt={name} className="size-full object-cover" />}
       <AvatarPrimitive.Fallback
-        className="grid size-full place-items-center font-semibold text-sec"
+        className={cn(
+          "grid size-full place-items-center font-bold",
+          onMidnight ? "text-midnight" : "text-accent",
+        )}
         aria-label={name}
       >
         {initials(name)}
@@ -71,10 +79,13 @@ export function Avatar({
 export function AvatarStack({
   people,
   slots = 4,
+  onMidnight = false,
   className,
 }: {
   people: { name: string; src?: string | null }[];
   slots?: number;
+  /** On a Midnight hero: rings and empty slots in Midnight and white instead of Card. */
+  onMidnight?: boolean;
   className?: string;
 }) {
   const shown = people.slice(0, slots);
@@ -87,7 +98,12 @@ export function AvatarStack({
           name={p.name}
           src={p.src}
           size={44}
-          className={cn("ring-[3px] ring-surface", i > 0 && "-ml-2")}
+          onMidnight={onMidnight}
+          className={cn(
+            "ring-[3px]",
+            onMidnight ? "ring-midnight" : "ring-surface",
+            i > 0 && "-ml-2",
+          )}
         />
       ))}
       {Array.from({ length: empty }, (_, i) => (
@@ -95,7 +111,9 @@ export function AvatarStack({
           key={`empty-${i}`}
           aria-hidden
           className={cn(
-            "size-11 rounded-pill border-[1.5px] border-dashed border-ter/60 bg-surface",
+            onMidnight
+              ? "size-11 rounded-pill border-[1.5px] border-dashed border-on-fill/45"
+              : "size-11 rounded-pill border-[1.5px] border-dashed border-ter/60 bg-surface",
             (shown.length > 0 || i > 0) && "-ml-2",
           )}
         />

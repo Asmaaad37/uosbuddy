@@ -11,13 +11,13 @@ import { BatchCard } from "@/components/explore/batch-card";
 import { ComingUp } from "@/components/explore/coming-up";
 import { NextClass } from "@/components/explore/next-class";
 import { Shortcuts } from "@/components/explore/shortcuts";
-import { SuggestedPerson } from "@/components/explore/suggested-person";
+import { InviteCard, SuggestedPerson } from "@/components/explore/suggested-person";
 import { BellSlot } from "@/components/notifications/bell-slot";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { Avatar } from "@/components/ui/avatar";
 import { SectionHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { GroupedList, Row } from "@/components/ui/grouped-list";
+import { ChipLink } from "@/components/ui/chip";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { aiEnabled } from "@/lib/ai/claude.server";
 import { getSession } from "@/lib/auth/session";
@@ -30,7 +30,10 @@ export const metadata: Metadata = { title: "Explore" };
 
 type Props = { searchParams: Promise<{ welcome?: string }> };
 
-/** Explore (redesign §5.1): your batch, shortcuts, AIBuddy, people like you, find people. */
+/**
+ * Explore (docs/design/explore-v2.png): your batch as the hero with the one orange action,
+ * four shortcuts and More, what's next, AIBuddy, people like you, and find-people chips.
+ */
 export default async function ExplorePage({ searchParams }: Props) {
   const { supabase, user, profile } = await getSession();
   if (!user || !profile) redirect("/login?next=/explore");
@@ -105,11 +108,17 @@ export default async function ExplorePage({ searchParams }: Props) {
   const shareText = batchLabel
     ? `I'm on UOSBuddy. Come find ${batchLabel}:`
     : "I'm on UOSBuddy. Come find our batch:";
+  // "Saturday, 21 Nov" in Pakistan time.
+  const pk = (opts: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Karachi", ...opts }).format(new Date());
+  const date = `${pk({ weekday: "long" })}, ${pk({ day: "numeric", month: "short" })}`;
 
   return (
     <AppShell>
       <ScreenHeader
         title="Explore"
+        eyebrow={date}
+        actionsBesideTitle
         actions={
           <span className="flex items-center gap-2 lg:hidden">
             <BellSlot />
@@ -133,7 +142,8 @@ export default async function ExplorePage({ searchParams }: Props) {
         />
       ) : (
         <BatchCard
-          title={code && year ? `${code} · Class of ${year}` : "Your batch"}
+          // The year students joined, not graduation: "Batch 2024".
+          title={code && year ? `${code} · Batch ${year}` : "Your batch"}
           me={{ name, src: profile.avatar_url }}
           batchmates={batchPeople.map((p) => ({
             name: p.full_name ?? p.handle ?? "Student",
@@ -152,10 +162,10 @@ export default async function ExplorePage({ searchParams }: Props) {
         />
       )}
 
-      <NextClass items={week} />
-      <ComingUp events={upcoming((calendar ?? []) as CalendarEvent[], today)} today={today} />
-      <InstallPrompt />
       <Shortcuts />
+      <NextClass items={week} />
+      <ComingUp events={upcoming((calendar ?? []) as CalendarEvent[], today, 1)} today={today} />
+      <InstallPrompt />
       <AIBuddyCard ready={aiEnabled()} waiting={!!waitlisted} />
 
       <section aria-labelledby="people-like-you" className="grid gap-3">
@@ -177,6 +187,9 @@ export default async function ExplorePage({ searchParams }: Props) {
                 <SuggestedPerson person={s.person} reason={s.reasons[0]} />
               </li>
             ))}
+            <li className="shrink-0 snap-start">
+              <InviteCard url={inviteUrl} text={shareText} />
+            </li>
           </ul>
         ) : (
           <EmptyState
@@ -199,38 +212,32 @@ export default async function ExplorePage({ searchParams }: Props) {
 
       <section aria-labelledby="find-people" className="grid gap-3">
         <SectionHeader id="find-people" title="Find people" />
-        <GroupedList aria-label="Find people">
+        <div className="flex flex-wrap gap-2.5">
           {profile.section && (
-            <Row
-              icon={Users}
-              title="Your section"
-              subtitle="People you sit with every day"
-              href="/explore/batch?tab=section"
-            />
+            <ChipLink icon={Users} href="/explore/batch?tab=section">
+              My section
+            </ChipLink>
           )}
-          <Row
+          <ChipLink
             icon={MapPin}
-            title={`From ${city}`}
-            subtitle="Handy for trips home and Eid travel"
             href={`/explore/batch?tab=all&hometown=${encodeURIComponent(city)}`}
-          />
-          <Row
+          >
+            From {city}
+          </ChipLink>
+          <ChipLink
             icon={Heart}
-            title="Shared interests"
-            subtitle={interest ? "Match on what you picked" : "Pick a few interests first"}
             href={
               interest
                 ? `/explore/batch?tab=all&interest=${interest.interest_id}`
                 : "/setup/interests?edit=1"
             }
-          />
-          <Row
-            icon={GraduationCap}
-            title={code ? `Seniors in ${code}` : "Seniors"}
-            subtitle="Mentors who've done your courses"
-            href="/mentors"
-          />
-        </GroupedList>
+          >
+            Same interests
+          </ChipLink>
+          <ChipLink icon={GraduationCap} href="/mentors">
+            {code ? `${code} seniors` : "Seniors"}
+          </ChipLink>
+        </div>
       </section>
     </AppShell>
   );

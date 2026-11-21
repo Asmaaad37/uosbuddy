@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Share } from "lucide-react";
+import { Check, Share, UserPlus } from "lucide-react";
 import { Button, type ButtonProps } from "@/components/ui/button";
 
 /** Native share sheet where the phone has one, otherwise copies the link. */
@@ -11,7 +11,15 @@ export function ShareButton({
   label = "Invite your batch",
   icon = true,
   ...props
-}: { url: string; text: string; label?: string; icon?: boolean } & Omit<ButtonProps, "onClick">) {
+}: {
+  url: string;
+  text: string;
+  label?: string;
+  /** true: the share icon; false: none; "user-plus" for invites. A name, not a component,
+   * so server components can pass it. */
+  icon?: boolean | "user-plus";
+} & Omit<ButtonProps, "onClick">) {
+  const Icon = icon === "user-plus" ? UserPlus : icon ? Share : null;
   const [copied, setCopied] = useState(false);
 
   async function share() {
@@ -31,7 +39,7 @@ export function ShareButton({
 
   return (
     <Button type="button" onClick={share} {...props}>
-      {copied ? <Check aria-hidden /> : icon && <Share aria-hidden />}
+      {copied ? <Check aria-hidden /> : Icon && <Icon aria-hidden />}
       {copied ? "Link copied" : label}
     </Button>
   );

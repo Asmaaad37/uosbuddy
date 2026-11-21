@@ -4,7 +4,9 @@
  * plays in full (MIN_MS), and stays longer only if the first screen isn't in yet, then zooms
  * away. Once per visit: later page loads in the same tab skip it (sessionStorage). Plain HTML
  * and inline CSS, so it paints with the first bytes, before any script or stylesheet loads.
- * People who ask for less motion get a short, still version. Colours are the 60·30·10
+ * People who ask for less motion get a short, still version. It is hidden by default and
+ * shown only while the script marks <html data-splash>, so if React ever rebuilds the page
+ * (after an error), the splash can't come back and cover the app. Colours are the 60·30·10
  * palette's Paper, Ink, Muted, Midnight and Blue, inlined because no stylesheet has loaded yet.
  */
 
@@ -15,7 +17,7 @@ const CSS = `
 html{background:#f4f6fc}
 @media (prefers-color-scheme:dark){html:not([data-theme=light]){background:#0a0f1f}}
 html[data-theme=dark]{background:#0a0f1f}
-#boot-splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:hidden;
+#boot-splash{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:hidden;
   --bg:#f4f6fc;--ink:#0e1734;--sec:#5e6784;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",var(--font-inter),system-ui,sans-serif;
   transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s}
@@ -33,8 +35,8 @@ html[data-theme=dark]{background:#0a0f1f}
 #boot-splash .bs-dots i{width:8px;height:8px;border-radius:50%;background:#2f4fe0;animation:bs-bounce 1s ease-in-out infinite}
 #boot-splash .bs-dots i:nth-child(2){animation-delay:.15s;opacity:.75}
 #boot-splash .bs-dots i:nth-child(3){animation-delay:.3s;opacity:.5}
-html.booted #boot-splash{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
-html.booted-skip #boot-splash{display:none}
+html[data-splash] #boot-splash{display:flex}
+html[data-splash=out] #boot-splash{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
 @keyframes bs-pop{0%{transform:scale(.3) rotate(-12deg);opacity:0}100%{transform:none;opacity:1}}
 @keyframes bs-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes bs-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
@@ -55,11 +57,12 @@ html.booted-skip #boot-splash{display:none}
  * otherwise waits for the first screen (a <main>, or the page done loading) and the minimum
  * time, whichever is later, then lets it zoom away. Never longer than 8 s.
  */
-export const BOOT_SCRIPT = `(function(){var d=document,h=d.documentElement,K="uosb-welcomed";
-if(navigator.webdriver){h.classList.add("booted","booted-skip");return}
-try{if(sessionStorage.getItem(K)){h.classList.add("booted","booted-skip");return}sessionStorage.setItem(K,"1")}catch(e){}
+export const BOOT_SCRIPT = `(function(){var d=document,K="uosb-welcomed",root=function(){return d.documentElement};
+if(navigator.webdriver)return;
+try{if(sessionStorage.getItem(K))return;sessionStorage.setItem(K,"1")}catch(e){}
+root().setAttribute("data-splash","on");
 var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,min=calm?${REDUCED_MS}:${MIN_MS},t0=Date.now(),gone=false;
-var hide=function(){if(gone)return;gone=true;h.classList.add("booted")};
+var hide=function(){if(gone)return;gone=true;root().setAttribute("data-splash","out");setTimeout(function(){root().removeAttribute("data-splash")},500)};
 var ready=function(){clearInterval(poll);setTimeout(hide,Math.max(0,min-(Date.now()-t0)))};
 var poll=setInterval(function(){if(d.querySelector("main"))ready()},40);
 d.addEventListener("DOMContentLoaded",ready);setTimeout(hide,8000)})();`;
@@ -68,10 +71,6 @@ export function BootSplash() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      {/* Without JavaScript nothing would hide it, so it never shows. */}
-      <noscript>
-        <style>{"#boot-splash{display:none}"}</style>
-      </noscript>
       <div id="boot-splash" aria-hidden>
         <div className="bs-glow" />
         <div className="bs-tile">

@@ -54,11 +54,11 @@ export function NotificationBell({
     <Link
       href="/notifications"
       aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}
-      className="relative grid size-11 shrink-0 place-items-center rounded-pill bg-surface text-label transition-transform duration-100 ease-out hover:bg-raised active:scale-[0.97]"
+      className="relative grid size-11 shrink-0 place-items-center rounded-pill bg-surface text-label shadow-card transition-transform duration-100 ease-out hover:bg-raised active:scale-[0.97]"
     >
       <Bell className="size-[22px]" strokeWidth={1.75} />
       {unread > 0 && (
-        <span className="absolute top-0.5 right-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-pill bg-fill px-1 text-caption font-semibold text-on-fill ring-2 ring-bg">
+        <span className="absolute top-0.5 right-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-pill bg-kinnow px-1 text-caption font-bold text-on-kinnow ring-2 ring-bg">
           {unread > 99 ? "99+" : unread}
         </span>
       )}

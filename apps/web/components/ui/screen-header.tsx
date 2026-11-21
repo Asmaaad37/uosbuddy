@@ -13,14 +13,20 @@ import { cn } from "@/lib/utils";
 export function ScreenHeader({
   title,
   subtitle,
+  eyebrow,
   actions,
+  actionsBesideTitle = false,
   back,
   backLabel = "Back",
   className,
 }: {
   title: string;
   subtitle?: React.ReactNode;
+  /** A short line above the title, in Muted (Explore shows the date). */
+  eyebrow?: React.ReactNode;
   actions?: React.ReactNode;
+  /** Put the actions next to the large title instead of in the toolbar row. */
+  actionsBesideTitle?: boolean;
   back?: string;
   backLabel?: string;
   className?: string;
@@ -84,14 +90,22 @@ export function ScreenHeader({
           <p aria-hidden style={{ opacity: "var(--collapse)" }} className="text-headline">
             {title}
           </p>
-          <div className="flex flex-1 items-center justify-end gap-2">{actions}</div>
+          <div className="flex flex-1 items-center justify-end gap-2">
+            {!actionsBesideTitle && actions}
+          </div>
         </div>
       </div>
-      <div className={cn("mt-1.5 grid gap-1", className)}>
-        <h1 ref={titleRef} className="text-large-title">
-          {title}
-        </h1>
-        {subtitle && <p className="text-body text-sec">{subtitle}</p>}
+      <div className={cn("mt-1.5 flex items-end justify-between gap-3", className)}>
+        <div className="grid min-w-0 gap-1">
+          {eyebrow && <p className="text-subhead font-semibold text-sec">{eyebrow}</p>}
+          <h1 ref={titleRef} className="text-large-title">
+            {title}
+          </h1>
+          {subtitle && <p className="text-body text-sec">{subtitle}</p>}
+        </div>
+        {actionsBesideTitle && actions && (
+          <div className="flex shrink-0 items-center gap-2 pb-1">{actions}</div>
+        )}
       </div>
     </>
   );
