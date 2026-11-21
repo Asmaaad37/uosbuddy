@@ -151,7 +151,7 @@ export function ReportDialog({
               <Button variant="quiet" size="md" onClick={() => close()}>
                 Cancel
               </Button>
-              <Button size="md" onClick={send} disabled={busy}>
+              <Button variant="cta" size="md" onClick={send} disabled={busy}>
                 Send report
               </Button>
             </div>

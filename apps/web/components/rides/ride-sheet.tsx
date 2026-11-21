@@ -114,8 +114,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
       <SheetContent>
         <SheetTitle className="text-xl font-bold">New ride</SheetTitle>
         <SheetDescription className="mb-4 text-sm text-sec">
-          Verified UoS students only. Phone numbers are never shown; you&apos;ll talk in a group
-          chat once you accept someone.
+          Numbers stay hidden. You&apos;ll chat once you accept someone.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <div
@@ -189,8 +188,10 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
                     setDays((x) => (x.includes(i) ? x.filter((y) => y !== i) : [...x, i]))
                   }
                   className={cn(
-                    "h-9 rounded-pill border px-3 text-sm font-semibold",
-                    days.includes(i) ? "border-accent bg-tint text-tint-text" : "border-sep",
+                    "hit h-9 rounded-pill px-3 text-sm shadow-card",
+                    days.includes(i)
+                      ? "bg-midnight font-semibold text-on-fill"
+                      : "bg-surface font-medium text-label",
                   )}
                 >
                   {d}
@@ -239,7 +240,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
               {error}
             </p>
           )}
-          <Button type="submit" block disabled={busy}>
+          <Button variant="cta" type="submit" block disabled={busy}>
             {busy && <Loader2 className="animate-spin" />} Post ride
           </Button>
         </form>

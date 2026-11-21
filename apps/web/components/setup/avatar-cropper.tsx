@@ -101,7 +101,7 @@ export function AvatarCropper({
           <Button variant="quiet" size="md" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="md" onClick={finish} disabled={busy || !area}>
+          <Button variant="cta" size="md" onClick={finish} disabled={busy || !area}>
             {busy ? "Saving…" : "Use photo"}
           </Button>
         </div>

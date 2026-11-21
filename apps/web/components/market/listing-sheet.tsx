@@ -99,8 +99,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
       <SheetContent>
         <SheetTitle className="text-xl font-bold">New listing</SheetTitle>
         <SheetDescription className="mb-4 text-sm text-sec">
-          Seen by verified UoS students. Meet on campus to hand things over, and never pay in
-          advance.
+          Meet on campus to hand things over, and never pay in advance.
         </SheetDescription>
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <div
@@ -217,7 +216,7 @@ export function ListingSheet({ initialKind = "sell" }: { initialKind?: ListingKi
               {error}
             </p>
           )}
-          <Button type="submit" block disabled={!!busy}>
+          <Button variant="cta" type="submit" block disabled={!!busy}>
             {busy === "post" && <Loader2 className="animate-spin" />} Post
           </Button>
         </form>

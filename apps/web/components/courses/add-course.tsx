@@ -184,7 +184,7 @@ export function AddCourse({
               >
                 Back
               </Button>
-              <Button type="submit" className="flex-1" disabled={busy === "add"}>
+              <Button variant="cta" type="submit" className="flex-1" disabled={busy === "add"}>
                 {busy === "add" && <Loader2 className="animate-spin" />} Add and join
               </Button>
             </div>

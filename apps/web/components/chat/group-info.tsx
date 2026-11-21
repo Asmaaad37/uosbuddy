@@ -230,7 +230,7 @@ function RenameForm({
         </p>
       )}
       {changed && (
-        <Button type="submit" size="md" disabled={busy || !title.trim()}>
+        <Button variant="cta" type="submit" size="md" disabled={busy || !title.trim()}>
           {busy && <Loader2 className="animate-spin" />} Save
         </Button>
       )}
@@ -327,7 +327,12 @@ function AddPeople({ conversationId, addable }: { conversationId: string; addabl
                 {error}
               </p>
             )}
-            <Button block disabled={busy || picked.length === 0} onClick={() => void add()}>
+            <Button
+              variant="cta"
+              block
+              disabled={busy || picked.length === 0}
+              onClick={() => void add()}
+            >
               {busy && <Loader2 className="animate-spin" />}{" "}
               {picked.length > 1 ? `Add ${picked.length} people` : "Add"}
             </Button>

@@ -40,7 +40,7 @@ export function AnnounceLaunch({ pending, live }: { pending: number; live: boole
             where it&apos;s on): &ldquo;AIBuddy is here&rdquo;. Each student is told once.
           </DialogDescription>
           <div className="mt-2 grid gap-2">
-            <Button block onClick={send} disabled={busy}>
+            <Button variant="cta" block onClick={send} disabled={busy}>
               {busy && <Loader2 className="animate-spin" aria-hidden />} Send
             </Button>
             <Button block variant="quiet" onClick={() => setOpen(false)}>
