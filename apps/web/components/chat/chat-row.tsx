@@ -180,7 +180,8 @@ export function ChatRow({ chat }: { chat: ChatRowData }) {
                 aria-label={`${chat.unread} unread`}
                 className={cn(
                   "ml-auto size-2.5 shrink-0 rounded-pill",
-                  muted ? "bg-ter" : "bg-accent",
+                  // Kinnow: the 10% marks new and unread (the count is in the label).
+                  muted ? "bg-ter" : "bg-kinnow",
                 )}
               />
             )}
