@@ -84,7 +84,8 @@ test("courses, files, study groups, free time together and a ping", async ({ bro
     [b.page, "12:00", "13:00", "OOP lab"],
   ] as const) {
     await page.goto("/timetable");
-    await page.getByRole("button", { name: "Add a class on Mon" }).click();
+    await page.getByRole("button", { name: "Add your own class" }).click();
+    await page.getByLabel("Day").selectOption("Mon");
     await page.getByLabel("Starts").fill(start);
     await page.getByLabel("Ends").fill(end);
     await page.getByLabel(/What is it\?|Label/).fill(label);

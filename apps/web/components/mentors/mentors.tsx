@@ -76,11 +76,7 @@ export function MentorList({ mentors }: { mentors: Mentor[] }) {
   const [error, setError] = useState<string>();
 
   if (!mentors.length) {
-    return (
-      <EmptyState icon={GraduationCap}>
-        No mentors in your department yet. Seniors can switch it on from this page.
-      </EmptyState>
-    );
+    return <EmptyState icon={GraduationCap}>No mentors in your department yet.</EmptyState>;
   }
 
   return (
