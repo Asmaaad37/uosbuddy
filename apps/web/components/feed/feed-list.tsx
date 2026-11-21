@@ -56,14 +56,14 @@ export function FeedList({
     return (
       <EmptyState
         icon={Newspaper}
-        title="Nothing here yet"
+        title="No posts yet"
         action={
           <Button variant="tinted" size="sm" onClick={openComposer}>
-            Write the first post
+            Start the first post
           </Button>
         }
       >
-        Lost something, found a great teacher, or have a question? Ask here.
+        Be the first to post here.
       </EmptyState>
     );
   }

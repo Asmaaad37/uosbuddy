@@ -31,7 +31,7 @@ const OPEN_EVENT = "uosbuddy:compose";
 export function ComposeButton() {
   return (
     <IconButton
-      fill
+      cta
       aria-label="New post"
       onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}
     >
@@ -149,7 +149,11 @@ export function Composer({
               <span className="sr-only">Write a post. </span>
               {placeholder}
             </span>
-            <ImageIcon className="size-[22px] shrink-0 text-sec" strokeWidth={1.75} aria-hidden />
+            <ImageIcon
+              className="size-[22px] shrink-0 text-accent"
+              strokeWidth={1.75}
+              aria-hidden
+            />
           </button>
         </SheetTrigger>
         <SheetContent>

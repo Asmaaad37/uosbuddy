@@ -181,8 +181,7 @@ export default async function BackupPage() {
               </Button>
             }
           >
-            When someone in {code ?? "your department"} needs a hand, it shows up here and
-            we&apos;ll ping you.
+            We&apos;ll ping you when someone needs a hand.
           </EmptyState>
         )}
       </section>
@@ -267,7 +266,7 @@ export default async function BackupPage() {
           <p className="py-2 text-center text-footnote text-sec">
             {(heroes?.length ?? 0) > 0
               ? "Help someone this month to join the list."
-              : "No saves yet this month. Help someone and you'll top the list."}
+              : "No saves yet. Help someone to top the list."}
           </p>
         </Card>
       </section>

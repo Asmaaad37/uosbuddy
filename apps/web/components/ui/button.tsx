@@ -51,15 +51,25 @@ export function Button({ className, variant, size, block, asChild, ...props }: B
 export function IconButton({
   className,
   fill = false,
+  cta = false,
   asChild,
   ...props
-}: React.ComponentProps<"button"> & { fill?: boolean; asChild?: boolean }) {
+}: React.ComponentProps<"button"> & {
+  fill?: boolean;
+  /** Kinnow: the screen's one main action (Feed's compose). */
+  cta?: boolean;
+  asChild?: boolean;
+}) {
   const Comp = asChild ? Slot.Root : "button";
   return (
     <Comp
       className={cn(
         "grid size-11 shrink-0 place-items-center rounded-pill transition-transform duration-100 ease-out active:scale-[0.97] [&_svg]:size-[22px]",
-        fill ? "bg-fill text-on-fill" : "bg-surface text-label hover:bg-raised",
+        cta
+          ? "bg-kinnow text-on-kinnow hover:brightness-105"
+          : fill
+            ? "bg-fill text-on-fill"
+            : "bg-surface text-label shadow-card hover:bg-raised",
         className,
       )}
       {...props}

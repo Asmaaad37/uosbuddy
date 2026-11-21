@@ -72,7 +72,8 @@ export function AskCard({
           ))}
         </div>
       </div>
-      <Button size="lg" block onClick={() => setOpen(true)}>
+      {/* The screen's one orange action (60·30·10). */}
+      <Button variant="cta" size="lg" block onClick={() => setOpen(true)}>
         <LifeBuoy aria-hidden /> {ASKS[picked].cta}
       </Button>
       <p className="-mt-1 text-center text-footnote text-sec">
