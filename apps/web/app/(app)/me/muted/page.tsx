@@ -21,12 +21,7 @@ export default async function MutedPage() {
       <ScreenHeader
         title="Muted"
         back="/me"
-        subtitle={
-          <>
-            Their posts don&apos;t show in your feeds. They aren&apos;t told, and you can still chat
-            or visit their profile.
-          </>
-        }
+        subtitle={<>Their posts are hidden from your feeds. They aren&apos;t told.</>}
       />
       {muted?.length ? (
         <ul className="overflow-hidden rounded-card bg-surface shadow-card [&>li:last-child>div]:shadow-none">

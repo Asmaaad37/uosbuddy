@@ -12,15 +12,15 @@ const ALERTS: PrefRow[] = [
   {
     key: "connections",
     label: "Connect requests",
-    hint: "Someone wants to connect, or accepted you",
+    hint: "New and accepted requests",
   },
-  { key: "backup", label: "Backup pings", hint: "Classmates nearby need backup (5 a day at most)" },
+  { key: "backup", label: "Backup pings", hint: "Classmates need a hand (5 a day at most)" },
   { key: "comments", label: "Comments and replies", hint: "On your posts and comments" },
-  { key: "messages", label: "Chat messages", hint: "As pushes; muted chats never ping" },
+  { key: "messages", label: "Chat messages", hint: "Muted chats never ping" },
   {
     key: "timetable",
     label: "Timetable and calendar",
-    hint: "When your class moves room, time or teacher, and reminders you set for calendar dates",
+    hint: "Class changes and your date reminders",
   },
 ];
 
@@ -28,17 +28,17 @@ const DELIVERY: PrefRow[] = [
   {
     key: "push",
     label: "Push notifications",
-    hint: "Alerts on your phones and computers. When off, you only see them inside the app.",
+    hint: "On your phones and computers",
   },
   {
     key: "previews",
     label: "Show message text",
-    hint: "In alerts on your lock screen. When off, they just say who it's from.",
+    hint: "Off shows only who it's from",
   },
   {
     key: "digest",
     label: "Weekly email",
-    hint: "A short Sunday summary of what's new for you",
+    hint: "A short Sunday summary",
   },
 ];
 

@@ -30,9 +30,7 @@ export default async function PrivacySettingsPage() {
       <ScreenHeader
         title="Privacy"
         back="/me"
-        subtitle={
-          <>Only verified UoS students can ever see you. Your roll number and email stay private.</>
-        }
+        subtitle={<>Only verified UoS students see you. Roll number and email stay private.</>}
       />
       <PrivacyForm
         initial={privacy ?? PRIVACY_PRESETS.open.settings}

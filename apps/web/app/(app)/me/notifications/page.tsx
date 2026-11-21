@@ -22,11 +22,7 @@ export default async function NotificationSettingsPage() {
 
   return (
     <AppShell>
-      <ScreenHeader
-        title="Notifications"
-        back="/me"
-        subtitle={<>Choose what pings you. Blocked students never notify you.</>}
-      />
+      <ScreenHeader title="Notifications" back="/me" subtitle={<>Choose what pings you.</>} />
       <PrefsForm
         endpoints={(devices ?? []).map((d) => d.endpoint)}
         initial={

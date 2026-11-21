@@ -62,7 +62,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
             {notice}
           </p>
         )}
-        <Button type="submit" block disabled={busy}>
+        <Button type="submit" variant="cta" block disabled={busy}>
           {busy ? "Checking…" : "Link email"}
         </Button>
         <div className="flex justify-between text-sm">
@@ -103,7 +103,7 @@ export function LinkEmailForm({ domain }: { domain: string }) {
           />
         )}
       </Field>
-      <Button type="submit" block disabled={busy}>
+      <Button type="submit" variant="cta" block disabled={busy}>
         {busy ? "Sending…" : "Email me a code"}
       </Button>
     </form>
