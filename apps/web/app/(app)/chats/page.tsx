@@ -105,6 +105,7 @@ export default async function ChatsPage({ searchParams }: Props) {
       <EmptyState
         icon={MessageCircle}
         title="No chats yet"
+        mascot="idle"
         action={
           <Button asChild variant="tinted" size="sm">
             <Link href="/explore/batch">Find your batch</Link>

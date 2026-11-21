@@ -43,7 +43,12 @@ for (const scheme of ["light", "dark"] as const) {
       role: "admin",
     });
     const page = await (
-      await browser.newContext({ colorScheme: scheme, viewport: { width: 375, height: 812 } })
+      await browser.newContext({
+        colorScheme: scheme,
+        // Reduced motion: scan the settled page, not cards mid-fade.
+        reducedMotion: "reduce",
+        viewport: { width: 375, height: 812 },
+      })
     ).newPage();
     await logIn(page, s.email, s.password);
 

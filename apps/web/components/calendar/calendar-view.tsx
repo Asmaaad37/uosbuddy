@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "@/components/ui/toast";
 import {
-  KIND_LABEL,
   byMonth,
   dateRange,
   monthGrid,
@@ -65,10 +64,11 @@ export function CalendarView({
           <span className="text-footnote text-sec">
             {dateRange(e)} · {whenLabel(e, today)}
           </span>
-          <span className="flex flex-wrap gap-1.5 pt-1">
-            <Pill>{KIND_LABEL[e.kind] ?? e.kind}</Pill>
-            {e.tentative && <Pill tone="outline">Tentative</Pill>}
-          </span>
+          {e.tentative && (
+            <span className="pt-1">
+              <Pill tone="outline">Tentative</Pill>
+            </span>
+          )}
           {e.notes && noteShownOn.get(e.notes) === e.id && (
             <span className="pt-1 text-footnote text-ter">{e.notes}</span>
           )}
@@ -97,6 +97,9 @@ export function CalendarView({
 
   return (
     <div className="grid gap-4">
+      {events.some((e) => e.tentative) && (
+        <p className="px-1 text-footnote text-sec">Tentative dates may still change.</p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button
           size="sm"

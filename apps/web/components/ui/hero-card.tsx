@@ -10,7 +10,7 @@ export function HeroCard({ className, children, ...props }: React.ComponentProps
   return (
     <section
       className={cn(
-        "relative isolate overflow-hidden rounded-[28px] bg-midnight p-5 text-on-fill shadow-card sm:p-6",
+        "card-in relative isolate overflow-hidden rounded-[28px] bg-midnight p-5 text-on-fill shadow-card sm:p-6",
         className,
       )}
       {...props}

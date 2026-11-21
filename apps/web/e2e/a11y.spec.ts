@@ -16,7 +16,8 @@ const PAGES = [
 
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} theme`, () => {
-    test.use({ colorScheme: scheme });
+    // Reduced motion: scan the settled page, not cards mid-fade.
+    test.use({ colorScheme: scheme, reducedMotion: "reduce" });
     for (const path of PAGES) {
       test(`${path} has no WCAG 2.1 AA violations`, async ({ page }) => {
         await page.goto(path);

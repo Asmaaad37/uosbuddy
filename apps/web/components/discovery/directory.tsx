@@ -239,7 +239,7 @@ export function Directory({
         className={cn("grid gap-2", pending && "opacity-60")}
       >
         {page.people.length === 0 && !pending ? (
-          <EmptyState icon={Users}>
+          <EmptyState icon={Users} mascot={query || active ? undefined : "wink"}>
             {query || active ? "Nobody matches. Try fewer filters." : EMPTY[scope]}
           </EmptyState>
         ) : (
