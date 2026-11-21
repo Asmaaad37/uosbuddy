@@ -38,24 +38,32 @@ export function Avatar({
   name,
   src,
   size = 40,
+  onMidnight = false,
   className,
 }: {
   name: string;
   src?: string | null;
   size?: keyof typeof sizes;
+  /** On a Midnight hero: a solid white circle with Midnight initials (Sky is translucent in
+   * dark mode, which loses contrast over Midnight). */
+  onMidnight?: boolean;
   className?: string;
 }) {
   return (
     <AvatarPrimitive.Root
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-pill bg-sky align-middle",
+        "relative inline-flex shrink-0 overflow-hidden rounded-pill align-middle",
+        onMidnight ? "bg-on-fill" : "bg-sky",
         sizes[size],
         className,
       )}
     >
       {src && <AvatarPrimitive.Image src={src} alt={name} className="size-full object-cover" />}
       <AvatarPrimitive.Fallback
-        className="grid size-full place-items-center font-bold text-accent"
+        className={cn(
+          "grid size-full place-items-center font-bold",
+          onMidnight ? "text-midnight" : "text-accent",
+        )}
         aria-label={name}
       >
         {initials(name)}
@@ -90,6 +98,7 @@ export function AvatarStack({
           name={p.name}
           src={p.src}
           size={44}
+          onMidnight={onMidnight}
           className={cn(
             "ring-[3px]",
             onMidnight ? "ring-midnight" : "ring-surface",
