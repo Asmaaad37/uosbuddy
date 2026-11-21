@@ -377,6 +377,22 @@
   }
 }
 
+/* Cards rise in gently when a screen opens (feedback-fast, 220ms); none with reduced motion. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.card-in {
+  animation: card-in 220ms cubic-bezier(0.2, 0, 0, 1) backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-in {
+    animation: none;
+  }
+}
+
 /* Sheets slide up and back down the same path; the overlay dims to 40%. */
 .sheet[data-state="open"] {
   animation: sheet-in var(--spring-sheet-ms) var(--spring-sheet);

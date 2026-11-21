@@ -57,6 +57,7 @@ export function FeedList({
       <EmptyState
         icon={Newspaper}
         title="No posts yet"
+        mascot="idle"
         action={
           <Button variant="tinted" size="sm" onClick={openComposer}>
             Start the first post
