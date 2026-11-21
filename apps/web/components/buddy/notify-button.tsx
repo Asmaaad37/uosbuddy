@@ -20,7 +20,7 @@ export function BuddyNotifyButton({ waiting }: { waiting: boolean }) {
   }
 
   return (
-    <Button block variant={on ? "tinted" : "primary"} onClick={toggle} disabled={busy}>
+    <Button block variant={on ? "tinted" : "cta"} onClick={toggle} disabled={busy}>
       {busy ? (
         <Loader2 className="animate-spin" aria-hidden />
       ) : on ? (
@@ -28,7 +28,7 @@ export function BuddyNotifyButton({ waiting }: { waiting: boolean }) {
       ) : (
         <Bell aria-hidden />
       )}
-      {on ? "You're on the list. We'll notify you" : "Notify me when it's ready"}
+      {on ? "You're on the list" : "Notify me when it's ready"}
     </Button>
   );
 }

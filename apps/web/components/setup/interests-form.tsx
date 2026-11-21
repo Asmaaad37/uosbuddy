@@ -87,10 +87,10 @@ export function InterestsForm({
                     disabled={!on && full}
                     onClick={() => toggle(i.id)}
                     className={cn(
-                      "inline-flex h-11 items-center gap-1.5 rounded-pill border px-3.5 text-sm font-medium transition-colors",
+                      "inline-flex h-11 items-center gap-1.5 rounded-pill px-3.5 text-sm shadow-card transition-colors contrast-more:border contrast-more:border-label",
                       on
-                        ? "border-accent bg-tint text-tint-text"
-                        : "border-sep bg-surface hover:shadow-lift disabled:opacity-40",
+                        ? "bg-midnight font-semibold text-on-fill"
+                        : "bg-surface font-medium hover:bg-raised disabled:opacity-40",
                     )}
                   >
                     <span aria-hidden>{i.emoji}</span>

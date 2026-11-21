@@ -42,7 +42,7 @@ export default async function BatchPage({ searchParams }: Props) {
       <ScreenHeader
         title="Your batch"
         back="/explore"
-        subtitle={<>Start with your section, then widen out to all of UoS.</>}
+        subtitle={<>Your section first, then all of UoS.</>}
       />
       <Directory
         initialScope={scope}

@@ -107,7 +107,7 @@ export function RideSheet({ womenEligible }: { womenEligible: boolean }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block variant="primary">
+        <Button block variant="cta">
           <Car /> Offer or ask for a ride
         </Button>
       </SheetTrigger>

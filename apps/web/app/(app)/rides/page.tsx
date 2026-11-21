@@ -44,7 +44,7 @@ export default async function RidesPage({ searchParams }: Props) {
       <ScreenHeader
         title="Rides"
         back="/explore"
-        subtitle={<>Share a ride with UoS students. Split the fare, not your number.</>}
+        subtitle={<>Split the fare with UoS students, not your number.</>}
         actions={
           <span className="lg:hidden">
             <BellSlot />

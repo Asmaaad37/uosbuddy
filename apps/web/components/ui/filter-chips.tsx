@@ -29,10 +29,11 @@ export function FilterChips({
       {chips.map((c) => {
         const on = c.value === value;
         const cls = cn(
-          "hit flex h-9 shrink-0 items-center gap-1.5 rounded-pill border px-3.5 text-subhead font-semibold transition-colors",
+          // Like Chip (60·30·10): Card with a lift; selected is Midnight with heavier text.
+          "hit flex h-9 shrink-0 items-center gap-1.5 rounded-pill px-3.5 text-subhead shadow-card transition-colors contrast-more:border contrast-more:border-label",
           on
-            ? "border-accent bg-tint text-tint-text"
-            : "border-sep bg-surface text-label hover:bg-raised",
+            ? "bg-midnight font-semibold text-on-fill"
+            : "bg-surface font-medium text-label hover:bg-raised",
         );
         const inner = (
           <>
