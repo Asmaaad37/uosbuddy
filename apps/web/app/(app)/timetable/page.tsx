@@ -131,10 +131,10 @@ export default async function TimetablePage({ searchParams }: Props) {
               href={`/timetable?tab=${p.key}`}
               aria-current={tab === p.key ? "page" : undefined}
               className={cn(
-                "hit inline-flex h-9 items-center rounded-pill border px-3.5 text-subhead font-medium",
+                "hit inline-flex h-9 items-center rounded-pill px-3.5 text-subhead shadow-card",
                 tab === p.key
-                  ? "border-accent bg-tint text-tint-text"
-                  : "border-sep text-label hover:bg-raised",
+                  ? "bg-midnight font-semibold text-on-fill"
+                  : "bg-surface font-medium text-label hover:bg-raised",
               )}
             >
               {p.label}
@@ -178,8 +178,7 @@ export default async function TimetablePage({ searchParams }: Props) {
         <section aria-labelledby="own-classes" className="grid gap-3">
           <SectionHeader id="own-classes" title="Your own classes" />
           <p className="-mt-2 px-1 text-footnote text-sec">
-            Extra classes, study blocks or anything not on the department&apos;s timetable. Only you
-            see these.
+            Extra classes or study blocks. Only you see these.
           </p>
           {aiEnabled() && <ImportTimetable />}
           <Week slots={slots ?? []} courses={courses ?? []} />

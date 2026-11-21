@@ -98,7 +98,7 @@ export default async function ResourcesPage({ searchParams }: Props) {
         title="Resources"
         back="/courses"
         backLabel="Courses"
-        subtitle={<>Notes, past papers and outlines shared for every course at UoS.</>}
+        subtitle={<>Notes, past papers and outlines for every course.</>}
       />
       <ResourceSearch q={params.q ?? ""} kind={kind} year={year} years={yearOptions} />
       {error ? (
@@ -111,7 +111,7 @@ export default async function ResourcesPage({ searchParams }: Props) {
         <EmptyState icon={FileSearch} title={filtered ? "Nothing matches" : "No files yet"}>
           {filtered
             ? "Try a course code like CS-301, a teacher's name, or fewer filters."
-            : "When students share notes and past papers in their course rooms, they show up here."}
+            : "Files shared in course rooms show up here."}
         </EmptyState>
       )}
     </AppShell>

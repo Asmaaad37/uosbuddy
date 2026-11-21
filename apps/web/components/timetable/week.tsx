@@ -27,57 +27,57 @@ const pad = (min: number) => minToTime(min).padStart(5, "0");
 export function Week({ slots, courses }: { slots: Slot[]; courses: Course[] }) {
   const [editing, setEditing] = useState<Partial<Slot> | null>(null);
 
+  // Only days that have your own classes; one button adds a class on any day.
+  const days = DAYS.slice(0, 6)
+    .map((day, i) => ({
+      day,
+      list: slots.filter((s) => s.day === i).sort((a, b) => a.start_min - b.start_min),
+    }))
+    .filter((d) => d.list.length > 0);
+  // Today (Mon–Sat), else Monday.
+  const today = (new Date().getDay() + 6) % 7;
+
   return (
     <div className="grid gap-3">
-      {DAYS.slice(0, 6).map((day, i) => {
-        const list = slots.filter((s) => s.day === i).sort((a, b) => a.start_min - b.start_min);
-        return (
-          <section
-            key={day}
-            aria-label={day}
-            className="grid gap-2 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold">{day}</h3>
-              <button
-                type="button"
-                className="hit flex items-center gap-1 text-sm font-semibold text-accent"
-                onClick={() => setEditing({ day: i, start_min: 540, end_min: 630 })}
-                aria-label={`Add a class on ${day}`}
-              >
-                <Plus className="size-4" /> Add
-              </button>
-            </div>
-            {list.length ? (
-              <ul className="grid gap-1.5">
-                {list.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      type="button"
-                      onClick={() => setEditing(s)}
-                      className="flex w-full items-center gap-3 rounded-field bg-raised px-3 py-2 text-left hover:bg-sep/40"
-                    >
-                      <span className="w-24 shrink-0 text-sm font-semibold tabular-nums">
-                        {minToTime(s.start_min)}–{minToTime(s.end_min)}
+      {days.map(({ day, list }) => (
+        <section
+          key={day}
+          aria-label={day}
+          className="grid gap-2 rounded-card bg-surface p-3 shadow-card contrast-more:border contrast-more:border-label"
+        >
+          <h3 className="font-bold">{day}</h3>
+          <ul className="grid gap-1.5">
+            {list.map((s) => (
+              <li key={s.id}>
+                <button
+                  type="button"
+                  onClick={() => setEditing(s)}
+                  className="flex w-full items-center gap-3 rounded-field bg-raised px-3 py-2 text-left hover:bg-sep/40"
+                >
+                  <span className="w-24 shrink-0 text-sm font-semibold tabular-nums">
+                    {minToTime(s.start_min)}–{minToTime(s.end_min)}
+                  </span>
+                  <span className="grid min-w-0 flex-1">
+                    <span className="truncate font-medium">{s.label}</span>
+                    {s.room && (
+                      <span className="flex items-center gap-1 text-xs text-sec">
+                        <MapPin className="size-3" /> {s.room}
                       </span>
-                      <span className="grid min-w-0 flex-1">
-                        <span className="truncate font-medium">{s.label}</span>
-                        {s.room && (
-                          <span className="flex items-center gap-1 text-xs text-sec">
-                            <MapPin className="size-3" /> {s.room}
-                          </span>
-                        )}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-sec">No classes</p>
-            )}
-          </section>
-        );
-      })}
+                    )}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <Button
+        variant="tinted"
+        block
+        onClick={() => setEditing({ day: today < 6 ? today : 0, start_min: 540, end_min: 630 })}
+      >
+        <Plus /> Add your own class
+      </Button>
       {editing && <SlotSheet slot={editing} courses={courses} onClose={() => setEditing(null)} />}
     </div>
   );

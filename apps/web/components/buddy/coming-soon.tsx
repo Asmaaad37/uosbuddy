@@ -20,8 +20,7 @@ export function BuddyComingSoon({ waiting = false }: { waiting?: boolean }) {
         </span>
         <h2 className="text-[24px] leading-tight font-bold">AIBuddy is almost ready</h2>
         <p className="max-w-sm text-sec">
-          Soft on the outside, smart on the inside: a study buddy that answers from your
-          course&apos;s shared files. We&apos;re finishing it now.
+          A study buddy that answers from your course&apos;s shared files.
         </p>
       </section>
       <BuddyNotifyButton waiting={waiting} />

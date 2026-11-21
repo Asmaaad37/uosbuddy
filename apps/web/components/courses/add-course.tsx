@@ -74,7 +74,7 @@ export function AddCourse({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button block>
+        <Button block variant="cta">
           <Plus /> Add a course
         </Button>
       </SheetTrigger>

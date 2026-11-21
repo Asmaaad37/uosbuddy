@@ -206,9 +206,7 @@ export function GpaCalculator() {
         <Plus /> Add a semester
       </Button>
       <p className="text-xs text-sec">
-        Uses the University of Sargodha grading table: 80+ = A (4.00), 65–79 = B, 50–64 = C, 40–49 =
-        D, below 40 = F. A course needs {PASS_MARK}% to pass in the semester system. Saved only on
-        this device. Your official result is what counts.
+        UoS grading, {PASS_MARK}% to pass. Saved on this device; your official result counts.
       </p>
     </div>
   );

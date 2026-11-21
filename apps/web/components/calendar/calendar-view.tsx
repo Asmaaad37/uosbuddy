@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, BellOff, CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bell, CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { remindAllDeadlines, setReminder } from "@/actions/calendar";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,10 @@ export function CalendarView({
     });
 
   const shown = showPast ? events : events.filter((e) => (e.ends_on ?? e.starts_on) >= today);
+  // Many dates share one note (every holiday says it depends on the government): show each note
+  // once, on its first date.
+  const noteShownOn = new Map<string, string>();
+  for (const e of shown) if (e.notes && !noteShownOn.has(e.notes)) noteShownOn.set(e.notes, e.id);
 
   const row = (e: CalendarEvent) => {
     const future = e.starts_on > today;
@@ -65,12 +69,14 @@ export function CalendarView({
             <Pill>{KIND_LABEL[e.kind] ?? e.kind}</Pill>
             {e.tentative && <Pill tone="outline">Tentative</Pill>}
           </span>
-          {e.notes && <span className="pt-1 text-footnote text-ter">{e.notes}</span>}
+          {e.notes && noteShownOn.get(e.notes) === e.id && (
+            <span className="pt-1 text-footnote text-ter">{e.notes}</span>
+          )}
         </span>
         {future && (
           <button
             type="button"
-            className={cn("hit shrink-0 rounded-pill p-1", on ? "text-accent" : "text-ter")}
+            className={cn("hit shrink-0 rounded-pill p-1", on ? "bg-tint text-accent" : "text-ter")}
             aria-pressed={on}
             aria-label={on ? `Stop reminding me about ${e.title}` : `Remind me about ${e.title}`}
             disabled={pending}
@@ -81,7 +87,8 @@ export function CalendarView({
               )
             }
           >
-            {on ? <Bell className="size-5" /> : <BellOff className="size-5" />}
+            {/* On: a filled Blue bell on Sky; off: an outline bell (not shown by colour alone). */}
+            <Bell className={cn("size-5", on && "fill-current")} />
           </button>
         )}
       </li>

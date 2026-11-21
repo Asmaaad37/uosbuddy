@@ -12,7 +12,7 @@ export default function GpaPage() {
       <ScreenHeader
         title="GPA calculator"
         back="/me"
-        subtitle={<>Enter your marks per course to see your GPA and CGPA.</>}
+        subtitle={<>Enter your marks to see your GPA and CGPA.</>}
       />
       <GpaCalculator />
     </AppShell>

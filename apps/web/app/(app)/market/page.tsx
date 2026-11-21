@@ -49,7 +49,7 @@ export default async function MarketPage({ searchParams }: Props) {
       <ScreenHeader
         title="Market"
         back="/explore"
-        subtitle={<>Buy, sell, give away, and find lost things around campus.</>}
+        subtitle={<>Buy, sell, give away and find lost things.</>}
         actions={
           <span className="lg:hidden">
             <BellSlot />

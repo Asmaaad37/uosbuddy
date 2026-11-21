@@ -39,7 +39,7 @@ export default async function CoursesPage() {
       <ScreenHeader
         title="My courses"
         back="/explore"
-        subtitle={<>{termLabel(term)}. Notes, past papers, study groups and a chat for each.</>}
+        subtitle={<>{termLabel(term)}. Files, study groups and a chat for each.</>}
         actions={
           <span className="lg:hidden">
             <BellSlot />
@@ -69,7 +69,7 @@ export default async function CoursesPage() {
           href="/resources"
           icon={FileSearch}
           title="Resources"
-          subtitle="Search notes and past papers from every course"
+          subtitle="Notes and past papers"
         />
       </GroupedList>
     </AppShell>

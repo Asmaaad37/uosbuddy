@@ -29,8 +29,7 @@ export default async function LinkEmailPage() {
         </Stamp>
         <h1 className="text-large-title">Link your UoS email</h1>
         <p className="text-sec">
-          Got your student email? Link it to add the UoS email stamp to your profile. You keep
-          logging in the way you do now.
+          Adds the UoS email stamp to your profile. Your login stays the same.
         </p>
       </div>
       <LinkEmailForm domain={domains?.[0]?.domain ?? "uos.edu.pk"} />

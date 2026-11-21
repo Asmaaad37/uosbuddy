@@ -21,10 +21,7 @@ export default async function BlockedPage() {
         title="Blocked"
         back="/me"
         subtitle={
-          <>
-            You and these students can&apos;t see or message each other. Unblocking doesn&apos;t
-            reconnect you.
-          </>
+          <>You can&apos;t see or message each other. Unblocking doesn&apos;t reconnect you.</>
         }
       />
       {blocked?.length ? (
