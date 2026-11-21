@@ -101,7 +101,7 @@ export default async function PendingPage() {
       </p>
 
       <div className="mt-auto grid gap-3">
-        <Button asChild block variant={status === "pending" ? "tinted" : "primary"}>
+        <Button asChild block variant={status === "pending" ? "tinted" : "cta"}>
           <Link href="/start/freshman/proof">
             {status === "pending" ? "Edit submission" : "Update submission"}
           </Link>

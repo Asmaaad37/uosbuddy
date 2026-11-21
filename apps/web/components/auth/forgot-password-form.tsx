@@ -61,7 +61,7 @@ export function ForgotPasswordForm() {
         )}
       </Field>
       {captcha.widget}
-      <Button type="submit" block disabled={busy || !captcha.ready}>
+      <Button variant="cta" type="submit" block disabled={busy || !captcha.ready}>
         {busy ? "Sending…" : "Send reset link"}
       </Button>
     </form>

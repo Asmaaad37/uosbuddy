@@ -16,7 +16,7 @@ const choices = [
     href: "/start/freshman",
     icon: UserPlus,
     title: "No, I'm a fresher / don't have it yet",
-    body: "Join with your roll number and a photo of your student card or admission letter.",
+    body: "Join with your roll number and a photo of your proof.",
   },
 ];
 

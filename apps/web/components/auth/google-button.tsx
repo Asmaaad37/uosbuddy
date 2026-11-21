@@ -28,7 +28,7 @@ export function GoogleButton({ domain }: { domain: string }) {
   }
 
   return (
-    <Button block onClick={signIn} disabled={busy}>
+    <Button variant="cta" block onClick={signIn} disabled={busy}>
       <svg aria-hidden viewBox="0 0 24 24" className="size-5">
         <path
           fill="#4285F4"

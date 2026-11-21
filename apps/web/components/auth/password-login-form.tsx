@@ -69,7 +69,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         Forgot password?
       </Link>
       {captcha.widget}
-      <Button type="submit" block disabled={busy || !captcha.ready}>
+      <Button variant="cta" type="submit" block disabled={busy || !captcha.ready}>
         {busy ? "Logging in…" : "Log in"}
       </Button>
     </form>

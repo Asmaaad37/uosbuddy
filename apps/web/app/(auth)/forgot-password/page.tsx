@@ -9,7 +9,7 @@ export default function ForgotPasswordPage() {
     <OnboardingShell
       back="/login"
       title="Forgot your password?"
-      subtitle="Enter your email and we'll send you a link to choose a new one."
+      subtitle="We'll email you a link to set a new one."
     >
       <ForgotPasswordForm />
     </OnboardingShell>

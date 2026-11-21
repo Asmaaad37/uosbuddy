@@ -100,15 +100,14 @@ export function EmailCodeForm({
     stage === "code" ? (
       <form onSubmit={verify} className="grid gap-4" noValidate>
         <p className="text-sec">
-          We sent a 6-digit code to <strong className="text-label">{email}</strong>. It can take a
-          minute, and may land in spam.
+          We sent a 6-digit code to <strong className="text-label">{email}</strong>. Check spam too.
         </p>
         <Field id={`${id}-code`} label="Code" error={error}>
           {(aria) => (
             <CodeInput {...aria} value={code} onChange={setCode} error={error} autoFocus />
           )}
         </Field>
-        <Button type="submit" block disabled={busy}>
+        <Button variant="cta" type="submit" block disabled={busy}>
           {busy ? "Checking…" : "Continue"}
         </Button>
         <div className="flex justify-between text-sm">
@@ -150,7 +149,7 @@ export function EmailCodeForm({
         <Button
           type="submit"
           block
-          variant={secondary ? "tinted" : "primary"}
+          variant={secondary ? "tinted" : "cta"}
           disabled={busy || !captcha.ready}
         >
           {busy ? "Sending…" : "Email me a code"}

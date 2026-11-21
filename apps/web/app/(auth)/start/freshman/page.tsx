@@ -15,7 +15,7 @@ export default async function FreshmanPage() {
       back="/start/email"
       step={3}
       title="Join as a fresher"
-      subtitle="First your account, then a photo of your proof. A real person checks it."
+      subtitle="Your account first, then a photo of your proof."
     >
       <FreshmanAccountForm />
     </OnboardingShell>

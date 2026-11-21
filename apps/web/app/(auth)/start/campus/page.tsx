@@ -18,7 +18,7 @@ export default async function CampusPage() {
       back="/"
       step={1}
       title="Where do you study?"
-      subtitle="UOSBuddy starts with one campus, so everyone here is actually near you."
+      subtitle="One campus for now, so everyone here is nearby."
     >
       <div
         role="radio"

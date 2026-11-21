@@ -38,7 +38,7 @@ export function TermsAgree({ next }: { next: string }) {
           .
         </span>
       </label>
-      <Button block disabled={!agreed} onClick={proceed}>
+      <Button variant="cta" block disabled={!agreed} onClick={proceed}>
         Continue
       </Button>
     </div>

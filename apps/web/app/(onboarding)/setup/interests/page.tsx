@@ -31,7 +31,7 @@ export default async function InterestsPage({
       back={editing ? "/me" : "/setup/about"}
       step={editing ? undefined : 3}
       title="What are you into?"
-      subtitle="Pick up to 10. We use them to suggest people you'll get along with."
+      subtitle="Pick up to 10 to meet people like you."
     >
       <InterestsForm
         interests={interests ?? []}

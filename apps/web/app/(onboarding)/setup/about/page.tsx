@@ -29,7 +29,7 @@ export default async function AboutPage({
       back={editing ? "/me" : "/setup/academic"}
       step={editing ? undefined : 2}
       title="About you"
-      subtitle="A face and a few words make people far more likely to say hi."
+      subtitle="A photo and a few words help people say hi."
     >
       <AboutForm
         userId={user.id}

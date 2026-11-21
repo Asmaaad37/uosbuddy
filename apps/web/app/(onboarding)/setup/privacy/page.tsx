@@ -26,7 +26,7 @@ export default async function PrivacyPage() {
       back="/setup/interests"
       step={4}
       title="Who sees what"
-      subtitle="Only verified UoS students can ever see you. Your roll number and email stay private."
+      subtitle="Only verified UoS students see you. Roll number and email stay private."
     >
       <PrivacyForm
         initial={privacy ?? PRIVACY_PRESETS.open.settings}

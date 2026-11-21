@@ -330,10 +330,10 @@ export function AboutForm({
               aria-checked={residence === r.value}
               onClick={() => setResidence(r.value)}
               className={cn(
-                "h-12 rounded-pill border text-sm font-semibold transition-colors",
+                "h-12 rounded-pill text-sm transition-colors",
                 residence === r.value
-                  ? "border-accent bg-tint text-tint-text"
-                  : "border-sep text-label hover:bg-raised",
+                  ? "bg-midnight font-semibold text-on-fill"
+                  : "bg-surface font-medium text-label shadow-card hover:bg-raised",
               )}
             >
               {r.label}
@@ -347,7 +347,7 @@ export function AboutForm({
           {error}
         </p>
       )}
-      <Button type="submit" block disabled={busy || uploading}>
+      <Button variant="cta" type="submit" block disabled={busy || uploading}>
         {busy ? "Saving…" : submitLabel}
       </Button>
     </form>

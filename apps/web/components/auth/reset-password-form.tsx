@@ -45,7 +45,7 @@ export function ResetPasswordForm() {
           />
         )}
       </Field>
-      <Button type="submit" block disabled={busy}>
+      <Button variant="cta" type="submit" block disabled={busy}>
         {busy ? "Saving…" : "Save new password"}
       </Button>
     </form>

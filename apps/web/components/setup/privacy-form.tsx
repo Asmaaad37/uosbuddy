@@ -194,7 +194,7 @@ export function PrivacyForm({
           {error}
         </p>
       )}
-      <Button type="submit" block disabled={busy}>
+      <Button variant="cta" type="submit" block disabled={busy}>
         {busy ? "Saving…" : submitLabel}
       </Button>
     </form>
