@@ -34,8 +34,8 @@ export function Shortcuts() {
                 href={href}
                 className="group flex flex-col items-center gap-2 rounded-well py-1 transition-transform duration-100 ease-out active:scale-[0.97]"
               >
-                <span className="grid size-[52px] place-items-center rounded-well bg-raised">
-                  <Icon className="size-6 text-label" strokeWidth={1.75} aria-hidden />
+                <span className="grid size-[58px] place-items-center rounded-well bg-sky">
+                  <Icon className="size-6 text-accent" strokeWidth={1.75} aria-hidden />
                 </span>
                 <span className="text-footnote leading-4 text-sec">{label}</span>
               </Link>

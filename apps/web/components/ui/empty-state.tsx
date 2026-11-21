@@ -23,8 +23,8 @@ export function EmptyState({
 }) {
   const body = (
     <div className="grid justify-items-center gap-3 px-2 py-6 text-center">
-      <span className="grid size-14 place-items-center rounded-pill bg-raised">
-        <Icon className="size-6 text-sec" strokeWidth={1.75} aria-hidden />
+      <span className="grid size-[58px] place-items-center rounded-well bg-sky">
+        <Icon className="size-6 text-accent" strokeWidth={1.75} aria-hidden />
       </span>
       <div className="grid gap-1">
         {title && <p className="text-headline">{title}</p>}

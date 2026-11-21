@@ -14,6 +14,9 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Kinnow orange: the ONE most important action on a screen (60·30·10). Never two.
+        cta: "bg-kinnow text-on-kinnow hover:brightness-105",
+        // Midnight, white text: filled buttons that aren't the screen's one main action.
         primary: "bg-fill text-on-fill hover:brightness-110",
         tinted: "bg-tint text-tint-text hover:brightness-110",
         plain: "bg-transparent text-accent hover:bg-tint",

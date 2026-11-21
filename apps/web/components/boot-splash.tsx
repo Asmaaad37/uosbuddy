@@ -4,32 +4,33 @@
  * plays in full (MIN_MS), and stays longer only if the first screen isn't in yet, then zooms
  * away. Once per visit: later page loads in the same tab skip it (sessionStorage). Plain HTML
  * and inline CSS, so it paints with the first bytes, before any script or stylesheet loads.
- * People who ask for less motion get a short, still version.
+ * People who ask for less motion get a short, still version. Colours are the 60·30·10
+ * palette's Paper, Ink, Muted, Midnight and Blue, inlined because no stylesheet has loaded yet.
  */
 
 const MIN_MS = 1900;
 const REDUCED_MS = 700;
 
 const CSS = `
-html{background:#f2f4f7}
-@media (prefers-color-scheme:dark){html:not([data-theme=light]){background:#0b0f17}}
-html[data-theme=dark]{background:#0b0f17}
+html{background:#f4f6fc}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]){background:#0a0f1f}}
+html[data-theme=dark]{background:#0a0f1f}
 #boot-splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:hidden;
-  --bg:#f2f4f7;--ink:#0b1220;--sec:#5a6475;background:var(--bg);color:var(--ink);
+  --bg:#f4f6fc;--ink:#0e1734;--sec:#5e6784;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",var(--font-inter),system-ui,sans-serif;
   transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) #boot-splash{--bg:#0b0f17;--ink:#f2f4f7;--sec:#9aa4b5}}
-:root[data-theme=dark] #boot-splash{--bg:#0b0f17;--ink:#f2f4f7;--sec:#9aa4b5}
-#boot-splash .bs-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.28),rgba(37,99,235,0) 65%);animation:bs-glow 2.4s ease-in-out infinite}
-#boot-splash .bs-tile{position:relative;width:92px;height:92px;border-radius:24px;background:linear-gradient(145deg,#3b82f6,#2563eb 55%,#1d4ed8);display:grid;place-items:center;
-  box-shadow:0 14px 34px rgba(37,99,235,.38);animation:bs-pop .7s cubic-bezier(.2,1.4,.4,1) both, bs-float 2.6s ease-in-out .8s infinite}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) #boot-splash{--bg:#0a0f1f;--ink:#eef2ff;--sec:#8f98b5}}
+:root[data-theme=dark] #boot-splash{--bg:#0a0f1f;--ink:#eef2ff;--sec:#8f98b5}
+#boot-splash .bs-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(47,79,224,.26),rgba(47,79,224,0) 65%);animation:bs-glow 2.4s ease-in-out infinite}
+#boot-splash .bs-tile{position:relative;width:92px;height:92px;border-radius:24px;background:linear-gradient(145deg,#2f4fe0,#1b2b6b);display:grid;place-items:center;
+  box-shadow:0 14px 34px rgba(27,43,107,.38);animation:bs-pop .7s cubic-bezier(.2,1.4,.4,1) both, bs-float 2.6s ease-in-out .8s infinite}
 #boot-splash .bs-eye{transform-box:fill-box;transform-origin:center;animation:bs-blink 3.2s ease-in-out .95s infinite}
 #boot-splash .bs-smile{stroke-dasharray:62;stroke-dashoffset:62;animation:bs-draw .6s cubic-bezier(.6,0,.2,1) .4s forwards}
 #boot-splash .bs-title{margin:26px 0 0;font-size:26px;font-weight:700;letter-spacing:-.02em;animation:bs-rise .6s cubic-bezier(.2,.8,.2,1) .55s both}
-#boot-splash .bs-title b{font-weight:800;background:linear-gradient(90deg,#2563eb,#60a5fa,#2563eb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:bs-shine 2s linear .9s infinite}
+#boot-splash .bs-title b{font-weight:800;background:linear-gradient(90deg,#2f4fe0,#9db4ff,#2f4fe0);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:bs-shine 2s linear .9s infinite}
 #boot-splash .bs-tag{margin:8px 0 0;font-size:15px;color:var(--sec);animation:bs-rise .6s cubic-bezier(.2,.8,.2,1) .75s both}
 #boot-splash .bs-dots{display:flex;gap:7px;margin-top:30px;animation:bs-rise .5s ease .95s both}
-#boot-splash .bs-dots i{width:8px;height:8px;border-radius:50%;background:#2563eb;animation:bs-bounce 1s ease-in-out infinite}
+#boot-splash .bs-dots i{width:8px;height:8px;border-radius:50%;background:#2f4fe0;animation:bs-bounce 1s ease-in-out infinite}
 #boot-splash .bs-dots i:nth-child(2){animation-delay:.15s;opacity:.75}
 #boot-splash .bs-dots i:nth-child(3){animation-delay:.3s;opacity:.5}
 html.booted #boot-splash{opacity:0;transform:scale(1.06);visibility:hidden;pointer-events:none}
