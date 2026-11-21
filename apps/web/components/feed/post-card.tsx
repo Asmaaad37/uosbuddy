@@ -175,12 +175,12 @@ export function PostCard({
         <div className="grid min-w-0 flex-1">
           <div className="flex min-w-0 items-center gap-1.5">
             {post.is_anonymous ? (
-              <span className="truncate text-subhead font-semibold">{name}</span>
+              <span className="truncate text-[1rem] leading-5 font-bold">{name}</span>
             ) : (
               <>
                 <Link
                   href={`/people/${post.author_handle}`}
-                  className="truncate text-subhead font-semibold"
+                  className="truncate text-[1rem] leading-5 font-bold"
                 >
                   {name}
                 </Link>
@@ -198,7 +198,7 @@ export function PostCard({
               </Pill>
             )}
           </div>
-          {meta && <span className="truncate text-footnote text-ter">{meta}</span>}
+          {meta && <span className="truncate text-footnote font-semibold text-sec">{meta}</span>}
         </div>
         <Menu>
           <MenuTrigger asChild>
