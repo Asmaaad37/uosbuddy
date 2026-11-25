@@ -26,6 +26,10 @@ export function authErrorMessage(error: AuthError | null | undefined) {
     case "signup_disabled":
       return "New sign-ups are paused right now. Try again later.";
     default:
+      // The sign-ups switch (launch fix 3) refuses new accounts in the database.
+      if (error.message?.includes("saving new user")) {
+        return "New sign-ups are paused right now. Try again later.";
+      }
       // Sending the email is the usual failure at this level.
       return (error.status ?? 0) >= 500
         ? "We couldn't send that just now. Try again in a few minutes."

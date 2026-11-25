@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Conversation } from "@/components/chat/conversation";
 import { getSession } from "@/lib/auth/session";
+import { switchOn } from "@/lib/switches.server";
 
 export const metadata: Metadata = { title: "Chat" };
 
@@ -24,6 +25,7 @@ export default async function ConversationPage({ params }: Props) {
     { data: messages },
     { data: row },
     { data: ride },
+    chatOn,
   ] = await Promise.all([
     supabase.rpc("my_conversations", { p_only: id }),
     supabase.rpc("conversation_people", { p_conversation: id }),
@@ -36,6 +38,7 @@ export default async function ConversationPage({ params }: Props) {
       .limit(30),
     supabase.from("conversations").select("expires_at").eq("id", id).maybeSingle(),
     supabase.from("rides").select("id").eq("conversation_id", id).maybeSingle(),
+    switchOn(supabase, "chat"),
   ]);
   const conversation = conversations?.[0];
   if (!conversation) notFound();
@@ -65,6 +68,7 @@ export default async function ConversationPage({ params }: Props) {
       muted={conversation.muted}
       endsAt={row?.expires_at ?? null}
       isRide={!!ride}
+      paused={!chatOn}
     />
   );
 }

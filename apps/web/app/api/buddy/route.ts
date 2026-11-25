@@ -14,6 +14,7 @@ import { MODEL, aiEnabled, aiFake, claude } from "@/lib/ai/claude.server";
 import { embed, toVector } from "@/lib/ai/embed.server";
 import { getSession } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { switchOn } from "@/lib/switches.server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -44,6 +45,8 @@ export async function POST(request: NextRequest) {
   if (!aiEnabled()) return json(503, "AI Buddy isn't switched on yet.");
   const { supabase, user } = await getSession();
   if (!user) return json(401, "Your session expired. Log in again.");
+  if (!(await switchOn(supabase, "ai_buddy")))
+    return json(503, "AIBuddy is taking a short break. Try again later.");
   const { courseId, message } = parsed.data;
 
   const { data: enrolled } = await supabase.rpc("my_courses");
