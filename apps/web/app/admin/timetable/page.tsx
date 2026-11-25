@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CalendarClock } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { ImportForm } from "@/components/admin/timetable-import";
+import { TimetableReports, type TimetableReport } from "@/components/admin/timetable-reports";
 import { Pill } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { homePath } from "@/lib/auth/routing";
@@ -33,13 +34,16 @@ export default async function TimetableImportsPage() {
   // CS first (the owner's choice), then the rest by name.
   departments.sort((a, b) => Number(b.short_code === "CS") - Number(a.short_code === "CS"));
 
-  const { data: imports } = await supabase
-    .from("timetable_imports")
-    .select(
-      "id, created_at, term, week_of, source_kind, source_name, status, diff_summary, published_at, department:departments(short_code)",
-    )
-    .order("created_at", { ascending: false })
-    .limit(30);
+  const [{ data: imports }, { data: reports }] = await Promise.all([
+    supabase
+      .from("timetable_imports")
+      .select(
+        "id, created_at, term, week_of, source_kind, source_name, status, diff_summary, published_at, department:departments(short_code)",
+      )
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase.rpc("timetable_report_queue"),
+  ]);
 
   return (
     <AdminShell current="/admin/timetable" isAdmin={isAdmin} back={homePath(profile)}>
@@ -50,6 +54,15 @@ export default async function TimetableImportsPage() {
           nothing until you publish.
         </p>
       </div>
+
+      {(reports?.length ?? 0) > 0 && (
+        <section aria-labelledby="wrong-info" className="grid gap-2">
+          <h2 id="wrong-info" className="text-lg font-bold">
+            Wrong info reported · {reports!.length}
+          </h2>
+          <TimetableReports reports={reports as unknown as TimetableReport[]} />
+        </section>
+      )}
 
       <ImportForm
         departments={departments.map((d) => ({

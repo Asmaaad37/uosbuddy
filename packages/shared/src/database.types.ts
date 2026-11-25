@@ -3672,6 +3672,108 @@ export type Database = {
           },
         ]
       }
+      timetable_reports: {
+        Row: {
+          created_at: string
+          department_id: string | null
+          entry_id: string | null
+          id: string
+          kind: string
+          note: string | null
+          reporter_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          room_id: string | null
+          seen: Json
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          department_id?: string | null
+          entry_id?: string | null
+          id?: string
+          kind: string
+          note?: string | null
+          reporter_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          room_id?: string | null
+          seen?: Json
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: string | null
+          entry_id?: string | null
+          id?: string
+          kind?: string
+          note?: string | null
+          reporter_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          room_id?: string | null
+          seen?: Json
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_reports_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "timetable_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "timetable_live"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timetable_reports_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       timetable_settings: {
         Row: {
           class_group_id: string | null
@@ -4373,6 +4475,7 @@ export type Database = {
         }
         Returns: string
       }
+      admin_health_alerts: { Args: never; Returns: number }
       admin_kpis: { Args: never; Returns: Json }
       admin_search_users: {
         Args: { p_query?: string }
@@ -5181,6 +5284,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      report_timetable: {
+        Args: {
+          p_entry: string
+          p_kind: string
+          p_note?: string
+          p_room: string
+        }
+        Returns: string
+      }
       request_account_deletion: { Args: never; Returns: string }
       request_connection: {
         Args: { p_message?: string; p_target: string }
@@ -5208,6 +5320,10 @@ export type Database = {
       }
       request_women_only: { Args: { p_note?: string }; Returns: undefined }
       resolve_backup: { Args: { p_request: string }; Returns: undefined }
+      resolve_timetable_report: {
+        Args: { p_report: string; p_status: string }
+        Returns: number
+      }
       respond_connection: {
         Args: { p_accept: boolean; p_requester: string }
         Returns: string
@@ -5485,6 +5601,7 @@ export type Database = {
           score: number
         }[]
       }
+      switch_on: { Args: { p_key: string }; Returns: boolean }
       term_rank: { Args: { p_term: string }; Returns: number }
       this_week: { Args: never; Returns: string }
       timetable_groups: {
@@ -5497,6 +5614,20 @@ export type Database = {
           label: string
           program_id: string
           section: string
+        }[]
+      }
+      timetable_report_queue: {
+        Args: never
+        Returns: {
+          created_at: string
+          department: string
+          entry_id: string
+          id: string
+          kind: string
+          note: string
+          reports: number
+          room_id: string
+          seen: Json
         }[]
       }
       timetable_rooms: {

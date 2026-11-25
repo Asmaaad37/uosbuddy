@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, UserRound, Users } from "lucide-react";
+import { ReportWrongInfo } from "@/components/timetable/report-wrong-info";
 import { Pill } from "@/components/ui/badge";
 import { DAYS, minToTime } from "@/lib/academics";
 
@@ -98,6 +99,10 @@ export function ClassList({
                     )}
                   </span>
                 </span>
+                <ReportWrongInfo
+                  entryId={c.id}
+                  label={`${c.course_title}, ${DAYS[c.day]} ${minToTime(c.start_min)}`}
+                />
               </li>
             ))}
           </ul>
