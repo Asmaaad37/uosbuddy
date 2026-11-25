@@ -64,6 +64,19 @@ audit log (shown on the dashboard).
 3. If the database is overloaded, check slow queries in Supabase → Reports, and the
    `admin-stats` / `award-badges` cron jobs.
 
+**Something is overloaded or misbehaving** (launch fix 3)
+
+Switch the feature off in `/admin/flags` (no redeploy; it takes effect at once):
+
+| Switch             | What happens when it's off                                      |
+| ------------------ | --------------------------------------------------------------- |
+| `ai_buddy`         | AIBuddy shows "taking a short break"; nothing is sent to the AI |
+| `chat`             | Chats stay readable; nobody can send                            |
+| `timetable_alerts` | Publishing a timetable sends no alerts                          |
+| `signups`          | No new accounts; existing students still log in                 |
+
+Order when the app is slow: AIBuddy first, then chat.
+
 **A secret leaked** (in a screenshot, a commit, a chat)
 
 1. Rotate it immediately at its source: Supabase (service key / JWT), Anthropic, SMTP,

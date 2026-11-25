@@ -13,6 +13,8 @@ import { shortTime } from "@/lib/chat";
 import { cn } from "@/lib/utils";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { BellSlot } from "@/components/notifications/bell-slot";
+import { EmptyState } from "@/components/ui/empty-state";
+import { switchOn } from "@/lib/switches.server";
 
 export const metadata: Metadata = { title: "AI Buddy" };
 
@@ -41,6 +43,17 @@ export default async function BuddyPage({ searchParams }: Props) {
           }
         />
         <BuddyComingSoon waiting={!!waitlisted} />
+      </AppShell>
+    );
+  }
+  // Switched off by an admin (launch fix 3): a friendly pause instead of the chat.
+  if (!(await switchOn(supabase, "ai_buddy"))) {
+    return (
+      <AppShell>
+        <ScreenHeader title="AIBuddy" back="/explore" />
+        <EmptyState icon={Plus} mascot="idle" title="AIBuddy is taking a short break">
+          Try again a little later.
+        </EmptyState>
       </AppShell>
     );
   }

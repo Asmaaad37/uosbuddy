@@ -55,7 +55,7 @@ const BUCKET = "chat-attachments";
 
 /** The database explains refusals in plain words; anything else gets a generic line. */
 function sendErrorMessage(error: { code?: string; message: string } | null) {
-  if (error && ["42501", "22023", "P0002", "54000"].includes(error.code ?? "")) {
+  if (error && ["42501", "22023", "P0002", "54000", "55000"].includes(error.code ?? "")) {
     return error.message;
   }
   return "Couldn't send. Check your connection and try again.";
@@ -95,6 +95,7 @@ export function Conversation({
   muted: initialMuted,
   endsAt = null,
   isRide = false,
+  paused = false,
 }: {
   conversationId: string;
   me: string;
@@ -108,6 +109,8 @@ export function Conversation({
   muted: boolean;
   /** When the chat ends (a ping, a Backup, a ride): still readable after, nothing can be sent. */
   endsAt?: string | null;
+  /** Chat switched off by an admin (launch fix 3): readable, nothing can be sent. */
+  paused?: boolean;
   /** A ride's chat: leaving it gives up your seat. */
   isRide?: boolean;
 }) {
@@ -678,9 +681,11 @@ export function Conversation({
           {error}
         </p>
       )}
-      {ended ? (
+      {ended || paused ? (
         <p className="gutter bg-surface pt-3 pb-[max(12px,env(safe-area-inset-bottom))] text-center text-subhead text-sec">
-          This chat has ended. You can still read it.
+          {ended
+            ? "This chat has ended. You can still read it."
+            : "Chat is paused for a little while. You can still read it."}
         </p>
       ) : (
         <form
