@@ -116,3 +116,47 @@ export async function unfollowClass(followId: string): Promise<ActionResult> {
   if (error) return fail("Couldn't remove that class. Try again.");
   return { ok: true, data: undefined };
 }
+
+const reportSchema = z
+  .object({
+    entryId: id.optional(),
+    roomId: id.optional(),
+    kind: z.enum(["room", "time", "teacher", "cancelled", "closed", "other"]),
+    note: z.string().trim().max(300).optional(),
+  })
+  .refine((r) => r.entryId || r.roomId);
+
+/** Launch fix 4: a student reports wrong info on a class or a room, for the editors. */
+export async function reportTimetable(input: z.input<typeof reportSchema>): Promise<ActionResult> {
+  const parsed = reportSchema.safeParse(input);
+  if (!parsed.success) return fail("Choose what's wrong");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { entryId, roomId, kind, note } = parsed.data;
+  // One of the two is null; the generated types don't know uuid arguments can be null.
+  const none = null as unknown as string;
+  const { error } = await s.supabase.rpc("report_timetable", {
+    p_entry: entryId ?? none,
+    p_room: roomId ?? none,
+    p_kind: kind,
+    p_note: note || undefined,
+  });
+  if (error) return fail(friendly(error, "Couldn't send. Try again."));
+  return { ok: true, data: undefined };
+}
+
+/** Launch fix 4: an editor closes every open report about one class or room. */
+export async function resolveTimetableReport(
+  reportId: string,
+  status: "fixed" | "dismissed",
+): Promise<ActionResult> {
+  if (!id.safeParse(reportId).success) return fail("Report not found");
+  const s = await session();
+  if (!s) return fail("Your session expired. Log in again.");
+  const { error } = await s.supabase.rpc("resolve_timetable_report", {
+    p_report: reportId,
+    p_status: status,
+  });
+  if (error) return fail(friendly(error, "Couldn't update. Try again."));
+  return { ok: true, data: undefined };
+}

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { DoorOpen } from "lucide-react";
+import { ReportWrongInfo } from "@/components/timetable/report-wrong-info";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -162,10 +163,10 @@ function RoomList({
       {items.length ? (
         <ul className="overflow-hidden rounded-card bg-surface shadow-card contrast-more:border contrast-more:border-label">
           {items.map(({ room, note }) => (
-            <li key={room.id} className="border-b border-sep last:border-0">
+            <li key={room.id} className="flex items-center border-b border-sep pr-4 last:border-0">
               <Link
                 href={`/timetable/room/${room.id}`}
-                className="flex items-center justify-between gap-3 px-4 py-3 active:bg-raised"
+                className="flex flex-1 items-center justify-between gap-3 px-4 py-3 active:bg-raised"
               >
                 <span className="grid">
                   <span className="font-medium">{room.label}</span>
@@ -175,6 +176,7 @@ function RoomList({
                   </span>
                 </span>
               </Link>
+              <ReportWrongInfo roomId={room.id} label={room.label} className="self-center" />
             </li>
           ))}
         </ul>

@@ -10,6 +10,7 @@ import {
   setMyClassGroup,
   unfollowClass,
 } from "@/actions/official-timetable";
+import { ReportWrongInfo } from "@/components/timetable/report-wrong-info";
 import { Pill } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, Overline } from "@/components/ui/card";
@@ -172,6 +173,10 @@ export function OfficialWeek({
                         </span>
                       )}
                     </span>
+                    <ReportWrongInfo
+                      entryId={c.id}
+                      label={`${c.course_title}, ${DAYS[day]} ${minToTime(c.start_min)}`}
+                    />
                     {c.follow_id && (
                       <button
                         type="button"
