@@ -109,6 +109,7 @@ Order when the app is slow: AIBuddy first, then chat.
 | Documents, exports and orphan files    | Vercel Cron `/api/cron/purge-documents` | 02:30 daily          |
 | Weekly digest email                    | Vercel Cron `/api/cron/weekly-digest`   | Sundays 19:00        |
 | Admin alerts (queues waiting > 24 h)   | pg_cron `admin-health-alerts`           | 09:00 daily          |
+| Bulk push queue (spreads mass alerts)  | pg_cron `push-queue`                    | every 15 seconds     |
 
 Check pg_cron runs in the SQL editor: `select jobname, status, start_time from
 cron.job_run_details order by start_time desc limit 20;`
