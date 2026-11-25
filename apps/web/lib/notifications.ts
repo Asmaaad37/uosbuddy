@@ -208,6 +208,20 @@ export function describe(n: NotificationLike): Described {
         body: "See your week, with rooms and teachers.",
         href: "/timetable",
       };
+    case "admin.verifications": {
+      const n = typeof p.count === "number" ? p.count : 0;
+      return {
+        title: `${n} verification${n === 1 ? "" : "s"} waiting over a day`,
+        body: "Students can't use UOSBuddy until they're checked.",
+        href: "/admin/verifications",
+      };
+    }
+    case "admin.imports":
+      return {
+        title: "A timetable import is still in review",
+        body: "Students see the old timetable until it's published or discarded.",
+        href: "/admin/timetable",
+      };
     case "system.test":
       return {
         title: "Test notification",

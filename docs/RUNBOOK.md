@@ -95,11 +95,23 @@ audit log (shown on the dashboard).
 | Purge deleted accounts (after 14 days) | pg_cron `purge-deleted-accounts`        | 03:15 daily          |
 | Documents, exports and orphan files    | Vercel Cron `/api/cron/purge-documents` | 02:30 daily          |
 | Weekly digest email                    | Vercel Cron `/api/cron/weekly-digest`   | Sundays 19:00        |
+| Admin alerts (queues waiting > 24 h)   | pg_cron `admin-health-alerts`           | 09:00 daily          |
 
 Check pg_cron runs in the SQL editor: `select jobname, status, start_time from
 cron.job_run_details order by start_time desc limit 20;`
 
-## 7. Backups
+## 7. Monitoring
+
+- **Uptime:** an uptime monitor (UptimeRobot or Better Stack) checks `https://<your-domain>/` and
+  `https://<your-domain>/api/health` every minute and alerts your phone. `/api/health` answers
+  200 when the app can reach the database within 3 seconds, 503 otherwise.
+- **Errors:** Sentry, when `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` are set in Vercel. Request
+  bodies, cookies, headers, query strings and emails are stripped before events are sent. Add an
+  alert rule in Sentry for a spike in errors.
+- **Queues:** every admin gets a notification at 09:00 if a verification has waited over 24 hours
+  or a timetable import has sat in review that long.
+
+## 8. Backups
 
 - Supabase takes daily backups (Pro plan keeps 7 days; point-in-time recovery is an add-on).
 - **Once a month, test a restore**: restore the latest backup into a new project, open it, and
