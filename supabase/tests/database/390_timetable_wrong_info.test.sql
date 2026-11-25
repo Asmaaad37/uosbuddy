@@ -55,23 +55,27 @@ select ok(tests.as('Ali', format('select public.report_timetable(%L, null, %L, %
   tests.entry(), 'room', 'It moved to CR-162')) is not null, 'a student reports a wrong room');
 select is((select seen->>'room' from public.timetable_reports where reporter_id = tests.uid('Ali')),
   'MAB CR-160', 'the report keeps what the student saw');
-select lives_ok(format($$ select tests.as('Ali', 'select public.report_timetable(%L, null, ''time'')::text') $$,
-  tests.entry()), 'reporting the same class again');
+select lives_ok(format('select tests.as(%L, %L)', 'Ali',
+  format('select public.report_timetable(%L, null, %L)::text', tests.entry(), 'time')),
+  'reporting the same class again');
 select is((select count(*)::int from public.timetable_reports where reporter_id = tests.uid('Ali')), 1,
   'updates the open report instead of adding another');
-select lives_ok(format($$ select tests.as('Sara', 'select public.report_timetable(%L, null, ''room'')::text') $$,
-  tests.entry()), 'a second student reports it too');
-select throws_ok(format($$ select tests.as('Newbie', 'select public.report_timetable(%L, null, ''room'')::text') $$,
-  tests.entry()), '42501', null, 'unverified students can''t report');
+select lives_ok(format('select tests.as(%L, %L)', 'Sara',
+  format('select public.report_timetable(%L, null, %L)::text', tests.entry(), 'room')),
+  'a second student reports it too');
+select throws_ok(format('select tests.as(%L, %L)', 'Newbie',
+  format('select public.report_timetable(%L, null, %L)::text', tests.entry(), 'room')),
+  '42501', null, 'unverified students can''t report');
 
 -- The queue.
 select is(tests.as('Admin', 'select reports::text from public.timetable_report_queue()'), '2',
   'the admin sees one row with both reports');
 select is(tests.as('Ali', 'select count(*)::text from public.timetable_report_queue()'), '0',
   'students don''t see the queue');
-select throws_ok(format($$ select tests.as('Ali', 'select public.resolve_timetable_report(%L, ''dismissed'')::text') $$,
-  (select id from public.timetable_reports where reporter_id = tests.uid('Ali'))), '42501', null,
-  'students can''t close reports');
+select throws_ok(format('select tests.as(%L, %L)', 'Ali',
+  format('select public.resolve_timetable_report(%L, %L)::text',
+    (select id from public.timetable_reports where reporter_id = tests.uid('Ali')), 'dismissed')),
+  '42501', null, 'students can''t close reports');
 select is(tests.as('Admin', format('select public.resolve_timetable_report(%L, %L)::text',
   (select id from public.timetable_reports where reporter_id = tests.uid('Ali')), 'fixed')), '2',
   'marking it fixed closes both reports');
